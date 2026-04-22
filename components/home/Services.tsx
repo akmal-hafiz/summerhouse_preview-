@@ -148,7 +148,7 @@ export default function Services() {
   }, [activeVideoIndex]);
 
   return (
-    <div className="w-full bg-[#FAFAF9] h-[2530px] lg:h-[2600px] flex flex-col overflow-x-hidden pt-[120px] lg:pt-[160px]">
+    <div className="w-full bg-[#FAFAF9] min-h-[100dvh] h-auto flex flex-col overflow-x-hidden pt-[120px] lg:pt-[160px]">
 
       {/* ============================================== */}
       {/* 1. HERO / INTRO SECTION                        */}

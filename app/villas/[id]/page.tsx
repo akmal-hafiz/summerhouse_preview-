@@ -29,7 +29,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ id
         : property.image_url || "/homepage_villa/VillaZen.webp";
 
     return (
-        <div className="w-full bg-white min-h-screen relative flex flex-col items-center overflow-x-hidden pb-[100px]">
+        <div className="w-full bg-white min-h-[100dvh] relative flex flex-col items-center overflow-x-hidden pb-[100px]">
             <Navbar />
 
             {/* ─── 1. HERO SECTION (Rounded Image with View More) ─── */}

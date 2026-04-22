@@ -195,14 +195,14 @@ const About = () => {
     }, [activeVideoIndex]);
 
     return (
-        <div className="w-full h-[340vh] lg:h-[640vh] pb-[100px] bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden">
+        <div className="w-full min-h-[340dvh] h-auto pb-[100px] bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden">
 
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (STORYTELLING)  */}
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (VIDEO CAROUSEL)*/}
             {/* ========================================= */}
-            <section className="w-full relative lg:top-[250px] h-[568vh] lg:h-[400vh] flex flex-col ">
+            <section className="w-full relative lg:top-[250px] min-h-[568dvh] lg:min-h-[400dvh] h-auto flex flex-col ">
                 {/* ─── TITLE & INTRODUCTION ─── */}
                 <div className="w-full max-w-[900px] bg-[#FAFAF9] relative bottom-[-180px] lg:bottom-[50px] left-[10zpx] lg:left-[390px] mx-auto text-center px-6 pt-[60px] lg:pt-[80px] pb-[60px] lg:pb-[120px]">
                     <motion.h1 

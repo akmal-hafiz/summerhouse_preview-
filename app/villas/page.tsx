@@ -27,11 +27,11 @@ export default async function VillasPage() {
   })) : [];
 
   return (
-    <div className="w-full bg-[#FAFAF9] min-h-screen relative flex flex-col items-center overflow-x-hidden">
+    <div className="w-full bg-[#FAFAF9] min-h-[100dvh] relative flex flex-col items-center overflow-x-hidden">
       <Navbar />
       
       {/* ─── 1. HERO SECTION (DNA: Playfair Staggered) ─── */}
-      <section className="w-full h-[80vh] lg:h-[100vh] relative flex flex-col items-center">
+      <section className="w-full min-h-[80dvh] lg:min-h-[100dvh] h-auto relative flex flex-col items-center">
         <div className="w-full max-w-[1400px] h-full px-6 lg:px-12 relative flex flex-col justify-center">
             {/* Title Block */}
             <div className="relative left-[-10px] lg:left-[50px] z-10">

@@ -46,7 +46,7 @@ const Contact = () => {
     const yParallax = useTransform(smoothProgress, [0, 1], ["-15%", "15%"]);
 
     return (
-        <div className="w-full bg-[#FAFAF9] h-[367vh] lg:h-[500vh] flex flex-col pt-[160px] lg:pt-[200px]">
+        <div className="w-full bg-[#FAFAF9] min-h-[367dvh] lg:min-h-[500dvh] h-auto flex flex-col pt-[160px] lg:pt-[200px]">
             
             {/* ========================================= */}
             {/* 1. HERO HEADER SECTION                    */}
@@ -72,7 +72,7 @@ const Contact = () => {
             {/* ========================================= */}
             {/* 2. PARALLAX FORM SECTION                  */}
             {/* ========================================= */}
-            <section ref={parallaxRef} className="w-full h-[95vh] lg:h-[130vh] relative lg:bottom-[-400px] bottom-[-290px] py-24 lg:py-33 overflow-hidden">
+            <section ref={parallaxRef} className="w-full min-h-[95dvh] lg:min-h-[130dvh] h-auto relative lg:bottom-[-400px] bottom-[-290px] py-24 lg:py-33 overflow-hidden">
                 <motion.div 
                     className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat" 
                     style={{ 
@@ -190,7 +190,7 @@ const Contact = () => {
             {/* ========================================= */}
             {/* 4. DISCOVER & STATS (DARK)                */}
             {/* ========================================= */}
-            <section className="w-full bg-[#0a0a0a] lg:h-[100vh] h-[130vh] pt-32 pb-24 px-6 md:px-12 relative bottom-[-490px] lg:bottom-[-1000px] mt-20 z-20 overflow-visible">
+            <section className="w-full bg-[#0a0a0a] min-h-[130dvh] h-auto pt-32 pb-24 px-6 md:px-12 relative bottom-[-490px] lg:bottom-[-1000px] mt-20 z-20 overflow-visible">
                 {/* Overlapping Polaroids */}
 
                 <div className="lg:max-w-[1300px] relative left-[-68px] lg:left-[38px] max-w-[400px] w-[350px] lg:w-full mx-auto flex flex-col items-center relative z-10 mt-12">
