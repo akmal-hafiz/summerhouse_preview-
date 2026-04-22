@@ -148,7 +148,7 @@ export default function Services() {
   }, [activeVideoIndex]);
 
   return (
-    <div className="w-full bg-[#FAFAF9] h-auto flex flex-col overflow-x-hidden pt-[120px] lg:pt-[160px]" style={{ touchAction: 'pan-y' }}>
+    <div className="w-full bg-[#FAFAF9] h-[2530px] lg:h-[2600px] flex flex-col overflow-x-hidden pt-[120px] lg:pt-[160px]" style={{ touchAction: 'pan-y' }}>
 
       {/* ============================================== */}
       {/* 1. HERO / INTRO SECTION                        */}

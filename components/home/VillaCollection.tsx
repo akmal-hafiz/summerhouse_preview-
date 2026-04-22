@@ -68,11 +68,11 @@ const VillaCollection = () => {
     const y4 = useTransform(scrollYProgress, [0, 1], [20, -20]);
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
-        {/* 1. Tag Section dengan Padding yang lega, tanpa tinggi kaku (h-auto) */}
-        <section className="w-full bg-[#FAFAF9] pt-[150px] pb-[100px] md:pb-[350px] h-auto" style={{ touchAction: 'pan-y' }}>
+        // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
+        <section className="w-full bg-[#FAFAF9] pt-[150px] h-[1800px] lg:h-[3200px] pb-[350px]" style={{ touchAction: 'pan-y' }}>
 
-            {/* 2. Container Utama - Menghilangkan relative top/bottom negatif yang ekstrem */}
-            <div className="max-w-8xl mx-auto px-4 md:px-8 lg:px-12 mt-[50px] md:mt-[150px]">
+            {/* 2. Container Pembungkus Lebar Konten */}
+            <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] md:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
 
                 {/* ============================================== */}
                 {/* MOBILE FULLY CUSTOM VERSION (Berdasarkan Screenshot) */}
