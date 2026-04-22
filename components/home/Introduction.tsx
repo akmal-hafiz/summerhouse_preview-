@@ -6,10 +6,10 @@ import { motion } from 'framer-motion';
 const Introduction = () => {
     return (
         // PENTING: bg solid relative untuk menutupi fixed hero di belakangnya
-        <section className="w-full bg-[#FAFAF9] z-10 flex items-center h-[90vh] lg:h-[90vh] py-[150px] lg:py-[1500vh] relative right-[-10px]">
-            <div className="container mx-auto px-6 relative bottom-[-200px]">
+        <section className="w-full bg-[#FAFAF9] z-10 flex items-center min-h-[80dvh] py-[100px] lg:py-[180px] relative">
+            <div className="container mx-auto px-6 mt-[50px] md:mt-[100px]">
                 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start relative bottom-[-50px]">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
                 
                     {/* --- 1. HEADING SECTION (Kiri Atas) --- */}
                     <motion.div
