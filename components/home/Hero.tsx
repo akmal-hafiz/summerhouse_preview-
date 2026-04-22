@@ -283,7 +283,7 @@ const Hero = () => {
     );
 
     return (
-        <section className="relative w-full min-h-screen z-0 overflow-hidden">
+        <section className="relative w-full min-h-[100dvh] z-0">
             {/* Click outside overlay */}
             {activeDropdown && (
                 <div
@@ -291,15 +291,18 @@ const Hero = () => {
                     onClick={() => setActiveDropdown(null)}
                 />
             )}
-
-            <video
-                src="/video/herosection_summerhouse.mp4"
-                autoPlay
-                loop
-                playsInline
-                muted
-                className="absolute inset-0 w-full h-full object-cover object-center"
-            />
+            
+            {/* Video Container */}
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+                <video
+                    src="/video/herosection_summerhouse.mp4"
+                    autoPlay
+                    loop
+                    playsInline
+                    muted
+                    className="w-full h-full object-cover object-center"
+                />
+            </div>
 
             {/* Cinematic Spotlight: Menggelapkan HANYA area bawah (Detail Filter Search) */}
             <motion.div 
@@ -314,11 +317,11 @@ const Hero = () => {
                 agar efek glassmorphism form pencarian bersinar sempurna.
                 Hanya mempertahankan sedikit bayangan tipis di atas dan kiri untuk Navbar & teks.
             */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-transparent pointer-events-none" />
 
             <div
-                className="hero-content-wrapper relative z-10 w-full max-w-[1400px] mx-auto min-h-screen flex flex-col justify-center"
+                className="hero-content-wrapper relative z-10 w-full max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col justify-center"
                 style={{ paddingLeft: "clamp(20px, 4vw, 56px)", paddingRight: "clamp(20px, 4vw, 56px)" }}
             >
                 <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 lg:gap-20 items-end w-full mb-16 md:mb-24">
@@ -347,7 +350,7 @@ const Hero = () => {
                 </div>
 
                 {/* ══ BLOCK 3: SEARCH INTERFACE ══ */}
-                <div className="hero-search-block w-full border-white/10 relative -bottom-[370px] lg:bottom-[-269px] max-w-[1260px] mx-auto z-60 px-2 lg:px-0">
+                <div className="hero-search-block w-full border-white/10 absolute bottom-20 lg:relative lg:bottom-[-269px] max-w-[1260px] mx-auto z-60 px-2 lg:px-0">
                     
                     {/* BOTH MOBILE & DESKTOP BEHAVIOR: MENGEMBANG DARI TENGAH */}
                     <div className="w-full flex justify-center items-center relative top-[-40px] lg:top-[-0px] h-[60px] lg:h-[90px]">

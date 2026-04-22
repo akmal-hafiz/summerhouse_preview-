@@ -51,8 +51,9 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                 MOBILE NAVBAR (< md)
             ═══════════════════════════════════════════════════════════ */}
             <nav
-                className="md:hidden fixed top-0 left-0 w-full z-110 grid grid-cols-[40px_1fr_40px] items-center px-6 sm:px-10 h-[80px] transition-all duration-500"
+                className="md:hidden absolute top-0 left-0 w-full z-110 grid grid-cols-[40px_1fr_40px] items-center px-6 sm:px-10 h-[80px] transition-all duration-500"
                 style={{
+                    paddingTop: 'env(safe-area-inset-top)',
                     ...(isMobileNavSolid ? {
                         backgroundColor: 'rgba(252, 250, 247, 0.85)',
                         backdropFilter: 'saturate(180%) blur(20px)',
