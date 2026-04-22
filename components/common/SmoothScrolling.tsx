@@ -7,10 +7,13 @@ function SmoothScrolling({ children }: { children: React.ReactNode }) {
 
     return (
         <Lenis root options={{ 
-            lerp: 0.05, 
-            duration: 1.8, 
+            lerp: 0.1, 
+            duration: 1.2, 
             smoothWheel: true,
-            wheelMultiplier: 0.8 
+            wheelMultiplier: 1,
+            touchInertiaMultiplier: 0,
+            syncTouch: false,
+            enabled: typeof window !== 'undefined' && !window.matchMedia('(pointer: coarse)').matches
         }}>
             {children}
         </Lenis>
