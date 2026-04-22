@@ -307,7 +307,7 @@ const About = () => {
                     {/* ==============================================
                         MOBILE BENTO SWIPE GALLERY (REFINED)
                         ============================================== */}
-                    <div className="flex lg:hidden overflow-x-auto snap-x snap-mandatory w-screen mx-[-16px] no-scrollbar pb-10 relative z-30 touch-pan-x">
+                    <div className="flex lg:hidden overflow-x-auto snap-x snap-mandatory w-screen mx-[-16px] no-scrollbar pb-10 relative z-30">
                         
                         {/* --- SLIDE 1: ORIGINAL CARD (POSISI & UKURAN UTUH) --- */}
                         <div className="min-w-full snap-start relative">

@@ -85,7 +85,7 @@ const VillaCollection = () => {
                     </div>
 
                     {/* Horizontal Scroll Cards Mobile */}
-                    <div className="flex w-[400px] overflow-x-auto pb-20 lg:pb-0 relative bottom-[-40px] lg:bottom-[-0px] right-[-20px] lg:right-[-0px] snap-x snap-mandatory gap-5 pl-5 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex w-full overflow-x-auto pb-20 lg:pb-0 relative bottom-[-40px] lg:bottom-[-0px] right-[-20px] lg:right-[-0px] snap-x snap-mandatory gap-5 pl-5 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
                         {/* KARTU 1 */}
                         <div className="flex flex-col w-[85vw] h-[600px] snap-center shrink-0 pb-27 lg:pb-0">
