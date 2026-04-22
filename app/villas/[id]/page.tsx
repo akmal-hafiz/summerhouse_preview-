@@ -51,8 +51,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ id
 
                 {/* ─── 2. TAB NAVIGATION ─── */}
                 <div className="flex justify-center border-b border-gray-100 mt-10">
-                    {/* Horizontal Scroll Tabs Mobile */}
-                    <div className="flex gap-8 lg:gap-12 text-[12px] font-medium text-gray-500 uppercase tracking-wider pb-4 overflow-x-auto no-scrollbar whitespace-nowrap" style={{ touchAction: 'pan-y' }}>
+                    <div className="flex gap-8 lg:gap-12 text-[12px] font-medium text-gray-500 uppercase tracking-wider pb-4 overflow-x-auto no-scrollbar whitespace-nowrap">
                         <span className="text-[#4d6a52] border-b-2 border-[#4d6a52] pb-4 cursor-pointer">Description</span>
                         <span className="hover:text-[#4d6a52] cursor-pointer">Pictures</span>
                         <span className="hover:text-[#4d6a52] cursor-pointer">Amenities</span>

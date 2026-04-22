@@ -69,7 +69,7 @@ const VillaCollection = () => {
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
         // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
-        <section className="w-full bg-[#FAFAF9] pt-[150px] h-[1800px] lg:h-[3200px] pb-[350px]" style={{ touchAction: 'pan-y' }}>
+        <section className="w-full bg-[#FAFAF9] pt-[150px] h-[1800px] lg:h-[3200px] pb-[350px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
             <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] md:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
@@ -85,7 +85,7 @@ const VillaCollection = () => {
                     </div>
 
                     {/* Horizontal Scroll Cards Mobile */}
-                    <div className="flex w-[400px] overflow-x-auto pb-20 lg:pb-0 relative bottom-[-40px] lg:bottom-[-0px] right-[-20px] lg:right-[-0px] snap-x snap-mandatory gap-5 pl-5 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-y' }}>
+                    <div className="flex w-[400px] overflow-x-auto pb-20 lg:pb-0 relative bottom-[-40px] lg:bottom-[-0px] right-[-20px] lg:right-[-0px] snap-x snap-mandatory gap-5 pl-5 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
                         {/* KARTU 1 */}
                         <div className="flex flex-col w-[85vw] h-[600px] snap-center shrink-0 pb-27 lg:pb-0">

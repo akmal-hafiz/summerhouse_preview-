@@ -195,7 +195,7 @@ const About = () => {
     }, [activeVideoIndex]);
 
     return (
-        <div className="w-full h-[340vh] lg:h-[640vh] pb-[100px] bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden" style={{ touchAction: 'pan-y' }}>
+        <div className="w-full h-[340vh] lg:h-[640vh] pb-[100px] bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden">
 
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (STORYTELLING)  */}
@@ -307,7 +307,7 @@ const About = () => {
                     {/* ==============================================
                         MOBILE BENTO SWIPE GALLERY (REFINED)
                         ============================================== */}
-                    <div className="flex lg:hidden overflow-x-auto snap-x snap-mandatory w-screen mx-[-16px] no-scrollbar pb-10 relative z-30 touch-pan-x" style={{ touchAction: 'pan-y' }}>
+                    <div className="flex lg:hidden overflow-x-auto snap-x snap-mandatory w-screen mx-[-16px] no-scrollbar pb-10 relative z-30 touch-pan-x">
                         
                         {/* --- SLIDE 1: ORIGINAL CARD (POSISI & UKURAN UTUH) --- */}
                         <div className="min-w-full snap-start relative">
