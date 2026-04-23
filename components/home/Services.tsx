@@ -153,7 +153,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 1. HERO / INTRO SECTION                        */}
       {/* ============================================== */}
-      <section className="w-full relative lg:right-[-70px] lg:bottom-[-180px] bottom-[-180px]  px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto flex flex-col items-center mb-16 lg:mb-24">
+      <section className="w-full relative lg:right-[-70px] lg:bottom-[-180px] bottom-[-180px]  px-6 md:px-12 lg:px-24 max-w-[1400px] mx-auto flex flex-col items-center mb-16 lg:mb-24 touch-pan-y">
         <motion.h1
           className="text-[25px] md:text-6xl lg:text-[72px] leading-[1.8] lg:leading-[1.7] text-[#446B4A] mb-4 lg:mb-8 tracking-tight font-medium text-center"
           style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -175,7 +175,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 2. STEWARDSHIP & BRIEFING GRID                 */}
       {/* ============================================== */}
-      <section className="w-full px-6 md:px-12 relative right-[-60px] top-[290px] lg:px-24 max-w-[1400px] mx-auto mb-32 lg:mb-48">
+      <section className="w-full px-6 md:px-12 relative right-[-60px] top-[290px] lg:px-24 max-w-[1400px] mx-auto mb-32 lg:mb-48 touch-pan-y">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
 
           {/* Left: Video Area */}
@@ -271,7 +271,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 3. CLIENT REVIEWS SECTION                      */}
       {/* ============================================== */}
-      <section className="w-full lg:w-full px-6 md:px-12 relative lg:right-[-70px] lg:top-[450px] top-[320px] lg:px-24 max-w-[1400px] mx-auto mb-32 lg:mb-48">
+      <section className="w-full lg:w-full px-6 md:px-12 relative lg:right-[-70px] lg:top-[450px] top-[320px] lg:px-24 max-w-[1400px] mx-auto mb-32 lg:mb-48 touch-pan-y">
         <div className="flex flex-col-reverse lg:flex-row gap-10 lg:gap-24 items-center">
 
           {/* Left: Text */}
@@ -341,7 +341,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 4. FINAL CTA SECTION (PARALLAX)                */}
       {/* ============================================== */}
-      <section ref={parallaxRef} className="w-full h-[500px] lg:h-[710px] relative top-[400px] lg:top-[668px] mt-auto overflow-hidden">
+      <section ref={parallaxRef} className="w-full h-[500px] lg:h-[710px] relative top-[400px] lg:top-[668px] mt-auto lg:overflow-hidden touch-pan-y">
         <motion.div
           className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat"
           style={{ 
