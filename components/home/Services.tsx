@@ -108,6 +108,14 @@ export default function Services() {
   const [progress, setProgress] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const parallaxRef = useRef(null);
   const { scrollYProgress } = useScroll({
       target: parallaxRef,
@@ -121,7 +129,7 @@ export default function Services() {
       restDelta: 0.001
   });
 
-  const yParallax = useTransform(smoothProgress, [0, 1], ["-15%", "15%"]);
+  const yParallax = useTransform(smoothProgress, [0, 1], isMobile ? ["0%", "0%"] : ["-15%", "15%"]);
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
@@ -341,7 +349,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 4. FINAL CTA SECTION (PARALLAX)                */}
       {/* ============================================== */}
-      <section ref={parallaxRef} className="w-full h-[500px] lg:h-[710px] relative top-[400px] lg:top-[668px] mt-auto lg:overflow-hidden touch-pan-y">
+      <section ref={parallaxRef} className="w-full min-h-[400px] lg:min-h-[710px] relative top-[400px] lg:top-[668px] mt-auto lg:overflow-hidden touch-pan-y">
         <motion.div
           className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat"
           style={{ 

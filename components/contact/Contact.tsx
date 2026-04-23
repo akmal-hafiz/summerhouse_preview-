@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { FiMapPin, FiPhone, FiMail } from 'react-icons/fi';
 import Magnetic from '@/components/common/Magnetic';
@@ -30,6 +30,14 @@ const CharacterReveal = ({ text, className }: { text: string, className?: string
 };
 
 const Contact = () => {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     const parallaxRef = useRef(null);
     const { scrollYProgress } = useScroll({
         target: parallaxRef,
@@ -43,7 +51,7 @@ const Contact = () => {
         restDelta: 0.001
     });
 
-    const yParallax = useTransform(smoothProgress, [0, 1], ["-15%", "15%"]);
+    const yParallax = useTransform(smoothProgress, [0, 1], isMobile ? ["0%", "0%"] : ["-15%", "15%"]);
 
     return (
         <div className="w-full bg-[#FAFAF9] min-h-[367dvh] lg:min-h-[500dvh] mb-[-250vh] lg:mb-0 h-auto flex flex-col pt-[160px] lg:pt-[200px]">
