@@ -156,7 +156,7 @@ export default function Services() {
   }, [activeVideoIndex]);
 
   return (
-    <div className="w-full bg-[#FAFAF9] min-h-[100dvh] lgm flex flex-col overflow-x-hidden pt-[120px] lg:pt-[160px]">
+    <div className="w-full bg-[#FAFAF9] min-h-[100dvh] lg:min-h-[90dvh] flex flex-col overflow-x-hidden pt-[120px] lg:pt-[160px]">
 
       {/* ============================================== */}
       {/* 1. HERO / INTRO SECTION                        */}

@@ -46,12 +46,12 @@ function SmoothScrolling({ children }: { children: React.ReactNode }) {
                 wheelMultiplier: 0.9,
                 touchInertiaMultiplier: 0,
                 syncTouch: false,
-                gestureDirection: "vertical",
             }}
         >
-            {children}
+            {children as any}
         </ReactLenis>
     );
 }
 
-export default SmoothScrolling;
+export default SmoothScrolling;
+
