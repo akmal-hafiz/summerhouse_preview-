@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 const Introduction = () => {
     return (
         // PENTING: bg solid relative untuk menutupi fixed hero di belakangnya
-        <section className="w-full bg-[#FAFAF9] z-20 flex items-center min-h-[80dvh] pt-[120px] pb-[100px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
-            <div className="container mx-auto px-6">
+        <section className="w-full bg-[#FAFAF9] z-20 flex items-center min-h-[100dvh] pt-[120px] pb-[100px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
+            <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-24">
                 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
                 
@@ -20,7 +20,7 @@ const Introduction = () => {
                         className="md:col-span-8 lg:col-span-7"
                     >
                         <h2 
-                            className="w-full text-[48px] md:text-5xl lg:text-[65px] leading-[1.2] tracking-[2] lg:tracking-normal text-[#446B4A]"
+                            className="w-full lg:pr-[100px] text-[48px] md:text-5xl lg:text-[65px] leading-[1.2] tracking-[2] lg:tracking-normal text-[#446B4A]"
                             style={{ fontFamily: "var(--font-playfair), serif" }}
                         >
                             A home, not a <br /> hotel
