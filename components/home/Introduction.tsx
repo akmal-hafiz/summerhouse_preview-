@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const Introduction = () => {
     return (
         // PENTING: bg solid relative untuk menutupi fixed hero di belakangnya
-        <section className="w-full bg-[#FAFAF9] z-10 flex items-center min-h-[80dvh] py-[100px] lg:py-[180px] relative">
+        <section className="w-full bg-[#FAFAF9] z-10 flex items-center min-h-[80dvh] pt-[160px] pb-[100px] lg:py-[180px] relative">
             <div className="container mx-auto px-6 mt-[50px] md:mt-[100px]">
                 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
@@ -17,10 +17,10 @@ const Introduction = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="md:col-span-8 lg:col-span-7 relative bottom-[-88px] lg:bottom-[-100px] right-[69px] lg:right-[90px]"
+                        className="md:col-span-8 lg:col-span-7 relative lg:bottom-[-100px] lg:right-[90px]"
                     >
                         <h2 
-                            className=" w-full text-[48px] md:text-5xl lg:text-[65px] leading-[1.2] tracking-[2] lg:tracking-normal text-[#446B4A] relative top-[-400px] lg:top-[-320px] left-[90px] lg:right-[0px] lg:left-[155px]"
+                            className="w-full text-[48px] md:text-5xl lg:text-[65px] leading-[1.2] tracking-[2] lg:tracking-normal text-[#446B4A] relative lg:top-[-320px] lg:left-[155px]"
                             style={{ fontFamily: "var(--font-playfair), serif" }}
                         >
                             A home, not a <br /> hotel
@@ -33,7 +33,7 @@ const Introduction = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-                        className="md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-8 relative right-[-20px] lg:right-[40px] top-[-240px] lg:top-[-200px]"
+                        className="md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-8 relative mt-12 md:mt-0 lg:right-[40px] lg:top-[-200px]"
                     >
                         <p 
                             className="text-[17px] md:text-[20px] leading-[1.9] md:leading-[2] font-light text-[#5a5651] max-w-[480px]"
@@ -58,9 +58,9 @@ const Introduction = () => {
                         </p>
 
                         {/* --- 3. QUOTE SECTION --- */}
-                        <div className="pl-5 md:pl-6 border-l-[3px] border-[#C7A58A] relative bottom-[-78px] lg:bottom-[-100px]">
+                        <div className="pl-5 md:pl-6 border-l-[3px] border-[#C7A58A] relative mt-16 lg:mt-0 lg:bottom-[-100px]">
                             <span 
-                                className="block text-[33px] md:text-[34px] leading-snug text-[#1a1a19] italic relative left-[30px] lg:left-[40px]"
+                                className="block text-[33px] md:text-[34px] leading-snug text-[#1a1a19] italic relative lg:left-[40px] ml-6 lg:ml-0"
                                 style={{ fontFamily: "var(--font-playfair), serif" }}
                             >
                                 As if you were living <br className="block md:hidden" /> here.
