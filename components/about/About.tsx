@@ -195,7 +195,7 @@ const About = () => {
     }, [activeVideoIndex]);
 
     return (
-        <div className="w-full min-h-[340dvh] h-auto pb-[100px] bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden">
+        <div className="w-full min-h-[340dvh] h-auto pb-[100px] mb-[-200vh] lg:mb-0 bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden">
 
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (STORYTELLING)  */}

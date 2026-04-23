@@ -3,7 +3,7 @@ import React from 'react';
 export default function Footer() {
   return (
     // Background sudah Anda ubah menjadi #F5F3F1, mari kita atur ruang atas bawahnya saja (pt, pb)
-    <footer className="bg-[#F5F3F1] w-full min-h-[90dvh] lg:min-h-[70dvh] h-auto mt-[150px] lg:mt-[300px] pt-[120px] pb-[80px]">
+    <footer className="bg-[#F5F3F1] w-full min-h-[90dvh] lg:min-h-[70dvh] h-auto mt-[150px] lg:mt-[300px] pt-[120px] pb-[250px] lg:pb-[80px]">
       
       {/* Container utama agar tetap di tengah */}
       <div className="w-full max-w-8xl mx-auto px-8 lg:px-12 relative bottom-[-90px] lg:bottom-[-150px] lg:right-[-40px]">

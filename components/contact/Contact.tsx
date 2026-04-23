@@ -46,7 +46,7 @@ const Contact = () => {
     const yParallax = useTransform(smoothProgress, [0, 1], ["-15%", "15%"]);
 
     return (
-        <div className="w-full bg-[#FAFAF9] min-h-[367dvh] lg:min-h-[500dvh] h-auto flex flex-col pt-[160px] lg:pt-[200px]">
+        <div className="w-full bg-[#FAFAF9] min-h-[367dvh] lg:min-h-[500dvh] mb-[-250vh] lg:mb-0 h-auto flex flex-col pt-[160px] lg:pt-[200px]">
             
             {/* ========================================= */}
             {/* 1. HERO HEADER SECTION                    */}
