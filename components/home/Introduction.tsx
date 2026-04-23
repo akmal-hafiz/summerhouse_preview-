@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 const Introduction = () => {
     return (
         // PENTING: bg solid relative untuk menutupi fixed hero di belakangnya
-        <section className="w-full bg-[#FAFAF9] z-10 flex items-center min-h-[80dvh] pt-[240px] pb-[100px] lg:pt-[320px] lg:pb-[180px] relative">
-            <div className="container mx-auto px-6 mt-[50px] md:mt-[100px]">
+        <section className="w-full bg-[#FAFAF9] z-20 flex items-center min-h-[80dvh] pt-[120px] pb-[100px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
+            <div className="container mx-auto px-6">
                 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
                 
@@ -17,10 +17,10 @@ const Introduction = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="md:col-span-8 lg:col-span-7 relative lg:bottom-[-100px] lg:right-[90px]"
+                        className="md:col-span-8 lg:col-span-7 relative lg:bottom-[-50px] lg:right-[90px]"
                     >
                         <h2 
-                            className="w-full text-[48px] md:text-5xl lg:text-[65px] leading-[1.2] tracking-[2] lg:tracking-normal text-[#446B4A] relative lg:top-[-320px] lg:left-[155px]"
+                            className="w-full text-[48px] md:text-5xl lg:text-[65px] leading-[1.2] tracking-[2] lg:tracking-normal text-[#446B4A] relative lg:top-[-100px] lg:left-[155px]"
                             style={{ fontFamily: "var(--font-playfair), serif" }}
                         >
                             A home, not a <br /> hotel
