@@ -5,52 +5,53 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 function SmoothScrolling({ children }: { children: React.ReactNode }) {
-    const [isMobile, setIsMobile] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
     const pathname = usePathname();
 
     useEffect(() => {
-        // Strict mobile detection via width
+        // Detect mobile based on width (more reliable than touch-only for smooth scroll preference)
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+            const mobile = window.innerWidth < 1024;
+            setIsMobile(mobile);
+            
+            // Clean up lenis class on mobile to prevent CSS conflicts
+            if (mobile) {
+                document.documentElement.classList.remove('lenis');
+            }
         };
         
         checkMobile();
         window.addEventListener('resize', checkMobile);
-        
-        // Remove lenis class if mobile
-        if (window.innerWidth < 768) {
-            document.documentElement.classList.remove('lenis');
-        }
-
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // RESET SCROLL ON ROUTE CHANGE (PENTING!)
+    // Reset scroll on route change
     useEffect(() => {
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: "instant" });
     }, [pathname]);
 
-    // Jika Mobile: Kembalikan Native Scroll Tanpa Pembungkus Lenis
+    // MOBILE → native scroll for better performance and stability
     if (isMobile) {
         return <>{children}</>;
     }
 
-    // Jika Desktop: Gunakan Lenis
+    // DESKTOP → smooth scroll with ReactLenis
     return (
-        <ReactLenis 
-            root 
-            options={{ 
-                lerp: 0.1, 
-                duration: 1.2, 
-                smoothWheel: true, 
-                wheelMultiplier: 1,
+        <ReactLenis
+            root
+            options={{
+                lerp: 0.07,
+                duration: 0.8,
+                smoothWheel: true,
+                wheelMultiplier: 0.9,
                 touchInertiaMultiplier: 0,
                 syncTouch: false,
+                gestureDirection: "vertical",
             }}
         >
-            {children as any}
+            {children}
         </ReactLenis>
     );
 }
 
-export default SmoothScrolling;
+export default SmoothScrolling;
