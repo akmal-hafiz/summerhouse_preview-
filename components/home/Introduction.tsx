@@ -5,13 +5,14 @@ import { motion } from 'framer-motion';
 
 const Introduction = () => {
     return (
-        // PENTING: bg solid relative untuk menutupi fixed hero di belakangnya
         <section className="w-full bg-[#FAFAF9] z-20 flex items-center min-h-[100dvh] pt-[120px] pb-[100px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
-            <div className="w-full max-w-[1400px] mx-auto px-8 lg:px-24">
+            
+            {/* ✅ DIUBAH DI SINI */}
+            <div className="w-full max-w-[1400px] mx-auto px-10 lg:px-20">
                 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
                 
-                    {/* --- 1. HEADING SECTION (Kiri Atas) --- */}
+                    {/* HEADING */}
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -27,7 +28,7 @@ const Introduction = () => {
                         </h2>
                     </motion.div>
 
-                    {/* --- 2. TEXT CONTENT SECTION (Kanan Tengah) --- */}
+                    {/* TEXT */}
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -39,7 +40,6 @@ const Introduction = () => {
                             className="text-[17px] md:text-[20px] leading-[1.9] md:leading-[2] font-light text-[#5a5651] max-w-[480px]"
                             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                         >
-                            {/* KHUSUS TAMPILAN MOBILE (Persis seperti Screenshot tapi LEBIH BESAR/LEBAR) */}
                             <span className="block md:hidden text-[21px] leading-[1.6]">
                                 We curate properties and <br />
                                 designed environments that focus <br />
@@ -51,13 +51,12 @@ const Introduction = () => {
                                 natural and personal.
                             </span>
                             
-                            {/* KHUSUS TAMPILAN DESKTOP (Dipertahankan Utuh) */}
                             <span className="hidden md:block">
                                 We curate properties and designed environments that focus on and nurture comfort, simplicity, and ease. Space that invites <br /> you to rethink, slow down, and experience life in a way that feels natural and personal.
                             </span>
                         </p>
 
-                        {/* --- 3. QUOTE SECTION --- */}
+                        {/* QUOTE */}
                         <div className="pl-5 md:pl-6 border-l-[3px] border-[#C7A58A] mt-16">
                             <span 
                                 className="block text-[33px] md:text-[34px] leading-snug text-[#1a1a19] italic ml-6 lg:ml-0"

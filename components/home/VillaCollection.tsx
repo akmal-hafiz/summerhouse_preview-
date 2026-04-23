@@ -516,22 +516,22 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: MOBILE ONLY CURATED SPACES --- */}
             {/* ========================================================= */}
-            <div className="block md:hidden w-[94%] px-5 py-20 relative bottom-[-30px] z-[99] mt-20 bg-[#FAFAF9]" style={{ borderTop: '1px solid transparent' }}>
+            <div className="block md:hidden w-[94%] px-5 py-20 z-[99] mt-20 bg-[#FAFAF9]" style={{ borderTop: '1px solid transparent' }}>
                 
                 {/* Header Text & Neighborhood Dropdown */}
                 <div className="flex justify-between items-end mb-8 relative pr-2 w-full">
                     {/* Header Text */}
-                    <div className="w-[75%] relative right-[-16.8px] lg:right-0 bottom-[-28px] lg:bottom-0">
+                    <div className="w-[75%] relative">
                         <h2 className="text-[28px] text-[#4d6a52] leading-[1.25] mb-4 tracking-wide" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                             A harmonious<br />fusion of stone and<br />light
                         </h2>
-                        <p className="text-[12px] relative bottom-[-20px] italic text-[#5a5651] leading-[1.6]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                        <p className="text-[12px] italic text-[#5a5651] leading-[1.6]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                             Where the architecture respects the<br />heritage of the land.
                         </p>
                     </div>
 
                     {/* Elegantly Blurred Apple-style Dropdown */}
-                    <div className="relative bottom-[-28px] right-[4px] z-[999] flex flex-col items-end">
+                    <div className="relative z-[999] flex flex-col items-end">
                         <button 
                             onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
                             className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] uppercase text-[#4d6a52]"
@@ -556,7 +556,7 @@ const VillaCollection = () => {
                                                 setActiveLocation(neighborhood);
                                                 setIsMobileDropdownOpen(false);
                                             }}
-                                            className={`text-left px-5 py-3 text-[7px] font-bold tracking-[0.2em] uppercase transition-all duration-300 relative right-[-10px] lg:right-0
+                                            className={`text-left px-5 py-3 text-[7px] font-bold tracking-[0.2em] uppercase transition-all duration-300
                                             ${activeLocation === neighborhood ? 'text-[#1a1a19]' : 'text-[#8F8A84] hover:text-[#4d6a52]'}`}
                                         >
                                             {activeLocation === neighborhood && (
@@ -572,7 +572,7 @@ const VillaCollection = () => {
                 </div>
 
                 {/* Mobile Masonry Grid */}
-                <div className="w-full flex gap-2 h-[600px] mx-auto mb-12 relative bottom-[-80px] lg:bottom-0 right-[-12.5px] lg:right-0 z-[1]">
+                <div className="w-full flex gap-2 h-[600px] mx-auto mb-12 relative z-[1] mt-10">
                     {/* Left Column */}
                     <div className="flex flex-col gap-2 w-[58%] h-full">
                         {/* Top Left Image: Yellow Details */}
@@ -616,7 +616,7 @@ const VillaCollection = () => {
                 </div>
 
                 {/* Mobile CTA Button */}
-                <div className="flex justify-center w-full relative right-[-16px] bottom-[-160px] lg:bottom-0">
+                <div className="flex justify-center w-full relative mt-20">
                     <AnimatePresence mode="wait">
                         <motion.button 
                             key={activeLocation + '-btn'}
