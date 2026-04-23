@@ -207,7 +207,7 @@ const Hero = () => {
 
     const renderDetailedForm = (isSticky: boolean) => (
         <form
-            className={`flex flex-row items-center justify-between w-full max-w-[450px] lg:max-w-none bg-[#1b1b1b]/1 lg:bg-[#1b1b1b]/3 lg:backdrop-blur-sm backdrop-blur-sm border border-white/10 rounded-full ${isSticky ? 'bg-black/80 lg:bg-[#1b1b1b]/90 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20' : 'shadow-[0_8px_32px_rgba(0,0,0,0.11)]'} px-1.5 py-1.5 lg:px-12 lg:py-8 gap-5 lg:gap-10 lg:overflow-visible pointer-events-auto touch-action-pan-y`}
+            className={`flex flex-row items-center justify-between w-full max-w-[450px] lg:max-w-none bg-[#1b1b1b]/1 lg:bg-[#1b1b1b]/3 lg:backdrop-blur-sm backdrop-blur-sm border border-white/10 rounded-full ${isSticky ? 'bg-black/80 lg:bg-[#1b1b1b]/90 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20' : 'shadow-[0_8px_32px_rgba(0,0,0,0.11)]'} px-1.5 py-1.5 lg:px-12 lg:py-8 gap-5 lg:gap-10 lg:overflow-visible pointer-events-auto touch-pan-y`}
             onSubmit={handleSubmit}
             role="search"
             aria-label="Property search"
@@ -321,18 +321,18 @@ const Hero = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-transparent pointer-events-none" />
 
             <div
-                className="hero-content-wrapper relative z-10 w-full max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col justify-center touch-action-pan-y"
+                className="hero-content-wrapper relative z-10 w-full max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col justify-center touch-pan-y"
                 style={{ paddingLeft: "clamp(20px, 4vw, 56px)", paddingRight: "clamp(20px, 4vw, 56px)" }}
             >
                 <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 lg:gap-20 items-end w-full mb-16 md:mb-24">
 
                     {/* ══ BLOCK 1: PRIMARY HEADING (Kiri) ══ */}
-                    <div className="hero-title-block w-full relative bottom-0 flex flex-col touch-action-pan-y">
+                    <div className="hero-title-block w-full relative bottom-0 flex flex-col touch-pan-y">
                         <div className="hero-main-heading-container">
                         </div>
 
                         <div className="lg:hidden mt-6">
-                            <p className="text-white/80 text-lg leading-[3] lg:leading-relaxed max-w-[36ch] touch-action-pan-y" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                            <p className="text-white/80 text-lg leading-[3] lg:leading-relaxed max-w-[36ch] touch-pan-y" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                                 Seamlessly navigate the global real estate market. Our expert team is here to guide you every step of the way.
                             </p>
                         </div>
@@ -350,10 +350,10 @@ const Hero = () => {
                 </div>
 
                 {/* ══ BLOCK 3: SEARCH INTERFACE ══ */}
-                <div className="hero-search-block w-full border-white/10 absolute bottom-20 lg:relative lg:bottom-[-269px] max-w-[1260px] mx-auto z-60 px-2 lg:px-0 touch-action-pan-y">
+                <div className="hero-search-block w-full border-white/10 absolute bottom-20 lg:relative lg:bottom-[-269px] max-w-[1260px] mx-auto z-60 px-2 lg:px-0 touch-pan-y">
                     
                     {/* BOTH MOBILE & DESKTOP BEHAVIOR: MENGEMBANG DARI TENGAH */}
-                    <div className="w-full flex justify-center items-center relative top-[-40px] lg:top-[-0px] h-[60px] lg:h-[90px] touch-action-pan-y">
+                    <div className="w-full flex justify-center items-center relative top-[-40px] lg:top-[-0px] h-[60px] lg:h-[90px] touch-pan-y">
                         <AnimatePresence mode="wait">
                             {!isExpanded ? (
                                 <motion.button
@@ -365,7 +365,7 @@ const Hero = () => {
                                     whileHover={{ scale: 1.05 }}
                                     transition={{ duration: 0.2 }}
                                     onClick={() => setHasInteracted(true)}
-                                    className="flex items-center justify-center gap-3 lg:gap-4 px-6 py-4 lg:px-10 lg:py-5 w-[250px] lg:w-[300px] bg-[#1b1b1b]/3 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.11)] border border-white/20 hover:bg-[#1b1b1b]/50 transition-all text-white rounded-full group cursor-pointer absolute inset-x-0 mx-auto top-1/2 left-1/2 -translate-x-1/2 lg:left-[38vw] lg:-translate-x-0 touch-action-pan-y"
+                                    className="flex items-center justify-center gap-3 lg:gap-4 px-6 py-4 lg:px-10 lg:py-5 w-[250px] lg:w-[300px] bg-[#1b1b1b]/3 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.11)] border border-white/20 hover:bg-[#1b1b1b]/50 transition-all text-white rounded-full group cursor-pointer absolute inset-x-0 mx-auto top-1/2 left-1/2 -translate-x-1/2 lg:left-[38vw] lg:-translate-x-0 touch-pan-y"
                                 >
                                     <FiSearch className="w-4 h-4 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" />
                                     <span className="text-[14px] lg:text-[17px] font-bold tracking-wider">Search</span>

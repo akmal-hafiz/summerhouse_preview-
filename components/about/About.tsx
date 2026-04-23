@@ -202,7 +202,7 @@ const About = () => {
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (VIDEO CAROUSEL)*/}
             {/* ========================================= */}
-            <section className="w-full relative lg:top-[250px] min-h-[568dvh] lg:min-h-[400dvh] h-auto flex flex-col ">
+            <section className="w-full relative lg:top-[250px] min-h-[180dvh] lg:min-h-[400dvh] h-auto flex flex-col touch-pan-y">
                 {/* ─── TITLE & INTRODUCTION ─── */}
                 <div className="w-full max-w-[900px] bg-[#FAFAF9] relative bottom-[-180px] lg:bottom-[50px] left-[10zpx] lg:left-[390px] mx-auto text-center px-6 pt-[60px] lg:pt-[80px] pb-[60px] lg:pb-[120px]">
                     <motion.h1 
@@ -228,7 +228,7 @@ const About = () => {
                 </div>
 
                 {/* Top Navigation Bar */}
-                <div className="w-full bg-[#FAFAF9] h-[60px] lg:h-[100px] flex items-center justify-between px-4 md:px-12 z-20 relative bottom-[-240px] lg:bottom-[-0px] shadow-sm">
+                <div className="w-full bg-[#FAFAF9] min-h-[4dvh] lg:h-[100px] flex items-center justify-between px-4 md:px-12 z-20 relative bottom-[-240px] lg:bottom-[-0px] shadow-sm">
                     <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between h-full">
                         {servicesData.map((service, index) => (
                             <div 
@@ -625,7 +625,7 @@ const About = () => {
                 </section>
 
                 {/* 4. THE JOURNAL SECTION (LODR STYLE) */}
-                <section className="w-full bg-[#050505] h-[600px] pb-[150px] lg:h-[1200px] pt-[100px] lg:py-[200px] relative bottom-[-1180px] lg:bottom-[-950px] px-8 lg:px-12">
+                <section className="w-full bg-[#050505] h-[600px] pb-[150px] lg:h-[1200px] pt-[100px] lg:py-[200px] relative bottom-[-1180px] lg:bottom-[-950px] px-8 lg:px-12 touch-pan-y">
                     <div className="max-w-7xl mx-auto relative lg:right-[-40px] lg:bottom-[-200px]">
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between relative bottom-[-20px] lg:bottom-[0px] lg:top-[-80px] mb-12 lg:mb-0 gap-6 lg:gap-0">
                             <h2 className="text-[28px] md:text-5xl lg:text-[56px] text-white font-medium tracking-tight text-center lg:text-left" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
@@ -792,7 +792,7 @@ const About = () => {
                                 </div>
 
                                 {/* BACK PAGE (PAGE 2) */}
-                                <div className="grid grid-cols-12 gap-16 absolute top-0 left-[-20px] w-full h-full" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+                                <div className="grid grid-cols-12 gap-16 absolute top-0 left-[-20px] w-full min-h-[10dvh] lg:h-[500px]" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
                                     {/* Left Large Card - Page 2 */}
                                     <article className="col-span-7 group cursor-pointer flex flex-col">
                                         <div className="w-[820px] h-[540px] rounded-[24px] overflow-hidden mb-8 bg-[#1a1a19]">
@@ -921,9 +921,9 @@ const About = () => {
                 </section>
 
                 {/* 5. POLAROID CTA SECTION */}
-                <section className="w-full h-[500px] lg:h-[500px] relative lg:bottom-[-1000px] bottom-[-140vh] bg-[#FAFAF9] py-[150px] lg:py-[200px] px-6 md:px-12 flex flex-col items-center justify-center overflow-hidden">
+                <section className="w-full min-h-[10dvh] lg:h-[500px] relative lg:bottom-[-1000px] bottom-[-150dvh] bg-[#FAFAF9] py-[150px] lg:py-[200px] px-6 md:px-12 flex flex-col items-center justify-center lg:overflow-hidden touch-pan-y">
                     
-                    <div className="flex flex-col lg:flex-row relative top-[-90px] lg:top-0 lg:right-[-20px] lg:top-[-80px] items-center justify-center mb-8 lg:mb-10 whitespace-normal lg:whitespace-nowrap flex-wrap gap-4 md:gap-8 w-full max-w-[1200px] mx-auto">
+                    <div className="flex flex-col lg:flex-row relative bottom-[40px] lg:top-0 lg:right-[-20px] lg:top-[-80px] items-center justify-center mb-8 lg:mb-10 whitespace-normal lg:whitespace-nowrap flex-wrap gap-4 md:gap-8 w-full max-w-[1200px] mx-auto">
                         <h2 className="text-[48px] relative top-[30px] lg:bottom-[0] md:text-7xl lg:text-[80px] font-medium tracking-tight text-[#1a1a19] text-center" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                             Stay
                         </h2>

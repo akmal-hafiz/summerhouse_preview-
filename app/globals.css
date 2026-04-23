@@ -91,8 +91,10 @@ html.lenis body {
   overscroll-behavior: contain;
 }
 
-.lenis.lenis-stopped {
-  overflow: hidden;
+@media (min-width: 769px) {
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
 }
 
 .lenis.lenis-scrolling iframe {
