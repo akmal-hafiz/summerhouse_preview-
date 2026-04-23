@@ -42,13 +42,13 @@ function SmoothScrolling({ children }: { children: React.ReactNode }) {
             options={{ 
                 lerp: 0.1, 
                 duration: 1.2, 
-                smoothWheel: true,
+                smoothWheel: true, 
                 wheelMultiplier: 1,
                 touchInertiaMultiplier: 0,
                 syncTouch: false,
             }}
         >
-            {children}
+            {children as any}
         </ReactLenis>
     );
 }
