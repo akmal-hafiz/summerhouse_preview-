@@ -17,11 +17,11 @@ const Hero = () => {
     // Scroll & Expansion state
     const { scrollY } = useScroll();
     const [isScrolled, setIsScrolled] = useState(false);
-    const [hasInteracted, setHasInteracted] = useState(false); // OPTION B: Smart Memory UX
+    const [hasInteracted, setHasInteracted] = useState(false);
 
     // OPTION A (Light): Fluid Scrubbing effect before expansion
     const pullStretch = useTransform(scrollY, [0, 50], [1, 1.08]);
-    const pullDownY = useTransform(scrollY, [0, 50], ["-50%", "-30%"]);
+    const pullDownY = useTransform(scrollY, [0, 50], [0, 20]); // ← FIX: pakai number, bukan string "-50%"
     const scrubOpacity = useTransform(scrollY, [0, 45], [1, 0.4]);
 
     useMotionValueEvent(scrollY, "change", (latest) => {
@@ -77,7 +77,7 @@ const Hero = () => {
                     </div>
                     <div>
                         <p className="text-[#1a1a1a] font-bold text-[15px]">Nearby</p>
-                        <p className="text-gray-500 text-[13px]">Find what's around you</p>
+                        <p className="text-gray-500 text-[13px]">Find what&apos;s around you</p>
                     </div>
                 </button>
                 {[
@@ -207,7 +207,7 @@ const Hero = () => {
 
     const renderDetailedForm = (isSticky: boolean) => (
         <form
-            className={`flex flex-row items-center justify-between w-full max-w-[450px] lg:max-w-none bg-[#1b1b1b]/1 lg:bg-[#1b1b1b]/3 lg:backdrop-blur-sm backdrop-blur-sm border border-white/10 rounded-full ${isSticky ? 'bg-black/80 lg:bg-[#1b1b1b]/90 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20' : 'shadow-[0_8px_32px_rgba(0,0,0,0.11)]'} px-1.5 py-1.5 lg:px-12 lg:py-8 gap-5 lg:gap-10 lg:overflow-visible pointer-events-auto touch-pan-y`}
+            className={`flex flex-row items-center justify-start w-full max-w-[44dvh] md:max-w-[88dvw] translate-y-[20px] md:translate-y-[20px] lg:translate-y-0 lg:max-w-[1000px] bg-[#1b1b1b]/1 lg:bg-[#1b1b1b]/3 lg:backdrop-blur-sm backdrop-blur-sm border border-white/10 rounded-full ${isSticky ? 'bg-black/80 lg:bg-[#1b1b1b]/90 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20' : 'shadow-[0_8px_32px_rgba(0,0,0,0.11)]'} px-1.5 py-1.5 lg:px-12 lg:py-8 gap-5 lg:gap-10 lg:overflow-visible pointer-events-auto touch-pan-y`}
             onSubmit={handleSubmit}
             role="search"
             aria-label="Property search"
@@ -291,7 +291,7 @@ const Hero = () => {
                     onClick={() => setActiveDropdown(null)}
                 />
             )}
-            
+
             {/* Video Container */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
                 <video
@@ -304,44 +304,42 @@ const Hero = () => {
                 />
             </div>
 
-            {/* Cinematic Spotlight: Menggelapkan HANYA area bawah (Detail Filter Search) */}
-            <motion.div 
+            {/* Cinematic Spotlight */}
+            <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isExpanded ? 1 : 0 }}
                 transition={{ duration: 0.8, ease: "easeInOut" }}
                 className="absolute inset-x-0 bottom-0 top-1/2 z-[1] pointer-events-none bg-gradient-to-t from-black/90 via-black/50 to-transparent"
             />
 
-            {/* 
-                Gradient diperhalus: Menghapus warna 'black' tebal di bagian bawah 
-                agar efek glassmorphism form pencarian bersinar sempurna.
-                Hanya mempertahankan sedikit bayangan tipis di atas dan kiri untuk Navbar & teks.
-            */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-transparent pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-transparent pointer-events-none" />
 
-            <div
-                className="hero-content-wrapper relative z-10 w-full max-w-[1400px] mx-auto min-h-[100dvh] flex flex-col justify-center touch-pan-y"
-                style={{ paddingLeft: "clamp(20px, 4vw, 56px)", paddingRight: "clamp(20px, 4vw, 56px)" }}
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 lg:gap-20 items-end w-full mb-16 md:mb-24">
+            {/* ✅ FIX 1: Hapus pt-40/48/32 yang double, pakai pt yang lebih wajar */}
+            {/* ✅ FIX 2: Hapus pb yang terlalu besar, biarkan search block di posisi natural */}
+            <div className="hero-content-wrapper relative z-10 w-full justify-center translate-y-[-10px] md:justify-center md:translate-x-[10px] md:translate-y-[20px] lg:justify-end lg:translate-x-[-30px] max-w-[1400px] mx-auto min-h-[95dvh] md:min-h-[95dvh] lg:min-h-[100dvh] flex flex-col pt-24 lg:pt-28 pb-16 lg:pb-20 px-6 md:px-12 lg:px-24 touch-pan-y">
+
+                {/* ══ UPPER CONTENT: HEADINGS ══ */}
+                {/* ✅ FIX 3: Hapus pt-32/48 di dalam grid (double padding), hapus lg:mt-64 (terlalu besar) */}
+                {/* ✅ FIX 4: Ganti mb-auto → flex-1, supaya mt pada search block bekerja */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 md:grid-cols-2 gap-10 lg:gap-30 items-center lg:item-center w-full flex-1 pt-10 lg:pt-12">
 
                     {/* ══ BLOCK 1: PRIMARY HEADING (Kiri) ══ */}
-                    <div className="hero-title-block w-full relative bottom-0 flex flex-col touch-pan-y">
-                        <div className="hero-main-heading-container">
-                        </div>
+                    <div className="lg:col-span-7 flex flex-col lg:mb-0">
+                        {/* Heading utama bisa ditaruh di sini */}
 
-                        <div className="lg:hidden mt-6">
-                            <p className="text-white/80 text-lg leading-[3] lg:leading-relaxed max-w-[36ch] touch-pan-y" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                        <div className="lg:hidden mt-[40px] flex justify-center translate-y-[30dvh] md:translate-y-[20dvh] px-4">
+                            <p className="text-white/80 text-[16px] md:text-[18px] leading-relaxed max-w-[30ch] font-light" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                                 Seamlessly navigate the global real estate market. Our expert team is here to guide you every step of the way.
                             </p>
                         </div>
                     </div>
 
                     {/* ══ BLOCK 2: SECONDARY HEADING / DESC (Kanan) ══ */}
-                    <div className="hero-desc-block hidden relative -bottom-10 lg:flex flex-col left-24 lg:pb-10">
+                    {/* ✅ FIX 5: Hapus pt-48 lg:pt-64 yang berlebihan */}
+                    <div className="hidden lg:flex lg:justify-end lg:translate-y-20 lg:translate-x-[24px] lg:col-span-5 flex-col">
                         <h2
-                            className="text-white/90 text-[22px] md:text-[26px] max-w-[28ch] leading-[1.4] font-light"
+                            className="text-white/90 text-[22px] md:text-[26px] max-w-[30ch] leading-[1.5] font-light"
                             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                         >
                             Seamlessly navigate the global real estate market. Our expert team is here to guide you every step of the way.
@@ -349,11 +347,11 @@ const Hero = () => {
                     </div>
                 </div>
 
-                {/* ══ BLOCK 3: SEARCH INTERFACE ══ */}
-                <div className="hero-search-block w-full border-white/10 absolute bottom-20 lg:relative lg:bottom-[-269px] max-w-[1260px] mx-auto z-60 px-2 lg:px-0 touch-pan-y">
-                    
-                    {/* BOTH MOBILE & DESKTOP BEHAVIOR: MENGEMBANG DARI TENGAH */}
-                    <div className="w-full flex justify-center items-center relative top-[-40px] lg:top-[-0px] h-[60px] lg:h-[90px] touch-pan-y">
+                {/* ══ LOWER CONTENT: SEARCH INTERFACE ══ */}
+                {/* ✅ FIX 6: mt-8 lg:mt-12 sekarang BEKERJA karena flex-1 di atas, bukan mb-auto */}
+                <div className="hero-search-block w-full flex justify-start lg:justify-end pl-10 lg:pl-[130px] items-start lg:items-start mt-25 lg:mt-40">
+
+                    <div className="w-full flex justify-center translate-y-[50px] md:translate-y-0 lg:translate-y-0 lg:justify-center lg:translate-x-[74px] md:pr-[40px] items-start min-h-[60px] lg:h-[90px] relative">
                         <AnimatePresence mode="wait">
                             {!isExpanded ? (
                                 <motion.button
@@ -361,11 +359,12 @@ const Hero = () => {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
+                                    // ✅ FIX 7: y pakai number (bukan string "-50%") agar useTransform bekerja
                                     style={{ scaleX: pullStretch, y: pullDownY, opacity: scrubOpacity }}
                                     whileHover={{ scale: 1.05 }}
                                     transition={{ duration: 0.2 }}
                                     onClick={() => setHasInteracted(true)}
-                                    className="flex items-center justify-center gap-3 lg:gap-4 px-6 py-4 lg:px-10 lg:py-5 w-[250px] lg:w-[300px] bg-[#1b1b1b]/3 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.11)] border border-white/20 hover:bg-[#1b1b1b]/50 transition-all text-white rounded-full group cursor-pointer absolute inset-x-0 mx-auto top-1/2 left-1/2 -translate-x-1/2 lg:left-[38vw] lg:-translate-x-0 touch-pan-y"
+                                    className="flex items-center justify-center gap-3 lg:gap-4 px-6 py-4 lg:px-10 lg:py-5 w-[250px] lg:w-[300px] bg-[#1b1b1b]/3 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.11)] border border-white/20 hover:bg-[#1b1b1b]/50 transition-all text-white rounded-full group cursor-pointer touch-pan-y"
                                 >
                                     <FiSearch className="w-4 h-4 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" />
                                     <span className="text-[14px] lg:text-[17px] font-bold tracking-wider">Search</span>
@@ -378,13 +377,13 @@ const Hero = () => {
                                     exit="exit"
                                     variants={{
                                         hidden: { opacity: 0, scale: 0.95 },
-                                        visible: { 
-                                            opacity: 1, scale: 1, 
-                                            transition: { type: "spring", stiffness: 200, damping: 25, staggerChildren: 0.1, delayChildren: 0.05 } 
+                                        visible: {
+                                            opacity: 1, scale: 1,
+                                            transition: { type: "spring", stiffness: 200, damping: 25, staggerChildren: 0.1, delayChildren: 0.05 }
                                         },
                                         exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }
                                     }}
-                                    className="w-full flex justify-center absolute inset-x-0 mx-auto top-1/2 -translate-y-1/2 lg:left-[5vw] lg:-translate-x-0 origin-center"
+                                    className="w-full flex justify-center origin-center"
                                     onClick={() => setHasInteracted(true)}
                                 >
                                     {renderDetailedForm(false)}

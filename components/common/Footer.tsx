@@ -2,157 +2,125 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    // Background sudah Anda ubah menjadi #F5F3F1, mari kita atur ruang atas bawahnya saja (pt, pb)
-    <footer className="bg-[#F5F3F1] w-full min-h-[90dvh] lg:min-h-[70dvh] h-auto mt-[150px] lg:mt-[300px] pt-[120px] pb-[250px] lg:pb-[80px]">
+    <footer className="bg-[#F5F3F1] w-full py-20 md:py-24 lg:py-32">
       
-      {/* Container utama agar tetap di tengah */}
-      <div className="w-full max-w-8xl mx-auto px-8 lg:px-12 relative bottom-[-90px] lg:bottom-[-150px] lg:right-[-40px]">
-        <div className="flex flex-col lg:flex-row justify-between items-start gap-16 lg:gap-20">
-          {/* ================= SISI KIRI (Teks Brand) ================= */}
-          <div className="w-full lg:w-4/12 max-w-lg relative z-10 right-[-40px] top-[-20px] lg:top-[-0px] lg:right-[-40px] gap-10">
+      <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
+        
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 pb-20 border-b border-black/5">
+          
+          {/* ================= LEFT SIDE (Brand Text) ================= */}
+          <div className="lg:col-span-4 flex flex-col gap-8">
             <h2
-              className="text-[#1a1a19] text-[22px] md:text-[26px] tracking-[0.3em] uppercase mb-8"
+              className="text-[#1a1a19] text-[22px] md:text-[26px] tracking-[0.3em] uppercase"
               style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               Summerhouse
             </h2>
 
             <p
-              className="text-[#5a5651] text-[13px] leading-[2] max-w-[320px] relative bottom-[-30px]"
+              className="text-[#5a5651] text-[15px] leading-[1.8] max-w-[360px] font-light"
               style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
             >
               A curated collection of private villas and apartments in Bali. We provide thoughtfully designed spaces that blend modern comfort with authentic island living.
             </p>
+
+            <div className="flex gap-6 mt-4">
+               {/* Social Icons Placeholder or Text Links */}
+               <a href="#" className="text-[#ad8553] text-[12px] font-bold tracking-widest uppercase hover:text-[#1a1a19] transition-colors">Instagram</a>
+               <a href="#" className="text-[#ad8553] text-[12px] font-bold tracking-widest uppercase hover:text-[#1a1a19] transition-colors">Pinterest</a>
+            </div>
           </div>
 
-          {/* ================= SISI KANAN (4 Kolom List) ================= */}
-          {/* w-full lg:w-6/12 membuat lebar container lebih kecil agar semua kolom navigasi berdekatan */}
-          <div className="w-full lg:w-6/12 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-x-9 lg:gap-y-[10px] pt-5 relative lg:right-[100px]">
+          {/* ================= RIGHT SIDE (Navigation Links) ================= */}
+          <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
             
-            {/* Kolom 1: STAY */}
-            <div className="flex flex-col relative top-[-20px] lg:top-[-0px] right-[-40px] lg:right-[-0px]">
+            {/* Column 1: COLLECTION */}
+            <div className="flex flex-col gap-8">
               <span
-                className="block text-[#ad8553] text-[10px] tracking-[0.2em] font-bold uppercase mb-8"
+                className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase"
                 style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
               >
-                Stay
+                Collection
               </span>
-              <ul className="flex flex-col gap-[20px] relative bottom-[-30px]">
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors whitespace-nowrap block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Short Stays
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors whitespace-nowrap block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Extended Stays
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors whitespace-nowrap block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Featured Homes
-                  </a>
-                </li>
+              <ul className="flex flex-col gap-5">
+                <li><a href="/villas" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">All Villas</a></li>
+                <li><a href="/villas" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Private Estates</a></li>
+                <li><a href="/villas" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Monthly Stays</a></li>
+                <li><a href="/villas" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">New Additions</a></li>
               </ul>
             </div>
 
-            {/* Kolom 2: FOR VILLA OWNERS */}
-            <div className="flex flex-col relative top-[-20px] lg:top-[-0px] right-[-20px] lg:right-[-0px]">
+            {/* Column 2: EXPERIENCE */}
+            <div className="flex flex-col gap-8">
               <span
-                className="text-[#ad8553] text-[10px] tracking-[0.2em] font-bold uppercase mb-8"
+                className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase"
                 style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
               >
-                For Villa Owners
+                Experience
               </span>
-              <ul className="flex flex-col gap-[20px] relative bottom-[-30px]">
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors whitespace-nowrap block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Property Management
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors whitespace-nowrap block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    List Your Property
-                  </a>
-                </li>
+              <ul className="flex flex-col gap-5">
+                <li><a href="/services" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Concierge</a></li>
+                <li><a href="/services" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Wellness & Spa</a></li>
+                <li><a href="/services" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Private Dining</a></li>
+                <li><a href="/about" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">The Journal</a></li>
               </ul>
             </div>
 
-            {/* Kolom 3: NAVIGATION */}
-            <div className="flex flex-col relative bottom-[-30px] lg:bottom-[-0px] right-[-40px] lg:right-[-0px]">
+            {/* Column 3: COMPANY */}
+            <div className="flex flex-col gap-8">
               <span
-                className="text-[#ad8553] text-[10px] tracking-[0.2em] font-bold uppercase mb-8"
+                className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase"
                 style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
               >
-                Navigation
+                Company
               </span>
-              <ul className="flex flex-col gap-[20px] relative bottom-[-30px]">
-                <li>
-                  <a href="/about" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#contact" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Contact
-                  </a>
-                </li>
+              <ul className="flex flex-col gap-5">
+                <li><a href="/about" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Our Story</a></li>
+                <li><a href="/about" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Sustainability</a></li>
+                <li><a href="/contact" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Careers</a></li>
+                <li><a href="/contact" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Contact Us</a></li>
               </ul>
             </div>
 
-            {/* Kolom 4: CONNECT */}
-            <div className="flex flex-col relative bottom-[-30px] lg:bottom-[-0px] right-[-20px] lg:right-[-0px]">
+            {/* Column 4: SUPPORT */}
+            <div className="flex flex-col gap-8">
               <span
-                className="text-[#ad8553] text-[10px] tracking-[0.2em] font-bold uppercase mb-8"
+                className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase"
                 style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
               >
-                Connect
+                Support
               </span>
-              <ul className="flex flex-col gap-[20px] relative bottom-[-30px]">
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    Pinteres  
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-[#5a5651] text-[12px] hover:text-[#1a1a19] transition-colors block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    TikTok
-                  </a>
-                </li>
+              <ul className="flex flex-col gap-5">
+                <li><a href="#" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Help Center</a></li>
+                <li><a href="#" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Booking Guide</a></li>
+                <li><a href="#" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Privacy Policy</a></li>
+                <li><a href="#" className="text-[#5a5651] text-[13px] hover:text-[#1a1a19] transition-colors block font-light">Terms of Use</a></li>
               </ul>
             </div>
-
           </div>
         </div>
-      </div>
 
-      
-      <div className="w-full max-w-7xl mx-auto px-8 lg:px-12 relative z-10 right-[-100px] lg:right-[-180px] bottom-[-100px] lg:bottom-[-380px]">
-        {/* flex-row membelah copyright di kiri dan Terms di kanan */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        {/* Bottom Footer (Copyright & Terms) */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-12">
           <span
-            className="text-[#8F8A84] relative left-[-100px] lg:left-[-113px] bottom-[-130px] lg:bottom-[-0px] text-[9px] tracking-[0.2em] font-bold uppercase"
+            className="text-[#8F8A84] text-[10px] tracking-[0.2em] font-medium uppercase text-center md:text-left"
             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
           >
             © 2026 Summerhouse. All Rights Reserved.
           </span>
           
-          <div className="flex items-center gap-8 md:gap-13 relative left-[-39px] lg:left-[-39px] bottom-[-200px] lg:bottom-[-0px]">
+          <div className="flex items-center gap-8 md:gap-12">
             <a
               href="#"
-              className="text-[#8F8A84] text-[9px] tracking-[0.2em] relative left-[-122px] lg:left-[-0px] font-bold uppercase hover:text-[#1a1a19] transition-colors"
+              className="text-[#8F8A84] text-[10px] tracking-[0.2em] font-medium uppercase hover:text-[#1a1a19] transition-colors"
               style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
             >
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-[#8F8A84] text-[9px] tracking-[0.2em] font-bold uppercase hover:text-[#1a1a19] transition-colors"
+              className="text-[#8F8A84] text-[10px] tracking-[0.2em] font-medium uppercase hover:text-[#1a1a19] transition-colors"
               style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
             >
               Terms of Service
@@ -160,7 +128,6 @@ export default function Footer() {
           </div>
         </div>
       </div>
-
     </footer>
   );
 }

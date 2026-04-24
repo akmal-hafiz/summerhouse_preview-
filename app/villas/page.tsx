@@ -27,32 +27,34 @@ export default async function VillasPage() {
   })) : [];
 
   return (
-    <div className="w-full bg-[#FAFAF9] min-h-[100dvh] relative flex flex-col items-center overflow-x-hidden">
+    <div className="w-full bg-[#FAFAF9] min-h-[100dvh] flex flex-col items-center overflow-x-hidden">
       <Navbar />
       
-      {/* ─── 1. HERO SECTION (DNA: Playfair Staggered) ─── */}
-      <section className="w-full min-h-[80dvh] lg:min-h-[100dvh] h-auto relative flex flex-col items-center">
-        <div className="w-full max-w-[1400px] h-full px-6 lg:px-12 relative flex flex-col justify-center">
-            {/* Title Block */}
-            <div className="relative left-[-10px] lg:left-[50px] z-10">
-                <span className="text-[10px] lg:text-[13px] font-bold tracking-[0.3em] uppercase text-[#1a1a19]/30 mb-8 block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                    The Selection
-                </span>
-                <h1 className="text-[62px] lg:text-[140px] text-[#4d6a52] leading-[0.85] tracking-tight mb-12" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                    The <br /> Collection
-                </h1>
-            </div>
+      {/* ─── 1. HERO SECTION ─── */}
+      <section className="w-full py-24 md:py-32 lg:py-48 flex flex-col items-center">
+        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-end">
+                {/* Title Block */}
+                <div className="lg:col-span-7">
+                    <span className="text-[11px] lg:text-[13px] font-bold tracking-[0.3em] uppercase text-[#1a1a19]/30 mb-8 block" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                        The Selection
+                    </span>
+                    <h1 className="text-[56px] md:text-[80px] lg:text-[120px] text-[#4d6a52] leading-[0.9] tracking-tight" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                        The <br /> Collection
+                    </h1>
+                </div>
 
-            {/* Subtext Block */}
-            <div className="relative mt-10 lg:mt-0 lg:absolute lg:top-[45%] lg:right-[150px] max-w-[450px] z-10">
-                <p className="text-[14px] lg:text-[17px] text-[#5a5651] leading-[1.8] font-light" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                    A curated selection of private sanctuaries, each designed with a deep respect for Balinese heritage and modern minimalist luxury.
-                </p>
-                <div className="w-[40px] h-[1px] bg-[#C7A58A] mt-8" />
+                {/* Subtext Block */}
+                <div className="lg:col-span-5 pb-4">
+                    <p className="text-[16px] lg:text-[18px] text-[#5a5651] leading-[1.8] font-light max-w-[420px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+                        A curated selection of private sanctuaries, each designed with a deep respect for Balinese heritage and modern minimalist luxury.
+                    </p>
+                    <div className="w-[40px] h-[1px] bg-[#C7A58A] mt-8" />
+                </div>
             </div>
 
             {/* Filter Links Block */}
-            <div className="flex mt-16 lg:mt-0 lg:absolute lg:bottom-[10%] lg:right-[100px] gap-10 items-center z-10">
+            <div className="flex mt-16 md:mt-24 items-center">
                 <div className="flex gap-10 text-[11px] font-bold tracking-[0.25em] uppercase text-[#1a1a19]">
                     <span className="border-b-2 border-[#C7A58A] pb-2 cursor-pointer">All Villas</span>
                     <span className="opacity-30 hover:opacity-100 transition-all cursor-pointer">Available Now</span>
@@ -61,13 +63,13 @@ export default async function VillasPage() {
         </div>
       </section>
 
-      {/* ─── 2. THE VILLAS GRID SECTION (DNA: VillaCollection Asymmetrical) ─── */}
-      <section className="w-full relative pb-[300px]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative lg:right-[-137px]">
+      {/* ─── 2. THE VILLAS GRID SECTION ─── */}
+      <section className="w-full py-20 md:py-24 lg:py-32">
+        <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
             {mappedVillas.length > 0 ? (
                 <VillaGrid villas={mappedVillas} />
             ) : (
-                <div className="flex flex-col items-center justify-center pt-60">
+                <div className="flex flex-col items-center justify-center py-32">
                     <p className="text-[24px] text-[#8F8A84] italic" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                         Preparing the collection...
                     </p>
@@ -77,8 +79,8 @@ export default async function VillasPage() {
       </section>
 
       {/* ─── 3. BOTTOM DECORATION ─── */}
-      <section className="w-full py-60 flex flex-col items-center">
-         <div className="w-[1px] h-[100px] bg-[#C7A58A]/30 mb-10" />
+      <section className="w-full py-20 md:py-32 flex flex-col items-center">
+         <div className="w-[1px] h-[80px] bg-[#C7A58A]/30 mb-8" />
          <h3 className="text-[11px] tracking-[0.4em] font-bold text-[#C7A58A] uppercase">End of Collection</h3>
       </section>
 

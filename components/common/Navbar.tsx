@@ -51,7 +51,7 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                 MOBILE NAVBAR (< md)
             ═══════════════════════════════════════════════════════════ */}
             <nav
-                className="md:hidden absolute top-0 left-0 w-full z-110 grid grid-cols-[40px_1fr_40px] items-center px-6 sm:px-10 h-[80px] transition-all duration-500"
+                className="lg:hidden absolute top-0 left-0 w-full z-110 flex items-center justify-between  px-10 md:px-24 h-[80px] transition-all duration-500"
                 style={{
                     paddingTop: 'env(safe-area-inset-top)',
                     ...(isMobileNavSolid ? {
@@ -65,24 +65,24 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                 {/* Left: Hamburger / Close Animated Icon */}
                 <button
                     onClick={() => setMobileOpen(!mobileOpen)}
-                    className="flex flex-col justify-center relative left-4 items-start w-[24px] h-[24px] gap-[5px] focus:outline-none z-50 group"
+                    className="flex flex-col justify-center translate-x-[10px] md:translate-x-[10px] items-start w-[32px] h-[32px] gap-[6px] focus:outline-none z-50 group transition-transform active:scale-90"
                     aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 >
                     <div
                         className={`h-[1.5px] transition-all duration-300 origin-left ${isMobileNavSolid ? 'bg-[#446B4A]' : 'bg-white'}`}
-                        style={{ width: mobileOpen ? '26px' : '20px', transform: mobileOpen ? 'rotate(45deg) translateY(-1px)' : 'rotate(0)' }}
+                        style={{ width: mobileOpen ? '28px' : '24px', transform: mobileOpen ? 'rotate(45deg) translateY(-1px)' : 'rotate(0)' }}
                     />
                     <div
                         className={`h-[1.5px] transition-all duration-300 ${isMobileNavSolid ? 'bg-[#446B4A]' : 'bg-white'}`}
-                        style={{ width: mobileOpen ? '0px' : '20px', opacity: mobileOpen ? 0 : 1 }}
+                        style={{ width: mobileOpen ? '0px' : '24px', opacity: mobileOpen ? 0 : 1 }}
                     />
                     <div
                         className={`h-[1.5px] transition-all duration-300 origin-left ${isMobileNavSolid ? 'bg-[#446B4A]' : 'bg-white'}`}
-                        style={{ width: mobileOpen ? '26px' : '20px', transform: mobileOpen ? 'rotate(-45deg) translateY(1px)' : 'rotate(0)' }}
+                        style={{ width: mobileOpen ? '28px' : '24px', transform: mobileOpen ? 'rotate(-45deg) translateY(1px)' : 'rotate(0)' }}
                     />
                 </button>
                 {/* Center: Logo (Absolutely Centered — does NOT affect nav height) */}
-                <div className="absolute left-[52%] top-11 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                     <Link href="/" className="flex items-center pointer-events-auto" onClick={() => setMobileOpen(false)}>
                         <div
                             className="w-[180px] sm:w-[200px] h-[180px] transition-all duration-500"
@@ -103,10 +103,10 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                 </div>
 
                 {/* Right: Search Icon */}
-                <div className="flex justify-end relative left-6">
-                    <Link href="#book" onClick={() => setMobileOpen(false)} aria-label="Book Search">
+                <div className="flex justify-end translate-x-[-20px] md:translate-x-[-10px] items-center w-[32px] h-[32px]">
+                    <Link href="#book" onClick={() => setMobileOpen(false)} aria-label="Book Search" className="transition-transform active:scale-90">
                         <FiSearch
-                            className={`w-[20px] h-[20px] transition-colors duration-500 ${isMobileNavSolid ? 'text-[#446B4A]' : 'text-white'}`}
+                            className={`w-[22px] h-[22px] transition-colors duration-500 ${isMobileNavSolid ? 'text-[#446B4A]' : 'text-white'}`}
                         />
                     </Link>
                 </div>
@@ -117,7 +117,7 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                 Frosted Ivory Crystal glass, staggered links
             ═══════════════════════════════════════════════════════════ */}
             < div
-                className={`md:hidden fixed inset-0 z-100 flex flex-col items-center justify-center transition-all duration-700 ease-in-out
+                className={`lg:hidden fixed inset-0 z-100 flex flex-col items-center justify-center transition-all duration-700 ease-in-out
                     ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
                 `}
                 style={{
@@ -165,7 +165,7 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                 DESKTOP NAVBAR (≥ md) — FULL WIDTH BAR
             ═══════════════════════════════════════════════════════════ */}
             < nav
-                className="hidden md:flex fixed top-0 left-0 w-full z-100 transition-all duration-700 ease-in-out h-[80px] items-center"
+                className="hidden lg:flex fixed top-0 left-0 w-full z-100 transition-all duration-700 ease-in-out h-[80px] items-center"
                 style={{
                     /* 
                        FROSTED IVORY CRYSTAL — Premium Navbar Glass
@@ -190,9 +190,9 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                     transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
             >
-                <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between px-8 md:px-12">
+                <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between px-6 md:px-12 lg:px-24">
                     {/* 1. LEFT PILLAR */}
-                    <div className="w-[280px] flex items-center justify-start">
+                    <div className="flex-1 lg:flex-none lg:w-[280px] flex items-center justify-start">
                         <Link href="/" className="transform transition-transform hover:scale-105 active:scale-95">
                             <img
                                 src="/SUMMERHOUSE_LOGO_PROJECT_1.svg"
@@ -229,7 +229,7 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                     </div>
 
                     {/* 3. RIGHT PILLAR */}
-                    <div className="w-[240px] relative left-[140px] flex items-center justify-center">
+                    <div className="flex-1 lg:flex-none lg:w-[280px] flex items-center justify-end">
                         <Link
                             href="#book"
                             className={`group hidden md:flex items-center justify-center w-[170px] h-[48px] rounded-full transition-all duration-500

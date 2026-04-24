@@ -5,11 +5,36 @@ import { motion } from 'framer-motion';
 
 const Introduction = () => {
     return (
-        <section className="w-full bg-[#FAFAF9] z-20 flex items-center min-h-[100dvh] pt-[120px] pb-[100px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
-            
+        <section className="w-full bg-[#FAFAF9] z-20 flex items-center min-h-[90dvh] pt-[140px] pb-[120px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             {/* ✅ DIUBAH DI SINI */}
-            <div className="w-full max-w-[1400px] mx-auto px-10 lg:px-20">
-                
+            <div className="w-full max-w-[1400px] mx-auto px-10 md:px-24 lg:px-24">
+
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-16 items-start">
                 
                     {/* HEADING */}

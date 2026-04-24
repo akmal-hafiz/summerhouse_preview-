@@ -21,21 +21,22 @@ const VillaGrid = ({ villas }: VillaGridProps) => {
     return (
         <div className="w-full flex flex-col items-center">
             {/* The Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-[50px] gap-y-[120px] lg:gap-y-[220px] w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 lg:gap-x-16 gap-y-24 lg:gap-y-32 w-full">
                 <AnimatePresence mode="popLayout">
                     {visibleVillas.map((villa, index) => {
                         let offsetClass = "";
                         let cardHeight = 500;
 
                         // Layout Logic (Editorial Asymmetrical) using PT for vertical to fix flow
+                        // Removing left/right offsets to ensure stability on mobile and tablet
                         if (index % 3 === 0) {
-                            offsetClass = "lg:pt-[100px] lg:relative lg:left-[-40px]"; 
+                            offsetClass = "lg:pt-20"; 
                             cardHeight = 500;
                         } else if (index % 3 === 1) {
-                            offsetClass = "lg:pt-[300px]";
+                            offsetClass = "lg:pt-48";
                             cardHeight = 400;
                         } else {
-                            offsetClass = "lg:pt-[0px] lg:relative lg:right-[-40px]";
+                            offsetClass = "lg:pt-0";
                             cardHeight = 500;
                         }
 
@@ -61,15 +62,14 @@ const VillaGrid = ({ villas }: VillaGridProps) => {
                 </AnimatePresence>
             </div>
 
-            {/* Load More Button (DNA: Circular Green Style from Screenshot) */}
+            {/* Load More Button */}
             {hasMore && (
-                <div className="mt-[450px] mb-[150px] flex flex-col items-center group cursor-pointer" onClick={loadMore}>
+                <div className="py-24 md:py-32 flex flex-col items-center group cursor-pointer" onClick={loadMore}>
                     <motion.div 
                         className="w-[100px] h-[100px] rounded-full border border-[#4d6a52]/40 flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:border-[#4d6a52]"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        {/* Subtle arrow or plus icon */}
                         <div className="flex flex-col items-center">
                             <span className="text-[10px] tracking-[0.3em] font-bold text-[#4d6a52] uppercase mb-1">More</span>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4d6a52" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
