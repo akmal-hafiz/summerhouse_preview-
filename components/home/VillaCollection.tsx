@@ -69,26 +69,26 @@ const VillaCollection = () => {
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
         // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
-        <section className="w-full bg-[#FAFAF9] pt-[150px] h-[1800px] lg:h-[3200px] pb-[350px]">
+        <section className="w-full bg-[#FAFAF9] pt-[150px] h-[1800px] md:h-[200dvh] lg:h-[3200px] pb-[350px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
             <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] md:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
 
                 {/* ============================================== */}
-                {/* MOBILE FULLY CUSTOM VERSION (Berdasarkan Screenshot) */}
+                {/* MOBILE & TABLET FULLY CUSTOM VERSION (Berdasarkan Screenshot) */}
                 {/* ============================================== */}
-                <div className="block md:hidden w-full overflow-visible">
-                    {/* Header Mobile */}
-                    <div className="flex justify-between items-end w-full px-5 mb-5 mt-8">
-                        <h2 className="text-[32px] relative right-[-20px] lg:right-[-0px] bottom-[-10px] lg:top-[-0px] text-[#446B4A]" style={{ fontFamily: 'var(--font-playfair), serif' }}>The Collection</h2>
-                        <span className="text-[#805621] relative top-[5px] lg:top-[-0px] right-[30px] lg:right-[-0px] bottom-[-10px] lg:top-[-0px] text-[15px] lg:text-[0px] italic underline decoration-[#805621] decoration-[1px] underline-offset-[11px]" style={{ fontFamily: 'var(--font-playfair), serif' }}>View All</span>
+                <div className="block lg:hidden w-full overflow-visible">
+                    {/* Header Mobile & Tablet */}
+                    <div className="flex justify-between items-end w-full px-6 md:px-10 mb-8 md:mb-12 mt-8 md:mt-16">
+                        <h2 className="text-[32px] md:text-[40px] text-[#446B4A]" style={{ fontFamily: 'var(--font-playfair), serif' }}>The Collection</h2>
+                        <span className="text-[#805621] text-[15px] italic underline decoration-[#805621] decoration-[1px] underline-offset-[11px] mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>View All</span>
                     </div>
 
-                    {/* Horizontal Scroll Cards Mobile */}
-                    <div className="flex w-full overflow-x-auto pb-20 lg:pb-0 relative bottom-[-40px] lg:bottom-[-0px] right-[-20px] lg:right-[-0px] snap-x snap-mandatory gap-5 pl-5 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    {/* Horizontal Scroll Cards Mobile & Tablet */}
+                    <div className="flex w-full overflow-x-auto pb-24 md:pb-40 relative snap-x snap-mandatory gap-5 md:gap-8 pl-6 md:pl-10 pr-6 md:pr-10 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
                         {/* KARTU 1 */}
-                        <div className="flex flex-col w-[85vw] h-[600px] snap-center shrink-0 pb-27 lg:pb-0">
+                        <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] h-[600px] snap-center shrink-0 pb-27 lg:pb-0">
                             <div className="w-full aspect-[4/4.8] relative rounded-[12px] overflow-hidden bg-[#d7cfc5]">
                                 <Image src="/homepage_villa/VillaZen.webp" alt="Zen River House" fill className="object-cover" />
                             </div>
@@ -109,7 +109,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* KARTU 2 */}
-                        <div className="flex flex-col w-[85vw] snap-center shrink-0">
+                        <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] snap-center shrink-0">
                             <div className="w-full aspect-[4/4.8] relative rounded-[12px] overflow-hidden bg-[#d7cfc5]">
                                 <Image src="/homepage_villa/CactusEstate.webp" alt="Cactus Estate" fill className="object-cover" />
                             </div>
@@ -130,7 +130,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* KARTU 3 */}
-                        <div className="flex flex-col w-[85vw] snap-center shrink-0">
+                        <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] snap-center shrink-0">
                             <div className="w-full aspect-[4/4.8] relative rounded-[12px] overflow-hidden bg-[#d7cfc5]">
                                 <Image src="/homepage_villa/officiana17.webp" alt="Officina 17" fill className="object-cover" />
                             </div>
@@ -151,7 +151,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* KARTU 4 */}
-                        <div className="flex flex-col w-[85vw] snap-center shrink-0">
+                        <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] snap-center shrink-0">
                             <div className="w-full aspect-[4/4.8] relative rounded-[12px] overflow-hidden bg-[#d7cfc5]">
                                 <Image src="/homepage_villa/88east.webp" alt="88 East" fill className="object-cover" />
                             </div>
@@ -172,7 +172,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* KARTU 5 */}
-                        <div className="flex flex-col w-[85vw] snap-center shrink-0">
+                        <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] snap-center shrink-0">
                             <div className="w-full aspect-[4/4.8] relative rounded-[12px] overflow-hidden bg-[#d7cfc5]">
                                 <Image src="/homepage_villa/villaarta.webp" alt="Villa Arta" fill className="object-cover" />
                             </div>
@@ -193,7 +193,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* KARTU 6 */}
-                        <div className="flex flex-col w-[85vw] snap-center shrink-0">
+                        <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] snap-center shrink-0">
                             <div className="w-full aspect-[4/4.8] relative rounded-[12px] overflow-hidden bg-[#d7cfc5]">
                                 <Image src="/homepage_villa/rumahmimosa.webp" alt="Rumah Mimosa" fill className="object-cover" />
                             </div>
@@ -221,7 +221,7 @@ const VillaCollection = () => {
                 {/* ============================================== */}
                 {/* DESKTOP VERSION (Layout Utama - 100% UTUH)     */}
                 {/* ============================================== */}
-                <div className="hidden md:block">
+                <div className="hidden lg:block">
                     {/* 3. KOTAK ATAS (Menggunakan Flexbox memisah Kiri & Kanan) */}
                     <div className="flex justify-between items-end relative bottom-[-10px] left-[-10px]">
                         {/* Sisi Kiri (Teks) */}
@@ -363,7 +363,7 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: EDITORIAL FRAMED SELECTOR (Golden Wrap) ---    */}
             {/* ========================================================= */}
-            <div className="hidden md:flex w-full max-w-[1200px] mx-auto relative bottom-[-400px] right-[-150px] justify-center mt-[250px] mb-[120px] z-[999] px-4 pointer-events-none">
+            <div className="hidden lg:flex w-full max-w-[1200px] mx-auto relative bottom-[-400px] right-[-150px] justify-center mt-[250px] mb-[120px] z-[999] px-4 pointer-events-none">
                 <div className="border-y border-[#C7A58A] px-[40px] md:px-[80px] py-[80px] flex flex-wrap justify-center gap-x-10 md:gap-x-19 gap-y-10 bg-transparent pointer-events-auto relative z-[999]">
                     {['Curated', 'Canggu', 'Ubud', 'Pererenan', 'Umalas', 'Legian', 'Padonan'].map((neighborhood) => (
                         <button
@@ -392,7 +392,7 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: CURATED SPACES GALLERY (Dynamic Content) ---   */}
             {/* ========================================================= */}
-            <div ref={curatedRef} className="hidden md:block max-w-[1500px] mx-auto w-full h-[700px] relative bottom-[-700px] mt-[50px] mb-[300px] pointer-events-none">
+            <div ref={curatedRef} className="hidden lg:block max-w-[1500px] mx-auto w-full h-[700px] relative bottom-[-700px] mt-[50px] mb-[300px] pointer-events-none">
 
                 {/* --- TEKS DAN TOMBOL VIEW GALLERY DI TENGAH --- */}
                 <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] text-center z-10 px-4 flex flex-col items-center pointer-events-none">
@@ -514,27 +514,26 @@ const VillaCollection = () => {
             {/* --- END: CURATED SPACES SECTION --- */}
 
             {/* ========================================================= */}
-            {/* --- START: MOBILE ONLY CURATED SPACES --- */}
+            {/* --- START: MOBILE & TABLET ONLY CURATED SPACES --- */}
             {/* ========================================================= */}
-            <div className="block md:hidden w-[94%] px-5 py-20 z-[99] mt-20 bg-[#FAFAF9]" style={{ borderTop: '1px solid transparent' }}>
+            <div className="block lg:hidden w-full max-w-[90dvh] md:max-w-[80dvh] mx-auto px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 bg-[#FAFAF9]" style={{ borderTop: '1px solid transparent' }}>
                 
-                {/* Header Text & Neighborhood Dropdown */}
-                <div className="flex justify-between items-end mb-8 relative pr-2 w-full">
-                    {/* Header Text */}
-                    <div className="w-[75%] relative">
-                        <h2 className="text-[28px] text-[#4d6a52] leading-[1.25] mb-4 tracking-wide" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                            A harmonious<br />fusion of stone and<br />light
-                        </h2>
-                        <p className="text-[12px] italic text-[#5a5651] leading-[1.6]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                            Where the architecture respects the<br />heritage of the land.
-                        </p>
-                    </div>
+                {/* Heading (Left Aligned) */}
+                <div className="w-full text-left relative mb-4">
+                    <h2 className="text-[24px] md:text-[34px] text-[#4d6a52] leading-[1.1] mb-3 tracking-normal" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                        A harmonious<br />fusion of stone and<br />light
+                    </h2>
+                    <p className="text-[11px] md:text-[13px] italic text-[#5a5651] leading-[1.6]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                        Where the architecture respects the<br className="hidden md:block" />heritage of the land.
+                    </p>
+                </div>
 
-                    {/* Elegantly Blurred Apple-style Dropdown */}
+                {/* Dropdown Button (Right Aligned, below heading) */}
+                <div className="w-full flex justify-end mb-5">
                     <div className="relative z-[999] flex flex-col items-end">
                         <button 
                             onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
-                            className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] uppercase text-[#4d6a52]"
+                            className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] uppercase text-[#4d6a52]"
                         >
                             {activeLocation === 'Curated' ? 'ALL SPACES' : activeLocation}
                             <motion.svg animate={{ rotate: isMobileDropdownOpen ? 180 : 0 }} transition={{ duration: 0.3 }} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></motion.svg>
@@ -547,7 +546,7 @@ const VillaCollection = () => {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                                    className="absolute top-[25px] right-[-10px] mt-2 w-[210px] py-3 rounded-2xl backdrop-blur-sm bg-white/60 border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.06)] flex flex-col z-[9999] overflow-hidden"
+                                    className="absolute top-[25px] right-[-5px] mt-2 w-[160px] py-2 rounded-xl backdrop-blur-md bg-white/90 border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col z-[9999] overflow-hidden"
                                 >
                                     {['Curated', 'Canggu', 'Ubud', 'Pererenan', 'Umalas', 'Legian', 'Padonan'].map((neighborhood) => (
                                         <button 
@@ -556,12 +555,9 @@ const VillaCollection = () => {
                                                 setActiveLocation(neighborhood);
                                                 setIsMobileDropdownOpen(false);
                                             }}
-                                            className={`text-left px-5 py-3 text-[7px] font-bold tracking-[0.2em] uppercase transition-all duration-300
-                                            ${activeLocation === neighborhood ? 'text-[#1a1a19]' : 'text-[#8F8A84] hover:text-[#4d6a52]'}`}
+                                            className={`text-right px-4 py-2.5 text-[8px] md:text-[9px] font-bold tracking-[0.2em] uppercase transition-all duration-300
+                                            ${activeLocation === neighborhood ? 'text-[#1a1a19] bg-black/5' : 'text-[#8F8A84] hover:text-[#4d6a52] hover:bg-black/5'}`}
                                         >
-                                            {activeLocation === neighborhood && (
-                                                <motion.span layoutId="mobile-dropdown-dot" className="absolute left-[8px] top-1/2 -translate-y-1/2 w-[3px] h-[3px] rounded-full bg-[#C7A58A]" />
-                                            )}
                                             {neighborhood === 'Curated' ? 'ALL SPACES' : neighborhood}
                                         </button>
                                     ))}
@@ -571,20 +567,20 @@ const VillaCollection = () => {
                     </div>
                 </div>
 
-                {/* Mobile Masonry Grid */}
-                <div className="w-full flex gap-2 h-[600px] mx-auto mb-12 relative z-[1] mt-10">
+                {/* Mobile Masonry Grid (Centered Safely with CSS Grid) */}
+                <div className="w-[90%] md:w-[90%] mx-auto grid grid-cols-[1.2fr_1fr] left-[50%] translate-x-[-50%] gap-2 h-[65dvh] md:h-[90dvh] mt-10 mb-14 relative z-[1]">
                     {/* Left Column */}
-                    <div className="flex flex-col gap-2 w-[58%] h-full">
-                        {/* Top Left Image: Yellow Details */}
-                        <div className="w-full h-[55%] relative overflow-hidden bg-[#2D332F] rounded-[12px]">
+                    <div className="flex flex-col gap-2 w-full h-full">
+                        {/* Top Left Image */}
+                        <div className="w-full h-[55%] relative overflow-hidden bg-[#2D332F] rounded-[4px]">
                             <AnimatePresence mode="wait">
                                 <motion.div key={currentData.images[0]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} className="w-full h-full relative">
                                     <Image src={currentData.images[0]} alt="Gallery Detail 1" fill className="object-cover" />
                                 </motion.div>
                             </AnimatePresence>
                         </div>
-                        {/* Bottom Left Image: Pool */}
-                        <div className="w-full h-[45%] relative overflow-hidden bg-[#6B8EAC] rounded-[12px]">
+                        {/* Bottom Left Image */}
+                        <div className="w-full h-[45%] relative overflow-hidden bg-[#6B8EAC] rounded-[4px]">
                             <AnimatePresence mode="wait">
                                 <motion.div key={currentData.images[1]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} className="w-full h-full relative">
                                     <Image src={currentData.images[1]} alt="Gallery Detail 2" fill className="object-cover" />
@@ -594,18 +590,17 @@ const VillaCollection = () => {
                     </div>
 
                     {/* Right Column */}
-                    <div className="flex flex-col gap-2 w-[42%] h-full">
-                        {/* Top Right Image: Blank/Detail */}
-                        <div className="w-full h-[35%] relative overflow-hidden bg-[#18151D] rounded-[12px]">
-                            {/* Uses the 3rd array image elegantly as top right */}
+                    <div className="flex flex-col gap-2 w-full h-full">
+                        {/* Top Right Image */}
+                        <div className="w-full h-[40%] relative overflow-hidden bg-[#18151D] rounded-[4px]">
                             <AnimatePresence mode="wait">
                                 <motion.div key={currentData.images[2]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} className="w-full h-full relative">
                                     <Image src={currentData.images[2]} alt="Gallery Detail 3" fill className="object-cover" />
                                 </motion.div>
                             </AnimatePresence>
                         </div>
-                        {/* Bottom Right Image: Tall */}
-                        <div className="w-full h-[65%] relative overflow-hidden bg-[#3C5753] rounded-[12px]">
+                        {/* Bottom Right Image */}
+                        <div className="w-full h-[60%] relative overflow-hidden bg-[#3C5753] rounded-[4px]">
                             <AnimatePresence mode="wait">
                                 <motion.div key={currentData.images[3]} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }} className="w-full h-full relative">
                                     <Image src={currentData.images[3]} alt="Gallery Detail 4" fill className="object-cover" />
@@ -615,8 +610,8 @@ const VillaCollection = () => {
                     </div>
                 </div>
 
-                {/* Mobile CTA Button */}
-                <div className="flex justify-center w-full relative mt-20">
+                {/* Bottom Bordered Button */}
+                <div className="flex justify-center w-full relative mt-8">
                     <AnimatePresence mode="wait">
                         <motion.button 
                             key={activeLocation + '-btn'}
@@ -624,18 +619,16 @@ const VillaCollection = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -5 }}
                             transition={{ duration: 0.4 }}
-                            className="group flex items-center justify-between w-[220px] h-[56px] rounded-full bg-[#2E2E2C] px-6 transition-all duration-300 hover:bg-[#222] shadow-[0_4px_14px_0_rgba(0,0,0,0.2)]"
+                            className="border border-[#d7cfc5] bg-transparent text-[#1a1a19] text-[9px] font-bold tracking-[0.25em] uppercase py-3.5 px-6 w-[180px] text-center hover:bg-[#FAF5F0] transition-colors duration-300"
                         >
-                            <div className="w-[5px] h-[5px] rounded-full bg-white opacity-90" />
-                            <span className="text-[14px] font-medium text-white tracking-wide" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                                {currentData.btn}
+                            <span className="block leading-[1.6]" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                VIEW ENTIRE<br/>COLLECTION
                             </span>
-                            <div className="w-[5px] h-[5px] rounded-full bg-white opacity-90" />
                         </motion.button>
                     </AnimatePresence>
                 </div>
             </div>
-            {/* --- END: MOBILE ONLY CURATED SPACES --- */}
+            {/* --- END: MOBILE & TABLET ONLY CURATED SPACES --- */}
 
         </section>
     );
