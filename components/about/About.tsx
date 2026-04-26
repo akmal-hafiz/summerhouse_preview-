@@ -128,6 +128,13 @@ const servicesData = [
 
 const sectionContainerClass = "mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8";
 const journalEditions = ["CURRENT EDITION", "EDITION 02: THE VOID", "EDITION 03: SOUL"];
+const lowerSectionStackClass = "w-full mt-[18vh] lg:-mt-[180px] flex flex-col items-center";
+const bookingSectionClass = "w-full relative py-[40px] lg:py-[200px] flex items-center justify-center min-h-[28vh] lg:min-h-[600px] overflow-hidden";
+const journalSectionClass = "w-full bg-[#050505] h-[600px] pb-[150px] lg:h-[1200px] pt-[100px] lg:py-[200px] relative px-8 lg:px-12 touch-pan-y";
+const ctaSectionClass = "w-full min-h-[10dvh] lg:h-[500px] relative bg-[#FAFAF9] py-[150px] lg:py-[200px] px-6 md:px-12 flex flex-col items-center justify-center lg:overflow-hidden touch-pan-y";
+const journalInnerClass = "max-w-7xl mx-auto relative lg:right-[-40px] lg:bottom-[-200px]";
+const journalHeaderClass = "flex flex-col lg:flex-row lg:items-center justify-between relative bottom-[-20px] lg:bottom-[0px] lg:top-[-80px] mb-12 lg:mb-0 gap-6 lg:gap-0";
+const ctaInnerClass = "flex flex-col lg:flex-row relative bottom-[40px] lg:top-0 lg:right-[-20px] lg:top-[-80px] items-center justify-center mb-8 lg:mb-10 whitespace-normal lg:whitespace-nowrap flex-wrap gap-4 md:gap-8 w-full max-w-[1200px] mx-auto";
 
 const About = () => {
     // Parallax Booking State
@@ -426,10 +433,10 @@ const About = () => {
             {/* ========================================= */}
             {/* 3. DISCOVER / BOOKING SECTION               */}
             {/* ========================================= */}
-            <div className="w-full relative bottom-[-20vh] top-[-129vh] lg:bottom-[-0vh] lg:top-[-130vh] flex flex-col items-center">
+            <div className={lowerSectionStackClass}>
                 
                 {/* 3. BOOKING SECTION */}
-                <section ref={bookingRef} className="w-full relative bottom-[-1190px] lg:bottom-[-980px] py-[40px] lg:py-[200px] flex items-center justify-center min-h-[28vh] lg:min-h-[600px] overflow-hidden">
+                <section ref={bookingRef} className={bookingSectionClass}>
                     <div className="absolute inset-0 z-0 overflow-hidden">
                         <motion.img 
                             style={{ y: yParallax, scale: 1.15 }}
@@ -568,9 +575,9 @@ const About = () => {
                 </section>
 
                 {/* 4. THE JOURNAL SECTION (LODR STYLE) */}
-                <section className="w-full bg-[#050505] h-[600px] pb-[150px] lg:h-[1200px] pt-[100px] lg:py-[200px] relative bottom-[-1180px] lg:bottom-[-950px] px-8 lg:px-12 touch-pan-y">
-                    <div className="max-w-7xl mx-auto relative lg:right-[-40px] lg:bottom-[-200px]">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between relative bottom-[-20px] lg:bottom-[0px] lg:top-[-80px] mb-12 lg:mb-0 gap-6 lg:gap-0">
+                <section className={journalSectionClass}>
+                    <div className={journalInnerClass}>
+                        <div className={journalHeaderClass}>
                             <h2 className="text-[28px] md:text-5xl lg:text-[56px] text-white font-medium tracking-tight text-center lg:text-left" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                                Summerhouse Journal
                             </h2> 
@@ -864,9 +871,9 @@ const About = () => {
                 </section>
 
                 {/* 5. POLAROID CTA SECTION */}
-                <section className="w-full min-h-[10dvh] lg:h-[500px] relative lg:bottom-[-1000px] bottom-[-150dvh] bg-[#FAFAF9] py-[150px] lg:py-[200px] px-6 md:px-12 flex flex-col items-center justify-center lg:overflow-hidden touch-pan-y">
+                <section className={ctaSectionClass}>
                     
-                    <div className="flex flex-col lg:flex-row relative bottom-[40px] lg:top-0 lg:right-[-20px] lg:top-[-80px] items-center justify-center mb-8 lg:mb-10 whitespace-normal lg:whitespace-nowrap flex-wrap gap-4 md:gap-8 w-full max-w-[1200px] mx-auto">
+                    <div className={ctaInnerClass}>
                         <h2 className="text-[48px] relative top-[30px] lg:bottom-[0] md:text-7xl lg:text-[80px] font-medium tracking-tight text-[#1a1a19] text-center" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                             Stay
                         </h2>
