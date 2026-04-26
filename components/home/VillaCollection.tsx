@@ -69,7 +69,7 @@ const VillaCollection = () => {
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
         // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
-        <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[180dvh] md:min-h-[196dvh] lg:min-h-[345dvh] pb-[350px]">
+        <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[182dvh] md:min-h-[196dvh] lg:min-h-[345dvh] pb-[350px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
             <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] lg:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
@@ -516,7 +516,7 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: MOBILE & TABLET ONLY CURATED SPACES --- */}
             {/* ========================================================= */}
-            <div className="block lg:hidden bg-red-200 w-[calc(100%-0px)] md:w-[calc(100%-0px)] min-h-[99dvh] md:min-h-[130dvh] overflow-hidden px-5 md:px-8 px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 " style={{ borderTop: '1px solid transparent' }}>
+            <div className="block lg:hidden bg-red-200 w-[calc(100%-0px)] md:w-[calc(100%-0px)] min-h-[105dvh] md:min-h-[130dvh] overflow-hidden px-5 md:px-8 px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 " style={{ borderTop: '1px solid transparent' }}>
                 
                 {/* Heading (Left Aligned) */}
                 <div className="w-full text-left relative mb-4 mt-16">
