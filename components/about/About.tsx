@@ -126,6 +126,9 @@ const servicesData = [
     { title: "Rooftop Pool & Lounge", videoUrl: "https://videos.pexels.com/video-files/4919736/4919736-uhd_2560_1440_25fps.mp4" }
 ];
 
+const sectionContainerClass = "mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8";
+const journalEditions = ["CURRENT EDITION", "EDITION 02: THE VOID", "EDITION 03: SOUL"];
+
 const About = () => {
     // Parallax Booking State
     const bookingRef = useRef(null);

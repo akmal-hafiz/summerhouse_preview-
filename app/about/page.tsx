@@ -4,7 +4,7 @@ import Footer from "@/components/common/Footer";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-[100dvh] flex flex-col overflow-x-hidden bg-[#FAFAF9]">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-[#FAFAF9]">
       <Navbar alwaysSolid={true} />
       <main className="flex-1 w-full">
         <About />
