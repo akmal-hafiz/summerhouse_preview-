@@ -85,7 +85,7 @@ const VillaCollection = () => {
                     </div>
 
                     {/* Horizontal Scroll Cards Mobile & Tablet */}
-                    <div className="flex translate-x-[16px] translate-y-[30px] overflow-x-auto pb-24 md:pb-40 relative snap-x snap-mandatory gap-5 md:gap-10 pr-4 md:pr-8 touch-pan-y [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex translate-x-[16px] translate-y-[30px] overflow-x-auto pb-24 md:pb-40 relative snap-x snap-mandatory gap-5 md:gap-10 pr-4 md:pr-8 touch-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
                         {/* KARTU 1 */}
                         <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] h-[600px] snap-center shrink-0 pb-27 lg:pb-0">
@@ -516,7 +516,7 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: MOBILE & TABLET ONLY CURATED SPACES --- */}
             {/* ========================================================= */}
-            <div className="block lg:hidden bg-red-200 w-[calc(100%-0px)] md:w-[calc(100%-0px)] min-h-[890px] md:min-h-[1330px] overflow-hidden px-5 md:px-8 px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 " style={{ borderTop: '1px solid transparent' }}>
+            <div className="block lg:hidden bg-[#FAFAF9] w-[calc(100%-0px)] md:w-[calc(100%-0px)] min-h-[890px] md:min-h-[1330px] overflow-hidden px-5 md:px-8 px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 " style={{ borderTop: '1px solid transparent' }}>
                 
                 {/* Heading (Left Aligned) */}
                 <div className="w-full text-left relative mb-4 mt-16">
