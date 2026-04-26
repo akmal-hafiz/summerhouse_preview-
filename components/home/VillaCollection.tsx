@@ -69,7 +69,7 @@ const VillaCollection = () => {
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
         // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
-        <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[178dvh] md:min-h-[196dvh] lg:min-h-[345dvh] pb-[350px]">
+        <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[180dvh] md:min-h-[196dvh] lg:min-h-[345dvh] pb-[350px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
             <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] lg:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
