@@ -69,23 +69,23 @@ const VillaCollection = () => {
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
         // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
-        <section className="w-full bg-[#FAFAF9] pt-[150px] h-[1800px] md:h-[200dvh] lg:h-[3200px] pb-[350px]">
+        <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[178dvh] md:min-h-[196dvh] lg:min-h-[345dvh] pb-[350px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
-            <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] md:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
+            <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] lg:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
 
                 {/* ============================================== */}
                 {/* MOBILE & TABLET FULLY CUSTOM VERSION (Berdasarkan Screenshot) */}
                 {/* ============================================== */}
-                <div className="block lg:hidden w-full overflow-visible">
+                <div className="block lg:hidden w-[calc(100%-0px)] md:w-[calc(100%-0px)] overflow-hidden px-5 md:px-8">
                     {/* Header Mobile & Tablet */}
-                    <div className="flex justify-between items-end w-full px-6 md:px-10 mb-8 md:mb-12 mt-8 md:mt-16">
-                        <h2 className="text-[32px] md:text-[40px] text-[#446B4A]" style={{ fontFamily: 'var(--font-playfair), serif' }}>The Collection</h2>
-                        <span className="text-[#805621] text-[15px] italic underline decoration-[#805621] decoration-[1px] underline-offset-[11px] mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>View All</span>
+                    <div className="flex justify-between items-end w-full mb-8 md:mb-12 mt-8 md:mt-16">
+                        <h2 className="text-[32px] translate-x-[10px] md:translate-x-[10px] md:text-[40px] text-[#446B4A]" style={{ fontFamily: 'var(--font-playfair), serif' }}>The Collection</h2>
+                        <span className="text-[#805621] translate-x-[-28px] md:translate-x-[-25px] text-[15px] italic underline decoration-[#805621] decoration-[1px] underline-offset-[11px] mb-1" style={{ fontFamily: 'var(--font-playfair), serif' }}>View All</span>
                     </div>
 
                     {/* Horizontal Scroll Cards Mobile & Tablet */}
-                    <div className="flex w-full overflow-x-auto pb-24 md:pb-40 relative snap-x snap-mandatory gap-5 md:gap-8 pl-6 md:pl-10 pr-6 md:pr-10 [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex translate-x-[16px] translate-y-[30px] overflow-x-auto pb-24 md:pb-40 relative snap-x snap-mandatory gap-5 md:gap-10 pr-4 md:pr-8 touch-pan-y [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 
                         {/* KARTU 1 */}
                         <div className="flex flex-col w-[85vw] md:w-[45vw] lg:w-[30vw] h-[600px] snap-center shrink-0 pb-27 lg:pb-0">
@@ -516,21 +516,21 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: MOBILE & TABLET ONLY CURATED SPACES --- */}
             {/* ========================================================= */}
-            <div className="block lg:hidden w-full max-w-[90dvh] md:max-w-[80dvh] mx-auto px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 bg-[#FAFAF9]" style={{ borderTop: '1px solid transparent' }}>
+            <div className="block lg:hidden bg-red-200 w-[calc(100%-0px)] md:w-[calc(100%-0px)] min-h-[99dvh] md:min-h-[130dvh] overflow-hidden px-5 md:px-8 px-10 md:px-24 py-28 md:py-40 z-[99] mt-10 " style={{ borderTop: '1px solid transparent' }}>
                 
                 {/* Heading (Left Aligned) */}
-                <div className="w-full text-left relative mb-4">
-                    <h2 className="text-[24px] md:text-[34px] text-[#4d6a52] leading-[1.1] mb-3 tracking-normal" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                <div className="w-full text-left relative mb-4 mt-16">
+                    <h2 className="text-[24px] flex justify-start translate-x-4 md:text-[34px] text-[#4d6a52] leading-[1.3] mb-3 tracking-normal" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                         A harmonious<br />fusion of stone and<br />light
                     </h2>
-                    <p className="text-[11px] md:text-[13px] italic text-[#5a5651] leading-[1.6]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                        Where the architecture respects the<br className="hidden md:block" />heritage of the land.
+                    <p className="text-[11px] md:text-[13px] flex justify-start translate-x-4 translate-y-2 md:translate-y-2 italic text-[#5a5651] leading-[1.6]" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                        Where the architecture respects the<br className=" md:block" />heritage of the land.
                     </p>
                 </div>
 
                 {/* Dropdown Button (Right Aligned, below heading) */}
                 <div className="w-full flex justify-end mb-5">
-                    <div className="relative z-[999] flex flex-col items-end">
+                    <div className="relative z-[1000] flex flex-col items-end -translate-x-5 md:-translate-x-9">
                         <button 
                             onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
                             className="flex items-center gap-1.5 text-[9px] md:text-[10px] font-bold tracking-[0.2em] uppercase text-[#4d6a52]"
@@ -546,7 +546,7 @@ const VillaCollection = () => {
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                                    className="absolute top-[25px] right-[-5px] mt-2 w-[160px] py-2 rounded-xl backdrop-blur-md bg-white/90 border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col z-[9999] overflow-hidden"
+                                    className="absolute top-[25px] right-[-5px] mt-2 w-[160px] gap-[8px] py-2 rounded-xl backdrop-blur-md bg-white/90 border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex justify-center items-center flex-col z-[9999] overflow-hidden"
                                 >
                                     {['Curated', 'Canggu', 'Ubud', 'Pererenan', 'Umalas', 'Legian', 'Padonan'].map((neighborhood) => (
                                         <button 
@@ -568,7 +568,7 @@ const VillaCollection = () => {
                 </div>
 
                 {/* Mobile Masonry Grid (Centered Safely with CSS Grid) */}
-                <div className="w-[90%] md:w-[90%] mx-auto grid grid-cols-[1.2fr_1fr] left-[50%] translate-x-[-50%] gap-2 h-[65dvh] md:h-[90dvh] mt-10 mb-14 relative z-[1]">
+                <div className="w-[90%] md:w-[90%] mx-auto grid grid-cols-[1.2fr_1fr] left-[50%] translate-x-[-50%] translate-y-[25px] gap-2 h-[65dvh] md:h-[90dvh] mt-10 mb-14 relative z-[1]">
                     {/* Left Column */}
                     <div className="flex flex-col gap-2 w-full h-full">
                         {/* Top Left Image */}
@@ -611,7 +611,7 @@ const VillaCollection = () => {
                 </div>
 
                 {/* Bottom Bordered Button */}
-                <div className="flex justify-center w-full relative mt-8">
+                <div className="flex justify-center items-center translate-y-[80px] md:translate-y-[100px] w-full relative mt-8">
                     <AnimatePresence mode="wait">
                         <motion.button 
                             key={activeLocation + '-btn'}
