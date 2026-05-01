@@ -156,15 +156,15 @@ export default function Services() {
   }, [activeVideoIndex]);
 
   return (
-    <div className="w-full bg-[#FAFAF9] flex flex-col overflow-x-hidden pt-[140px] lg:pt-[220px]">
+    <div className="services-page-shell w-full bg-[#FAFAF9] flex flex-col overflow-x-hidden">
 
       {/* ============================================== */}
       {/* 1. HERO / INTRO SECTION                        */}
       {/* ============================================== */}
-      <section className="pb-24 lg:pb-48 pt-4 lg:pt-8 w-full touch-pan-y">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center">
+      <section className="services-hero-section w-full touch-pan-y">
+        <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center">
           <motion.h1
-            className="text-[25px] md:text-6xl lg:text-[72px] leading-[1.8] lg:leading-[1.7] text-[#446B4A] mb-4 lg:mb-8 tracking-tight font-medium text-center"
+            className="text-[34px] md:text-6xl lg:text-[72px] leading-[1.25] md:leading-[1.18] lg:leading-[1.12] text-[#446B4A] tracking-tight font-medium text-center"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             <CharacterReveal text="Your villa. Our obsession." />
@@ -174,7 +174,7 @@ export default function Services() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-[#5a5651] text-[11px] md:text-[16px] lg:text-[17px] leading-[1.7] lg:leading-[1.8] font-light max-w-[800px] text-center"
+            className="text-[#5a5651] text-[13px] md:text-[16px] lg:text-[17px] leading-[1.7] lg:leading-[1.8] font-light max-w-[800px] text-center"
             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
           >
             You built something beautiful. Let us make sure the world knows it — and that it earns exactly what it deserves.
@@ -185,9 +185,9 @@ export default function Services() {
       {/* ============================================== */}
       {/* 2. STEWARDSHIP & BRIEFING GRID                 */}
       {/* ============================================== */}
-      <section className="py-24 lg:py-48 w-full touch-pan-y">
+      <section className="services-rhythm-section w-full touch-pan-y">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="services-content-grid grid grid-cols-1 lg:grid-cols-12 items-start">
 
             {/* Left: Video Area */}
             <div className="lg:col-span-7 flex flex-col">
@@ -240,7 +240,7 @@ export default function Services() {
 
             {/* Right: Briefing Area */}
             <div className="lg:col-span-5 flex flex-col lg:pt-24">
-              <div className="border-l border-[#C7A58A]/30 pl-6 md:pl-8 lg:pl-12 flex flex-col gap-12">
+              <div className="services-brief-panel border-l border-[#C7A58A]/30 pl-6 md:pl-8 lg:pl-12 flex flex-col">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeVideoIndex}
@@ -248,7 +248,7 @@ export default function Services() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="flex flex-col gap-12"
+                    className="services-brief-list flex flex-col"
                   >
                     {managementServicesData[activeVideoIndex].briefs.map((brief, bIndex) => (
                       <motion.div 
@@ -257,13 +257,13 @@ export default function Services() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: bIndex * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative"
+                        className="services-brief-item relative"
                       >
                         <div className="absolute -left-[28px] md:-left-[36px] lg:-left-[52px] top-1.5 w-2 h-2 rounded-full bg-[#2E2E2C]" />
-                        <span className="text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase text-[#8F8A84] block mb-3" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+                        <span className="text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase text-[#8F8A84] block" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                           Brief {brief.id}
                         </span>
-                        <h4 className={`text-[22px] md:text-[26px] text-[#1a1a19] mb-3 lg:mb-4 ${bIndex === 0 || bIndex === 2 ? 'italic' : ''}`} style={{ fontFamily: 'var(--font-playfair), serif' }}>
+                        <h4 className={`text-[22px] md:text-[26px] text-[#1a1a19] ${bIndex === 0 || bIndex === 2 ? 'italic' : ''}`} style={{ fontFamily: 'var(--font-playfair), serif' }}>
                           {brief.title}
                         </h4>
                         <p className="text-[#5a5651] text-[14px] md:text-[15px] leading-[1.8] font-light" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
@@ -283,13 +283,13 @@ export default function Services() {
       {/* ============================================== */}
       {/* 3. CLIENT REVIEWS SECTION                      */}
       {/* ============================================== */}
-      <section className="py-24 lg:py-48 w-full touch-pan-y">
+      <section className="services-rhythm-section w-full touch-pan-y">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="flex flex-col-reverse lg:flex-row gap-12 lg:gap-20 items-center">
+          <div className="services-review-layout flex flex-col-reverse lg:flex-row items-center">
 
             {/* Left: Text */}
-            <div className="w-full lg:w-5/12 flex flex-col justify-center">
-              <span className="text-[14px] text-[#1a1a19] mb-8 lg:mb-16 font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+            <div className="services-review-copy w-full lg:w-5/12 flex flex-col justify-center">
+              <span className="text-[14px] text-[#1a1a19] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                 What villa owners say
               </span>
 
@@ -301,9 +301,9 @@ export default function Services() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.4 }}
-                    className="flex flex-col flex-1"
+                    className="services-testimonial-stack flex flex-col flex-1"
                   >
-                    <h2 className="text-[28px] md:text-[40px] lg:text-[44px] leading-[1.15] text-[#1a1a19] mb-6 tracking-tight font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+                    <h2 className="text-[28px] md:text-[40px] lg:text-[44px] leading-[1.15] text-[#1a1a19] tracking-tight font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                       {activeTestimonial.quote}
                     </h2>
                     <p className="text-[14px] md:text-[16px] text-[#68635c] leading-[1.6] lg:leading-[1.7] max-w-[95%]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
@@ -333,7 +333,7 @@ export default function Services() {
           </div>
 
           {/* Tabs at the bottom */}
-          <div className="grid grid-cols-2 lg:flex w-full items-end justify-between mt-16 lg:mt-24 gap-x-2 gap-y-4 lg:gap-0 lg:gap-x-16 lg:gap-y-10">
+          <div className="services-testimonial-tabs grid grid-cols-2 lg:flex w-full items-end justify-between">
             {testimonials.map((t, idx) => (
               <motion.div
                 key={t.id}
@@ -357,7 +357,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 4. FINAL CTA SECTION (PARALLAX)                */}
       {/* ============================================== */}
-      <section ref={parallaxRef} className="py-32 lg:py-56 w-full relative overflow-hidden touch-pan-y flex flex-col justify-center min-h-[500px] lg:min-h-[700px]">
+      <section ref={parallaxRef} className="services-cta-section w-full relative overflow-hidden touch-pan-y flex flex-col justify-center min-h-[560px] lg:min-h-[760px]">
         <motion.div
           className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat"
           style={{ 
@@ -373,15 +373,15 @@ export default function Services() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col items-center lg:items-start"
+            className="services-cta-copy flex flex-col items-center lg:items-start"
           >
-            <span className="text-white text-[13px] md:text-[16px] mb-6 block font-medium tracking-wide" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+            <span className="text-white text-[13px] md:text-[16px] block font-medium tracking-wide" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
               For villa owners
             </span>
-            <h2 className="text-white text-[42px] md:text-[72px] lg:text-[88px] leading-[1.1] md:leading-[1.05] font-medium mb-8 tracking-tight max-w-[800px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+            <h2 className="text-white text-[42px] md:text-[72px] lg:text-[88px] leading-[1.1] md:leading-[1.05] font-medium tracking-tight max-w-[800px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
               Your property <br className="lg:hidden" /> deserves better.
             </h2>
-            <p className="text-white/80 text-[14px] md:text-[17px] leading-[1.6] max-w-[350px] lg:max-w-[480px] mb-12 font-light" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+            <p className="text-white/80 text-[14px] md:text-[17px] leading-[1.6] max-w-[350px] lg:max-w-[480px] font-light" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
               Most villas in Bali sit half-empty. Yours doesn't have to. Partner with us and let's change that together.
             </p>
 

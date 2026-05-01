@@ -10,6 +10,174 @@
   .luxury-shadow {
     box-shadow: 0 40px 60px -20px rgba(23, 48, 33, 0.06);
   }
+
+  .villa-card-stage {
+    --villa-optical-y: clamp(-56px, -3.82svh, -24px);
+    display: grid;
+    place-items: center;
+    width: 100vw;
+    min-height: clamp(820px, 100svh, 1120px);
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: clamp(48px, 8svh, 96px) clamp(24px, 5vw, 72px);
+    overflow: hidden;
+  }
+
+  .villa-card-cluster {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+    gap: clamp(24px, 2.85vw, 44px);
+    width: min(100%, 1400px);
+    transform: translate3d(0, var(--villa-optical-y), 0);
+  }
+
+  .villa-card-tile {
+    width: min(100%, 420px);
+  }
+
+  @media (max-width: 1279px) {
+    .villa-card-cluster {
+      gap: clamp(20px, 2.4vw, 32px);
+    }
+  }
+
+  .services-page-shell {
+    --services-nav-height: 80px;
+    --services-space-1: clamp(56px, 7.5svh, 88px);
+    --services-space-phi: calc(var(--services-space-1) * 1.618);
+    --services-space-phi-lg: calc(var(--services-space-phi) * 1.618);
+    --services-step-0: clamp(10px, 0.9vw, 13px);
+    --services-step-1: calc(var(--services-step-0) * 1.618);
+    --services-step-2: calc(var(--services-step-1) * 1.618);
+    --services-step-3: calc(var(--services-step-2) * 1.618);
+    --services-step-4: calc(var(--services-step-3) * 1.618);
+  }
+
+  .services-hero-section {
+    display: grid;
+    align-items: center;
+    min-height: clamp(620px, 92svh, 860px);
+    padding-top: calc(var(--services-nav-height) + var(--services-space-phi));
+    padding-bottom: var(--services-space-phi-lg);
+  }
+
+  .services-hero-copy {
+    gap: var(--services-step-2);
+    transform: translate3d(0, clamp(10px, 1.618svh, 24px), 0);
+  }
+
+  .services-hero-copy > * {
+    margin: 0;
+  }
+
+  .about-hero-section {
+    display: grid;
+    align-items: center;
+    min-height: clamp(520px, 72svh, 680px);
+    padding-top: calc(var(--services-nav-height) + var(--services-space-1));
+    padding-bottom: var(--services-space-phi);
+  }
+
+  .about-hero-copy {
+    gap: var(--services-step-2);
+    transform: translate3d(0, clamp(8px, 1.2svh, 18px), 0);
+  }
+
+  .about-hero-copy > * {
+    margin: 0;
+  }
+
+  .about-video-section {
+    padding-bottom: var(--services-space-phi);
+  }
+
+  .services-rhythm-section {
+    padding-top: var(--services-space-phi-lg);
+    padding-bottom: var(--services-space-phi-lg);
+  }
+
+  .services-cta-section {
+    padding-top: calc(var(--services-space-phi-lg) * 1.12);
+    padding-bottom: calc(var(--services-space-phi-lg) * 1.12);
+  }
+
+  .services-content-grid {
+    gap: var(--services-step-4);
+  }
+
+  .services-brief-panel {
+    gap: var(--services-step-3);
+  }
+
+  .services-brief-list {
+    gap: var(--services-step-3);
+  }
+
+  .services-brief-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--services-step-0);
+  }
+
+  .services-brief-item > * {
+    margin: 0;
+  }
+
+  .services-review-layout {
+    gap: var(--services-step-4);
+  }
+
+  .services-review-copy {
+    gap: var(--services-step-2);
+  }
+
+  .services-review-copy > * {
+    margin: 0;
+  }
+
+  .services-testimonial-stack {
+    gap: var(--services-step-1);
+  }
+
+  .services-testimonial-stack > * {
+    margin: 0;
+  }
+
+  .services-testimonial-tabs {
+    gap: var(--services-step-1);
+    margin-top: var(--services-step-4);
+  }
+
+  .services-cta-copy {
+    gap: var(--services-step-2);
+  }
+
+  .services-cta-copy > * {
+    margin: 0;
+  }
+
+  @media (max-width: 767px) {
+    .services-page-shell {
+      --services-space-1: clamp(44px, 8svh, 64px);
+      --services-step-0: clamp(9px, 2.4vw, 12px);
+    }
+
+    .services-hero-section {
+      min-height: clamp(560px, 86svh, 720px);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services-content-grid {
+      gap: var(--services-step-4);
+    }
+
+    .services-review-layout {
+      gap: var(--services-step-4);
+    }
+  }
 }
 
 @theme {

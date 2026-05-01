@@ -272,10 +272,11 @@ const VillaCollection = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="w-full mx-auto grid grid-cols-3 gap-x-[40px] lg:gap-x-[60px] xl:gap-x-[80px] gap-y-[120px] mt-[100px] justify-center items-center translate-y-[100px]"
+                        className="villa-card-stage bg-black mt-[100px]"
                     >
+                        <div className="villa-card-cluster">
                         {/* --- KARTU VILLA 1 --- */}
-                        <div className="flex flex-col group cursor-pointer">
+                        <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/VillaZen.webp" alt="Zen River House" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#ad8553] text-white text-[9px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -289,7 +290,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 2 --- */}
-                        <div className="flex flex-col group cursor-pointer">
+                        <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/CactusEstate.webp" alt="Cactus Estate" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                             </div>
@@ -300,7 +301,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 3 --- */}
-                        <div className="flex flex-col group cursor-pointer">
+                        <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/officiana17.webp" alt="Officina 17" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#1a1a19] text-white text-[10px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -314,7 +315,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 4 --- */}
-                        <div className="flex flex-col group cursor-pointer">
+                        <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/88east.webp" alt="88 East" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                             </div>
@@ -325,7 +326,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 5 --- */}
-                        <div className="flex flex-col group cursor-pointer">
+                        <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/villaarta.webp" alt="Villa Arta" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                             </div>
@@ -336,7 +337,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 6 --- */}
-                        <div className="flex flex-col group cursor-pointer">
+                        <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/rumahmimosa.webp" alt="Rumah Mimosa" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#C7A58A] text-white text-[10px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -349,6 +350,7 @@ const VillaCollection = () => {
                             </p>
                         </div>
 
+                        </div>
                     </motion.div>
 
                     <div className="w-full flex justify-end mt-[230px] translate-y-[180px]">
