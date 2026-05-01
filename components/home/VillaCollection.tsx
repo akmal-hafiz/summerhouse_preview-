@@ -272,10 +272,10 @@ const VillaCollection = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="w-full mx-auto grid grid-cols-3 gap-x-[40px] xl:gap-x-[50px] gap-y-[120px] mt-[100px] justify-center items-center translate-y-[100px]"
+                        className="w-full mx-auto grid grid-cols-3 gap-x-[40px] lg:gap-x-[60px] xl:gap-x-[80px] gap-y-[120px] mt-[100px] justify-center items-center translate-y-[100px]"
                     >
                         {/* --- KARTU VILLA 1 --- */}
-                        <div className="flex flex-col group cursor-pointer -translate-x-[40px]">
+                        <div className="flex flex-col group cursor-pointer">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/VillaZen.webp" alt="Zen River House" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#ad8553] text-white text-[9px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -300,7 +300,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 3 --- */}
-                        <div className="flex flex-col group cursor-pointer translate-x-[40px]">
+                        <div className="flex flex-col group cursor-pointer">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/officiana17.webp" alt="Officina 17" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#1a1a19] text-white text-[10px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -314,7 +314,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 4 --- */}
-                        <div className="flex flex-col group cursor-pointer -translate-x-[40px]">
+                        <div className="flex flex-col group cursor-pointer">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/88east.webp" alt="88 East" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                             </div>
@@ -336,7 +336,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 6 --- */}
-                        <div className="flex flex-col group cursor-pointer translate-x-[40px]">
+                        <div className="flex flex-col group cursor-pointer">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/rumahmimosa.webp" alt="Rumah Mimosa" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#C7A58A] text-white text-[10px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -351,8 +351,8 @@ const VillaCollection = () => {
 
                     </motion.div>
 
-                    <div className="max-w-[250px] relative bottom-[-180px] right-[-550px] mt-[230px]">
-                        <h3 className="text-[12px] text-center text-[#C7A58A] mt-6 tracking-[0.4em] font-bold" style={{ fontFamily: 'var(--font-inter), serif' }}>DISCOVER MORE</h3>
+                    <div className="w-full flex justify-end mt-[230px] translate-y-[180px]">
+                        <h3 className="text-[12px] text-[#C7A58A] mt-6 tracking-[0.4em] font-bold cursor-pointer hover:text-[#1a1a19] transition-colors" style={{ fontFamily: 'var(--font-inter), serif' }}>DISCOVER MORE</h3>
                     </div>
 
                 </div> {/* Penutup "hidden md:block" (Batas Dunia Desktop) */}
@@ -362,7 +362,7 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: EDITORIAL FRAMED SELECTOR (Golden Wrap) ---    */}
             {/* ========================================================= */}
-            <div className="hidden lg:flex w-full max-w-[1200px] mx-auto relative bottom-[-400px] right-[-150px] justify-center mt-[250px] mb-[120px] z-[999] px-4 pointer-events-none">
+            <div className="hidden lg:flex w-full max-w-[1200px] mx-auto relative bottom-[-400px] justify-center mt-[250px] mb-[120px] z-[999] px-4 pointer-events-none">
                 <div className="border-y border-[#C7A58A] px-[40px] md:px-[80px] py-[80px] flex flex-wrap justify-center gap-x-10 md:gap-x-19 gap-y-10 bg-transparent pointer-events-auto relative z-[999]">
                     {['Curated', 'Canggu', 'Ubud', 'Pererenan', 'Umalas', 'Legian', 'Padonan'].map((neighborhood) => (
                         <button
