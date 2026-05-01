@@ -126,16 +126,6 @@ const servicesData = [
     { title: "Rooftop Pool & Lounge", videoUrl: "https://videos.pexels.com/video-files/4919736/4919736-uhd_2560_1440_25fps.mp4" }
 ];
 
-const sectionContainerClass = "mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8";
-const journalEditions = ["CURRENT EDITION", "EDITION 02: THE VOID", "EDITION 03: SOUL"];
-const lowerSectionStackClass = "w-full mt-[18vh] lg:-mt-[180px] flex flex-col items-center";
-const bookingSectionClass = "w-full relative py-[40px] lg:py-[200px] flex items-center justify-center min-h-[28vh] lg:min-h-[600px] overflow-hidden";
-const journalSectionClass = "w-full bg-[#050505] h-[600px] pb-[150px] lg:h-[1200px] pt-[100px] lg:py-[200px] relative px-8 lg:px-12 touch-pan-y";
-const ctaSectionClass = "w-full min-h-[10dvh] lg:h-[500px] relative bg-[#FAFAF9] py-[150px] lg:py-[200px] px-6 md:px-12 flex flex-col items-center justify-center lg:overflow-hidden touch-pan-y";
-const journalInnerClass = "max-w-7xl mx-auto relative lg:right-[-40px] lg:bottom-[-200px]";
-const journalHeaderClass = "flex flex-col lg:flex-row lg:items-center justify-between relative bottom-[-20px] lg:bottom-[0px] lg:top-[-80px] mb-12 lg:mb-0 gap-6 lg:gap-0";
-const ctaInnerClass = "flex flex-col lg:flex-row relative bottom-[40px] lg:top-0 lg:right-[-20px] lg:top-[-80px] items-center justify-center mb-8 lg:mb-10 whitespace-normal lg:whitespace-nowrap flex-wrap gap-4 md:gap-8 w-full max-w-[1200px] mx-auto";
-
 const About = () => {
     // Parallax Booking State
     const bookingRef = useRef(null);
@@ -205,23 +195,23 @@ const About = () => {
     }, [activeVideoIndex]);
 
     return (
-        <div className="w-full bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden pt-32 lg:pt-40">
+        <div className="w-full min-h-[340dvh] h-auto pb-[100px] mb-[-200vh] lg:mb-0 bg-[#FAFAF9] flex flex-col items-center overflow-x-hidden">
 
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (STORYTELLING)  */}
             {/* ========================================= */}
             {/* 1. THE EXPERIENCE SECTION (VIDEO CAROUSEL)*/}
             {/* ========================================= */}
-            <section className="w-full flex flex-col touch-pan-y pt-12 lg:pt-20">
+            <section className="w-full relative lg:top-[250px] min-h-[180dvh] lg:min-h-[400dvh] h-auto flex flex-col touch-pan-y">
                 {/* ─── TITLE & INTRODUCTION ─── */}
-                <div className="w-full max-w-[900px] mx-auto text-center px-4 md:px-6 pb-12 lg:pb-24 flex flex-col items-center">
+                <div className="w-full max-w-[900px] bg-[#FAFAF9] relative bottom-[-180px] lg:bottom-[50px] left-[10zpx] lg:left-[390px] mx-auto text-center px-6 pt-[60px] lg:pt-[80px] pb-[60px] lg:pb-[120px]">
                     <motion.h1 
                         initial={{ opacity: 0, y: 20 }} 
                         whileInView={{ opacity: 1, y: 0 }} 
                         viewport={{ once: true }} 
                         transition={{ duration: 0.8, ease: "easeOut" }} 
-                        className="text-[28px] md:text-6xl lg:text-[72px] text-[#446B4A] mb-6 tracking-tight font-medium" 
-                        style={{ fontFamily: "var(--font-playfair), serif" }}
+                        className="text-[28px] md:text-6xl lg:text-[72px] text-[#446B4A] lg:text-[#446B4A] lg:relative lg:left-[-65px] mb-4 lg:mb-8 tracking-tight font-medium" 
+                        style={{ fontFamily: "var(--font-playfair), serif text-align: center" }}
                     >
                         <CharacterReveal text="Not a hotel. A home." />
                     </motion.h1>
@@ -230,7 +220,7 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }} 
                         viewport={{ once: true }} 
                         transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }} 
-                        className="text-[#5a5651] text-[12px] md:text-[16px] lg:text-[17px] leading-[1.7] lg:leading-[1.8] font-light max-w-[760px] mx-auto" 
+                        className="text-[#5a5651] text-[12px] md:text-[16px] lg:relative lg:top-[20px] lg:text-[17px] leading-[1.] lg:leading-[1.8] font-light max-w-[760px] mx-auto" 
                         style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                     >
                         Some places offer a room. We offer something rarer — a space that feels like it was built for you. Quiet, intentional, and entirely Bali.
@@ -238,19 +228,19 @@ const About = () => {
                 </div>
 
                 {/* Top Navigation Bar */}
-                <div className="w-full bg-[#FAFAF9] min-h-[50px] lg:h-[100px] flex items-center justify-between px-4 md:px-6 lg:px-8 z-20 shadow-sm border-t border-[#1a1a19]/5">
-                    <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-full">
+                <div className="w-full bg-[#FAFAF9] min-h-[4dvh] lg:h-[100px] flex items-center justify-between px-4 md:px-12 z-20 relative bottom-[-240px] lg:bottom-[-0px] shadow-sm">
+                    <div className="w-full max-w-[1400px] mx-auto flex items-center justify-between h-full">
                         {servicesData.map((service, index) => (
                             <div 
                                 key={index} 
                                 className="flex-1 flex flex-col items-center justify-center cursor-pointer h-full relative group" 
                                 onClick={() => { setActiveVideoIndex(index); setProgress(0); }}
                             >
-                                <span className={`text-[9px] md:text-[13px] tracking-wide transition-all text-center px-1 ${activeVideoIndex === index ? 'text-black font-bold' : 'text-gray-400 group-hover:text-gray-600'}`} style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                <span className={`text-[9px] md:text-[13px] tracking-wide transition-all text-center ${activeVideoIndex === index ? 'text-black font-bold' : 'text-gray-400 group-hover:text-gray-600'}`} style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                                     {service.title}
                                 </span>
                                 {/* Progress Bar Line - YouTube/Instagram Style */}
-                                <div className="absolute bottom-0 left-2 right-2 md:left-4 md:right-4 h-[3px] bg-gray-100 overflow-hidden">
+                                <div className="absolute bottom-0 left-4 right-4 h-[3px] bg-gray-100 overflow-hidden">
                                     <div 
                                         className="h-full bg-[#1a1a19] transition-all duration-75" 
                                         style={{ width: activeVideoIndex === index ? `${progress}%` : activeVideoIndex > index ? '100%' : '0%' }} 
@@ -263,7 +253,7 @@ const About = () => {
 
                 {/* Video Container with Curve */}
                 {/* Using a pseudo-element or border-radius hack for the subtle curve */}
-                <div className="w-full h-[40vh] lg:h-[85vh] relative overflow-hidden" style={{ borderBottomLeftRadius: '50% 5%', borderBottomRightRadius: '50% 5%' }}>
+                <div className="w-full h-[40vh] lg:h-[85vh] relative bottom-[-240px] lg:bottom-[-0px] overflow-hidden" style={{ borderBottomLeftRadius: '50% 5%', borderBottomRightRadius: '50% 5%' }}>
                     {/* Dark Overlay for better contrast */}
                     <div className="absolute inset-0 bg-black/20 z-10 pointer-events-none" />
                     
@@ -290,19 +280,19 @@ const About = () => {
                 </div>
 
                 {/* ─── NEW ABOUT TEXT BLOCK (BELOW VIDEO) ─── */}
-                <div className="w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-20 lg:py-32 flex flex-col items-start bg-[#FAFAF9]">
+                <div className="w-full max-w-[1400px] relative z-10 top-[355px] lg:top-[140px] lg:right-[-65px] mx-auto px-6 md:px-12 pt-[40px] lg:pt-[100px] pb-[30px] lg:pb-[50px] flex flex-col items-start bg-[#FAFAF9]">
                     {/* Label */}
-                    <span className="text-[11px] lg:text-[15px] font-medium tracking-[0.12em] uppercase text-[#1a1a19]/50 lg:text-[#1a1a19] mb-4 lg:mb-6" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                    <span className="text-[11px] lg:text-[15px] relative top-[-20px] lg:top-[-0px]  right-[-25px] lg:right-[-0px]  font-medium tracking-[0.12em] uppercase text-[#1a1a19]/50 lg:text-[#1a1a19] mb-4 lg:mb-6" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                         The Summerhouse Story
                     </span>
                     {/* Heading — large black on mobile, green on desktop */}
-                    <h2 className="text-[24px] lg:text-[44px] leading-[1.4] lg:leading-[1.15] tracking-tight text-[#446B4A] font-medium max-w-full lg:max-w-[1100px] mb-10 lg:mb-16" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                    <h2 className=" w-[350px] lg:w-[1200px] text-[24px] lg:text-3xl relative right-[-25px] lg:right-[-0px]  lg:bottom-[-20px] md:text-4xl lg:text-[44px] leading-[1.4] lg:leading-[1.15] tracking-tight text-[#446B4A] lg:text-[#446B4A] font-medium max-w-full lg:max-w-[1100px] mb-10 lg:mb-12" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                         We didn't set out to build another villa rental. We set out to answer one question: what does it feel like to stay somewhere that truly gets you? The result is Summerhouse — where every detail exists to make you feel at home, not like a guest.
                     </h2>
                     
                     {/* CTA Button */}
                     <Magnetic>
-                        <a href="/villas" className="group flex items-center justify-between w-[220px] h-[56px] rounded-full bg-[#2E2E2C] px-6 transition-all duration-300 hover:bg-[#222] shadow-[0_4px_14px_0_rgba(0,0,0,0.2)] hover:-translate-y-0.5">
+                        <a href="/villas" className="group relative bottom-[-37px] lg:bottom-[-50px] left-[20px] lg:left-[-7px] flex items-center justify-between w-[220px] h-[56px] rounded-full bg-[#2E2E2C] px-6 transition-all duration-300 hover:bg-[#222] shadow-[0_4px_14px_0_rgba(0,0,0,0.2)] hover:-translate-y-0.5">
                             <div className="w-[5px] h-[5px] rounded-full bg-white opacity-90" />
                             <span className="text-[14px] font-medium text-white tracking-wide" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                                 Find your villa
@@ -313,71 +303,131 @@ const About = () => {
                 </div>
 
                 {/* ─── NEW IMAGE GRID & TEXT BLOCK (BELOW ABOUT TEXT) ─── */}
-                <div className="w-full z-30 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pb-20 lg:pb-32 bg-[#FAFAF9]">
+                <div className="w-full h-[300px] lg:h-[0px] z-30 max-w-[2800px] relative top-[470px] lg:top-[280px] lg:right-[-40px] mx-auto px-4 md:px-12 pt-[30px] pb-[60px] lg:pb-[150px] bg-[#FAFAF9]">
                     {/* ==============================================
-                        MOBILE VERTICAL STACK (SCROLL REVEAL)
+                        MOBILE BENTO SWIPE GALLERY (REFINED)
                         ============================================== */}
-                    <div className="flex lg:hidden flex-col gap-8 w-full pb-10 relative z-30">
+                    <div className="flex lg:hidden overflow-x-auto snap-x snap-mandatory w-screen mx-[-16px] no-scrollbar pb-10 relative z-30">
                         
-                        {/* 1. TEXT CARD (Appears Normally) */}
-                        <div className="w-full rounded-[28px] bg-[#F2EDE3] flex flex-col justify-center px-7 py-12 border border-[#1a1a19]/5 relative overflow-hidden">
-                            <div className="absolute top-[-20px] left-[-10px] text-[#e8e0d0] text-[160px] font-serif leading-none opacity-50 select-none pointer-events-none" style={{ fontFamily: "var(--font-playfair), serif" }}>"</div>
-                            
-                            <h3 className="w-full text-[18px] leading-[1.4] tracking-tight text-[#1a1a19] font-medium mb-5 relative z-10" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                                Every corner is a decision. Every window is a frame. We don't just build villas — we compose spaces that let Bali speak for itself.
-                            </h3>
-                            <p className="w-full text-[#68635c] text-[15px] leading-[1.7] font-normal relative z-10" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                                Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Because real luxury isn't about excess. It's about meaning.
-                            </p>
+                        {/* --- SLIDE 1: ORIGINAL CARD (POSISI & UKURAN UTUH) --- */}
+                        <div className="min-w-full snap-start relative">
+                            {/* EXACT ORIGINAL CARD DESIGN */}
+                            <div className="w-[90%] mx-auto h-[300px] rounded-[28px] bg-[#F2EDE3] flex flex-col justify-center px-7 py-12 border border-[#1a1a19]/5 relative bottom-[20px] right-[-20px] overflow-hidden">
+                                <div className="absolute top-[-20px] left-[-10px] text-[#e8e0d0] text-[160px] font-serif leading-none opacity-50 select-none pointer-events-none" style={{ fontFamily: "var(--font-playfair), serif" }}>"</div>
+                                
+                                <h3 className="w-[90%] text-[15px] leading-[1.35] tracking-tight text-[#1a1a19] font-medium mb-5 relative right-[-20px] z-10" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                    Every corner is a decision. Every window is a frame. We don't just build villas — we compose spaces that let Bali speak for itself.
+                                </h3>
+                                <p className="w-[85%] text-[#68635c] text-[15px] leading-[1.7] font-normal relative bottom-[-10px] right-[-20px] z-10" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                    Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Because real luxury isn't about excess. It's about meaning.
+                                </p>
+                            </div>
+
+                            {/* Swipe Indicator (OUTSIDE CARD - MINIMALIST) */}
+                            <motion.div 
+                                animate={{ x: [0, 5, 0] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="absolute bottom-[-5px] right-10 text-[8px] tracking-[0.3em] font-bold text-[#1a1a19]/30 uppercase"
+                            >
+                                Swipe to explore <span className="text-[10px]">→</span>
+                            </motion.div>
                         </div>
 
-                        {/* 2. IMAGE GRID (Vertical Scroll Reveal) */}
-                        <motion.div 
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ duration: 1, ease: [0.33, 1, 0.68, 1] }}
-                            className="w-full flex gap-3"
-                        >
-                            {/* Left Column */}
-                            <div className="flex flex-col gap-3 w-1/2">
-                                <MaskedImage 
-                                    src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop" 
-                                    alt="Villa Detail" 
-                                    className="w-full h-[180px] rounded-[20px]" 
-                                    parallaxSpeed={0}
-                                />
-                                <MaskedVideo 
-                                    src="/video/video1.mp4" 
-                                    className="w-full h-[180px] rounded-[20px]" 
-                                    parallaxSpeed={0}
-                                />
-                            </div>
+                        {/* --- SLIDE 2: MAGAZINE COVER BENTO GALLERY --- */}
+                        <div className="min-w-[95vw] snap-start h-[300px] flex gap-2 pl-4 pr-10 relative bottom-[20px]">
                             
-                            {/* Right Column */}
-                            <div className="flex flex-col gap-3 w-1/2">
-                                <MaskedVideo 
-                                    src="/video/herosection_summerhouse.mp4" 
-                                    className="w-full h-[180px] rounded-[20px]" 
-                                    parallaxSpeed={0}
-                                />
-                                <MaskedImage 
-                                    src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" 
-                                    alt="Villa Kitchen" 
-                                    className="w-full h-[280px] rounded-[20px]" 
-                                    parallaxSpeed={0}
-                                />
+                            {/* Left Column (45%): Large Portrait VIDEO */}
+                            <div className="w-[45%] h-full relative group overflow-hidden rounded-[24px]">
+                                <motion.div
+                                    initial={{ clipPath: "inset(0% 0% 100% 0%)", opacity: 0 }}
+                                    animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
+                                    transition={{ duration: 1.2, delay: 0.1, ease: [0.33, 1, 0.68, 1] }}
+                                    className="w-full h-full"
+                                >
+                                    <video 
+                                        src="/video/video1.mp4" 
+                                        autoPlay 
+                                        loop 
+                                        muted 
+                                        playsInline 
+                                        className="w-full h-full object-cover" 
+                                    />
+                                </motion.div>
+                                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
+                                <div className="absolute bottom-4 left-4 text-[7px] tracking-[0.2em] text-white font-bold uppercase z-20">01 / The Craft</div>
                             </div>
-                        </motion.div>
+
+                            {/* Right Column (55%): Split Layout */}
+                            <div className="w-[55%] flex flex-col gap-2">
+                                {/* Top: Landscape VIDEO */}
+                                <div className="h-[58%] w-full relative group overflow-hidden rounded-[24px]">
+                                    <motion.div
+                                        initial={{ clipPath: "inset(0% 0% 100% 0%)", opacity: 0 }}
+                                        animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
+                                        transition={{ duration: 1.2, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
+                                        className="w-full h-full"
+                                    >
+                                        <video 
+                                            src="/video/herosection_summerhouse.mp4" 
+                                            autoPlay 
+                                            loop 
+                                            muted 
+                                            playsInline 
+                                            className="w-full h-full object-cover" 
+                                        />
+                                    </motion.div>
+                                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent z-10 pointer-events-none" />
+                                    <div className="absolute bottom-4 left-4 text-[7px] tracking-[0.2em] text-white font-bold uppercase z-20">02 / The Light</div>
+                                </div>
+                                
+                                {/* Bottom: Side by Side Squares */}
+                                <div className="h-[42%] w-full flex gap-2">
+                                    <div className="w-1/2 h-full relative group overflow-hidden rounded-[18px]">
+                                        <motion.div
+                                            initial={{ clipPath: "inset(0% 0% 100% 0%)", opacity: 0 }}
+                                            animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
+                                            transition={{ duration: 1.2, delay: 0.3, ease: [0.33, 1, 0.68, 1] }}
+                                            className="w-full h-full"
+                                        >
+                                            <Image 
+                                                src="/homepage_villa/curated-1-main.webp" 
+                                                alt="Pool Detail" 
+                                                fill
+                                                className="object-cover" 
+                                            />
+                                        </motion.div>
+                                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/30 to-transparent z-10 pointer-events-none" />
+                                        <div className="absolute bottom-2 left-2 text-[5px] tracking-[0.2em] text-white font-bold uppercase z-20">03 / The Void</div>
+                                    </div>
+                                    <div className="w-1/2 h-full relative group overflow-hidden rounded-[18px]">
+                                        <motion.div
+                                            initial={{ clipPath: "inset(0% 0% 100% 0%)", opacity: 0 }}
+                                            animate={{ clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
+                                            transition={{ duration: 1.2, delay: 0.4, ease: [0.33, 1, 0.68, 1] }}
+                                            className="w-full h-full"
+                                        >
+                                            <Image 
+                                                src="/homepage_villa/curated-2-detail.webp" 
+                                                alt="Material Detail" 
+                                                fill
+                                                className="object-cover" 
+                                            />
+                                        </motion.div>
+                                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/30 to-transparent z-10 pointer-events-none" />
+                                        <div className="absolute bottom-2 left-2 text-[5px] tracking-[0.2em] text-white font-bold uppercase z-20">04 / The Soul</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {/* =========================================
                         DESKTOP IMAGE GRID & TEXT BLOCK (LOCKED)
                         ========================================= */}
-                    <div className="hidden lg:grid lg:grid-cols-2 gap-8 w-full items-stretch">
+                    <div className="hidden lg:grid lg:grid-cols-2 gap-4 max-w-[1380px]">
                         {/* Left Side: Masonry Layout (2 Columns) */}
-                        <div className="flex gap-4 w-full h-full">
+                        <div className="flex gap-4 w-full">
                             {/* Left Column */}
-                            <div className="flex flex-col gap-4 w-1/2 h-full justify-start">
+                            <div className="flex flex-col gap-1 w-1/2">
                                 {/* Top Left */}
                                 <MaskedImage 
                                     src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop" 
@@ -396,7 +446,7 @@ const About = () => {
                             </div>
                             
                             {/* Right Column */}
-                            <div className="flex flex-col gap-4 w-1/2 h-full justify-start">
+                            <div className="flex flex-col gap-5 w-1/2 ">
                                 {/* Top Right */}
                                 <MaskedVideo 
                                     src="/video/herosection_summerhouse.mp4" 
@@ -416,12 +466,12 @@ const About = () => {
                         </div>
 
                         {/* Right Side: Text Block instead of Large Image */}
-                        <div className="w-full h-full rounded-[24px] bg-[#F2EDE3] flex flex-col justify-center px-8 lg:px-[60px] py-16 border border-[#1a1a19]/5">
-                            <h3 className="text-[28px] leading-[1.35] tracking-tight text-[#1a1a19] font-medium mb-8" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                                "Every corner is a decision. Every window is a frame. We compose spaces that let Bali speak for itself."
+                        <div className="h-[480px] w-[740px] rounded-[24px] bg-[#F2EDE3] relative left-[17px] flex flex-col justify-center px-[60px] py-12 border border-[#1a1a19]/5">
+                            <h3 className="text-[28px] relative top-[-130px] right-[-20px] leading-[1.35] tracking-tight text-[#1a1a19] font-medium mb-5" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                "Every corner is a decision. Every window is a frame. We compose spaces that let Bali <br></br> speak for itself."
                             </h3>
-                            <p className="text-[#68635c] text-[16px] leading-[1.7] font-normal" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                                Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Real luxury isn't about excess. It's about meaning. And meaning lasts long after check-out.
+                            <p className="text-[#68635c] text-[16px] relative top-[-110px] right-[-20px] leading-[1.7] font-normal" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                Raw stone, reclaimed wood, hand-woven textiles — every material <br></br>is chosen with intention. Real luxury isn't about excess. <br></br>It's about meaning. And meaning lasts long after check-out.
                             </p>
                         </div>
                     </div>
@@ -433,10 +483,10 @@ const About = () => {
             {/* ========================================= */}
             {/* 3. DISCOVER / BOOKING SECTION               */}
             {/* ========================================= */}
-            <div className={lowerSectionStackClass}>
+            <div className="w-full relative bottom-[-20vh] top-[-129vh] lg:bottom-[-0vh] lg:top-[-130vh] flex flex-col items-center">
                 
                 {/* 3. BOOKING SECTION */}
-                <section ref={bookingRef} className={bookingSectionClass}>
+                <section ref={bookingRef} className="w-full relative bottom-[-1190px] lg:bottom-[-980px] py-[40px] lg:py-[200px] flex items-center justify-center min-h-[28vh] lg:min-h-[600px] overflow-hidden">
                     <div className="absolute inset-0 z-0 overflow-hidden">
                         <motion.img 
                             style={{ y: yParallax, scale: 1.15 }}
@@ -575,9 +625,9 @@ const About = () => {
                 </section>
 
                 {/* 4. THE JOURNAL SECTION (LODR STYLE) */}
-                <section className={journalSectionClass}>
-                    <div className={journalInnerClass}>
-                        <div className={journalHeaderClass}>
+                <section className="w-full bg-[#050505] h-[600px] pb-[150px] lg:h-[1200px] pt-[100px] lg:py-[200px] relative bottom-[-1180px] lg:bottom-[-950px] px-8 lg:px-12 touch-pan-y">
+                    <div className="max-w-7xl mx-auto relative lg:right-[-40px] lg:bottom-[-200px]">
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between relative bottom-[-20px] lg:bottom-[0px] lg:top-[-80px] mb-12 lg:mb-0 gap-6 lg:gap-0">
                             <h2 className="text-[28px] md:text-5xl lg:text-[56px] text-white font-medium tracking-tight text-center lg:text-left" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                                Summerhouse Journal
                             </h2> 
@@ -871,9 +921,9 @@ const About = () => {
                 </section>
 
                 {/* 5. POLAROID CTA SECTION */}
-                <section className={ctaSectionClass}>
+                <section className="w-full min-h-[10dvh] lg:h-[500px] relative lg:bottom-[-1000px] bottom-[-150dvh] bg-[#FAFAF9] py-[150px] lg:py-[200px] px-6 md:px-12 flex flex-col items-center justify-center lg:overflow-hidden touch-pan-y">
                     
-                    <div className={ctaInnerClass}>
+                    <div className="flex flex-col lg:flex-row relative bottom-[40px] lg:top-0 lg:right-[-20px] lg:top-[-80px] items-center justify-center mb-8 lg:mb-10 whitespace-normal lg:whitespace-nowrap flex-wrap gap-4 md:gap-8 w-full max-w-[1200px] mx-auto">
                         <h2 className="text-[48px] relative top-[30px] lg:bottom-[0] md:text-7xl lg:text-[80px] font-medium tracking-tight text-[#1a1a19] text-center" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
                             Stay
                         </h2>
