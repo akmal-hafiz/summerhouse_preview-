@@ -72,7 +72,7 @@ const VillaCollection = () => {
         <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[1540px] md:min-h-[2000px] lg:min-h-[3100px] pb-[350px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
-            <div className="max-w-8xl mx-auto px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[-0px] bottom-[-10px] md:bottom-[-80px] lg:right-[-86px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
+            <div className="max-w-8xl mx-auto bg-[#FAFAF9] px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[0px] bottom-[-10px] md:bottom-[-80px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
 
                 {/* ============================================== */}
                 {/* MOBILE & TABLET FULLY CUSTOM VERSION (Berdasarkan Screenshot) */}
@@ -221,9 +221,9 @@ const VillaCollection = () => {
                 {/* ============================================== */}
                 {/* DESKTOP VERSION (Layout Utama - 100% UTUH)     */}
                 {/* ============================================== */}
-                <div className="hidden lg:block">
+                <div className="hidden lg:block w-full max-w-[1400px] mx-auto px-10 md:px-24 lg:px-24">
                     {/* 3. KOTAK ATAS (Menggunakan Flexbox memisah Kiri & Kanan) */}
-                    <div className="flex justify-between items-end relative bottom-[-10px] left-[-10px]">
+                    <div className="flex justify-between items-end translate-y-[10px]">
                         {/* Sisi Kiri (Teks) */}
                         <motion.div
                             initial={{ opacity: 0, y: 50 }}
@@ -258,7 +258,7 @@ const VillaCollection = () => {
                         </motion.div>
 
                         {/* Sisi Kanan (Area Tabs Filter) */}
-                        <div className="flex gap-6 text-[11px] font-bold tracking-widest uppercase relative left-[-170px] top-[-40px]">
+                        <div className="flex gap-6 text-[11px] font-bold tracking-widest uppercase -translate-y-[40px]">
                             <span className="underline decoration-2 decoration-[#C7A58A] underline-offset-16 cursor-pointer text-[#50453A]">All Stay</span>
                             <span className="pb-8 text-[#50453A] cursor-pointer hover:text-[#1a1a19]">SHORT STAYS</span>
                             <span className="pb-8 text-[#50453A] cursor-pointer hover:text-[#1a1a19]">MONTHLY STAYS</span>
@@ -272,11 +272,10 @@ const VillaCollection = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                        className=" max-w-7xl max-h-[1800px] mx-auto grid grid-cols-3 gap-x-[50px] gap-y-[120px] relative mt-[100px] bottom-[-100px] right-[-37px]"
+                        className="w-full mx-auto grid grid-cols-3 gap-x-[40px] xl:gap-x-[50px] gap-y-[120px] mt-[100px] justify-center items-center translate-y-[100px]"
                     >
-
                         {/* --- KARTU VILLA 1 --- */}
-                        <div className="flex flex-col group cursor-pointer relative left-[-40px]">
+                        <div className="flex flex-col group cursor-pointer -translate-x-[40px]">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/VillaZen.webp" alt="Zen River House" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#ad8553] text-white text-[9px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -301,7 +300,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 3 --- */}
-                        <div className="flex flex-col group cursor-pointer relative right-[-40px]">
+                        <div className="flex flex-col group cursor-pointer translate-x-[40px]">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/officiana17.webp" alt="Officina 17" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#1a1a19] text-white text-[10px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
@@ -315,7 +314,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 4 --- */}
-                        <div className="flex flex-col group cursor-pointer relative left-[-40px]">
+                        <div className="flex flex-col group cursor-pointer -translate-x-[40px]">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/88east.webp" alt="88 East" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                             </div>
@@ -337,7 +336,7 @@ const VillaCollection = () => {
                         </div>
 
                         {/* --- KARTU VILLA 6 --- */}
-                        <div className="flex flex-col group cursor-pointer relative right-[-40px]">
+                        <div className="flex flex-col group cursor-pointer translate-x-[40px]">
                             <div className="w-full h-[400px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
                                 <Image src="/homepage_villa/rumahmimosa.webp" alt="Rumah Mimosa" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
                                 <span className="absolute top-4 left-[0px] z-10 bg-[#C7A58A] text-white text-[10px] font-bold min-w-[90px] h-[26px] flex items-center justify-center tracking-[0.2em] uppercase">
