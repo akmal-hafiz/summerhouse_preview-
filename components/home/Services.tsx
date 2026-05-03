@@ -75,28 +75,28 @@ const testimonials = [
     name: "Martin Radowski",
     quote: "“Summerhouse turned my empty villa into a fully booked asset.”",
     text: "I didn't have to do a thing. Bookings came in, guests were handled, and the transfers arrived on time. It's the kind of partnership I didn't know I needed.",
-    image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=2080&auto=format&fit=crop"
+    image: "/homepage_villa/curated-2-detail.webp"
   },
   {
     id: 2,
     name: "Daniel Blaned",
     quote: "“Occupancy went from 40% to 85% in six months.”",
     text: "The team handled everything — pricing, guest relations, maintenance. I just received the transfers. I finally feel like my property is working for me, not the other way around.",
-    image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=2070&auto=format&fit=crop"
+    image: "/homepage_villa/curated-3-corner.webp"
   },
   {
     id: 3,
     name: "Olivia Rodru",
     quote: "“I was skeptical at first. Now I'm opening a second property with them.”",
     text: "What won me over wasn't the pitch — it was the execution. Transparent reporting, proactive communication, and a team that genuinely cares about the property.",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=2000&auto=format&fit=crop"
+    image: "/homepage_villa/curated-4-view.webp"
   },
   {
     id: 4,
     name: "Jane Hiness",
     quote: "“They treat my villa like it's their own.”",
     text: "That peace of mind is worth more than the numbers — though the numbers are excellent too. My villa has never looked better, and neither has my annual return.",
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=2070&auto=format&fit=crop"
+    image: "/homepage_villa/curated-5-lounge.webp"
   }
 ];
 
@@ -156,31 +156,32 @@ export default function Services() {
   }, [activeVideoIndex]);
 
   return (
-    <div className="services-page-shell w-full bg-[#FAFAF9] flex flex-col overflow-x-hidden">
+    <div className="services-page-shell w-full bg-[#FAF9F6] flex flex-col gap-y-[60px] md:gap-y-[80px] lg:gap-y-[120px]  overflow-x-hidden">
 
       {/* ============================================== */}
-      {/* 1. HERO / INTRO SECTION                        */}
+      {/* 1. HERO & INTRO GROUP (Wrapped to prevent gap) */}
       {/* ============================================== */}
-      <section className="services-hero-section w-full touch-pan-y">
-        <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center">
-          <motion.h1
-            className="text-[34px] md:text-6xl lg:text-[72px] leading-[1.25] md:leading-[1.18] lg:leading-[1.12] text-[#446B4A] tracking-tight font-medium text-center"
-            style={{ fontFamily: "var(--font-playfair), serif" }}
-          >
-            <CharacterReveal text="Your villa. Our obsession." />
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-[#5a5651] text-[13px] md:text-[16px] lg:text-[17px] leading-[1.7] lg:leading-[1.8] font-light max-w-[800px] text-center"
-            style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
-          >
-            You built something beautiful. Let us make sure the world knows it — and that it earns exactly what it deserves.
-          </motion.p>
-        </div>
-      </section>
+      <div className="w-full">
+        <section className="services-hero-section w-full touch-pan-y">
+          <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center">
+            <motion.h1
+              className="text-[34px] md:text-6xl lg:text-[72px] leading-[1.25] md:leading-[1.18] lg:leading-[1.12] text-[#446B4A] tracking-tight font-medium text-center"
+              style={{ fontFamily: "var(--font-playfair), serif" }}
+            >
+              <CharacterReveal text="Your villa. Our obsession." />
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="text-[#5a5651] text-[13px] md:text-[16px] lg:text-[17px] leading-[1.7] lg:leading-[1.8] font-light max-w-[800px] text-center"
+              style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
+            >
+              You built something beautiful. Let us make sure the world knows it — and that it earns exactly what it deserves.
+            </motion.p>
+          </div>
+        </section>
 
       {/* ============================================== */}
       {/* 2. STEWARDSHIP & BRIEFING GRID                 */}
@@ -279,6 +280,7 @@ export default function Services() {
           </div>
         </div>
       </section>
+      </div>
 
       {/* ============================================== */}
       {/* 3. CLIENT REVIEWS SECTION                      */}
@@ -361,7 +363,7 @@ export default function Services() {
         <motion.div
           className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat"
           style={{ 
-              backgroundImage: 'url(https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=2080&auto=format&fit=crop)',
+              backgroundImage: 'url(/homepage_villa/curated-6-exterior.webp)',
               y: yParallax
           }}
         />

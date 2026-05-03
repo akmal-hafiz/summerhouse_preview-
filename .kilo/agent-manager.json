@@ -1,9 +1,25 @@
 {
-  "worktrees": {},
-  "sessions": {},
+  "worktrees": {
+    "wt-1777778667693-1": {
+      "branch": "graceful-breakfast",
+      "path": "c:\\laragon\\www\\summerhouses-next\\.kilo\\worktrees\\graceful-breakfast",
+      "parentBranch": "master",
+      "createdAt": "2026-05-03T03:24:27.693Z",
+      "remote": "origin"
+    }
+  },
+  "sessions": {
+    "ses_214224e6fffevTWYdOpLmE8gDU": {
+      "worktreeId": "wt-1777778667693-1",
+      "createdAt": "2026-05-03T03:24:28.699Z"
+    }
+  },
   "tabOrder": {
     "local": [
       "pending:1"
     ]
-  }
+  },
+  "worktreeOrder": [
+    "wt-1777778667693-1"
+  ]
 }

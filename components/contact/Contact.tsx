@@ -84,7 +84,7 @@ const Contact = () => {
                 <motion.div 
                     className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat" 
                     style={{ 
-                        backgroundImage: 'url(https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=2080&auto=format&fit=crop)',
+                        backgroundImage: 'url(/homepage_villa/curated-7.webp)',
                         y: yParallax
                     }}
                 ></motion.div>
@@ -147,7 +147,7 @@ const Contact = () => {
                         className="w-[88%] lg:w-full aspect-square lg:aspect-[4/5] rounded-[32px] lg:rounded-[24px] overflow-hidden relative right-[-25px] lg:right-0 shadow-2xl"
                     >
                         <img 
-                            src="https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200&auto=format&fit=crop" 
+                            src="/homepage_villa/curated-8.webp" 
                             alt="Resort Pool" 
                             className="w-full h-full object-cover" 
                         />

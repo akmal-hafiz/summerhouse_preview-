@@ -66,7 +66,7 @@ const journalPages: JournalPage[] = [
                 category: 'Culture',
                 title: 'The Heart of Ubud: Sanctuaries & Local Lore',
                 description: 'A curated guide to the vibrant pulse surrounding Villa Zen. From the ancient pathways of the Monkey Forest to exclusive artisanal coffee tastings.',
-                image: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?q=80&w=800&auto=format&fit=crop',
+                image: '/homepage_villa/88east.webp',
                 alt: 'The Heart of Ubud',
             },
             {
@@ -82,7 +82,7 @@ const journalPages: JournalPage[] = [
             category: 'Lifestyle',
             title: 'The Art of Slow Living in Bali',
             description: 'Embracing the Balinese philosophy of time. How our villas are designed to disconnect you from the rush and reconnect you with the present moment.',
-            image: 'https://images.unsplash.com/photo-1542314831-c6a4d14b83cc?q=80&w=800&auto=format&fit=crop',
+            image: '/homepage_villa/CactusEstate.webp',
             alt: 'Slow Living',
         },
         secondary: [
@@ -90,13 +90,13 @@ const journalPages: JournalPage[] = [
                 category: 'Design',
                 title: 'Sustainable Luxury',
                 description: 'Exploring the boundaries of bamboo architecture and how local materials are shaping the future of high-end eco-resorts.',
-                image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop',
+                image: '/homepage_villa/officiana17.webp',
                 alt: 'Bamboo Architecture',
             },
             {
                 category: 'Exploration',
                 title: 'Secret Beaches of the Bukit',
-                image: 'https://images.unsplash.com/photo-1506501139174-099022df5260?q=80&w=800&auto=format&fit=crop',
+                image: '/homepage_villa/rumahmimosa.webp',
                 alt: 'Secret Beaches',
             },
         ],
@@ -133,9 +133,11 @@ const MaskedVideo = ({ src, className, delay = 0, parallaxSpeed = 0 }: { src: st
                 whileInView={{ clipPath: 'inset(0% 0% 0% 0%)', filter: 'blur(0px)', opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1.5, delay, ease: [0.33, 1, 0.68, 1] }}
-                className="h-full w-full"
+                className="relative h-full w-full"
             >
-                <motion.video style={{ y, scale: 1.15 }} src={src} autoPlay loop muted playsInline className="h-full w-full object-cover" />
+                <motion.div style={{ y, scale: 1.15 }} className="absolute inset-0 h-full w-full">
+                    <video src={src} autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover" />
+                </motion.div>
             </motion.div>
         </div>
     );
@@ -153,9 +155,11 @@ const MaskedImage = ({ src, alt, className, delay = 0, parallaxSpeed = 0 }: { sr
                 whileInView={{ clipPath: 'inset(0% 0% 0% 0%)', filter: 'blur(0px)', opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1.5, delay, ease: [0.33, 1, 0.68, 1] }}
-                className="h-full w-full"
+                className="relative h-full w-full"
             >
-                <motion.img style={{ y, scale: 1.15 }} src={src} alt={alt} className="h-full w-full object-cover" />
+                <motion.div style={{ y, scale: 1.15 }} className="absolute inset-0 h-full w-full">
+                    <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 25vw" />
+                </motion.div>
             </motion.div>
         </div>
     );
@@ -221,16 +225,18 @@ const StoryBlock = () => (
 const MobileBentoGallery = () => (
     <div className="-mx-4 flex w-screen snap-x snap-mandatory overflow-x-auto pb-12 md:-mx-6 lg:hidden">
         <div className="relative h-[300px] min-w-full snap-start px-4 md:h-[420px] md:px-6">
-            <div className="relative mx-auto flex h-full w-[90%] flex-col justify-center overflow-hidden rounded-[28px] border border-[#1a1a19]/5 bg-[#F2EDE3] px-7 py-12 md:px-10 md:py-14">
+            <div className="relative mx-auto grid h-full w-[90%] place-items-center overflow-hidden rounded-[28px] border border-[#1a1a19]/5 bg-[#F2EDE3] px-7 py-12 md:px-10 md:py-14">
                 <div className="pointer-events-none absolute -left-3 -top-5 select-none font-serif text-[160px] leading-none text-[#e8e0d0] opacity-50" style={{ fontFamily: fontSerif }}>
                     &quot;
                 </div>
-                <h3 className="relative z-10 w-[90%] text-[15px] font-medium leading-[1.35] tracking-tight text-[#1a1a19] md:max-w-[620px]" style={{ fontFamily: fontSans }}>
-                    Every corner is a decision. Every window is a frame. We don't just build villas — we compose spaces that let Bali speak for itself.
-                </h3>
-                <p className="relative z-10 mt-5 w-[85%] text-[15px] font-normal leading-[1.7] text-[#68635c] md:max-w-[680px]" style={{ fontFamily: fontSans }}>
-                    Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Because real luxury isn't about excess. It's about meaning.
-                </p>
+                <div style={{ transform: 'translateY(clamp(-8px, -1.5svh, -16px))' }}>
+                    <h3 className="relative z-10 w-[90%] text-[15px] font-medium leading-[1.35] tracking-tight text-[#1a1a19] md:max-w-[620px]" style={{ fontFamily: fontSans }}>
+                        Every corner is a decision. Every window is a frame. We don't just build villas — we compose spaces that let Bali speak for itself.
+                    </h3>
+                    <p className="relative z-10 mt-5 w-[85%] text-[15px] font-normal leading-[1.7] text-[#68635c] md:max-w-[680px]" style={{ fontFamily: fontSans }}>
+                        Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Because real luxury isn't about excess. It's about meaning.
+                    </p>
+                </div>
             </div>
             <motion.div animate={{ x: [0, 5, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -bottom-7 right-8 text-right text-[8px] font-bold uppercase tracking-[0.3em] text-[#1a1a19]/30 md:right-10">
                 Swipe to explore <span className="text-[10px]">→</span>
@@ -269,22 +275,24 @@ const MobileGalleryImage = ({ src, alt, label }: { src: string; alt: string; lab
 const DesktopGallery = () => (
     <div className="hidden grid-cols-2 gap-4 lg:grid">
         <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-                <MaskedImage src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop" alt="Villa Detail" className="aspect-square rounded-[24px]" parallaxSpeed={-0.2} delay={0.1} />
+            <div className="flex flex-col gap-4">
+                <MaskedImage src="/homepage_villa/TKR03549-HDR.webp" alt="Villa Detail" className="aspect-square rounded-[24px]" parallaxSpeed={-0.2} delay={0.1} />
                 <MaskedVideo src="/video/video1.mp4" className="aspect-square rounded-[24px]" parallaxSpeed={0.15} delay={0.2} />
             </div>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
                 <MaskedVideo src="/video/herosection_summerhouse.mp4" className="aspect-square rounded-[24px]" parallaxSpeed={0.25} delay={0.3} />
-                <MaskedImage src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=800&auto=format&fit=crop" alt="Villa Kitchen" className="aspect-[4/5] rounded-[24px]" parallaxSpeed={-0.1} delay={0.4} />
+                <MaskedImage src="/homepage_villa/villaarta.webp" alt="Villa Kitchen" className="aspect-square rounded-[24px]" parallaxSpeed={-0.1} delay={0.4} />
             </div>
         </div>
-        <div className="flex min-h-[480px] flex-col justify-center rounded-[24px] border border-[#1a1a19]/5 bg-[#F2EDE3] px-12 py-12">
-            <h3 className="text-[28px] font-medium leading-[1.35] tracking-tight text-[#1a1a19]" style={{ fontFamily: fontSans }}>
-                &quot;Every corner is a decision. Every window is a frame. We compose spaces that let Bali speak for itself.&quot;
-            </h3>
-            <p className="mt-5 text-[16px] font-normal leading-[1.7] text-[#68635c]" style={{ fontFamily: fontSans }}>
-                Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Real luxury isn't about excess. It's about meaning. And meaning lasts long after check-out.
-            </p>
+        <div className="grid min-h-[480px] place-items-center rounded-[24px] border border-[#1a1a19]/5 bg-[#F2EDE3] px-12 py-12">
+            <div style={{ transform: 'translateY(clamp(-12px, -2svh, -24px))' }}>
+                <h3 className="text-[28px] font-medium leading-[1.35] tracking-tight text-[#1a1a19]" style={{ fontFamily: fontSans }}>
+                    &quot;Every corner is a decision. Every window is a frame. We compose spaces that let Bali speak for itself.&quot;
+                </h3>
+                <p className="mt-5 text-[16px] font-normal leading-[1.7] text-[#68635c]" style={{ fontFamily: fontSans }}>
+                    Raw stone, reclaimed wood, hand-woven textiles — every material is chosen with intention. Real luxury isn't about excess. It's about meaning. And meaning lasts long after check-out.
+                </p>
+            </div>
         </div>
     </div>
 );
@@ -299,7 +307,7 @@ const GallerySection = () => (
 );
 
 const ExperienceSection = ({ activeVideoIndex, progress, videoRef, onVideoChange, onTimeUpdate, onVideoEnd }: { activeVideoIndex: number; progress: number; videoRef: React.RefObject<HTMLVideoElement | null>; onVideoChange: (index: number) => void; onTimeUpdate: () => void; onVideoEnd: () => void }) => (
-    <>
+    <div className="w-full">
         <section className="about-hero-section w-full touch-pan-y">
             <div className={`${containerClass} about-hero-copy flex flex-col items-center text-center`}>
                 <motion.h1 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: 'easeOut' }} className="text-[34px] font-medium leading-[1.25] tracking-tight text-[#446B4A] md:text-6xl md:leading-[1.18] lg:text-[72px] lg:leading-[1.12]" style={{ fontFamily: fontSerif }}>
@@ -315,7 +323,7 @@ const ExperienceSection = ({ activeVideoIndex, progress, videoRef, onVideoChange
             <ServiceNavigation activeVideoIndex={activeVideoIndex} progress={progress} onChange={onVideoChange} />
             <HeroVideo videoRef={videoRef} onTimeUpdate={onTimeUpdate} onEnded={onVideoEnd} activeVideoIndex={activeVideoIndex} />
         </section>
-    </>
+    </div>
 );
 
 const BookingFieldGroup = ({ field, isLast, compact = false }: { field: BookingField; isLast: boolean; compact?: boolean }) => (
@@ -328,9 +336,9 @@ const BookingFieldGroup = ({ field, isLast, compact = false }: { field: BookingF
 );
 
 const BookingSection = ({ bookingRef, yParallax }: { bookingRef: React.RefObject<HTMLElement | null>; yParallax: any }) => (
-    <section ref={bookingRef} className="services-cta-section relative flex min-h-[560px] w-full items-center justify-center overflow-hidden touch-pan-y lg:min-h-[760px]">
+    <section ref={bookingRef} className="services-cta-section relative flex min-h-[440px] w-full items-center justify-center overflow-hidden touch-pan-y lg:min-h-[580px]">
         <div className="absolute inset-0 z-0 overflow-hidden">
-            <motion.img style={{ y: yParallax, scale: 1.15 }} src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=2000&auto=format&fit=crop" className="absolute -top-[15%] h-[130%] w-full object-cover" alt="Villa Pool" />
+            <motion.img style={{ y: yParallax, scale: 1.15 }} src="/homepage_villa/VillaZen.webp" className="absolute -top-[15%] h-[130%] w-full object-cover" alt="Villa Pool" />
             <div className="absolute inset-0 bg-black/50 lg:bg-black/40" />
         </div>
         <div className={`${containerClass} relative z-10 flex flex-col items-center gap-10 lg:gap-16`}>
@@ -390,33 +398,33 @@ const JournalDropdown = ({ activeEdition, isOpen, onToggle, onSelect, variant }:
 };
 
 const DesktopJournalPage = ({ page }: { page: JournalPage }) => (
-    <div className="grid w-full grid-cols-12 gap-12" style={{ backfaceVisibility: 'hidden' }}>
+    <div className="grid w-full min-h-[800px] grid-cols-12 gap-10 lg:px-8" style={{ backfaceVisibility: 'hidden' }}>
         <article className="group col-span-7 flex cursor-pointer flex-col">
             <div className="aspect-[820/540] overflow-hidden rounded-[24px] bg-[#1a1a19]">
                 <img src={page.featured.image} alt={page.featured.alt} className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105" />
             </div>
             <span className="mt-8 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">{page.featured.category}</span>
-            <h3 className="mt-2 text-[36px] font-medium leading-[1.25] tracking-tight text-white" style={{ fontFamily: fontSans }}>
+            <h3 className="mt-2 text-[32px] font-medium leading-[1.25] tracking-tight text-white lg:text-[32px]" style={{ fontFamily: fontSans }}>
                 {page.featured.title}
             </h3>
             {page.featured.description && (
-                <p className="mt-4 max-w-[90%] text-[16px] leading-[1.7] text-white/60" style={{ fontFamily: fontSans }}>
+                <p className="mt-3 max-w-[90%] text-[14px] leading-[1.7] text-white/60" style={{ fontFamily: fontSans }}>
                     {page.featured.description}
                 </p>
             )}
         </article>
-        <div className="col-span-5 flex flex-col gap-12">
+        <div className="col-span-5 flex flex-col gap-8">
             {page.secondary.map((article) => (
                 <article key={article.title} className="group flex cursor-pointer flex-col">
                     <div className="aspect-[16/9] overflow-hidden rounded-[24px] bg-[#1a1a19]">
                         <img src={article.image} alt={article.alt} className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105" />
                     </div>
-                    <span className="mt-6 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">{article.category}</span>
-                    <h3 className="mt-2 text-[28px] font-medium leading-[1.2] tracking-tight text-white" style={{ fontFamily: fontSans }}>
+                    <span className="mt-5 text-[9px] font-bold uppercase tracking-[0.15em] text-white/40">{article.category}</span>
+                    <h3 className="mt-2 text-[22px] font-medium leading-[1.2] tracking-tight text-white" style={{ fontFamily: fontSans }}>
                         {article.title}
                     </h3>
                     {article.description && (
-                        <p className="mt-4 text-[15px] leading-[1.6] text-white/60" style={{ fontFamily: fontSans }}>
+                        <p className="mt-2 text-[13px] leading-[1.6] text-white/60" style={{ fontFamily: fontSans }}>
                             {article.description}
                         </p>
                     )}
@@ -464,7 +472,7 @@ const MobileJournalPage = ({ page }: { page: JournalPage }) => (
 );
 
 const JournalSection = ({ activeEdition, isDesktopOpen, isMobileOpen, isDesktopFlipped, isMobileFlipped, onDesktopToggle, onMobileToggle, onDesktopSelect, onMobileSelect }: { activeEdition: Edition; isDesktopOpen: boolean; isMobileOpen: boolean; isDesktopFlipped: boolean; isMobileFlipped: boolean; onDesktopToggle: () => void; onMobileToggle: () => void; onDesktopSelect: (edition: Edition) => void; onMobileSelect: (edition: Edition) => void }) => (
-    <section className="services-rhythm-section w-full bg-[#050505] touch-pan-y">
+    <section className="services-rhythm-section w-full bg-[#050505] touch-pan-y min-h-[80svh] flex flex-col justify-center">
         <div className={containerClass}>
             <div className="flex flex-col gap-10">
                 <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
@@ -500,9 +508,9 @@ const JournalSection = ({ activeEdition, isDesktopOpen, isMobileOpen, isDesktopF
 
 const PolaroidStack = () => (
     <div className="relative flex h-[140px] w-[180px] items-center justify-center md:h-[180px] md:w-[260px]">
-        <PolaroidCard className="left-0 z-10 -rotate-12 hover:rotate-0" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=400&auto=format&fit=crop" alt="Villa 1" />
-        <PolaroidCard className="right-0 z-10 rotate-12 hover:rotate-0" src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=400&auto=format&fit=crop" alt="Villa 2" />
-        <PolaroidCard className="z-20 hover:scale-110" src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=400&auto=format&fit=crop" alt="Villa 3" center />
+        <PolaroidCard className="left-0 z-10 -rotate-12 hover:rotate-0" src="/homepage_villa/curated-1-main.webp" alt="Villa 1" />
+        <PolaroidCard className="right-0 z-10 rotate-12 hover:rotate-0" src="/homepage_villa/curated-2-detail.webp" alt="Villa 2" />
+        <PolaroidCard className="z-20 hover:scale-110" src="/homepage_villa/curated-3-corner.webp" alt="Villa 3" center />
     </div>
 );
 
@@ -516,8 +524,8 @@ const PolaroidCard = ({ src, alt, className, center = false }: { src: string; al
 );
 
 const PolaroidCTA = () => (
-    <section className="services-rhythm-section w-full bg-[#FAFAF9] touch-pan-y">
-        <div className={`${containerClass} flex flex-col items-center justify-center gap-8 text-center`}>
+    <section className="services-rhythm-section w-full min-h-[500px] bg-[#FAFAF9] touch-pan-y lg:grid lg:place-items-center">
+        <div className={`${containerClass} flex flex-col items-center justify-center gap-8 text-center`} style={{ transform: 'translateY(clamp(-16px, -2svh, -32px))' }}>
             <div className="flex w-full max-w-[1200px] flex-col flex-wrap items-center justify-center gap-4 whitespace-normal md:gap-8 lg:flex-row lg:whitespace-nowrap">
                 <h2 className="text-[48px] font-medium tracking-tight text-[#1a1a19] md:text-7xl lg:text-[80px]" style={{ fontFamily: fontSans }}>
                     Stay
@@ -603,12 +611,14 @@ const About = () => {
     }, [activeVideoIndex]);
 
     return (
-        <div className="services-page-shell flex w-full flex-col items-center overflow-x-hidden bg-[#FAFAF9]">
+        <div className="services-page-shell flex w-full flex-col items-center gap-y-[60px] md:gap-y-[80px] lg:gap-y-[110px] overflow-x-hidden bg-[#FAFAF9]">
             <ExperienceSection activeVideoIndex={activeVideoIndex} progress={progress} videoRef={videoRef} onVideoChange={(index) => { setActiveVideoIndex(index); setProgress(0); }} onTimeUpdate={handleTimeUpdate} onVideoEnd={handleVideoEnd} />
             <StoryBlock />
             <GallerySection />
-            <BookingSection bookingRef={bookingRef} yParallax={yParallax} />
-            <JournalSection activeEdition={activeEdition} isDesktopOpen={isJournalDropdownOpen} isMobileOpen={isMobileJournalDropdownOpen} isDesktopFlipped={isDesktopJournalFlipped} isMobileFlipped={isMobileJournalFlipped} onDesktopToggle={() => setIsJournalDropdownOpen((open) => !open)} onMobileToggle={() => setIsMobileJournalDropdownOpen((open) => !open)} onDesktopSelect={(edition) => setEdition(edition, 'desktop')} onMobileSelect={(edition) => setEdition(edition, 'mobile')} />
+            <div className="w-full">
+                <BookingSection bookingRef={bookingRef} yParallax={yParallax} />
+                <JournalSection activeEdition={activeEdition} isDesktopOpen={isJournalDropdownOpen} isMobileOpen={isMobileJournalDropdownOpen} isDesktopFlipped={isDesktopJournalFlipped} isMobileFlipped={isMobileJournalFlipped} onDesktopToggle={() => setIsJournalDropdownOpen((open) => !open)} onMobileToggle={() => setIsMobileJournalDropdownOpen((open) => !open)} onDesktopSelect={(edition) => setEdition(edition, 'desktop')} onMobileSelect={(edition) => setEdition(edition, 'mobile')} />
+            </div>
             <PolaroidCTA />
         </div>
     );

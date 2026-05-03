@@ -53,19 +53,26 @@
     --services-step-2: calc(var(--services-step-1) * 1.618);
     --services-step-3: calc(var(--services-step-2) * 1.618);
     --services-step-4: calc(var(--services-step-3) * 1.618);
+
+    /* Golden ratio optical center system */
+    --golden: 1.618;
+    /* Responsive section spacing */
+    --section-padding: 60px;
+    /* Hero-to-body opener gap (kept moderate so header doesn't feel disconnected) */
+    --hero-body-gap: 24px;
   }
 
   .services-hero-section {
     display: grid;
     align-items: center;
-    min-height: clamp(620px, 92svh, 860px);
-    padding-top: calc(var(--services-nav-height) + var(--services-space-phi));
-    padding-bottom: var(--services-space-phi-lg);
+    min-height: clamp(520px, 72svh, 680px);
+    padding-top: calc(var(--services-nav-height) + var(--services-space-1));
+    padding-bottom: var(--hero-body-gap); /* Tight connection to next section */
   }
 
   .services-hero-copy {
     gap: var(--services-step-2);
-    transform: translate3d(0, clamp(10px, 1.618svh, 24px), 0);
+    transform: translate3d(0, clamp(8px, 1.2svh, 18px), 0);
   }
 
   .services-hero-copy > * {
@@ -77,7 +84,7 @@
     align-items: center;
     min-height: clamp(520px, 72svh, 680px);
     padding-top: calc(var(--services-nav-height) + var(--services-space-1));
-    padding-bottom: var(--services-space-phi);
+    padding-bottom: var(--hero-body-gap); /* Tight connection to video */
   }
 
   .about-hero-copy {
@@ -90,17 +97,23 @@
   }
 
   .about-video-section {
-    padding-bottom: var(--services-space-phi);
+    padding-bottom: var(--section-padding);
   }
 
   .services-rhythm-section {
-    padding-top: var(--services-space-phi-lg);
-    padding-bottom: var(--services-space-phi-lg);
+    padding-top: var(--section-padding);
+    padding-bottom: calc(var(--section-padding) * var(--golden));
   }
 
   .services-cta-section {
-    padding-top: calc(var(--services-space-phi-lg) * 1.12);
-    padding-bottom: calc(var(--services-space-phi-lg) * 1.12);
+    padding-top: var(--section-padding);
+    padding-bottom: calc(var(--section-padding) * var(--golden));
+  }
+
+  /* Reusable optical center utility — apply to any section */
+  .optical-center {
+    padding-top: var(--section-padding);
+    padding-bottom: calc(var(--section-padding) * var(--golden));
   }
 
   .services-content-grid {
@@ -162,10 +175,36 @@
     .services-page-shell {
       --services-space-1: clamp(44px, 8svh, 64px);
       --services-step-0: clamp(9px, 2.4vw, 12px);
+      --section-padding: 60px;
+      --hero-body-gap: 20px;
     }
 
     .services-hero-section {
-      min-height: clamp(560px, 86svh, 720px);
+      min-height: clamp(360px, 55svh, 480px);
+      padding-top: calc(var(--services-nav-height) + 48px);
+      padding-bottom: var(--hero-body-gap);
+    }
+
+    .about-hero-section {
+      min-height: clamp(360px, 55svh, 480px);
+      padding-top: calc(var(--services-nav-height) + 48px);
+      padding-bottom: var(--hero-body-gap);
+    }
+  }
+
+  /* Tablet breakpoint */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .services-page-shell {
+      --section-padding: 80px;
+      --hero-body-gap: 28px;
+    }
+  }
+
+  /* Desktop breakpoint */
+  @media (min-width: 1024px) {
+    .services-page-shell {
+      --section-padding: 110px;
+      --hero-body-gap: 32px;
     }
   }
 

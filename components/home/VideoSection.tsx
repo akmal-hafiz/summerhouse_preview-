@@ -58,7 +58,7 @@ const VideoSection = () => {
                         loop
                         muted
                         playsInline
-                        poster="https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop"
+                        poster="/homepage_villa/curated-1-main.webp"
                     >
                         <source src="/video1.mp4" type="video/mp4" />
                     </video>
