@@ -162,8 +162,8 @@ export default function Services() {
       {/* 1. HERO & INTRO GROUP (Wrapped to prevent gap) */}
       {/* ============================================== */}
       <div className="w-full">
-        <section className="services-hero-section w-full touch-pan-y">
-          <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center">
+        <section className="services-hero-section w-full touch-pan-y min-h-[50vh] flex flex-col justify-center items-center">
+          <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center -translate-y-6 lg:-translate-y-12">
             <motion.h1
               className="text-[34px] md:text-6xl lg:text-[72px] leading-[1.25] md:leading-[1.18] lg:leading-[1.12] text-[#446B4A] tracking-tight font-medium text-center"
               style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -188,10 +188,10 @@ export default function Services() {
       {/* ============================================== */}
       <section className="services-rhythm-section w-full touch-pan-y">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="services-content-grid grid grid-cols-1 lg:grid-cols-12 items-start">
+          <div className="services-content-grid grid grid-cols-1 lg:grid-cols-[1.618fr_1fr] gap-12 lg:gap-[6vw] items-center">
 
             {/* Left: Video Area */}
-            <div className="lg:col-span-7 flex flex-col">
+            <div className="flex flex-col">
               {/* Top Navigation Bar */}
               <div className="w-full bg-[#FAFAF9] h-[50px] lg:h-[70px] flex items-center justify-between px-2 md:px-4 z-20 shadow-sm border border-[#1a1a19]/5 rounded-t-[12px]">
                 <div className="w-full flex items-center justify-between h-full">
@@ -240,7 +240,7 @@ export default function Services() {
             </div>
 
             {/* Right: Briefing Area */}
-            <div className="lg:col-span-5 flex flex-col lg:pt-24">
+            <div className="flex flex-col">
               <div className="services-brief-panel border-l border-[#C7A58A]/30 pl-6 md:pl-8 lg:pl-12 flex flex-col">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -287,10 +287,10 @@ export default function Services() {
       {/* ============================================== */}
       <section className="services-rhythm-section w-full touch-pan-y">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="services-review-layout flex flex-col-reverse lg:flex-row items-center">
+          <div className="services-review-layout flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-[4vw]">
 
             {/* Left: Text */}
-            <div className="services-review-copy w-full lg:w-5/12 flex flex-col justify-center">
+            <div className="services-review-copy w-full lg:w-[38.2%] flex flex-col justify-center">
               <span className="text-[14px] text-[#1a1a19] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                 What villa owners say
               </span>
@@ -317,7 +317,7 @@ export default function Services() {
             </div>
 
             {/* Right: Image */}
-            <div className="w-full lg:w-7/12 aspect-[4/3] lg:aspect-[16/10] relative rounded-[16px] overflow-hidden bg-[#e0dcd5]">
+            <div className="w-full lg:w-[61.8%] aspect-[4/3] lg:aspect-[16/10] relative rounded-[16px] overflow-hidden bg-[#e0dcd5]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`img-${activeTestimonial.id}`}
@@ -375,7 +375,7 @@ export default function Services() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="services-cta-copy flex flex-col items-center lg:items-start"
+            className="services-cta-copy flex flex-col items-center lg:items-start -translate-y-6 lg:-translate-y-12"
           >
             <span className="text-white text-[13px] md:text-[16px] block font-medium tracking-wide" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
               For villa owners
