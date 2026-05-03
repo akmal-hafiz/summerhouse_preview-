@@ -272,7 +272,7 @@ const VillaCollection = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="villa-card-stage bg-black mt-[100px]"
+                        className="villa-card-stage bg-transparent mt-[100px]"
                     >
                         <div className="villa-card-cluster">
                         {/* --- KARTU VILLA 1 --- */}
