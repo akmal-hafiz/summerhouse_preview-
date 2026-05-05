@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { getArticleBySlug, getAllSlugs } from "@/data/articles";
+import { notFound } from "next/navigation";
 import ArticlePage from "@/components/journal/ArticlePage";
+import {
+  getAllSlugs,
+  getArticleBySlug,
+  getRelatedArticles,
+} from "@/data/articles";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
 }
 
@@ -16,23 +21,74 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!article) {
     return {
-      title: "Article Not Found — Summerhouse Journal",
-      description: "This story hasn't been written yet.",
+      title: "Article Not Found | Summerhouses Journal",
+      description: "This Summerhouses Journal story is not available.",
     };
   }
 
+  const title = `${article.title} | Summerhouses Journal`;
+
   return {
-    title: `${article.title} — Summerhouse Journal`,
+    title,
     description: article.excerpt,
+    alternates: {
+      canonical: `/journal/${article.slug}`,
+    },
     openGraph: {
-      title: article.title,
+      title,
       description: article.excerpt,
-      images: [{ url: article.heroImage }],
+      type: "article",
+      publishedTime: article.date,
+      authors: [article.author.name],
+      images: [
+        {
+          url: article.heroImage,
+          alt: article.heroAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: article.excerpt,
+      images: [article.heroImage],
     },
   };
 }
 
 export default async function JournalArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  return <ArticlePage slug={slug} />;
+  const article = getArticleBySlug(slug);
+
+  if (!article) {
+    notFound();
+  }
+
+  const relatedArticles = getRelatedArticles(article.slug, 3);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.excerpt,
+    image: article.heroImage,
+    datePublished: article.date,
+    author: {
+      "@type": "Organization",
+      name: article.author.name,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Summerhouses Bali",
+    },
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticlePage article={article} relatedArticles={relatedArticles} />
+    </>
+  );
 }

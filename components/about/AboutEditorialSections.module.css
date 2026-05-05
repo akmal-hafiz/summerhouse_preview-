@@ -1,0 +1,754 @@
+.aboutShell {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-x: hidden;
+  background: #f6f1e8;
+}
+
+.brandStory,
+.villaStory {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  color: #1f1f1d;
+  background: #f6f1e8;
+}
+
+.brandStory {
+  padding: 7.5rem 1.25rem 7rem;
+}
+
+.brandStory::before {
+  content: "";
+  position: absolute;
+  right: -11rem;
+  top: 16rem;
+  width: 35rem;
+  height: 35rem;
+  border: 1px solid rgba(68, 107, 74, 0.12);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.brandStory::after {
+  content: "";
+  position: absolute;
+  left: -13rem;
+  bottom: 4rem;
+  width: 30rem;
+  height: 30rem;
+  border: 1px solid rgba(143, 118, 86, 0.13);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.mastheadShell,
+.villaShell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 88rem);
+  margin-inline: auto;
+}
+
+.mastheadTopline {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(31, 31, 29, 0.14);
+  color: #556c55;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.mastheadTitle {
+  max-width: 70rem;
+  margin: 2.4rem auto 0;
+  color: #171715;
+  text-align: center;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 10.5rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.78;
+}
+
+.mastheadTitle em {
+  display: block;
+  color: #3f6a49;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.mastheadIntro {
+  max-width: 42rem;
+  margin: 2.5rem auto 0;
+  text-align: center;
+}
+
+.introLead {
+  margin: 0;
+  color: #22211f;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 2.35rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.introLead em {
+  display: block;
+  color: #3f6a49;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.introText {
+  margin: 1.25rem auto 0;
+  max-width: 39rem;
+  color: #686158;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.9;
+}
+
+.textLink {
+  display: inline-flex;
+  position: relative;
+  width: max-content;
+  margin-top: 1.6rem;
+  color: #1f1f1d;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.textLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.45rem;
+  width: 2.15rem;
+  height: 1px;
+  background: currentColor;
+  transition: width 240ms ease;
+}
+
+.textLink:hover::after {
+  width: 100%;
+}
+
+.mastheadImageRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 13.5rem;
+  gap: 1.5rem;
+  align-items: end;
+  margin-top: 4.8rem;
+}
+
+.mediaFrame {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  background: #d7cec0;
+}
+
+.mediaImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms ease;
+}
+
+.mediaFrame:hover .mediaImage {
+  transform: scale(1.025);
+}
+
+.panoramaFrame {
+  aspect-ratio: 16 / 8.4;
+  border-radius: 0.9rem;
+  box-shadow: 0 2.2rem 5rem rgba(58, 49, 38, 0.12);
+}
+
+.mastheadNote {
+  padding: 1rem 0 0 1.25rem;
+  border-top: 1px solid rgba(31, 31, 29, 0.18);
+  color: #5e584f;
+}
+
+.mastheadNote span,
+.chapter,
+.villaNumber,
+.villaLabel,
+.villaIndex span {
+  display: block;
+  color: #8d7554;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.55;
+  text-transform: uppercase;
+}
+
+.mastheadNote p {
+  margin: 0.75rem 0 0;
+  color: #5e584f;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.12;
+}
+
+.villaStory {
+  padding: 6.5rem 1.25rem 8rem;
+  background: linear-gradient(180deg, #f6f1e8 0%, #efe7da 100%);
+}
+
+.villaStory::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(31, 31, 29, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 31, 29, 0.035) 1px, transparent 1px);
+  background-size: 100% 8rem, 8rem 100%;
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.villaHeading {
+  max-width: 46rem;
+  margin: 0 auto 4rem;
+  text-align: center;
+}
+
+.chapter {
+  margin: 0 0 0.95rem;
+  color: #3f6a49;
+}
+
+.villaTitle {
+  margin: 0;
+  color: #1f1f1d;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 4.9rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.92;
+}
+
+.villaTitle em {
+  display: block;
+  color: #3f6a49;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.villaEditorialGrid {
+  display: grid;
+  grid-template-columns: 19rem minmax(0, 1fr);
+  gap: 4.5rem;
+  align-items: start;
+}
+
+.villaCopy {
+  position: sticky;
+  top: 7.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(31, 31, 29, 0.18);
+}
+
+.villaNumber {
+  color: #3f6a49;
+}
+
+.villaLabel {
+  margin-top: 3rem;
+  color: #8d7554;
+}
+
+.villaCopy h4 {
+  margin: 0.25rem 0 1rem;
+  color: #1f1f1d;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 2.3rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+
+.villaCopy p {
+  margin: 0;
+  color: #625c54;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.85;
+}
+
+.villaImageStack {
+  min-width: 0;
+}
+
+.villaMainFrame {
+  aspect-ratio: 16 / 10;
+  border-radius: 0.9rem;
+  box-shadow: 0 2.4rem 5rem rgba(58, 49, 38, 0.13);
+}
+
+.villaLowerRow {
+  display: grid;
+  grid-template-columns: 17.5rem minmax(0, 1fr);
+  gap: 1.2rem;
+  align-items: end;
+  width: min(100%, 42rem);
+  margin-top: 1.2rem;
+  margin-left: auto;
+}
+
+.villaDetailFrame {
+  aspect-ratio: 4 / 3.8;
+  border-radius: 0.8rem;
+}
+
+.villaIndex {
+  padding: 1.25rem 0 0;
+  border-top: 1px solid rgba(31, 31, 29, 0.18);
+}
+
+.villaIndex strong {
+  display: block;
+  max-width: 22rem;
+  margin-top: 0.75rem;
+  color: #1f1f1d;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.9rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.philosophyStory {
+  width: 100%;
+  padding: 7rem 1.25rem;
+  color: #1f1f1d;
+  background: #faf8f3;
+}
+
+.philosophyShell {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(24rem, 0.72fr);
+  gap: 5rem;
+  width: min(100%, 78rem);
+  margin-inline: auto;
+  align-items: start;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(31, 31, 29, 0.14);
+}
+
+.philosophyCopy h3 {
+  max-width: 34rem;
+  margin: 0;
+  color: #1f1f1d;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 5rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.9;
+}
+
+.philosophyCopy h3 em {
+  display: block;
+  color: #3f6a49;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.philosophyCopy > p:last-child {
+  max-width: 38rem;
+  margin: 1.55rem 0 0;
+  color: #625c54;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0;
+  line-height: 1.9;
+}
+
+.philosophyServices {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid rgba(31, 31, 29, 0.12);
+}
+
+.philosophyService {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: center;
+  min-height: 5.1rem;
+  border-bottom: 1px solid rgba(31, 31, 29, 0.12);
+}
+
+.philosophyService span {
+  color: #8d7554;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+.philosophyService p {
+  margin: 0;
+  color: #292826;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.moreStay {
+  position: relative;
+  width: 100%;
+  height: 50rem;
+  overflow: hidden;
+  background: #1f1f1d;
+  color: #fffaf1;
+}
+
+.moreStayMedia,
+.moreStayImageWrap,
+.moreStayOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.moreStayImageWrap {
+  width: 100%;
+  height: 100%;
+}
+
+.moreStayImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.moreStayOverlay {
+  background:
+    linear-gradient(180deg, rgba(31, 31, 29, 0.22) 0%, rgba(31, 31, 29, 0.1) 42%, rgba(31, 31, 29, 0.38) 100%),
+    rgba(31, 31, 29, 0.04);
+}
+
+.moreStayBrand {
+  position: absolute;
+  top: 2.5rem;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  padding-inline: 3rem;
+}
+
+.moreStayBrand span {
+  color: #fffaf1;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.moreStayContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8.5rem 4rem 5rem;
+}
+
+.moreStayWords {
+  position: relative;
+  display: grid;
+  min-height: 24rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.moreStayWord {
+  margin: 0;
+  color: #fffaf1;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 7rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 0.9;
+  text-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.18);
+}
+
+.moreStayWordLeft {
+  justify-self: start;
+}
+
+.moreStayWordCenter {
+  justify-self: center;
+}
+
+.moreStayWordRight {
+  justify-self: end;
+  font-style: italic;
+}
+
+.moreStayText {
+  max-width: 48rem;
+  margin: 0 auto;
+  color: #fffaf1;
+  text-align: center;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 2.25rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.18;
+  text-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1120px) {
+  .brandStory {
+    padding-top: 6rem;
+  }
+
+  .mastheadTitle {
+    font-size: 7.25rem;
+  }
+
+  .mastheadImageRow,
+  .villaEditorialGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mastheadNote {
+    max-width: 28rem;
+    margin-left: auto;
+  }
+
+  .villaCopy {
+    position: static;
+    max-width: 38rem;
+  }
+
+  .villaTitle {
+    font-size: 4.1rem;
+  }
+
+  .philosophyShell {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .philosophyCopy h3 {
+    font-size: 4.1rem;
+  }
+
+  .moreStay {
+    height: 42rem;
+  }
+
+  .moreStayContent {
+    padding: 7rem 2.5rem 4rem;
+  }
+
+  .moreStayWord {
+    font-size: 5.8rem;
+  }
+
+  .moreStayText {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .brandStory {
+    padding: 5rem 1rem 5.5rem;
+  }
+
+  .villaStory {
+    padding: 5.25rem 1rem 6rem;
+  }
+
+  .philosophyStory {
+    padding: 5.5rem 1rem;
+  }
+
+  .mastheadTopline {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .mastheadTitle {
+    margin-top: 2rem;
+    font-size: 4.2rem;
+    line-height: 0.86;
+  }
+
+  .mastheadIntro {
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .introLead {
+    font-size: 1.95rem;
+  }
+
+  .introText {
+    font-size: 0.95rem;
+  }
+
+  .mastheadImageRow {
+    margin-top: 3rem;
+  }
+
+  .panoramaFrame,
+  .villaMainFrame {
+    aspect-ratio: 4 / 4.7;
+    border-radius: 0.75rem;
+  }
+
+  .mastheadNote {
+    margin-left: 0;
+  }
+
+  .mastheadNote p {
+    font-size: 1.25rem;
+  }
+
+  .villaHeading {
+    margin-bottom: 3rem;
+    text-align: left;
+  }
+
+  .villaTitle {
+    font-size: 3.15rem;
+  }
+
+  .villaEditorialGrid {
+    gap: 3rem;
+  }
+
+  .villaLowerRow {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .villaDetailFrame {
+    aspect-ratio: 16 / 11;
+  }
+
+  .villaIndex strong {
+    font-size: 1.55rem;
+  }
+
+  .philosophyShell {
+    gap: 2.5rem;
+    padding-top: 1.1rem;
+  }
+
+  .philosophyCopy h3 {
+    font-size: 3.1rem;
+  }
+
+  .philosophyCopy > p:last-child {
+    font-size: 0.95rem;
+  }
+
+  .philosophyService {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    min-height: 4.7rem;
+  }
+
+  .philosophyService p {
+    font-size: 1.35rem;
+  }
+
+  .moreStay {
+    height: 32rem;
+  }
+
+  .moreStayBrand {
+    top: 1.5rem;
+    padding-inline: 1.5rem;
+  }
+
+  .moreStayBrand span {
+    font-size: 1rem;
+  }
+
+  .moreStayContent {
+    padding: 5.5rem 1.25rem 2.5rem;
+  }
+
+  .moreStayWords {
+    min-height: 16rem;
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .moreStayWord {
+    font-size: 3rem;
+  }
+
+  .moreStayWordLeft {
+    justify-self: start;
+  }
+
+  .moreStayWordCenter {
+    justify-self: center;
+  }
+
+  .moreStayWordRight {
+    justify-self: end;
+  }
+
+  .moreStayText {
+    max-width: 22rem;
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .mastheadTitle {
+    font-size: 3.55rem;
+  }
+
+  .villaTitle {
+    font-size: 2.75rem;
+  }
+
+  .philosophyCopy h3 {
+    font-size: 2.7rem;
+  }
+
+  .moreStayWord {
+    font-size: 2.6rem;
+  }
+}
