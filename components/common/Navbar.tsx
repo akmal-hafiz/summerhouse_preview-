@@ -205,7 +205,7 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                     </div>
 
                     {/* 2. CENTER PILLAR */}
-                    <div className="hidden lg:flex flex-1 items-center justify-center gap-10">
+                    <div className="hidden lg:flex flex-1 items-center justify-center gap-10 xl:translate-x-[25px] 2xl:translate-x-[55px]">
                         {desktopItems.map((item, index) => {
                             if (item.label === "Villas") {
                                 return <ShiftingDropDown key={index} scrolled={isSolid} />;
@@ -229,7 +229,7 @@ const Navbar = ({ alwaysSolid = false }: NavbarProps) => {
                     </div>
 
                     {/* 3. RIGHT PILLAR */}
-                    <div className="flex-1 lg:flex-none lg:w-[280px] flex items-center justify-end">
+                    <div className="flex-1 lg:flex-none lg:w-[280px] flex items-center justify-end xl:translate-x-[10px] 2xl:translate-x-[89px]">
                         <Link
                             href="#book"
                             className={`group hidden md:flex items-center justify-center w-[170px] h-[48px] rounded-full transition-all duration-500

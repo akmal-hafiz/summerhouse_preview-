@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const Introduction = () => {
     return (
-        <section className="w-full bg-[#FAF9F6] z-20 flex items-center min-h-[90dvh]  md:min-h-[90dvh] lg:min-h-[70dvh]  pt-[140px] pb-[120px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
+        <section className="w-full bg-[#FAF9F6] z-20 flex items-center min-h-[90dvh]  md:min-h-[90dvh] lg:min-h-[80dvh]  pt-[140px] pb-[120px] lg:pt-[180px] lg:pb-[180px] relative mt-[80px] lg:mt-[150px]">
 
 
 
@@ -35,7 +35,7 @@ const Introduction = () => {
             {/* ✅ DIUBAH DI SINI */}
             <div className="w-full max-w-[1400px] min-h-[300px] mx-auto px-10 md:px-24 lg:px-24">
 
-                <div className="grid grid-cols-1 -translate-y-4 md:-translate-y-8 lg:translate-y-0 md:grid-cols-12 gap-8 lg:gap-16 items-start">
+                <div className="grid grid-cols-1 -translate-y-4 md:-translate-y-8 lg:translate-y-0 md:grid-cols-12 gap-8 lg:gap-33 items-start">
                 
                     {/* HEADING */}
                     <motion.div
@@ -59,7 +59,7 @@ const Introduction = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-                        className="md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-8 mt-12 md:mt-0"
+                        className="md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-8 mt-12 md:mt-0 2xl:translate-x-10"
                     >
                         <p 
                             className="text-[17px] md:text-[20px] flex translate-y-5 lg:-translate-y-4 translate-x-5 lg:translate-x-15 leading-[1.9] md:leading-[2] font-light text-[#5a5651] max-w-[480px]"

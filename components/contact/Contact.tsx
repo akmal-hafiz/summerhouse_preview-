@@ -54,12 +54,12 @@ const Contact = () => {
     const yParallax = useTransform(smoothProgress, [0, 1], isMobile ? ["0%", "0%"] : ["-15%", "15%"]);
 
     return (
-        <div className="w-full bg-[#FAFAF9] min-h-[367dvh] lg:min-h-[500dvh] mb-[-250vh] lg:mb-0 h-auto flex flex-col pt-[160px] lg:pt-[200px]">
+        <div className="w-full bg-[#FAFAF9] min-h-[2900px] md:min-h-[3800px] lg:min-h-[4000px] xl:min-h-[4000px] 2xl:min-h-[3800px] mb-[-250vh] lg:mb-0 h-auto flex flex-col pt-[160px] lg:pt-[200px]">
             
             {/* ========================================= */}
             {/* 1. HERO HEADER SECTION                    */}
             {/* ========================================= */}
-            <section className="w-full relative lg:left-[360px] bottom-[-170px] lg:bottom-[-200px] px-6 flex flex-col items-center text-center max-w-[800px] mx-auto mb-20 lg:mb-32 pt-20 lg:pt-0">
+            <section className="w-full relative lg:left-[360px] md:left-0 bottom-[-170px] lg:bottom-[-200px] md:bottom-[-100px] px-6 flex flex-col items-center text-center max-w-[800px] mx-auto mb-20 lg:mb-32 pt-20 lg:pt-0">
                 <motion.h1 
                     className="text-[28px] md:text-6xl lg:text-[72px] leading-[1.8] lg:leading-[1.7] text-[#446B4A] lg:text-[#446B4A] mb-6 lg:mb-8 tracking-[-0.02em] font-bold lg:font-medium text-center"
                     style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}
@@ -90,15 +90,15 @@ const Contact = () => {
                 ></motion.div>
                 <div className="absolute inset-0 bg-black/40"></div>
                 
-                <div className="relative right-[-40px] lg:right-[-350px] bottom-[-36px] lg:bottom-[-250px] z-10 max-w-[1300px] mx-auto px-6 w-full">
+                <div className="relative translate-x-0px md:translate-x-0 lg:translate-x-26 bottom-[-36px] md:translate-y-20 xl:translate-y-80 2xl:translate-y-56 z-10 max-w-[1300px] mx-auto px-6 w-full flex justify-center">
                     <motion.div 
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="bg-white rounded-[40px] relative left-[-20px] lg:left-[-18px] top-[5px] lg:top-[-150px] px-8 py-16 md:px-24 md:py-24 lg:px-[180px] lg:py-[280px] min-h-[770px] lg:min-h-[760px] w-[90%] lg:w-[68%] shadow-2xl flex items-center justify-start"
+                        className="bg-white rounded-[40px] relative md:left-0 lg:left-[-18px] top-[5px] md:top-0 lg:top-[-150px] px-8 py-16 md:px-24 md:py-24 lg:px-[180px] lg:py-[280px] min-h-[720px] lg:min-h-[760px] w-[90%] md:w-[85%] lg:w-[68%] shadow-2xl flex items-center justify-center lg:justify-start"
                     >
-                        <form className="flex flex-col gap-6 lg:gap-8 relative bottom-[5px] lg:bottom-[0px] right-[-30px] lg:right-[-50px] w-[80%] lg:w-[100%] max-w-[800px]">
+                        <form className="flex flex-col gap-6 lg:gap-8 relative bottom-[5px] md:bottom-0 lg:bottom-0px md:right-0 lg:right-[-50px] w-[80%] md:w-[90%] lg:w-[100%] max-w-[800px]">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                                 <div className="flex flex-col gap-2.5 lg:gap-3">
                                     <label className="text-[14px] font-bold lg:font-medium text-[#1a1a19]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>First name *</label>
@@ -136,7 +136,7 @@ const Contact = () => {
             {/* ========================================= */}
             {/* 3. CONTACT INFO SECTION                   */}
             {/* ========================================= */}
-            <section className="w-full max-w-[1400px] relative lg:right-[-80px] bottom-[-370px] lg:bottom-[-700px] mx-auto px-6 md:px-12 lg:px-24 py-16 lg:py-40">
+            <section className="w-full max-w-[1400px] relative lg:right-[-80px] md:right-0 bottom-[-370px] md:bottom-[-450px] lg:bottom-[-700px] mx-auto px-6 md:px-12 lg:px-24 py-16 lg:py-40">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
                     {/* Left: Image */}
                     <motion.div 
@@ -144,7 +144,7 @@ const Contact = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="w-[88%] lg:w-full aspect-square lg:aspect-[4/5] rounded-[32px] lg:rounded-[24px] overflow-hidden relative right-[-25px] lg:right-0 shadow-2xl"
+                        className="w-[88%] md:w-full md:mx-auto lg:w-full aspect-square lg:aspect-[4/5] rounded-[32px] lg:rounded-[24px] overflow-hidden relative right-[-25px] md:right-0 lg:right-0 shadow-2xl"
                     >
                         <img 
                             src="/homepage_villa/curated-8.webp" 
@@ -159,7 +159,7 @@ const Contact = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="flex flex-col lg:pl-0 relative bottom-[-8px] lg:bottom-0 right-[-25px] lg:right-0"
+                        className="flex flex-col lg:pl-0 relative bottom-[-8px] md:bottom-0 lg:bottom-0 right-[-25px] md:right-0 lg:right-0 md:items-center lg:items-start md:text-center lg:text-left"
                     >
                         <span className="text-[14px] relative bottom-[20px] lg:bottom-0 font-medium text-[#1a1a19] mb-4" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Our location</span>
                         <h2 className="text-[28px] lg:text-[64px] relative bottom-[8px] lg:bottom-0 font-bold  lg:font-medium tracking-tight text-[#1a1a19] mb-6 leading-[1.1]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
@@ -198,24 +198,24 @@ const Contact = () => {
             {/* ========================================= */}
             {/* 4. DISCOVER & STATS (DARK)                */}
             {/* ========================================= */}
-            <section className="w-full bg-[#0a0a0a] min-h-[130dvh] h-auto pt-32 pb-24 px-6 md:px-12 relative bottom-[-490px] lg:bottom-[-1000px] mt-20 z-20 overflow-visible">
+            <section className="w-full bg-[#0a0a0a] min-h-[137dvh] md:min-h-[100dvh] xl:min-h-[100dvh] 2xl:min-h-[120dvh] pt-32 pb-24 px-6 md:px-12 relative bottom-[-490px] md:bottom-[-600px] lg:bottom-[-1000px] mt-20 z-20 overflow-visible">
                 {/* Overlapping Polaroids */}
 
-                <div className="lg:max-w-[1300px] relative left-[-68px] lg:left-[38px] max-w-[400px] w-[350px] lg:w-full mx-auto flex flex-col items-center relative z-10 mt-12">
+                <div className="lg:max-w-[1300px] justify-center items-center -translate-x-20 md:translate-x-0 lg:translate-x-5 translate-y-0 md:translate-y-5 lg:translate-y-10 max-w-[400px] md:max-w-[800px] w-[350px] md:w-full lg:w-full mx-auto flex flex-col relative z-10 mt-12">
                     <motion.h2 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-2xl relative bottom-[-80px] lg:bottom-[-50px] lg:right-[-88px] right-[-100px] md:text-5xl lg:text-[60px] font-medium tracking-tight text-white mb-16 text-center leading-[1.1]" 
+                        className="text-2xl relative  lg:right-[-88px] md:right-0 right-[-100px] md:text-5xl lg:text-[60px] font-medium tracking-tight text-white mb-16 text-center leading-[1.1]" 
                         style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}
                     >
                         Discover our rooms &<br/>enjoy your stay
                     </motion.h2>
                     
                     {/* Inline Booking Form */}
-                    <div className="w-full flex flex-col lg:flex-row gap-6 lg:gap-4 mb-24 relative bottom-[-150px] lg:bottom-[-160px] right-[-100px]">
-                        <div className="flex-1 flex flex-col gap-2">
+                    <div className="w-full md:w-[80%] lg:w-[100%] flex flex-col lg:flex-row gap-6 lg:gap-4 mb-24 relative bottom-[-150px] md:bottom-0 lg:bottom-[-160px] translate-x-24 md:translate-x-0 lg:translate-x-10">
+                        <div className="flex-1 flex flex-col gap-4">
                             <label className="text-white text-[13px] font-medium pl-2" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Full name*</label>
                             <div className="relative">
                                 <input type="text" placeholder="Alex Johnson" className="w-full h-[56px] rounded-full bg-white/[0.08] border border-white/20 px-6 text-white outline-none focus:border-white/50 transition-colors font-light" style={{ paddingLeft: '20px', paddingRight: '20px' }} />
@@ -267,10 +267,10 @@ const Contact = () => {
                         </div>
                     </div>
 
-                    <div className="w-[1200px] lg:w-[128%] relative bottom-[-245px] lg:bottom-0px h-[1px] bg-white/90 mb-20"></div>
+                    <div className="w-[1200px] md:w-full lg:w-[128%] relative translate-y-55 md:translate-y-16 lg:translate-y-10 h-[1px] bg-white/90 mb-20"></div>
 
                     {/* Statistics Grid */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 w-full relative bottom-[-280px] lg:bottom-[-305px] right-[-95px] lg:right-[-145px]">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10 translate-x-0 lg:-translate-x-8 w-full relative md:translate-y-26 translate-y-70 lg:translate-y-90 md:right-0 right-[-95px] lg:right-[-145px]">
                         <motion.div 
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}

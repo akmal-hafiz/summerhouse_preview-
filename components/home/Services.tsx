@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import Magnetic from '@/components/common/Magnetic';
+import { ManagementStatsSection } from './ManagementStatsSection';
 
 // Character-by-character reveal component
 const CharacterReveal = ({ text, className }: { text: string, className?: string }) => {
@@ -156,14 +157,14 @@ export default function Services() {
   }, [activeVideoIndex]);
 
   return (
-    <div className="services-page-shell w-full bg-[#FAF9F6] flex flex-col gap-y-[60px] md:gap-y-[80px] lg:gap-y-[120px]  overflow-x-hidden">
+    <div className="services-page-shell w-full bg-[#FAF9F6] flex flex-col gap-y-[90px] md:gap-y-[120px] lg:gap-y-[160px] overflow-x-hidden">
 
       {/* ============================================== */}
       {/* 1. HERO & INTRO GROUP (Wrapped to prevent gap) */}
       {/* ============================================== */}
       <div className="w-full">
-        <section className="services-hero-section w-full touch-pan-y min-h-[50vh] flex flex-col justify-center items-center">
-          <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center -translate-y-6 lg:-translate-y-12">
+        <section className="services-hero-section w-full min-h-0px md:min-h-0px lg:min-h-[460px] touch-pan-y flex flex-col justify-center items-center translate-y-12">
+          <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center -translate-y-6 lg:translate-y-16">
             <motion.h1
               className="text-[34px] md:text-6xl lg:text-[72px] leading-[1.25] md:leading-[1.18] lg:leading-[1.12] text-[#446B4A] tracking-tight font-medium text-center"
               style={{ fontFamily: "var(--font-playfair), serif" }}
@@ -186,7 +187,7 @@ export default function Services() {
       {/* ============================================== */}
       {/* 2. STEWARDSHIP & BRIEFING GRID                 */}
       {/* ============================================== */}
-      <section className="services-rhythm-section w-full touch-pan-y">
+      <section className="services-rhythm-section w-full min-h-[800px] flex justify-center items-center touch-pan-y">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="services-content-grid grid grid-cols-1 lg:grid-cols-[1.618fr_1fr] gap-12 lg:gap-[6vw] items-center">
 
@@ -241,7 +242,7 @@ export default function Services() {
 
             {/* Right: Briefing Area */}
             <div className="flex flex-col">
-              <div className="services-brief-panel border-l border-[#C7A58A]/30 pl-6 md:pl-8 lg:pl-12 flex flex-col">
+              <div className="services-brief-panel border-l border-[#C7A58A]/30 pl-6 md:pl-8 lg:pl-12 flex translate-x-14  lg:translate-x-0 flex-col">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeVideoIndex}
@@ -267,7 +268,7 @@ export default function Services() {
                         <h4 className={`text-[22px] md:text-[26px] text-[#1a1a19] ${bIndex === 0 || bIndex === 2 ? 'italic' : ''}`} style={{ fontFamily: 'var(--font-playfair), serif' }}>
                           {brief.title}
                         </h4>
-                        <p className="text-[#5a5651] text-[14px] md:text-[15px] leading-[1.8] font-light" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+                        <p className="text-[#5a5651] text-[14px] md:text-[15px] leading-[1.8] font-light md:w-[650px] lg:w-fit w-[250px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                           {brief.text}
                         </p>
                       </motion.div>
@@ -280,17 +281,18 @@ export default function Services() {
           </div>
         </div>
       </section>
+      <ManagementStatsSection />
       </div>
 
       {/* ============================================== */}
       {/* 3. CLIENT REVIEWS SECTION                      */}
       {/* ============================================== */}
-      <section className="services-rhythm-section w-full touch-pan-y">
+      <section className="services-rhythm-section w-full flex justify-center items-center touch-pan-y">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="services-review-layout flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-[4vw]">
 
             {/* Left: Text */}
-            <div className="services-review-copy w-full lg:w-[38.2%] flex flex-col justify-center">
+            <div className="services-review-copy w-full lg:w-[38.2%] flex flex-col justify-center translate-x-5 md:translate-x-6 lg:translate-x-0px">
               <span className="text-[14px] text-[#1a1a19] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                 What villa owners say
               </span>
@@ -305,7 +307,7 @@ export default function Services() {
                     transition={{ duration: 0.4 }}
                     className="services-testimonial-stack flex flex-col flex-1"
                   >
-                    <h2 className="text-[28px] md:text-[40px] lg:text-[44px] leading-[1.15] text-[#1a1a19] tracking-tight font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
+                    <h2 className="text-[28px] md:text-[30px] lg:text-[44px] w-[330px] md:w-[500px] lg:w-fit leading-[1.15] text-[#1a1a19] tracking-tight font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
                       {activeTestimonial.quote}
                     </h2>
                     <p className="text-[14px] md:text-[16px] text-[#68635c] leading-[1.6] lg:leading-[1.7] max-w-[95%]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
@@ -317,7 +319,7 @@ export default function Services() {
             </div>
 
             {/* Right: Image */}
-            <div className="w-full lg:w-[61.8%] aspect-[4/3] lg:aspect-[16/10] relative rounded-[16px] overflow-hidden bg-[#e0dcd5]">
+            <div className="w-[90%] md:w-[98%] lg:w-[61.8%] aspect-[5/3] lg:aspect-[16/10] relative rounded-[16px] overflow-hidden bg-[#e0dcd5]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`img-${activeTestimonial.id}`}
@@ -335,7 +337,7 @@ export default function Services() {
           </div>
 
           {/* Tabs at the bottom */}
-          <div className="services-testimonial-tabs grid grid-cols-2 lg:flex w-full items-end justify-between">
+          <div className="services-testimonial-tabs grid grid-cols-2 lg:flex w-full items-end justify-between translate-x-5 md:translate-x-6 lg:translate-x-0 translate-y-5 md:translate-y-3 lg:translate-y-10">
             {testimonials.map((t, idx) => (
               <motion.div
                 key={t.id}
@@ -369,7 +371,7 @@ export default function Services() {
         />
         <div className="absolute inset-0 bg-black/40 lg:bg-gradient-to-r lg:from-[#1a1a19] lg:via-[#1a1a19]/80 lg:to-transparent z-10" />
 
-        <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 w-full flex flex-col items-center lg:items-start justify-center text-center lg:text-left">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 w-full flex flex-col items-center lg:items-start justify-center text-center translate-x-0 md:translate-x-0 lg:translate-x-10 lg:text-left">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

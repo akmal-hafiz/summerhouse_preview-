@@ -283,7 +283,7 @@ const Hero = () => {
     );
 
     return (
-        <section className="relative w-full min-h-[100dvh] z-0">
+        <section className="relative w-full min-h-[120px] z-0">
             {/* Click outside overlay */}
             {activeDropdown && (
                 <div
@@ -337,9 +337,9 @@ const Hero = () => {
 
                     {/* ══ BLOCK 2: SECONDARY HEADING / DESC (Kanan) ══ */}
                     {/* ✅ FIX 5: Hapus pt-48 lg:pt-64 yang berlebihan */}
-                    <div className="hidden lg:flex lg:justify-end lg:translate-y-20 lg:translate-x-[24px] lg:col-span-5 flex-col">
+                    <div className="hidden lg:flex lg:justify-end lg:translate-y-10 lg:translate-x-[39px] lg:col-span-5 flex-col">
                         <h2
-                            className="text-white/90 text-[22px] md:text-[26px] max-w-[30ch] leading-[1.5] font-light"
+                            className="text-white/90 text-[28px] md:text-[28px] max-w-[37ch] leading-[1.5] font-light"
                             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                         >
                             Seamlessly navigate the global real estate market. Our expert team is here to guide you every step of the way.

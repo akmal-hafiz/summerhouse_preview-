@@ -69,10 +69,10 @@ const VillaCollection = () => {
     const y5 = useTransform(scrollYProgress, [0, 1], [35, -35]);
     return (
         // 1. Tag Section dengan Jarak Atas(pt) dan Bawah(pb) yang lega untuk Desktop
-        <section className="w-full bg-[#FAFAF9] pt-[150px] min-h-[1540px] md:min-h-[2000px] lg:min-h-[3100px] pb-[350px]">
+        <section className="w-full bg-[#FAFAF9]  pt-[150px] min-h-[1540px] md:min-h-[2000px] lg:min-h-[3200px] pb-[950px]">
 
             {/* 2. Container Pembungkus Lebar Konten */}
-            <div className="max-w-8xl mx-auto bg-[#FAFAF9] px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[0px] bottom-[-10px] md:bottom-[-80px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-[0px]">
+            <div className="max-w-8xl mx-auto bg-[#FAFAF9] px-0 md:px-8 lg:px-12 relative top-[-10px] lg:top-[0px] gap-y-[60px] md:gap-y-[100px] lg:gap-y-[120px] bottom-[-10px] md:bottom-[-80px] mt-[180px] mb-[300px] md:mt-[150px] md:mb-0px">
 
                 {/* ============================================== */}
                 {/* MOBILE & TABLET FULLY CUSTOM VERSION (Berdasarkan Screenshot) */}
@@ -221,47 +221,57 @@ const VillaCollection = () => {
                 {/* ============================================== */}
                 {/* DESKTOP VERSION (Layout Utama - 100% UTUH)     */}
                 {/* ============================================== */}
-                <div className="hidden lg:block w-full max-w-[1400px] mx-auto px-10 md:px-24 lg:px-24">
-                    {/* 3. KOTAK ATAS (Menggunakan Flexbox memisah Kiri & Kanan) */}
-                    <div className="flex justify-between items-end translate-y-[10px]">
-                        {/* Sisi Kiri (Teks) */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-100px" }}
-                            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                            className="max-w-[600px]"
-                        >
-                            <motion.h2
-                                className="text-[52px] text-[#4d6a52] mb-6 tracking-wide flex flex-wrap gap-x-3"
-                                style={{ fontFamily: 'var(--font-playfair), serif' }}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, margin: "-100px" }}
-                                variants={{
-                                    visible: { transition: { staggerChildren: 0.15 } }
-                                }}
-                            >
-                                {staysText.map((word, i) => (
-                                    <motion.span
-                                        key={i}
+                <div className="hidden lg:block w-full">
+                    {/* 3. KOTAK ATAS (Header & Tabs) - Menggunakan Grid 3 Kolom yang SAMA PERSIS dengan Grid Kartu Villa */}
+                    <div className="w-screen ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] px-[clamp(24px,5vw,72px)]">
+                        <div className="w-full max-w-[1400px] mx-auto grid grid-cols-3 gap-[clamp(24px,2.85vw,44px)] justify-items-center">
+                            {/* Kolom 1 (Kiri) - Teks "The Stays" */}
+                            <div className="w-full max-w-[420px] flex justify-start items-center xl:translate-x-6 2xl:translate-x-12">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 50 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-100px" }}
+                                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                                    className="w-full"
+                                >
+                                    <motion.h2
+                                        className="text-[52px] text-[#4d6a52] mb-6 tracking-wide flex flex-wrap gap-x-4"
+                                        style={{ fontFamily: 'var(--font-playfair), serif' }}
+                                        initial="hidden"
+                                        whileInView="visible"
+                                        viewport={{ once: true, margin: "-100px" }}
                                         variants={{
-                                            hidden: { opacity: 0, y: 40 },
-                                            visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
+                                            visible: { transition: { staggerChildren: 0.15 } }
                                         }}
-                                        className="inline-block"
                                     >
-                                        {word}
-                                    </motion.span>
-                                ))}
-                            </motion.h2>
-                        </motion.div>
+                                        {staysText.map((word, i) => (
+                                            <motion.span
+                                                key={i}
+                                                variants={{
+                                                    hidden: { opacity: 0, y: 40 },
+                                                    visible: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } }
+                                                }}
+                                                className="inline-block"
+                                            >
+                                                {word}
+                                            </motion.span>
+                                        ))}
+                                    </motion.h2>
+                                </motion.div>
+                            </div>
 
-                        {/* Sisi Kanan (Area Tabs Filter) */}
-                        <div className="flex gap-6 text-[11px] font-bold tracking-widest uppercase -translate-y-[40px]">
-                            <span className="underline decoration-2 decoration-[#C7A58A] underline-offset-16 cursor-pointer text-[#50453A]">All Stay</span>
-                            <span className="pb-8 text-[#50453A] cursor-pointer hover:text-[#1a1a19]">SHORT STAYS</span>
-                            <span className="pb-8 text-[#50453A] cursor-pointer hover:text-[#1a1a19]">MONTHLY STAYS</span>
+                            {/* Kolom 2 (Tengah) - Spacer kosong agar grid tetap 3 kolom yang identik */}
+                            <div className="w-full max-w-[420px]"></div>
+
+                            {/* Kolom 3 (Kanan) - Area Tabs Filter */}
+                            <div className="w-full max-w-[420px] flex justify-end items-end pb-2 translate-x-4 xl:translate-x-2 2xl:translate-x-16">
+                                <div className="flex gap-8 text-[11px] font-bold tracking-widest uppercase">
+                                    <span className="underline decoration-2 decoration-[#C7A58A] underline-offset-[12px] cursor-pointer text-[#50453A]">All Stay</span>
+                                    <span className="cursor-pointer text-[#50453A] hover:text-[#1a1a19]">SHORT STAYS</span>
+                                    <span className="cursor-pointer text-[#50453A] hover:text-[#1a1a19]">MONTHLY STAYS</span>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -272,9 +282,9 @@ const VillaCollection = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-50px" }}
                         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="villa-card-stage bg-transparent mt-[100px]"
+                        className="villa-card-stage bg-transparent mt-[100px] flex items-center justify-center translate-y-[70px] -translate-x-0.5"
                     >
-                        <div className="villa-card-cluster">
+                        <div className="villa-card-cluster gap-y-30 ">
                         {/* --- KARTU VILLA 1 --- */}
                         <div className="villa-card-tile flex flex-col group cursor-pointer">
                             <div className="w-full h-[500px] rounded-[12px] bg-[#d7cfc5] relative flex items-center justify-center overflow-hidden">
@@ -353,8 +363,13 @@ const VillaCollection = () => {
                         </div>
                     </motion.div>
 
-                    <div className="w-full flex justify-end mt-[230px] translate-y-[180px]">
-                        <h3 className="text-[12px] text-[#C7A58A] mt-6 tracking-[0.4em] font-bold cursor-pointer hover:text-[#1a1a19] transition-colors" style={{ fontFamily: 'var(--font-inter), serif' }}>DISCOVER MORE</h3>
+                    <div className="w-full flex justify-center items-center mt-[230px] translate-y-[180px]">
+                        {/* Gunakan w-[angka] dan py-[angka] untuk mengatur besar kotak tanpa mempengaruhi teks */}
+                        <button className="border border-[#C7A58A] bg-transparent text-[#C7A58A] text-[10px] font-bold tracking-[0.4em] uppercase py-5 w-[260px] h-[56px] text-center hover:bg-[#2E2E2C] hover:text-[#FAF5F0] transition-colors duration-300">
+                            <span className="block leading-[1.6]" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
+                                DISCOVER MORE
+                            </span>
+                        </button>
                     </div>
 
                 </div> {/* Penutup "hidden md:block" (Batas Dunia Desktop) */}
@@ -364,8 +379,9 @@ const VillaCollection = () => {
             {/* ========================================================= */}
             {/* --- START: EDITORIAL FRAMED SELECTOR (Golden Wrap) ---    */}
             {/* ========================================================= */}
-            <div className="hidden lg:flex w-full max-w-[1200px] mx-auto relative bottom-[-400px] justify-center mt-[250px] mb-[120px] z-[999] px-4 pointer-events-none">
-                <div className="border-y border-[#C7A58A] px-[40px] md:px-[80px] py-[80px] flex flex-wrap justify-center gap-x-10 md:gap-x-19 gap-y-10 bg-transparent pointer-events-auto relative z-[999]">
+            <div className="hidden lg:flex w-full max-w-[1200px] mx-auto items-center justify-center translate-y-80 translate-x-30 xl:translate-x-30 mt-[250px] mb-[120px] z-[999] px-4 pointer-events-none">
+                {/* Pendekatan yang sama: Menggunakan w-[angka] dan h-[angka] agar panjang/tinggi garis border bisa diatur pasti, tanpa terpengaruh ukuran teks */}
+                <div className="border-y border-[#C7A58A] w-[1000px] h-[100px] flex flex-wrap justify-center items-center gap-x-10 md:gap-x-19 gap-y-10 bg-transparent pointer-events-auto relative z-[999]">
                     {['Curated', 'Canggu', 'Ubud', 'Pererenan', 'Umalas', 'Legian', 'Padonan'].map((neighborhood) => (
                         <button
                             key={neighborhood}
