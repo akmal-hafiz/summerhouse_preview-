@@ -207,7 +207,7 @@ const Hero = () => {
 
     const renderDetailedForm = (isSticky: boolean) => (
         <form
-            className={`flex flex-row items-center justify-start w-full max-w-[44dvh] md:max-w-[88dvw] translate-y-[20px] md:translate-y-[20px] lg:translate-y-0 lg:max-w-[1000px] bg-[#1b1b1b]/1 lg:bg-[#1b1b1b]/3 lg:backdrop-blur-sm backdrop-blur-sm border border-white/10 rounded-full ${isSticky ? 'bg-black/80 lg:bg-[#1b1b1b]/90 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20' : 'shadow-[0_8px_32px_rgba(0,0,0,0.11)]'} px-1.5 py-1.5 lg:px-12 lg:py-8 gap-5 lg:gap-10 lg:overflow-visible pointer-events-auto touch-pan-y`}
+            className={`flex flex-row items-center justify-start w-full max-w-[44dvh] md:max-w-[88dvw] translate-y-[10px] md:translate-y-[20px] lg:translate-y-0 lg:max-w-[1000px] bg-[#1b1b1b]/1 lg:bg-[#1b1b1b]/3 lg:backdrop-blur-sm backdrop-blur-sm border border-white/10 rounded-full ${isSticky ? 'bg-black/80 lg:bg-[#1b1b1b]/90 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20' : 'shadow-[0_8px_32px_rgba(0,0,0,0.11)]'} px-1.5 py-1.5 lg:px-12 lg:py-8 gap-5 lg:gap-10 lg:overflow-visible pointer-events-auto touch-pan-y`}
             onSubmit={handleSubmit}
             role="search"
             aria-label="Property search"
@@ -349,9 +349,9 @@ const Hero = () => {
 
                 {/* ══ LOWER CONTENT: SEARCH INTERFACE ══ */}
                 {/* ✅ FIX 6: mt-8 lg:mt-12 sekarang BEKERJA karena flex-1 di atas, bukan mb-auto */}
-                <div className="hero-search-block w-full flex justify-start lg:justify-end pl-10 lg:pl-[130px] items-start lg:items-start mt-25 lg:mt-40">
+                <div className="hero-search-block -translate-y-20 md:-translate-y-30 w-full flex justify-start lg:justify-end pl-10 lg:pl-[130px] items-start lg:items-start mt-25 lg:mt-40">
 
-                    <div className="w-full flex justify-center translate-y-[50px] md:translate-y-0 lg:translate-y-0 lg:justify-center lg:translate-x-[74px] md:pr-[40px] items-start min-h-[60px] lg:h-[90px] relative">
+                    <div className="w-full flex justify-center translate-y-20 md:-translate-y-15 lg:translate-y-0 lg:justify-center lg:translate-x-[74px] md:pr-[40px] items-start min-h-[60px] lg:h-[90px] relative">
                         <AnimatePresence mode="wait">
                             {!isExpanded ? (
                                 <motion.button
