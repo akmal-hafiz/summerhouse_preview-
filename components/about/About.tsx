@@ -498,81 +498,6 @@ const MoreThanStaySection = () => {
 
 
 
-// --- Section 7: Philosophy (The Ethos) ---
-
-const PhilosophySection = () => {
-    const pillars = [
-        {
-            title: "Spatial Poetry",
-            description: "We believe a room should be more than four walls; it should be a frame for the landscape and a sanctuary for the mind. Every window, every texture, and every light shadow is curated to inspire peace.",
-            image: "/homepage_villa/curated-1-main.webp"
-        },
-        {
-            title: "Conscious Luxury",
-            description: "Refinement that doesn't scream. We celebrate the beauty of raw materials, local craftsmanship, and the quiet luxury of silence. True comfort is found in the things you don't notice, but feel deeply.",
-            image: "/homepage_villa/curated-2-detail.webp"
-        },
-        {
-            title: "The Spirit of Bali",
-            description: "Summerhouses isn't just in Bali; it's part of it. We honor the island's rhythm through sustainable practices, community roots, and architecture that respects the land it sits upon.",
-            image: "/homepage_villa/villaarta.webp"
-        }
-    ];
-
-    return (
-        <section className={`${sectionClass} pb-[100px] lg:pb-[150px]`}>
-            <div className={containerClass}>
-                <div className="mb-16 md:mb-24 text-center">
-                    <motion.span 
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        className="text-[11px] font-bold uppercase tracking-[0.4em] text-[#1a1a19]/40 mb-4 block"
-                        style={{ fontFamily: fontSans }}
-                    >
-                        OUR FOUNDATION
-                    </motion.span>
-                    <motion.h2 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        className="text-[32px] md:text-[48px] font-normal text-[#446B4A]"
-                        style={{ fontFamily: fontSerif }}
-                    >
-                        The Summerhouses Ethos
-                    </motion.h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20">
-                    {pillars.map((pillar, index) => (
-                        <motion.div 
-                            key={pillar.title}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: index * 0.2 }}
-                            className="flex flex-col items-center text-center"
-                        >
-                            <div className="w-full aspect-square max-w-[280px] mb-8 overflow-hidden rounded-[2px]">
-                                <MaskedImage 
-                                    src={pillar.image} 
-                                    alt={pillar.title} 
-                                    className="w-full h-full"
-                                    parallaxSpeed={0.05}
-                                />
-                            </div>
-                            <h3 className="text-[22px] md:text-[24px] font-medium text-[#1a1a19] mb-4" style={{ fontFamily: fontSerif }}>
-                                {pillar.title}
-                            </h3>
-                            <p className="text-[14px] md:text-[15px] leading-relaxed text-[#68635c] max-w-[320px]" style={{ fontFamily: fontSans }}>
-                                {pillar.description}
-                            </p>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-};
-
 // --- Main Page Component ---
 
 const About = () => {
@@ -615,7 +540,6 @@ const About = () => {
             <BrandEditorialSection />
             <MoreThanStaySection />
             <StatsSection />
-            <PhilosophySection />
         </div>
     );
 };
