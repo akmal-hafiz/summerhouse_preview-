@@ -1,281 +1,168 @@
-import React from 'react';
-import { getPropertyById, getPropertyImages, getPropertyRooms } from "@/lib/lodgify";
-import Navbar from "@/components/common/Navbar";
-import Footer from "@/components/common/Footer";
-import styles from "./VillaDetail.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "@/components/common/Navbar";
+import Footer from "@/components/common/Footer";
+import AvailabilityCalendar from "@/components/booking/AvailabilityCalendar";
+import VillaAmenities from "@/components/booking/VillaAmenities";
+import VillaPhotoGallery from "@/components/booking/VillaPhotoGallery";
+import { getVillaDetail, getVillaSummaries } from "@/lib/lodgify";
 
 interface VillaDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: VillaDetailPageProps) {
   const { id } = await params;
-  const property = await getPropertyById(id);
+  const villa = await getVillaDetail(id);
+
   return {
-    title: `${property?.name || 'Villa'} | Summerhouse Bali`,
-    description: property?.description || "Explore this luxury sanctuary in Bali.",
+    title: `${villa?.name || "Villa"} | Summerhouse Bali`,
+    description: villa?.descriptionText || "Explore this Summerhouses Bali villa.",
   };
 }
 
 export default async function VillaDetailPage({ params }: VillaDetailPageProps) {
   const { id } = await params;
-  const [property, images, rooms] = await Promise.all([
-    getPropertyById(id),
-    getPropertyImages(id),
-    getPropertyRooms(id)
+  const [villa, summaries] = await Promise.all([
+    getVillaDetail(id),
+    getVillaSummaries(),
   ]);
 
-  if (!property) {
+  if (!villa) {
     return (
-      <div className={styles.errorContainer}>
+      <main className="villa-detail-page">
         <Navbar />
-        <div className={styles.errorContent}>
+        <section className="villa-detail-missing">
           <h1>Villa not found</h1>
-          <Link href="/villas" className={styles.backButton}>Back to Collection</Link>
-        </div>
+          <Link href="/villas">Back to villa collection</Link>
+        </section>
         <Footer />
-      </div>
+      </main>
     );
   }
 
-  // Get first room for specific details
-  const mainRoom = rooms && rooms.length > 0 ? rooms[0] : null;
-
-  // Formatting amenities - handle both array and object formats from Lodgify
-  let rawAmenities = property.amenities || (mainRoom?.amenities) || [];
-  const amenities = Array.isArray(rawAmenities) 
-    ? rawAmenities 
-    : typeof rawAmenities === 'object' 
-      ? Object.values(rawAmenities) 
-      : [];
-  
-  // Gallery Logic: Fallback if /images returns 404
-  let displayImages = images || [];
-  if (displayImages.length === 0) {
-    const roomImages = rooms?.map((r: any) => ({ url: r.image_url, name: r.name }))
-      .filter((img: any) => img.url && img.url !== property.image_url);
-    
-    displayImages = [
-      { url: property.image_url, name: property.name },
-      ...(roomImages || [])
-    ];
-  }
-
-  // Ensure we have at least 5 for the mosaic, or fallback to main image
-  const mosaicImages = displayImages.length >= 5 
-    ? displayImages.slice(0, 5) 
-    : [...displayImages, ...Array(5 - displayImages.length).fill({ url: property.image_url })].slice(0, 5);
+  const related = summaries.filter((item) => item.id !== villa.id).slice(0, 3);
+  const amenitiesPreview = Array.isArray(villa.amenitiesPreview) ? villa.amenitiesPreview.filter(Boolean).slice(0, 6) : [];
+  const photos = Array.isArray(villa.imageGallery) && villa.imageGallery.length > 0
+    ? villa.imageGallery
+    : [{ url: villa.imageUrl, caption: villa.name }];
+  const mapQuery = villa.latitude && villa.longitude
+    ? `${villa.latitude},${villa.longitude}`
+    : `${villa.address || villa.city}, Indonesia`;
 
   return (
-    <main className={styles.main}>
+    <main className="villa-detail-page">
       <Navbar />
-      
-      <div className={styles.container}>
-        {/* ─── 1. HEADER SECTION ─── */}
-        <section className={styles.headerSection}>
-          <div className={styles.titleWrapper}>
-            <h1 className={styles.title}>{property.name}</h1>
-            <div className={styles.headerActions}>
-              <button className={styles.actionBtn}>
-                <span className="material-symbols-outlined">ios_share</span>
-                Share
-              </button>
-              <button className={styles.actionBtn}>
-                <span className="material-symbols-outlined">favorite</span>
-                Save
-              </button>
+
+      <section className="villa-detail-hero">
+        <div className="villa-detail-shell">
+          <div className="villa-detail-hero-copy">
+            <Link href="/villas" className="villa-detail-back">Villa collection</Link>
+            <h1>{villa.name}</h1>
+            <p className="villa-detail-location-line">{villa.address || `${villa.city}, ${villa.country}`}</p>
+            <div className="villa-detail-facts" aria-label="Villa quick facts">
+              <span>{villa.guests} guests</span>
+              <span>{villa.bedrooms} beds</span>
+              <span>{villa.bathrooms} bath</span>
+              {villa.priceLabel && <span>from {villa.priceLabel} / night</span>}
             </div>
           </div>
-          <div className={styles.metaHeader}>
-            <span className={styles.rating}>
-              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>star</span>
-              New
-            </span>
-            <span>•</span>
-            <span className={styles.reviewsCount}>No reviews yet</span>
-            <span>•</span>
-            <span className={styles.locationLink}>{property.location?.name || property.city || "Bali"}, Indonesia</span>
-          </div>
-        </section>
 
-        {/* ─── 2. GALLERY SECTION (Mosaic) ─── */}
-        <section className={styles.gallerySection}>
-          <div className={styles.mosaicGrid}>
-            <div className={`${styles.mosaicItem} ${styles.mainImage}`}>
-              <Image 
-                src={mosaicImages[0].url} 
-                alt={property.name} 
-                fill 
-                priority 
-                className={styles.objectCover}
-                unoptimized
-              />
-            </div>
-            {mosaicImages.slice(1, 5).map((img, i) => (
-              <div key={i} className={styles.mosaicItem}>
-                <Image 
-                  src={img.url} 
-                  alt={`${property.name} detail ${i + 1}`} 
-                  fill 
-                  className={styles.objectCover}
-                  unoptimized
-                />
-              </div>
-            ))}
-          </div>
-        </section>
+          <VillaPhotoGallery villaName={villa.name} photos={photos} />
+        </div>
+      </section>
 
-        {/* ─── 3. CONTENT SECTION ─── */}
-        <section className={styles.contentSection}>
-          <div className={styles.layoutGrid}>
-            
-            {/* Left Column: Info */}
-            <div className={styles.infoColumn}>
-              <div className={styles.hostSummary}>
+      <section className="villa-detail-body">
+        <div className="villa-detail-shell villa-detail-airbnb-layout">
+          <article className="villa-detail-content">
+            <section className="villa-detail-section villa-detail-intro">
+              <div className="villa-detail-host-line">
                 <div>
-                  <h2 className={styles.hostTitle}>Entire villa hosted by Summerhouses</h2>
-                  <div className={styles.propertyStats}>
-                    {mainRoom?.max_people || property.max_people || 4} guests • {mainRoom?.bedrooms || property.rooms_count || 2} bedrooms • {mainRoom?.bathrooms || property.bathrooms_count || 2} baths
-                  </div>
-                </div>
-                <div className={styles.hostAvatar}>
-                  <Image src="/logo.png" alt="Summerhouses" fill className={styles.objectCover} />
+                  <h2>Entire villa in {villa.city || "Bali"}</h2>
+                  <p>{villa.guests} guests - {villa.bedrooms} beds - {villa.bathrooms} bath</p>
                 </div>
               </div>
+              <div
+                className="villa-detail-description"
+                dangerouslySetInnerHTML={{ __html: villa.descriptionHtml }}
+              />
+            </section>
 
-              <div className={styles.sectionDivider} />
-
-              <div className={styles.highlights}>
-                <div className={styles.highlightItem}>
-                  <span className={`material-symbols-outlined ${styles.highlightIcon}`}>workspace_premium</span>
-                  <div className={styles.highlightText}>
-                    <h4>Experienced host</h4>
-                    <p>Summerhouses has been welcoming guests to Bali for years.</p>
-                  </div>
-                </div>
-                <div className={styles.highlightItem}>
-                  <span className={`material-symbols-outlined ${styles.highlightIcon}`}>location_on</span>
-                  <div className={styles.highlightText}>
-                    <h4>Great location</h4>
-                    <p>100% of recent guests gave the location a 5-star rating.</p>
-                  </div>
-                </div>
-                <div className={styles.highlightItem}>
-                  <span className={`material-symbols-outlined ${styles.highlightIcon}`}>calendar_today</span>
-                  <div className={styles.highlightText}>
-                    <h4>Free cancellation</h4>
-                    <p>Full refund if cancelled within 48 hours.</p>
-                  </div>
-                </div>
+            <section className="villa-detail-section">
+              <div className="villa-detail-section-heading">
+                <h2>What this place offers</h2>
               </div>
+              <VillaAmenities groups={villa.amenityGroups || []} preview={amenitiesPreview} />
+            </section>
 
-              <div className={styles.sectionDivider} />
-
-              <div className={styles.description}>
-                <div 
-                  className={styles.descriptionText}
-                  dangerouslySetInnerHTML={{ __html: property.description }} 
+            <section className="villa-detail-section">
+              <div className="villa-detail-section-heading">
+                <h2>Where you'll be</h2>
+                <p>{villa.address || `${villa.city}, ${villa.country}`}</p>
+              </div>
+              <div className="villa-detail-map">
+                <iframe
+                  title={`${villa.name} map`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
                 />
               </div>
+            </section>
+          </article>
 
-              <div className={styles.sectionDivider} />
+          <aside className="villa-detail-reserve-card">
+            <div>
+              <span>Starting from</span>
+              <strong>{villa.priceLabel || "Rate on request"}</strong>
+              <p>per night before final Lodgify fees and taxes</p>
+            </div>
+            <a href="#availability">Check availability</a>
+            <small>Dates, minimum stay, and payment are confirmed by Lodgify.</small>
+          </aside>
+        </div>
 
-              <div className={styles.amenities}>
-                <h2 className={styles.subTitle}>What this place offers</h2>
-                <div className={styles.amenitiesGrid}>
-                  {amenities.slice(0, 10).map((amenity: any, index: number) => (
-                    <div key={index} className={styles.amenityItem}>
-                      <span className={`material-symbols-outlined ${styles.amenityIcon}`}>
-                        {amenity.name?.toLowerCase().includes('wifi') ? 'wifi' : 
-                         amenity.name?.toLowerCase().includes('pool') ? 'pool' :
-                         amenity.name?.toLowerCase().includes('kitchen') ? 'kitchen' :
-                         amenity.name?.toLowerCase().includes('parking') ? 'local_parking' :
-                         'check_circle'}
-                      </span>
-                      <span>{amenity.name || 'Amenity'}</span>
-                    </div>
+        <div className="villa-detail-shell">
+          <article className="villa-detail-content">
+            <AvailabilityCalendar
+              propertyId={villa.id}
+              villaName={villa.name}
+              location={villa.address || `${villa.city}, ${villa.country}`}
+              priceLabel={villa.originalPriceLabel || villa.priceLabel}
+              maxGuests={villa.guests}
+            />
+
+            {related.length > 0 && (
+              <section className="villa-detail-section">
+                <div className="villa-detail-section-heading">
+                  <p className="villa-detail-section-label">More stays</p>
+                  <h2>Other Summerhouses nearby.</h2>
+                </div>
+                <div className="villa-detail-related">
+                  {related.map((item) => (
+                    <Link href={`/villas/${item.id}`} key={item.id}>
+                      <figure>
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.name}
+                          fill
+                          sizes="(min-width: 1024px) 20vw, 100vw"
+                          className="villa-detail-image"
+                          unoptimized
+                        />
+                      </figure>
+                      <span>{item.location}</span>
+                      <strong>{item.name}</strong>
+                    </Link>
                   ))}
                 </div>
-                {amenities.length > 10 && (
-                  <button className={styles.showAllBtn}>Show all {amenities.length} amenities</button>
-                )}
-              </div>
-            </div>
-
-            {/* Right Column: Sticky Booking */}
-            <div className={styles.bookingColumn}>
-              <div className={styles.stickyWrapper}>
-                <div className={styles.bookingCard}>
-                  <div className={styles.cardHeader}>
-                    <div className={styles.priceDisplay}>
-                      $ {property.min_price?.toFixed(0) || "---"} <span>/ night</span>
-                    </div>
-                    <div className={styles.rating}>
-                      <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>star</span>
-                      New
-                    </div>
-                  </div>
-
-                  <div className={styles.inputGroup}>
-                    <div className={styles.dateRow}>
-                      <div className={styles.inputBox}>
-                        <span className={styles.inputLabel}>Check-in</span>
-                        <span className={styles.inputValue}>Add date</span>
-                      </div>
-                      <div className={styles.inputBox}>
-                        <span className={styles.inputLabel}>Checkout</span>
-                        <span className={styles.inputValue}>Add date</span>
-                      </div>
-                    </div>
-                    <div className={styles.guestBox}>
-                      <div>
-                        <span className={styles.inputLabel}>Guests</span>
-                        <span className={styles.inputValue}>1 guest</span>
-                      </div>
-                      <span className="material-symbols-outlined">expand_more</span>
-                    </div>
-                  </div>
-
-                  <a 
-                    href={`https://lodgify.com/v2/direct-booking?propertyId=${property.id}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none' }}
-                  >
-                    <button className={styles.reserveBtn}>Check Availability</button>
-                  </a>
-
-                  <p className={styles.bookingNote}>You won't be charged yet</p>
-
-                  <div className={styles.priceBreakdown}>
-                    <div className={styles.priceRow}>
-                      <span>$ {property.min_price?.toFixed(0) || "0"} x 1 night</span>
-                      <span>$ {property.min_price?.toFixed(0) || "0"}</span>
-                    </div>
-                    <div className={styles.priceRow}>
-                      <span>Cleaning fee</span>
-                      <span>$ 0</span>
-                    </div>
-                    <div className={styles.priceRow}>
-                      <span>Service fee</span>
-                      <span>$ 0</span>
-                    </div>
-                    <div className={styles.totalRow}>
-                      <span>Total before taxes</span>
-                      <span>$ {property.min_price?.toFixed(0) || "0"}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-      </div>
+              </section>
+            )}
+          </article>
+        </div>
+      </section>
 
       <Footer />
     </main>

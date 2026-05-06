@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useTransform } from "framer-motion";
 import React, { FormEvent, useState, useRef, useEffect } from "react";
 import { FiSearch, FiMapPin, FiNavigation, FiMinus, FiPlus, FiChevronLeft, FiChevronRight, FiCalendar, FiUser } from "react-icons/fi";
+import VillaSearchForm from "@/components/booking/VillaSearchForm";
 
 const Hero = () => {
     // Basic States
@@ -386,7 +387,7 @@ const Hero = () => {
                                     className="w-full flex justify-center origin-center"
                                     onClick={() => setHasInteracted(true)}
                                 >
-                                    {renderDetailedForm(false)}
+                                    <VillaSearchForm variant="hero" />
                                 </motion.div>
                             )}
                         </AnimatePresence>

@@ -1,90 +1,171 @@
-import React, { Suspense } from 'react';
+import React, { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
-import RefinedVillaGrid from "@/components/villas/RefinedVillaGrid";
 import VillaGridLoading from "@/components/villas/VillaGridLoading";
-import { getProperties, getPropertyRooms } from "@/lib/lodgify";
-import styles from "./Villas.module.css";
+import VillaSearchForm from "@/components/booking/VillaSearchForm";
+import { getVillaSearchOptions, searchAvailableVillas } from "@/lib/lodgify";
 
 export const metadata = {
   title: "Villa Collection | Summerhouse Bali",
-  description: "Explore our curated collection of luxury villas in Bali, powered by Lodgify.",
+  description: "Explore Summerhouses Bali villas connected to live Lodgify property data.",
 };
 
-async function VillaList() {
-  const properties = await getProperties();
-  
-  const mappedVillas = Array.isArray(properties) ? await Promise.all(properties.map(async (p: any) => {
-    const rooms = await getPropertyRooms(p.id);
-    return {
-      id: p.id,
-      name: p.name,
-      description: p.description,
-      imageUrl: p.image_url,
-      bedrooms: rooms?.length || p.rooms_count || 2,
-      bathrooms: p.bathrooms_count || 2,
-      location: p.location?.name || p.city || "Bali",
-      isFeatured: p.is_featured || false
-    };
-  })) : [];
+type VillasPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-  if (mappedVillas.length === 0) {
+const firstParam = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
+const numberParam = (value: string | string[] | undefined) => {
+  const numeric = Number(firstParam(value));
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined;
+};
+
+async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFilters>> }) {
+  const villas = await searchAvailableVillas(filters);
+
+  if (villas.length === 0) {
     return (
-      <div className={styles.emptyState}>
-        <p>Preparing the collection...</p>
+      <div className="villa-collection-empty">
+        <p>No villas match those dates yet. Try another stay window or location.</p>
       </div>
     );
   }
 
-  return <RefinedVillaGrid villas={mappedVillas} />;
+  return (
+    <div className="villa-collection-grid">
+      {villas.map((villa, index) => (
+        <VillaCard key={villa.id} villa={villa} index={index} />
+      ))}
+    </div>
+  );
 }
 
-export default function VillasPage() {
+function VillaCard({ villa, index }: { villa: any; index: number }) {
+  const facts = [
+    villa.guests ? `${villa.guests} guests` : null,
+    villa.bedrooms ? `${villa.bedrooms} beds` : null,
+    villa.bathrooms ? `${villa.bathrooms} bath` : null,
+  ].filter(Boolean);
+  const amenities = Array.isArray(villa.amenitiesPreview) ? villa.amenitiesPreview.filter(Boolean).slice(0, 4) : [];
+
   return (
-    <div className={styles.pageWrapper}>
+    <article className={`villa-collection-card villa-collection-card--airbnb ${index === 0 ? "villa-collection-card-featured" : ""}`}>
+      <Link href={`/villas/${villa.id}`} className="villa-collection-card-link">
+        <figure className="villa-collection-card-media">
+          <Image
+            src={villa.imageUrl}
+            alt={villa.name}
+            fill
+            priority={index < 3}
+            sizes={index === 0 ? "(min-width: 1024px) 62vw, 100vw" : "(min-width: 1024px) 31vw, 100vw"}
+            className="villa-collection-card-image"
+            unoptimized
+          />
+          <span className="villa-collection-card-action">View villa</span>
+        </figure>
+
+        <div className="villa-collection-card-body">
+          <div className="villa-collection-card-title-row">
+            <h2>{villa.name}</h2>
+            {villa.rating > 0 && (
+              <span className="villa-collection-card-rating">
+                <span aria-hidden="true">★</span> {villa.rating}
+              </span>
+            )}
+          </div>
+          <div className="villa-collection-card-meta">
+            <span>Villa</span>
+            {facts.length > 0 ? facts.map((fact) => <span key={fact}>{fact}</span>) : <span>Details inside</span>}
+          </div>
+          {amenities.length > 0 && (
+            <p className="villa-collection-card-amenities">{amenities.join(" · ")}</p>
+          )}
+          <p className="villa-collection-card-price">
+            {villa.priceLabel ? (
+              <>
+                from <strong>{villa.priceLabel}</strong> per night
+              </>
+            ) : (
+              "Rate on request"
+            )}
+          </p>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+async function getFilters(searchParams: Promise<Record<string, string | string[] | undefined>>) {
+  const params = await searchParams;
+
+  return {
+    location: firstParam(params.location) || "",
+    checkIn: firstParam(params.checkIn) || "",
+    checkOut: firstParam(params.checkOut) || "",
+    adults: numberParam(params.adults) || 1,
+    children: numberParam(params.children) || 0,
+    infants: numberParam(params.infants) || 0,
+    pets: numberParam(params.pets) || 0,
+    minPrice: numberParam(params.minPrice),
+    maxPrice: numberParam(params.maxPrice),
+  };
+}
+
+export default async function VillasPage({ searchParams }: VillasPageProps) {
+  const [filters, options] = await Promise.all([
+    getFilters(searchParams),
+    getVillaSearchOptions(),
+  ]);
+  const hasActiveSearch = Boolean(filters.location || filters.checkIn || filters.checkOut || filters.children || filters.minPrice || filters.maxPrice);
+
+  return (
+    <div className="villa-collection-page">
       <Navbar />
-      
-      {/* ─── 1. HERO SECTION ─── */}
-      <header className={styles.hero}>
-        <div className={styles.container}>
-          <div className={styles.heroContent}>
-            <div className={styles.heroMain}>
-              <span className={styles.label}>The Selection</span>
-              <h1 className={styles.title}>
-                The <br /> <span>Collection</span>
-              </h1>
-            </div>
-            <div className={styles.heroBrief}>
-              <p className={styles.description}>
-                A curated selection of private sanctuaries, each designed with a deep respect for Balinese heritage and modern minimalist luxury.
+
+      <main>
+        <header className="villa-collection-hero">
+          <div className="villa-collection-shell">
+            <div className="villa-collection-hero-copy">
+              <p className="villa-collection-eyebrow">Summerhouses Bali</p>
+              <h1>Private villas, selected for a slower island rhythm.</h1>
+              <p>
+                Browse homes connected to live Lodgify inventory, then open each villa
+                for details, amenities, location, and the direct booking path.
               </p>
-              <div className={styles.accentLine} />
+            </div>
+
+          </div>
+        </header>
+
+        <section className="villa-collection-toolbar">
+          <div className="villa-collection-shell villa-collection-toolbar-inner">
+            <div>
+              <span>{hasActiveSearch ? "Search results" : "Collection"}</span>
+              <strong>{hasActiveSearch ? "Available homes from Lodgify" : "All available homes"}</strong>
             </div>
           </div>
-          
-          <nav className={styles.filterBar}>
-            <div className={styles.filterLinks}>
-              <button className={`${styles.filterBtn} ${styles.active}`}>All Villas</button>
-              <button className={styles.filterBtn}>Available Now</button>
-            </div>
-          </nav>
-        </div>
-      </header>
+        </section>
 
-      {/* ─── 2. THE VILLAS GRID SECTION ─── */}
-      <section className={styles.gridSection}>
-        <div className={styles.container}>
-          <Suspense fallback={<VillaGridLoading />}>
-            <VillaList />
-          </Suspense>
-        </div>
-      </section>
+        <section className="villa-collection-search">
+          <div className="villa-collection-shell">
+            <VillaSearchForm
+              variant="listing"
+              initialValues={filters}
+              locations={options.locations}
+            />
+          </div>
+        </section>
 
-      {/* ─── 3. BOTTOM DECORATION ─── */}
-      <section className={styles.bottomDecor}>
-         <div className={styles.decorLine} />
-         <h3 className={styles.decorText}>End of Collection</h3>
-      </section>
+        <section className="villa-collection-list">
+          <div className="villa-collection-shell">
+            <Suspense fallback={<VillaGridLoading />}>
+              <VillaList filters={filters} />
+            </Suspense>
+          </div>
+        </section>
+      </main>
 
       <Footer />
     </div>
