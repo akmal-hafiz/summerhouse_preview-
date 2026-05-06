@@ -9,9 +9,9 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-[100dvh] flex flex-col overflow-x-hidden bg-[#FAFAF9]">
+    <div className="contact-route-shell">
       <Navbar alwaysSolid={true} />
-      <main className="flex-1 w-full">
+      <main className="contact-route-main">
         <Contact />
       </main>
       <Footer />

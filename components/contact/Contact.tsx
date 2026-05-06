@@ -1,323 +1,136 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
-import { FiMapPin, FiPhone, FiMail } from 'react-icons/fi';
-import Magnetic from '@/components/common/Magnetic';
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import styles from "./Contact.module.css";
 
-// Character-by-character reveal component
-const CharacterReveal = ({ text, className }: { text: string, className?: string }) => {
-    const characters = text.split("");
-    return (
-        <span className={className}>
-            {characters.map((char, index) => (
-                <motion.span
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                        duration: 0.6, 
-                        delay: index * 0.03, 
-                        ease: [0.22, 1, 0.36, 1] 
-                    }}
-                    style={{ display: 'inline-block', whiteSpace: char === " " ? "pre" : "normal" }}
-                >
-                    {char}
-                </motion.span>
-            ))}
-        </span>
-    );
+const contactItems = [
+  {
+    icon: FiMapPin,
+    label: "Visit",
+    value: "Jl. Raya Campuhan, Ubud, Bali 80571",
+  },
+  {
+    icon: FiPhone,
+    label: "Call",
+    value: "+62 811 388 999",
+  },
+  {
+    icon: FiMail,
+    label: "Email",
+    value: "hello@summerhousebali.com",
+  },
+];
+
+const fieldMotion = {
+  initial: { opacity: 0, y: 18 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.35 },
+  transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const },
 };
 
-const Contact = () => {
-    const [isMobile, setIsMobile] = useState(false);
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
+export default function Contact() {
+  return (
+    <div className={styles.contactPage}>
+      <section className={styles.hero}>
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          className={styles.heroInner}
+        >
+          <p className={styles.eyebrow}>Summerhouses Bali</p>
+          <h1>
+            Start the conversation <em>before you arrive.</em>
+          </h1>
+          <p className={styles.heroText}>
+            Tell us what kind of stay you are imagining. Our team will help with availability,
+            private villa details, and the quiet practical things that make Bali feel effortless.
+          </p>
+        </motion.div>
+      </section>
 
-    const parallaxRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: parallaxRef,
-        offset: ["start end", "end start"]
-    });
-
-    // Subtle Parallax Dampening for Desktop
-    const smoothProgress = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
-    });
-
-    const yParallax = useTransform(smoothProgress, [0, 1], isMobile ? ["0%", "0%"] : ["-15%", "15%"]);
-
-    return (
-        <div className="w-full bg-[#FAFAF9] min-h-[2900px] md:min-h-[3800px] lg:min-h-[4000px] xl:min-h-[4000px] 2xl:min-h-[3800px] mb-[-250vh] lg:mb-0 h-auto flex flex-col pt-[160px] lg:pt-[200px]">
-            
-            {/* ========================================= */}
-            {/* 1. HERO HEADER SECTION                    */}
-            {/* ========================================= */}
-            <section className="w-full relative lg:left-[360px] md:left-0 bottom-[-170px] lg:bottom-[-200px] md:bottom-[-100px] px-6 flex flex-col items-center text-center max-w-[800px] mx-auto mb-20 lg:mb-32 pt-20 lg:pt-0">
-                <motion.h1 
-                    className="text-[28px] md:text-6xl lg:text-[72px] leading-[1.8] lg:leading-[1.7] text-[#446B4A] lg:text-[#446B4A] mb-6 lg:mb-8 tracking-[-0.02em] font-bold lg:font-medium text-center"
-                    style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}
-                >
-                    <CharacterReveal text="Connect with our team" />
-                </motion.h1>
-                <motion.p 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-[#68635c] lg:text-[#5a5651] text-[14px] md:text-[18px] font-normal lg:font-light leading-[1.6] max-w-[280px] md:max-w-[400px] lg:max-w-[600px] text-center"
-                    style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}
-                >
-                    Have a question or need assistance? Whether it's about your booking, or anything else - just reach out. We'd love to hear from you!
-                </motion.p>
-            </section>
-
-            {/* ========================================= */}
-            {/* 2. PARALLAX FORM SECTION                  */}
-            {/* ========================================= */}
-            <section ref={parallaxRef} className="w-full min-h-[95dvh] lg:min-h-[130dvh] h-auto relative lg:bottom-[-400px] bottom-[-290px] py-24 lg:py-33 overflow-hidden">
-                <motion.div 
-                    className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat" 
-                    style={{ 
-                        backgroundImage: 'url(/homepage_villa/curated-7.webp)',
-                        y: yParallax
-                    }}
-                ></motion.div>
-                <div className="absolute inset-0 bg-black/40"></div>
-                
-                <div className="relative translate-x-0px md:translate-x-0 lg:translate-x-26 bottom-[-36px] md:translate-y-20 xl:translate-y-80 2xl:translate-y-56 z-10 max-w-[1300px] mx-auto px-6 w-full flex justify-center">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="bg-white rounded-[40px] relative md:left-0 lg:left-[-18px] top-[5px] md:top-0 lg:top-[-150px] px-8 py-16 md:px-24 md:py-24 lg:px-[180px] lg:py-[280px] min-h-[720px] lg:min-h-[760px] w-[90%] md:w-[85%] lg:w-[68%] shadow-2xl flex items-center justify-center lg:justify-start"
-                    >
-                        <form className="flex flex-col gap-6 lg:gap-8 relative bottom-[5px] md:bottom-0 lg:bottom-0px md:right-0 lg:right-[-50px] w-[80%] md:w-[90%] lg:w-[100%] max-w-[800px]">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                                <div className="flex flex-col gap-2.5 lg:gap-3">
-                                    <label className="text-[14px] font-bold lg:font-medium text-[#1a1a19]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>First name *</label>
-                                    <input type="text" placeholder="Jane" className="h-[58px] lg:h-[56px] rounded-full lg:rounded-[12px] bg-[#F5F5F4] lg:bg-[#FAFAF9] border-none lg:border lg:border-[#E5E5E5] outline-none focus:ring-1 focus:ring-[#446B4A] transition-all font-light text-[15px] placeholder-[#8F8A84]" style={{ paddingLeft: '24px', paddingRight: '24px' }} />
-                                </div>
-                                <div className="flex flex-col gap-2.5 lg:gap-3">
-                                    <label className="text-[14px] font-bold lg:font-medium text-[#1a1a19]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Last name</label>
-                                    <input type="text" placeholder="Smith" className="h-[58px] lg:h-[56px] rounded-full lg:rounded-[12px] bg-[#F5F5F4] lg:bg-[#FAFAF9] border-none lg:border lg:border-[#E5E5E5] outline-none focus:ring-1 focus:ring-[#446B4A] transition-all font-light text-[15px] placeholder-[#8F8A84]" style={{ paddingLeft: '24px', paddingRight: '24px' }} />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                                <div className="flex flex-col gap-2.5 lg:gap-3">
-                                    <label className="text-[14px] font-bold lg:font-medium text-[#1a1a19]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Phone number</label>
-                                    <input type="tel" placeholder="+1 (555) 123-4567" className="h-[58px] lg:h-[56px] rounded-full lg:rounded-[12px] bg-[#F5F5F4] lg:bg-[#FAFAF9] border-none lg:border lg:border-[#E5E5E5] outline-none focus:ring-1 focus:ring-[#446B4A] transition-all font-light text-[15px] placeholder-[#8F8A84]" style={{ paddingLeft: '24px', paddingRight: '24px' }} />
-                                </div>
-                                <div className="flex flex-col gap-2.5 lg:gap-3">
-                                    <label className="text-[14px] font-bold lg:font-medium text-[#1a1a19]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Email *</label>
-                                    <input type="email" placeholder="smith@email.com" className="h-[58px] lg:h-[56px] rounded-full lg:rounded-[12px] bg-[#F5F5F4] lg:bg-[#FAFAF9] border-none lg:border lg:border-[#E5E5E5] outline-none focus:ring-1 focus:ring-[#446B4A] transition-all font-light text-[15px] placeholder-[#8F8A84]" style={{ paddingLeft: '24px', paddingRight: '24px' }} />
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2.5 lg:gap-3">
-                                <label className="text-[14px] font-bold lg:font-medium text-[#1a1a19]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Message *</label>
-                                <textarea placeholder="Give us more info..." className="h-[140px] lg:h-[160px] p-6 lg:p-5 rounded-[24px] lg:rounded-[12px] bg-[#F5F5F4] lg:bg-[#FAFAF9] border-none lg:border lg:border-[#E5E5E5] outline-none focus:ring-1 focus:ring-[#446B4A] transition-all font-light text-[15px] resize-none placeholder-[#8F8A84]" style={{ paddingLeft: '24px', paddingRight: '24px' }}></textarea>
-                            </div>
-                            <Magnetic>
-                                <button type="submit" className="w-[100%] relative bottom-[-6px] lg:bottom-0px right-[-4px] lg:right-0 lg:w-full h-[40px] lg:h-[60px] bg-black lg:bg-[#1a1a19] text-white rounded-full lg:rounded-[12px] font-bold lg:font-medium tracking-wide text-[16px] hover:bg-[#2a2a29] transition-all mt-4 lg:mt-2 shadow-lg lg:shadow-none" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                                    Submit
-                                </button>
-                            </Magnetic>
-                        </form>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* ========================================= */}
-            {/* 3. CONTACT INFO SECTION                   */}
-            {/* ========================================= */}
-            <section className="w-full max-w-[1400px] relative lg:right-[-80px] md:right-0 bottom-[-370px] md:bottom-[-450px] lg:bottom-[-700px] mx-auto px-6 md:px-12 lg:px-24 py-16 lg:py-40">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-                    {/* Left: Image */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="w-[88%] md:w-full md:mx-auto lg:w-full aspect-square lg:aspect-[4/5] rounded-[32px] lg:rounded-[24px] overflow-hidden relative right-[-25px] md:right-0 lg:right-0 shadow-2xl"
-                    >
-                        <img 
-                            src="/homepage_villa/curated-8.webp" 
-                            alt="Resort Pool" 
-                            className="w-full h-full object-cover" 
-                        />
-                    </motion.div>
-                    
-                    {/* Right: Info */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="flex flex-col lg:pl-0 relative bottom-[-8px] md:bottom-0 lg:bottom-0 right-[-25px] md:right-0 lg:right-0 md:items-center lg:items-start md:text-center lg:text-left"
-                    >
-                        <span className="text-[14px] relative bottom-[20px] lg:bottom-0 font-medium text-[#1a1a19] mb-4" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Our location</span>
-                        <h2 className="text-[28px] lg:text-[64px] relative bottom-[8px] lg:bottom-0 font-bold  lg:font-medium tracking-tight text-[#1a1a19] mb-6 leading-[1.1]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                            Contact information
-                        </h2>
-                        <p className="text-[#68635c] relative bottom-[-6px] lg:bottom-0 lg:text-[#5a5651] text-[14px] lg:text-[18px] font-normal lg:font-light leading-[1.6] mb-10 lg:mb-12 max-w-[350px] lg:max-w-[500px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                            Need to reach us? Here's how you can get in touch. Call, email, or visit - our team is ready to assist you with anything you need before, during, or after stay.
-                        </p>
-                        
-                        <div className="w-[78%] lg:w-full relative top-[22px] lg:top-0 h-[1px] bg-[#2E2E2C] mb-10"></div>
-                        
-                        <div className="flex flex-col gap-8 relative bottom-[-40px] lg:bottom-0">
-                            <div className="flex items-center gap-5 lg:gap-6 group cursor-pointer">
-                                <div className="lg:w-12 lg:h-12 lg:rounded-full lg:bg-[#FAFAF9] lg:border lg:border-[#E5E5E5] flex items-center justify-center lg:group-hover:bg-[#1a1a19] lg:group-hover:text-white transition-colors duration-300">
-                                    <FiMapPin className="text-[20px] lg:text-xl text-black lg:text-current" />
-                                </div>
-                                <span className="text-[16px] text-[#161615] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Jl. Raya Campuhan, Ubud, Bali 80571</span>
-                            </div>
-                            <div className="flex items-center gap-5 lg:gap-6 group cursor-pointer">
-                                <div className="lg:w-12 lg:h-12 lg:rounded-full lg:bg-[#FAFAF9] lg:border lg:border-[#E5E5E5] flex items-center justify-center lg:group-hover:bg-[#1a1a19] lg:group-hover:text-white transition-colors duration-300">
-                                    <FiPhone className="text-[20px] lg:text-xl text-black lg:text-current" />
-                                </div>
-                                <span className="text-[16px] text-[#1a1a19] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>+62 811 388 999</span>
-                            </div>
-                            <div className="flex items-center gap-5 lg:gap-6 group cursor-pointer">
-                                <div className="lg:w-12 lg:h-12 lg:rounded-full lg:bg-[#FAFAF9] lg:border lg:border-[#E5E5E5] flex items-center justify-center lg:group-hover:bg-[#1a1a19] lg:group-hover:text-white transition-colors duration-300">
-                                    <FiMail className="text-[20px] lg:text-xl text-black lg:text-current" />
-                                </div>
-                                <span className="text-[16px] text-[#1a1a19] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>hello@summerhousebali.com</span>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* ========================================= */}
-            {/* 4. DISCOVER & STATS (DARK)                */}
-            {/* ========================================= */}
-            <section className="w-full bg-[#0a0a0a] min-h-[137dvh] md:min-h-[100dvh] xl:min-h-[100dvh] 2xl:min-h-[120dvh] pt-32 pb-24 px-6 md:px-12 relative bottom-[-490px] md:bottom-[-600px] lg:bottom-[-1000px] mt-20 z-20 overflow-visible">
-                {/* Overlapping Polaroids */}
-
-                <div className="lg:max-w-[1300px] justify-center items-center -translate-x-20 md:translate-x-0 lg:translate-x-5 translate-y-0 md:translate-y-5 lg:translate-y-10 max-w-[400px] md:max-w-[800px] w-[350px] md:w-full lg:w-full mx-auto flex flex-col relative z-10 mt-12">
-                    <motion.h2 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="text-2xl relative  lg:right-[-88px] md:right-0 right-[-100px] md:text-5xl lg:text-[60px] font-medium tracking-tight text-white mb-16 text-center leading-[1.1]" 
-                        style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}
-                    >
-                        Discover our rooms &<br/>enjoy your stay
-                    </motion.h2>
-                    
-                    {/* Inline Booking Form */}
-                    <div className="w-full md:w-[80%] lg:w-[100%] flex flex-col lg:flex-row gap-6 lg:gap-4 mb-24 relative bottom-[-150px] md:bottom-0 lg:bottom-[-160px] translate-x-24 md:translate-x-0 lg:translate-x-10">
-                        <div className="flex-1 flex flex-col gap-4">
-                            <label className="text-white text-[13px] font-medium pl-2" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Full name*</label>
-                            <div className="relative">
-                                <input type="text" placeholder="Alex Johnson" className="w-full h-[56px] rounded-full bg-white/[0.08] border border-white/20 px-6 text-white outline-none focus:border-white/50 transition-colors font-light" style={{ paddingLeft: '20px', paddingRight: '20px' }} />
-                                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 font-serif italic text-sm">Aa</span>
-                            </div>
-                        </div>
-                        <div className="flex-1 flex flex-col gap-2">
-                            <label className="text-white text-[13px] font-medium pl-2" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Email*</label>
-                            <div className="relative">
-                                <input type="email" placeholder="johnson@mail.com" className="w-full h-[56px] rounded-full bg-white/[0.08] border border-white/20 px-6 text-white outline-none focus:border-white/50 transition-colors font-light" style={{ paddingLeft: '20px', paddingRight: '20px' }} />
-                                <FiMail className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 text-lg" />
-                            </div>
-                        </div>
-                        <div className="flex-1 flex flex-col gap-2">
-                            <label className="text-white text-[13px] font-medium pl-2" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Guests</label>
-                            <div className="relative">
-                                <select className="w-full h-[56px] rounded-full bg-white/[0.08] border border-white/20 px-6 text-white outline-none focus:border-white/50 appearance-none cursor-pointer font-light" style={{ paddingLeft: '20px', paddingRight: '20px' }}>
-                                    <option value="1" className="bg-[#1a1a19] ">1 guest</option>
-                                    <option value="2" className="bg-[#1a1a19]" defaultValue="2">2 guests</option>
-                                    <option value="3" className="bg-[#1a1a19]">3 guests</option>
-                                    <option value="4" className="bg-[#1a1a19]">4+ guests</option>
-                                </select>
-                                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex-1 flex flex-col gap-2">
-                            <label className="text-white text-[13px] font-medium pl-2" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Rooms</label>
-                            <div className="relative">
-                                <select className="w-full h-[56px] rounded-full bg-white/[0.08] border border-white/20 px-6 text-white outline-none focus:border-white/50 appearance-none cursor-pointer font-light" style={{ paddingLeft: '20px', paddingRight: '20px' }}>
-                                    <option value="" disabled className="bg-[#1a1a19]">Select...</option>
-                                    <option value="1" className="bg-[#1a1a19]">1 room</option>
-                                    <option value="2" className="bg-[#1a1a19]">2 rooms</option>
-                                    <option value="3" className="bg-[#1a1a19]">3+ rooms</option>
-                                </select>
-                                <div className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none">
-                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="flex flex-col relative bottom-[-20px] lg:bottom-[4px] justify-end lg:w-auto mt-4 lg:mt-0">
-                            <button className="h-[56px] px-8 bg-white text-[#1a1a19] rounded-full font-medium tracking-wide flex items-center justify-between gap-4 hover:bg-gray-100 transition-colors w-full lg:w-[260px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                                <div className="w-[5px] h-[5px] rounded-full bg-[#1a1a19]" />
-                                Book your stay
-                                <div className="w-[5px] h-[5px] rounded-full bg-[#1a1a19]" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="w-[1200px] md:w-full lg:w-[128%] relative translate-y-55 md:translate-y-16 lg:translate-y-10 h-[1px] bg-white/90 mb-20"></div>
-
-                    {/* Statistics Grid */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-10 translate-x-0 lg:-translate-x-8 w-full relative md:translate-y-26 translate-y-70 lg:translate-y-90 md:right-0 right-[-95px] lg:right-[-145px]">
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.1 }}
-                            className="flex flex-col items-center lg:items-start text-center lg:text-left"
-                        >
-                            <span className="text-[64px] md:text-[80px] lg:text-[100px] font-medium text-white/90 leading-[1] tracking-tighter" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>4.9</span>
-                            <span className="text-white/60 text-[14px] mt-4 font-medium uppercase tracking-wider" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Average Guest Rating</span>
-                        </motion.div>
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="flex flex-col items-center lg:items-start text-center lg:text-left"
-                        >
-                            <span className="text-[64px] md:text-[80px] lg:text-[100px] font-medium text-white/90 leading-[1] tracking-tighter" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>10K+</span>
-                            <span className="text-white/60 text-[14px] mt-4 font-medium uppercase tracking-wider" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Happy Guests Hosted</span>
-                        </motion.div>
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.3 }}
-                            className="flex flex-col items-center lg:items-start text-center lg:text-left"
-                        >
-                            <span className="text-[64px] md:text-[80px] lg:text-[100px] font-medium text-white/90 leading-[1] tracking-tighter" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>19</span>
-                            <span className="text-white/60 text-[14px] mt-4 font-medium uppercase tracking-wider" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Stylishly Designed Rooms</span>
-                        </motion.div>
-                        <motion.div 
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
-                            className="flex flex-col items-center lg:items-start text-center lg:text-left"
-                        >
-                            <span className="text-[64px] md:text-[80px] lg:text-[100px] font-medium text-white/90 leading-[1] tracking-tighter" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>365</span>
-                            <span className="text-white/60 text-[14px] mt-4 font-medium uppercase tracking-wider" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>Days of Warm Service</span>
-                        </motion.div>
-                    </div>
-
-                </div>
-            </section>
-
+      <section className={styles.contactEditorial}>
+        <div className={styles.mediaColumn}>
+          <motion.figure {...fieldMotion} className={styles.mainImage}>
+            <Image
+              src="/homepage_villa/curated-7.webp"
+              alt="Summerhouses villa pool and tropical garden"
+              width={1100}
+              height={1400}
+              sizes="(min-width: 1024px) 42vw, 100vw"
+              className={styles.image}
+            />
+          </motion.figure>
+          <motion.div {...fieldMotion} className={styles.note}>
+            <span>Concierge note</span>
+            <p>For urgent arrival support, call our Bali team directly.</p>
+          </motion.div>
         </div>
-    );
-};
 
-export default Contact;
+        <motion.div {...fieldMotion} className={styles.formPanel}>
+          <div className={styles.formHeading}>
+            <p>Contact us</p>
+            <h2>Share a few details</h2>
+          </div>
+
+          <form className={styles.form}>
+            <div className={styles.fieldGrid}>
+              <label>
+                <span>First name *</span>
+                <input type="text" placeholder="Jane" />
+              </label>
+              <label>
+                <span>Last name</span>
+                <input type="text" placeholder="Smith" />
+              </label>
+            </div>
+
+            <div className={styles.fieldGrid}>
+              <label>
+                <span>Email *</span>
+                <input type="email" placeholder="jane@email.com" />
+              </label>
+              <label>
+                <span>Phone</span>
+                <input type="tel" placeholder="+62 811 388 999" />
+              </label>
+            </div>
+
+            <label>
+              <span>Message *</span>
+              <textarea placeholder="Tell us about your dates, villa preference, or what you need help with." />
+            </label>
+
+            <button type="submit">Send inquiry</button>
+          </form>
+        </motion.div>
+      </section>
+
+      <section className={styles.infoSection}>
+        <div className={styles.infoHeader}>
+          <p className={styles.eyebrow}>Direct details</p>
+          <h2>Reach the Summerhouses team.</h2>
+        </div>
+
+        <div className={styles.infoGrid}>
+          {contactItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <motion.article {...fieldMotion} key={item.label} className={styles.infoItem}>
+                <div className={styles.infoIcon}>
+                  <Icon />
+                </div>
+                <div>
+                  <span>{item.label}</span>
+                  <p>{item.value}</p>
+                </div>
+              </motion.article>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}

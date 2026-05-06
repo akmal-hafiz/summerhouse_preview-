@@ -49,14 +49,19 @@ export default function Footer() {
       {/* ================================================= */}
       {/* MOBILE FOOTER (Light Version) */}
       {/* ================================================= */}
-      <footer className="block md:hidden bg-[#F5F3F1] w-full pt-20 pb-10 overflow-hidden">
-        <div className="w-full px-6">
-          <div className="grid grid-cols-1 gap-14 pb-16 text-center">
+      <footer className="summer-footer-mobile block md:hidden bg-[#F5F3F1] w-full pt-20 pb-10 overflow-hidden">
+        <div className="summer-footer-mobile__inner w-full px-6">
+          <div className="summer-footer-mobile__intro">
+            <p>Summerhouse Bali</p>
+            <h2>Your stay begins with a quieter kind of island living.</h2>
+          </div>
+
+          <div className="summer-footer-mobile__nav grid grid-cols-1 gap-14 pb-16 text-center">
             
             {/* Column 1: Stay */}
-            <div className="flex flex-col items-center gap-6">
+            <div className="summer-footer-mobile__group flex flex-col items-center gap-6">
               <h3 className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>Stay</h3>
-              <ul className="flex flex-col gap-4">
+              <ul className="summer-footer-mobile__links flex flex-col gap-4">
                 {FOOTER_LINKS.stay.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="text-[#5a5651] text-[14px] hover:text-[#1a1a19] transition-colors font-light">
@@ -68,9 +73,9 @@ export default function Footer() {
             </div>
 
             {/* Column 2: For Villa Owners */}
-            <div className="flex flex-col items-center gap-6">
+            <div className="summer-footer-mobile__group flex flex-col items-center gap-6">
               <h3 className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>For Villa Owners</h3>
-              <ul className="flex flex-col gap-4">
+              <ul className="summer-footer-mobile__links flex flex-col gap-4">
                 {FOOTER_LINKS.forVillaOwners.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="text-[#5a5651] text-[14px] hover:text-[#1a1a19] transition-colors font-light">
@@ -82,9 +87,9 @@ export default function Footer() {
             </div>
 
             {/* Column 3: Navigation */}
-            <div className="flex flex-col items-center gap-6">
+            <div className="summer-footer-mobile__group flex flex-col items-center gap-6">
               <h3 className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>Navigation</h3>
-              <ul className="flex flex-col gap-4">
+              <ul className="summer-footer-mobile__links flex flex-col gap-4">
                 {FOOTER_LINKS.navigation.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="text-[#5a5651] text-[14px] hover:text-[#1a1a19] transition-colors font-light">
@@ -96,9 +101,9 @@ export default function Footer() {
             </div>
 
             {/* Column 4: Connect */}
-            <div className="flex flex-col items-center gap-6">
+            <div className="summer-footer-mobile__group flex flex-col items-center gap-6">
               <h3 className="text-[#ad8553] text-[11px] tracking-[0.2em] font-bold uppercase" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>Connect</h3>
-              <div className="flex gap-4">
+              <div className="summer-footer-mobile__socials flex gap-4">
                 <a href="#" className="w-10 h-10 rounded-full border border-[#d7cfc5] flex items-center justify-center text-[#5a5651] hover:bg-[#1a1a19] hover:text-[#F5F3F1] transition-all duration-300"><FiInstagram className="w-4 h-4" /></a>
                 <a href="#" className="w-10 h-10 rounded-full border border-[#d7cfc5] flex items-center justify-center text-[#5a5651] hover:bg-[#bd081c] hover:text-white transition-all duration-300"><FaPinterestP className="w-4 h-4" /></a>
                 <a href="#" className="w-10 h-10 rounded-full border border-[#d7cfc5] flex items-center justify-center text-[#5a5651] hover:bg-[#010101] hover:text-white transition-all duration-300"><FaTiktok className="w-4 h-4" /></a>
@@ -107,7 +112,7 @@ export default function Footer() {
           </div>
 
           {/* Bottom Copyright Bar */}
-          <div className="flex flex-col items-center gap-6 pt-8 border-t border-black/10">
+          <div className="summer-footer-mobile__bottom flex flex-col items-center gap-6 pt-8 border-t border-black/10">
             <span className="text-[#8F8A84] text-[10px] tracking-[0.2em] font-medium uppercase text-center" style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
               © {new Date().getFullYear()} Summerhouse. All Rights Reserved.
             </span>

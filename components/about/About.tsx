@@ -11,13 +11,36 @@ import editorialStyles from './AboutEditorialSections.module.css';
 
 type ServiceItem = {
     title: string;
+    description: string;
+    image: string;
+    alt: string;
 };
 
 const servicesData: ServiceItem[] = [
-    { title: '24/7 Concierge Service' },
-    { title: 'Wellness & Spa Center' },
-    { title: 'Gourmet On-Site Dining' },
-    { title: 'Rooftop Pool & Lounge' },
+    {
+        title: 'Private Chef',
+        description: 'Seasonal ingredients, island flavors, and quiet tableside service shaped around the way you want to gather.',
+        image: '/homepage_villa/villaarta.webp',
+        alt: 'Private villa dining and kitchen setting',
+    },
+    {
+        title: 'Boarding Assistance',
+        description: 'Begin and end your journey with ease through arrival guidance, luggage support, and seamless transfers across Bali.',
+        image: '/bellevoire/beach_stay.png',
+        alt: 'Quiet beach arrival arranged by Summerhouses',
+    },
+    {
+        title: 'Wellness Rituals',
+        description: 'In-villa massage, poolside recovery, and slow morning rituals arranged around your rhythm, privacy, and pace.',
+        image: '/homepage_villa/curated-5-lounge.webp',
+        alt: 'Poolside wellness moment at a Summerhouses villa',
+    },
+    {
+        title: 'Island Concierge',
+        description: 'From private dinners to local reservations, every detail is handled with calm precision before you need to ask.',
+        image: '/bellevoire/editorial_large.png',
+        alt: 'Summerhouses villa terrace prepared for a private stay',
+    },
 ];
 
 // --- Section 1: Brand Intro ---
@@ -171,44 +194,70 @@ const BrandEditorialSection = () => (
     </section>
 );
 
-// --- Section 3: Philosophy ---
+// --- Section 3: Personalized Services ---
 
-const PhilosophySection = () => (
-    <section className={editorialStyles.philosophyStory}>
-        <div className={editorialStyles.philosophyShell}>
-            <motion.div
-                initial={{ opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-                className={editorialStyles.philosophyCopy}
-            >
-                <p className={editorialStyles.chapter}>The Summerhouse Story</p>
-                <h3>Not a hotel. <em>A home.</em></h3>
-                <p>
-                    We did not set out to build another villa rental. We set out to answer one question:
-                    what does it feel like to stay somewhere that truly gets you? The result is Summerhouse,
-                    where every detail exists to make you feel at home, not like a guest.
-                </p>
-            </motion.div>
-
-            <motion.div
-                initial={{ opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.85, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-                className={editorialStyles.philosophyServices}
-            >
-                {servicesData.map((service, index) => (
-                    <div key={service.title} className={editorialStyles.philosophyService}>
-                        <span>{String(index + 1).padStart(2, '0')}</span>
-                        <p>{service.title}</p>
-                    </div>
-                ))}
-            </motion.div>
-        </div>
-    </section>
+const StackedServiceCard = ({
+    service,
+    index,
+}: {
+    service: ServiceItem;
+    index: number;
+}) => (
+        <article
+            className={`${editorialStyles.servicePanel} about-service-panel`}
+            style={{
+                ['--stack-index' as string]: index,
+                ['--stack-offset' as string]: `${index * 1.65}rem`,
+                ['--stack-offset-tablet' as string]: `${index * 1.22}rem`,
+                ['--stack-offset-mobile' as string]: `${index * 0.95}rem`,
+                ['--stack-z' as string]: 20 + index,
+            }}
+        >
+            <div className={editorialStyles.servicePanelNumber}>
+                {String(index + 1).padStart(2, '0')}
+            </div>
+            <h4 className={editorialStyles.servicePanelTitle}>{service.title}</h4>
+            <p className={editorialStyles.servicePanelDescription}>{service.description}</p>
+            <figure className={editorialStyles.servicePanelImageFrame}>
+                <Image
+                    src={service.image}
+                    alt={service.alt}
+                    width={760}
+                    height={560}
+                    sizes="(min-width: 1200px) 30vw, (min-width: 768px) 42vw, 100vw"
+                    className={editorialStyles.servicePanelImage}
+                />
+            </figure>
+        </article>
 );
+
+const PersonalizedServicesSection = () => {
+    return (
+        <section className={`${editorialStyles.personalizedStory} about-personalized-story`}>
+            <div className={`${editorialStyles.personalizedShell} about-personalized-shell`}>
+                <motion.header
+                    initial={{ opacity: 0, y: 34 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                    className={`${editorialStyles.personalizedHeader} about-personalized-header`}
+                >
+                    <h3>Personalized <em>Services</em></h3>
+                </motion.header>
+
+                <div className={`${editorialStyles.serviceDeck} about-service-deck`}>
+                    {servicesData.map((service, index) => (
+                        <StackedServiceCard
+                            key={service.title}
+                            service={service}
+                            index={index}
+                        />
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
 
 // --- Section 4: More Than Stay (Transitional) ---
 
@@ -302,7 +351,7 @@ const About = () => {
         <div className={editorialStyles.aboutShell}>
             <BrandIntroSection />
             <BrandEditorialSection />
-            <PhilosophySection />
+            <PersonalizedServicesSection />
             <MoreThanStaySection />
             <JournalPreviewSection />
             <StatsSection />
