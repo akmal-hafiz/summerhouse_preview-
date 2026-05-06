@@ -5,13 +5,13 @@ if (!LODGIFY_API_KEY) {
   console.warn('Warning: LODGIFY_API_KEY is not defined in environment variables.');
 }
 
-export interface LodgifyProperty {
-  id: number;
-  name: string;
-  description: string;
-  image_url: string;
-  // Tambahkan field lain sesuai kebutuhan dari Lodgify API
-}
+/**
+ * Helper to ensure image URLs have https protocol
+ */
+const ensureProtocol = (url: string) => {
+  if (!url) return '';
+  return url.startsWith('//') ? `https:${url}` : url;
+};
 
 /**
  * Fetch all properties from Lodgify
@@ -24,23 +24,20 @@ export async function getProperties() {
         'X-ApiKey': LODGIFY_API_KEY || '',
         'Accept': 'application/json',
       },
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: 3600 }
     });
 
     if (!response.ok) {
-      throw new Error(`Lodgify API error: ${response.status} ${response.statusText}`);
+      console.error(`Lodgify Properties API error: ${response.status}`);
+      return [];
     }
 
     const data = await response.json();
     
-    // Lodgify returns { count, items: [...] }
     if (data && data.items && Array.isArray(data.items)) {
       return data.items.map((item: any) => ({
         ...item,
-        // Ensure image URL has https: protocol if it starts with //
-        image_url: item.image_url && item.image_url.startsWith('//') 
-          ? `https:${item.image_url}` 
-          : item.image_url
+        image_url: ensureProtocol(item.image_url)
       }));
     }
     
@@ -55,8 +52,11 @@ export async function getProperties() {
  * Fetch a single property details
  */
 export async function getPropertyById(id: string | number) {
+  if (!id) return null;
+  
   try {
-    const response = await fetch(`${BASE_URL}/properties/${id}`, {
+    const url = `${BASE_URL}/properties/${id}`;
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'X-ApiKey': LODGIFY_API_KEY || '',
@@ -65,10 +65,15 @@ export async function getPropertyById(id: string | number) {
     });
 
     if (!response.ok) {
-      throw new Error(`Lodgify API error: ${response.status} ${response.statusText}`);
+      console.error(`Lodgify Property Detail error for ID ${id}: ${response.status}`);
+      return null;
     }
 
-    return await response.json();
+    const data = await response.json();
+    if (data) {
+      data.image_url = ensureProtocol(data.image_url);
+    }
+    return data;
   } catch (error) {
     console.error(`Error fetching Lodgify property ${id}:`, error);
     return null;
@@ -88,10 +93,7 @@ export async function getAvailability(propertyId: number, startDate: string, end
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Lodgify API error: ${response.status} ${response.statusText}`);
-    }
-
+    if (!response.ok) return null;
     return await response.json();
   } catch (error) {
     console.error(`Error fetching availability for ${propertyId}:`, error);
@@ -103,8 +105,11 @@ export async function getAvailability(propertyId: number, startDate: string, end
  * Fetch images for a specific property
  */
 export async function getPropertyImages(id: string | number) {
+  if (!id) return [];
+
   try {
-    const response = await fetch(`${BASE_URL}/properties/${id}/images`, {
+    const url = `${BASE_URL}/properties/${id}/images`;
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'X-ApiKey': LODGIFY_API_KEY || '',
@@ -114,12 +119,56 @@ export async function getPropertyImages(id: string | number) {
     });
 
     if (!response.ok) {
-      throw new Error(`Lodgify API error: ${response.status} ${response.statusText}`);
+      console.error(`Lodgify Images error for ID ${id}: ${response.status}`);
+      return [];
     }
 
-    return await response.json();
+    const images = await response.json();
+    if (Array.isArray(images)) {
+      return images.map((img: any) => ({
+        ...img,
+        url: ensureProtocol(img.url)
+      }));
+    }
+    return [];
   } catch (error) {
     console.error(`Error fetching images for property ${id}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Fetch rooms for a specific property (includes amenities info)
+ */
+export async function getPropertyRooms(id: string | number) {
+  if (!id) return [];
+
+  try {
+    const url = `${BASE_URL}/properties/${id}/rooms`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'X-ApiKey': LODGIFY_API_KEY || '',
+        'Accept': 'application/json',
+      },
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      console.error(`Lodgify Rooms error for ID ${id}: ${response.status}`);
+      return [];
+    }
+
+    const rooms = await response.json();
+    if (Array.isArray(rooms)) {
+      return rooms.map((room: any) => ({
+        ...room,
+        image_url: ensureProtocol(room.image_url)
+      }));
+    }
+    return [];
+  } catch (error) {
+    console.error(`Error fetching rooms for property ${id}:`, error);
     return [];
   }
 }
