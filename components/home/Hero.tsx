@@ -284,7 +284,7 @@ const Hero = () => {
     );
 
     return (
-        <section className="relative w-full min-h-[120px] z-0">
+        <section className="home-hero-section relative w-full min-h-[120px] z-0">
             {/* Click outside overlay */}
             {activeDropdown && (
                 <div

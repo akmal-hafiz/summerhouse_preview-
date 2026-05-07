@@ -11,6 +11,14 @@ type StickyBookingBarProps = {
   nights: number;
   isValid: boolean;
   error?: string;
+  rateQuote?: {
+    totalLabel?: string | null;
+    averageNightlyLabel?: string | null;
+    additionalGuestSubtotal?: number;
+    isMinimumStayValid?: boolean;
+    message?: string;
+  } | null;
+  isQuoteLoading?: boolean;
   checkoutUrl: string;
   onGuestChange: (guests: number) => void;
   onClearDates: () => void;
@@ -27,15 +35,30 @@ export default function StickyBookingBar({
   nights,
   isValid,
   error,
+  rateQuote,
+  isQuoteLoading = false,
   checkoutUrl,
   onGuestChange,
   onClearDates,
 }: StickyBookingBarProps) {
+  const bookingLabel = isValid && rateQuote?.totalLabel
+    ? `Book for ${rateQuote.totalLabel}`
+    : isValid
+      ? "Book Now"
+      : "Check dates";
+  const summaryLabel = isValid
+    ? isQuoteLoading
+      ? "Checking Lodgify rates..."
+      : rateQuote?.totalLabel
+        ? `${nights} ${nights === 1 ? "night" : "nights"} - ${rateQuote.totalLabel}`
+        : `${nights} ${nights === 1 ? "night" : "nights"} selected`
+    : error || "Select available dates";
+
   return (
     <div className="villa-booking-bar" aria-live="polite">
       <div className="villa-booking-bar__identity">
         <strong>{villaName}</strong>
-        <span>{location}{priceLabel ? ` · from ${priceLabel} per night` : ""}</span>
+        <span>{location}{priceLabel ? ` - from ${priceLabel} per night` : ""}</span>
       </div>
 
       <div className="villa-booking-bar__controls">
@@ -63,11 +86,10 @@ export default function StickyBookingBar({
       </div>
 
       <div className="villa-booking-bar__summary">
-        <span>
-          {isValid
-            ? `${nights} ${nights === 1 ? "night" : "nights"} selected`
-            : error || "Select available dates"}
-        </span>
+        <span>{summaryLabel}</span>
+        {isValid && rateQuote?.averageNightlyLabel && (
+          <small>{rateQuote.averageNightlyLabel} average per night from Lodgify rates</small>
+        )}
         <a
           href={isValid ? checkoutUrl : undefined}
           aria-disabled={!isValid}
@@ -75,7 +97,7 @@ export default function StickyBookingBar({
           target="_blank"
           rel="noopener noreferrer"
         >
-          {isValid ? "Book Now" : "Check dates"}
+          {bookingLabel}
         </a>
       </div>
     </div>

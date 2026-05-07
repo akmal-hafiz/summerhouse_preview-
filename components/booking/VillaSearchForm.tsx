@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
 
@@ -92,6 +93,10 @@ export default function VillaSearchForm({
       .catch(() => setLocations([]));
   }, [providedLocations.length]);
 
+  const togglePanel = (panel: "location" | "dates" | "guests") => {
+    setActivePanel(activePanel === panel ? null : panel);
+  };
+
   const guestLabel = useMemo(() => {
     const total = adults + children;
     return `${total} ${total === 1 ? "adult" : "guests"}${infants ? `, ${infants} infant` : ""}${pets ? `, ${pets} pet` : ""}`;
@@ -181,89 +186,92 @@ export default function VillaSearchForm({
       onSubmit={submitSearch}
     >
       <div className="villa-search-form__group villa-search-form__group--location">
-        <button type="button" onClick={() => setActivePanel(activePanel === "location" ? null : "location")}>
+        <button type="button" onClick={() => togglePanel("location")}>
           <span>Location</span>
           <strong>{location || "Location"}</strong>
           <FiChevronDown aria-hidden="true" className="villa-search-form__chevron" />
         </button>
-        {activePanel === "location" && (
-          <div className="villa-search-form__panel villa-search-form__panel--location">
-            {locations.map((item) => (
-              <button
-                type="button"
-                key={item}
-                onClick={() => {
-                  setLocation(item);
-                  setActivePanel(null);
-                }}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="villa-search-form__group villa-search-form__group--dates">
-        <button type="button" onClick={() => setActivePanel(activePanel === "dates" ? null : "dates")}>
+        <button type="button" onClick={() => togglePanel("dates")}>
           <span>Check-in</span>
           <strong>{checkIn || "Check-in"}</strong>
         </button>
-        <button type="button" onClick={() => setActivePanel(activePanel === "dates" ? null : "dates")}>
+        <button type="button" onClick={() => togglePanel("dates")}>
           <span>Check-out</span>
           <strong>{checkOut || "Check-out"}</strong>
         </button>
-        {activePanel === "dates" && (
-          <div className="villa-search-form__panel villa-search-form__panel--dates">
-            <button type="button" className="villa-search-calendar__nav" onClick={() => setVisibleMonth(addMonths(visibleMonth, -1))}>
-              &#8592;
-            </button>
-            <div className="villa-search-calendar">
-              {renderDateMonth(visibleMonth)}
-              {renderDateMonth(addMonths(visibleMonth, 1))}
-            </div>
-            <button type="button" className="villa-search-calendar__nav" onClick={() => setVisibleMonth(addMonths(visibleMonth, 1))}>
-              &#8594;
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="villa-search-form__group villa-search-form__group--guests">
-        <button type="button" onClick={() => setActivePanel(activePanel === "guests" ? null : "guests")}>
+        <button type="button" onClick={() => togglePanel("guests")}>
           <span>Guests</span>
           <strong>{guestLabel}</strong>
           <FiChevronDown aria-hidden="true" className="villa-search-form__chevron" />
         </button>
-        {activePanel === "guests" && (
-          <div className="villa-search-form__panel villa-search-form__panel--guests">
-            {[
-              ["adults", "adults", "Ages 13 or above"],
-              ["children", "children", "Ages 2-12"],
-              ["infants", "infants", "Under 2"],
-              ["pets", "pets", "Pets"],
-            ].map(([key, label, helper]) => (
-              <div key={key} className="villa-search-guests__row">
-                <div>
-                  <strong>{label}</strong>
-                  <span>{helper}</span>
-                </div>
-                <div>
-                  <button type="button" onClick={() => changeGuest(key as "adults" | "children" | "infants" | "pets", -1)}>-</button>
-                  <span>{({ adults, children, infants, pets } as Record<string, number>)[key]}</span>
-                  <button type="button" onClick={() => changeGuest(key as "adults" | "children" | "infants" | "pets", 1)}>+</button>
-                </div>
-              </div>
-            ))}
-            <button type="button" className="villa-search-guests__done" onClick={() => setActivePanel(null)}>Done</button>
-          </div>
-        )}
       </div>
 
       <button type="submit" className="villa-search-form__submit">
         <FiSearch aria-hidden="true" />
         <span>Search</span>
       </button>
+
+      {activePanel === "location" && (
+        <div className="villa-search-form__panel villa-search-form__panel--location">
+          {locations.map((item) => (
+            <button
+              type="button"
+              key={item}
+              onClick={() => {
+                setLocation(item);
+                setActivePanel(null);
+              }}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {activePanel === "dates" && (
+        <div className="villa-search-form__panel villa-search-form__panel--dates">
+          <button type="button" className="villa-search-calendar__nav" onClick={() => setVisibleMonth(addMonths(visibleMonth, -1))}>
+            &#8592;
+          </button>
+          <div className="villa-search-calendar">
+            {renderDateMonth(visibleMonth)}
+            {renderDateMonth(addMonths(visibleMonth, 1))}
+          </div>
+          <button type="button" className="villa-search-calendar__nav" onClick={() => setVisibleMonth(addMonths(visibleMonth, 1))}>
+            &#8594;
+          </button>
+        </div>
+      )}
+
+      {activePanel === "guests" && (
+        <div className="villa-search-form__panel villa-search-form__panel--guests">
+          {[
+            ["adults", "adults", "Ages 13 or above"],
+            ["children", "children", "Ages 2-12"],
+            ["infants", "infants", "Under 2"],
+            ["pets", "pets", "Pets"],
+          ].map(([key, label, helper]) => (
+            <div key={key} className="villa-search-guests__row">
+              <div>
+                <strong>{label}</strong>
+                <span>{helper}</span>
+              </div>
+              <div>
+                <button type="button" onClick={() => changeGuest(key as "adults" | "children" | "infants" | "pets", -1)}>-</button>
+                <span>{({ adults, children, infants, pets } as Record<string, number>)[key]}</span>
+                <button type="button" onClick={() => changeGuest(key as "adults" | "children" | "infants" | "pets", 1)}>+</button>
+              </div>
+            </div>
+          ))}
+          <button type="button" className="villa-search-guests__done" onClick={() => setActivePanel(null)}>Done</button>
+        </div>
+      )}
     </form>
   );
 }

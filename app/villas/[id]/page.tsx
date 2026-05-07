@@ -128,6 +128,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
           <article className="villa-detail-content">
             <AvailabilityCalendar
               propertyId={villa.id}
+              roomTypeId={villa.roomTypeId}
               villaName={villa.name}
               location={villa.address || `${villa.city}, ${villa.country}`}
               priceLabel={villa.originalPriceLabel || villa.priceLabel}

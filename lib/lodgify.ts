@@ -231,6 +231,36 @@ export type VillaSearchParams = {
   maxPrice?: number;
 };
 
+export type LodgifyRateQuote = {
+  success: boolean;
+  source: 'lodgify-rates-calendar';
+  propertyId: string | number;
+  roomTypeId?: string | number | null;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  nights: number;
+  currencyCode: string;
+  nightlySubtotal: number;
+  additionalGuestSubtotal: number;
+  total: number;
+  totalLabel: string | null;
+  averageNightlyLabel: string | null;
+  minStay: number | null;
+  maxStay: number | null;
+  isMinimumStayValid: boolean;
+  message: string;
+  breakdown: Array<{
+    date: string;
+    baseRate: number;
+    additionalGuestRate: number;
+    additionalGuests: number;
+    totalRate: number;
+    minStay: number | null;
+    maxStay: number | null;
+  }>;
+};
+
 const toDate = (value: string) => {
   const [year, month, day] = value.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -300,6 +330,19 @@ const getCapacityFromRooms = (rooms: any[] = [], property: any = {}) => {
 const getComparablePrice = (property: any) => {
   const price = Number(property.original_min_price || property.min_price || 0);
   return Number.isFinite(price) ? price : 0;
+};
+
+const pickPriceRule = (prices: any[] = [], nights: number) => {
+  return prices.find((price) => {
+    const minStay = Number(price?.min_stay || 1);
+    const maxStay = Number(price?.max_stay || 9999);
+    return nights >= minStay && nights <= maxStay;
+  }) || prices[0] || null;
+};
+
+const getPrimaryRoomTypeId = (rooms: any[] = []) => {
+  const room = rooms.find((item) => item?.id) || rooms[0];
+  return room?.id || null;
 };
 
 const matchesLocation = (property: any, location?: string) => {
@@ -643,6 +686,7 @@ export async function getVillaDetail(id: string | number) {
     currencyCode: property.currency_code || 'IDR',
     bookingUrl: getDirectBookingUrl(property.id),
     contact: property.contact || null,
+    roomTypeId: getPrimaryRoomTypeId(rooms),
     rooms,
     ...facts,
   };
@@ -668,6 +712,125 @@ export async function getAvailabilityMap(
   }
 
   return buildAvailabilityMapFromItems(availability, propertyId, startDate, endDate);
+}
+
+export async function getRateQuoteForProperty({
+  propertyId,
+  roomTypeId,
+  checkIn,
+  checkOut,
+  guests = 1,
+}: {
+  propertyId: string | number;
+  roomTypeId?: string | number | null;
+  checkIn: string;
+  checkOut: string;
+  guests?: number;
+}): Promise<LodgifyRateQuote | null> {
+  if (!hasDateRange(checkIn, checkOut)) return null;
+
+  const [property, rooms] = await Promise.all([
+    getPropertyById(propertyId),
+    roomTypeId ? Promise.resolve([]) : getPropertyRooms(propertyId),
+  ]);
+
+  if (!property) return null;
+
+  const selectedRoomTypeId = roomTypeId || getPrimaryRoomTypeId(rooms);
+  if (!selectedRoomTypeId) return null;
+
+  const nights = eachNightInRange(checkIn, checkOut);
+  const endNight = nights[nights.length - 1];
+  const guestCount = Math.max(1, Number(guests || 1));
+  const currencyCode = property.currency_code || 'IDR';
+
+  const params = new URLSearchParams({
+    houseId: String(propertyId),
+    roomTypeId: String(selectedRoomTypeId),
+    startDate: checkIn,
+    endDate: endNight,
+  });
+
+  const response = await fetch(`${BASE_URL}/rates/calendar?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      'X-ApiKey': LODGIFY_API_KEY || '',
+      'Accept': 'application/json',
+    },
+    next: { revalidate: 60 },
+  });
+
+  if (!response.ok) {
+    console.error(`Lodgify Rates API error for property ${propertyId}: ${response.status}`);
+    return null;
+  }
+
+  const data = await response.json();
+  const calendarItems = Array.isArray(data?.calendar_items) ? data.calendar_items : [];
+  const defaultItem = calendarItems.find((item: any) => item?.is_default);
+  const itemsByDate = new Map(
+    calendarItems
+      .filter((item: any) => item?.date)
+      .map((item: any) => [item.date, item])
+  );
+
+  const breakdown = nights.map((date) => {
+    const item: any = itemsByDate.get(date) || defaultItem || {};
+    const rule = pickPriceRule(item.prices, nights.length);
+    const baseRate = Number(rule?.price_per_day || 0);
+    const additionalGuestRate = Number(rule?.price_per_additional_guest || 0);
+    const additionalGuestsStartFrom = Number(rule?.additional_guests_starts_from || 0);
+    const additionalGuests = additionalGuestRate > 0 && additionalGuestsStartFrom > 0
+      ? Math.max(0, guestCount - additionalGuestsStartFrom)
+      : 0;
+    const additionalGuestTotal = additionalGuests * additionalGuestRate;
+
+    return {
+      date,
+      baseRate,
+      additionalGuestRate,
+      additionalGuests,
+      totalRate: baseRate + additionalGuestTotal,
+      minStay: Number.isFinite(Number(rule?.min_stay)) ? Number(rule.min_stay) : null,
+      maxStay: Number.isFinite(Number(rule?.max_stay)) ? Number(rule.max_stay) : null,
+    };
+  });
+
+  const nightlySubtotal = breakdown.reduce((total, item) => total + item.baseRate, 0);
+  const additionalGuestSubtotal = breakdown.reduce(
+    (total, item) => total + (item.additionalGuestRate * item.additionalGuests),
+    0
+  );
+  const total = breakdown.reduce((sum, item) => sum + item.totalRate, 0);
+  const minStayValues = breakdown.map((item) => item.minStay).filter((value): value is number => Boolean(value));
+  const maxStayValues = breakdown.map((item) => item.maxStay).filter((value): value is number => Boolean(value));
+  const minStay = minStayValues.length ? Math.max(...minStayValues) : null;
+  const maxStay = maxStayValues.length ? Math.min(...maxStayValues) : null;
+  const isMinimumStayValid = minStay ? nights.length >= minStay : true;
+
+  return {
+    success: true,
+    source: 'lodgify-rates-calendar',
+    propertyId,
+    roomTypeId: selectedRoomTypeId,
+    checkIn,
+    checkOut,
+    guests: guestCount,
+    nights: nights.length,
+    currencyCode,
+    nightlySubtotal,
+    additionalGuestSubtotal,
+    total,
+    totalLabel: formatPrice(total, currencyCode),
+    averageNightlyLabel: formatPrice(total / Math.max(1, nights.length), currencyCode),
+    minStay,
+    maxStay,
+    isMinimumStayValid,
+    message: isMinimumStayValid
+      ? 'Rate total from Lodgify rates calendar. Final taxes, fees, and payment are confirmed by Lodgify checkout.'
+      : `Minimum stay is ${minStay} nights for these dates.`,
+    breakdown,
+  };
 }
 
 export function isRangeAvailable(

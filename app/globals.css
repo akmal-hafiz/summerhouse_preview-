@@ -1863,6 +1863,14 @@ img {
   color: #70695f;
 }
 
+.villa-booking-bar__summary small {
+  display: block;
+  margin-top: -0.35rem;
+  color: #70695f;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 @media (max-width: 1100px) {
   .villa-search-form {
     grid-template-columns: 1fr 1fr;
@@ -2291,6 +2299,32 @@ img {
   color: #5f5a52;
 }
 
+.villa-calendar-section__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 0.35rem;
+}
+
+.villa-calendar-section__actions button {
+  padding-top: 0;
+}
+
+.villa-calendar-section__actions a {
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #3f704d;
+  color: #fffaf2;
+  padding: 0 1.6rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 @media (max-width: 1023px) {
   .villa-detail-airbnb-layout {
     grid-template-columns: 1fr;
@@ -2618,6 +2652,10 @@ img {
     grid-column: auto;
   }
 
+  .villa-search-form__group--guests {
+    grid-column: auto;
+  }
+
   .villa-search-form__group,
   .villa-search-form__group--dates {
     border: 0;
@@ -2851,6 +2889,573 @@ img {
   }
 }
 
+/* Final search UI correction: old hero glass feel, centered popovers, usable mobile date sheet */
+.home-hero-section,
+.home-hero-section .absolute,
+.hero-search-block,
+.villa-collection-search {
+  overflow: visible !important;
+}
+
+.home-hero-section {
+  position: relative;
+  z-index: 80;
+}
+
+.home-hero-section:has(.villa-search-form.is-panel-open),
+.hero-search-block:has(.villa-search-form.is-panel-open),
+.villa-collection-search:has(.villa-search-form.is-panel-open) {
+  z-index: 6000;
+}
+
+.villa-search-form {
+  position: relative;
+  isolation: isolate;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(12.5rem, 1.12fr) minmax(20rem, 1.46fr) minmax(11.5rem, 0.85fr) minmax(9.75rem, 0.66fr);
+  gap: 0.5rem;
+  align-items: stretch;
+  width: min(100%, 76rem);
+  padding: 0.42rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0.78rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.055)),
+    rgba(20, 22, 19, 0.18);
+  box-shadow:
+    0 1.25rem 3.4rem rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+.villa-search-form--listing {
+  border-color: rgba(255, 255, 255, 0.52);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.28)),
+    rgba(247, 243, 236, 0.34);
+  box-shadow:
+    0 1.1rem 3rem rgba(31, 31, 29, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.home-hero-section .villa-search-form--hero {
+  border-color: rgba(255, 255, 255, 0.26);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.055)),
+    rgba(18, 19, 17, 0.3);
+  box-shadow:
+    0 1.35rem 3.5rem rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.villa-search-form.is-panel-open {
+  z-index: 6100;
+}
+
+.villa-search-form__group,
+.villa-search-form__group--dates {
+  min-width: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0.62rem;
+  background: transparent;
+}
+
+.villa-search-form__group > button,
+.villa-search-form__group label,
+.villa-search-form__group--dates,
+.villa-search-form__group--dates > button {
+  min-width: 0;
+  min-height: 3.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 0.62rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42)),
+    rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 0.55rem 1.45rem rgba(31, 31, 29, 0.07);
+  backdrop-filter: blur(20px) saturate(155%);
+  -webkit-backdrop-filter: blur(20px) saturate(155%);
+}
+
+.home-hero-section .villa-search-form__group > button,
+.home-hero-section .villa-search-form__group label,
+.home-hero-section .villa-search-form__group--dates,
+.home-hero-section .villa-search-form__group--dates > button {
+  border-color: rgba(255, 255, 255, 0.34);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.1)),
+    rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.villa-search-form__group > button,
+.villa-search-form__group label {
+  padding: 0.78rem 2.65rem 0.76rem 1.05rem;
+}
+
+.villa-search-form__group--dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.villa-search-form__group--dates > button {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0.78rem 1rem 0.76rem;
+}
+
+.villa-search-form__group--dates > button:first-child {
+  border-right: 1px solid rgba(31, 31, 29, 0.12);
+}
+
+.home-hero-section .villa-search-form__group--dates > button:first-child {
+  border-right-color: rgba(255, 255, 255, 0.24);
+}
+
+.villa-search-form__group span {
+  color: rgba(31, 31, 29, 0.58);
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.home-hero-section .villa-search-form__group span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.villa-search-form__group strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 0.22rem;
+  color: #1f1f1d;
+  font-size: 0.93rem;
+  font-weight: 650;
+  line-height: 1.12;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-hero-section .villa-search-form__group strong,
+.home-hero-section .villa-search-form__chevron {
+  color: #fff;
+}
+
+.villa-search-form__chevron {
+  right: 0.88rem;
+  width: 1.08rem;
+  height: 1.08rem;
+}
+
+.villa-search-form__submit {
+  min-width: 0;
+  min-height: 3.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0.62rem;
+  background:
+    linear-gradient(135deg, rgba(72, 126, 88, 0.96), rgba(47, 91, 65, 0.98)),
+    #3f704d;
+  box-shadow:
+    0 0.85rem 2rem rgba(40, 79, 55, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.villa-search-form__submit svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.villa-search-form__panel {
+  position: absolute;
+  z-index: 6200;
+  top: calc(100% + 0.72rem);
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 0.95rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.62)),
+    rgba(255, 255, 255, 0.54);
+  box-shadow:
+    0 1.8rem 4.8rem rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+}
+
+.villa-search-form__panel--location {
+  left: 0;
+  width: min(18.75rem, calc(100vw - 1.5rem));
+  max-height: min(24rem, calc(100svh - 7rem));
+  padding: 0.42rem;
+}
+
+.villa-search-form__panel--location button {
+  min-height: 3.25rem;
+  border-radius: 0.68rem;
+  padding: 0.8rem 0.9rem;
+  color: #2b2925;
+  font-size: 0.96rem;
+}
+
+.villa-search-form__panel--location button:first-child,
+.villa-search-form__panel--location button:hover {
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.villa-search-form__panel--dates {
+  left: 50%;
+  width: min(47rem, calc(100vw - 2rem));
+  max-height: min(34rem, calc(100svh - 7rem));
+  padding: 1.18rem 1.7rem 1.55rem;
+  transform: translateX(-50%);
+}
+
+.villa-search-calendar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.villa-search-calendar__month {
+  min-width: 0;
+}
+
+.villa-search-calendar__month h4 {
+  margin: 0 2.35rem 1.05rem;
+  color: #1f1f1d;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.villa-search-calendar__weekdays,
+.villa-search-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.villa-search-calendar__weekdays span {
+  padding: 0.25rem 0 0.75rem;
+  color: rgba(31, 31, 29, 0.54);
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.villa-search-calendar__grid {
+  gap: 0.2rem;
+}
+
+.villa-search-calendar__day {
+  min-height: 2.28rem;
+  border-radius: 0.56rem;
+  color: #0f0f0e;
+  font-size: 0.86rem;
+}
+
+.villa-search-calendar__day:not(:disabled):hover {
+  outline: 1px solid rgba(31, 31, 29, 0.72);
+  outline-offset: -1px;
+}
+
+.villa-search-calendar__day.is-outside,
+.villa-search-calendar__day.is-past {
+  color: rgba(31, 31, 29, 0.2);
+}
+
+.villa-search-calendar__day.is-in-range {
+  background: rgba(63, 112, 77, 0.16);
+}
+
+.villa-search-calendar__day.is-selected-start,
+.villa-search-calendar__day.is-selected-end {
+  background: #3f704d;
+  color: #fff;
+  box-shadow: 0 0.6rem 1.2rem rgba(63, 112, 77, 0.2);
+}
+
+.villa-search-calendar__nav {
+  position: absolute;
+  top: 1.05rem;
+  z-index: 2;
+  display: grid;
+  width: 2.05rem;
+  height: 2.05rem;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.36);
+  color: rgba(31, 31, 29, 0.6);
+  font-size: 1.15rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.villa-search-calendar__nav:first-child {
+  left: 1rem;
+}
+
+.villa-search-calendar__nav:last-child {
+  right: 1rem;
+}
+
+.villa-search-form__panel--guests {
+  right: 0;
+  width: min(24.5rem, calc(100vw - 1.5rem));
+  max-height: min(28rem, calc(100svh - 7rem));
+  padding: 1.2rem;
+}
+
+.villa-search-guests__row button,
+.villa-search-guests__done {
+  background: rgba(255, 255, 255, 0.44);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .villa-search-form {
+    grid-template-columns: minmax(9.7rem, 1.08fr) minmax(17.5rem, 1.55fr) minmax(8.8rem, 0.82fr) minmax(8.2rem, 0.62fr);
+    gap: 0.38rem;
+    width: min(calc(100vw - 2rem), 58rem);
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates,
+  .villa-search-form__group--dates > button,
+  .villa-search-form__submit {
+    min-height: 3.45rem;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates > button {
+    padding: 0.62rem 0.78rem;
+  }
+
+  .villa-search-form__group--location > button,
+  .villa-search-form__group--guests > button {
+    padding-right: 2rem;
+  }
+
+  .villa-search-form__group span {
+    font-size: 0.62rem;
+  }
+
+  .villa-search-form__group strong {
+    font-size: 0.76rem;
+  }
+
+  .villa-search-form__submit {
+    gap: 0.45rem;
+    padding-inline: 0.8rem;
+    font-size: 0.78rem;
+  }
+
+  .villa-search-form__submit svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .villa-search-form__panel--dates {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: min(39.5rem, calc(100vw - 2.5rem));
+    max-height: min(80svh, 34rem);
+    padding: 1rem 1.25rem 1.3rem;
+    transform: translate(-50%, -44%);
+  }
+
+  .villa-search-calendar {
+    gap: 1.15rem;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin-bottom: 0.88rem;
+    font-size: 0.92rem;
+  }
+
+  .villa-search-calendar__weekdays span {
+    font-size: 0.68rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: 1.95rem;
+    font-size: 0.78rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .home-hero-section .villa-search-form .villa-search-form__panel {
+    top: auto !important;
+    bottom: calc(100% + 0.85rem) !important;
+  }
+
+  .home-hero-section .villa-search-form .villa-search-form__panel--dates {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.82)),
+      rgba(255, 255, 255, 0.78) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-search-block {
+    width: min(calc(100vw - 1rem), 25rem);
+  }
+
+  .villa-search-form,
+  .villa-search-form--hero,
+  .villa-search-form--listing {
+    grid-template-columns: minmax(4.9rem, 1.05fr) minmax(6.35rem, 1.38fr) minmax(4.55rem, 1fr) 3.15rem;
+    gap: 0.24rem;
+    width: min(calc(100vw - 1rem), 25rem);
+    padding: 0.24rem;
+    border-radius: 0.58rem;
+  }
+
+  .villa-search-form__group,
+  .villa-search-form__group--dates {
+    grid-column: auto !important;
+    border: 0;
+    background: transparent;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates,
+  .villa-search-form__group--dates > button,
+  .villa-search-form__submit {
+    min-height: 2.5rem;
+    border-radius: 0.42rem;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates > button {
+    padding: 0.43rem 0.4rem;
+  }
+
+  .villa-search-form__group--location > button,
+  .villa-search-form__group--guests > button {
+    padding-right: 1.1rem;
+  }
+
+  .villa-search-form__group--dates {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .villa-search-form__group--dates > button:first-child {
+    border-right: 1px solid rgba(31, 31, 29, 0.12);
+    border-bottom: 0;
+  }
+
+  .home-hero-section .villa-search-form__group--dates > button:first-child {
+    border-right-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .villa-search-form__group span {
+    font-size: 0.47rem;
+  }
+
+  .villa-search-form__group strong {
+    margin-top: 0.12rem;
+    font-size: 0.58rem;
+  }
+
+  .villa-search-form__chevron {
+    right: 0.28rem;
+    width: 0.68rem;
+    height: 0.68rem;
+  }
+
+  .villa-search-form__submit {
+    grid-column: auto !important;
+    padding: 0;
+  }
+
+  .villa-search-form__submit span {
+    display: none;
+  }
+
+  .villa-search-form__submit svg {
+    width: 1.02rem;
+    height: 1.02rem;
+  }
+
+  .villa-search-form__panel {
+    position: fixed !important;
+    z-index: 7000;
+    right: 0.65rem !important;
+    bottom: 0.65rem !important;
+    left: 0.65rem !important;
+    width: auto !important;
+    max-height: min(78svh, 36rem);
+    transform: none !important;
+  }
+
+  .villa-search-form__panel--location,
+  .villa-search-form__panel--guests {
+    top: auto !important;
+  }
+
+  .villa-search-form__panel--dates {
+    top: auto !important;
+    bottom: 4.6rem !important;
+    padding: 1rem 0.82rem 1.05rem;
+    border-radius: 1.08rem;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.84)),
+      rgba(255, 255, 255, 0.82);
+  }
+
+  .villa-search-calendar {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .villa-search-calendar .villa-search-calendar__month:nth-child(2) {
+    display: none;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin: 0 2.3rem 0.9rem;
+    font-size: 0.92rem;
+  }
+
+  .villa-search-calendar__weekdays span {
+    padding-bottom: 0.42rem;
+    font-size: 0.66rem;
+  }
+
+  .villa-search-calendar__grid {
+    gap: 0.16rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: clamp(2.05rem, 8.1vw, 2.6rem);
+    border-radius: 0.58rem;
+    font-size: 0.8rem;
+  }
+
+  .villa-search-calendar__nav {
+    top: 0.82rem;
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+}
+
 /* Detail modals and final glass polish */
 .villa-photo-grid__show,
 .villa-amenities__show {
@@ -3059,5 +3664,642 @@ img {
   .villa-photo-grid__show {
     right: 1.5rem;
     bottom: 0.75rem;
+  }
+}
+
+/* Final hero search polish: horizontal, glass, and above every section */
+.home-hero-section {
+  isolation: isolate;
+  overflow: visible;
+  z-index: 20;
+}
+
+.home-hero-section:has(.villa-search-form.is-panel-open) {
+  isolation: auto;
+  z-index: 3000;
+}
+
+.home-hero-section .hero-content-wrapper,
+.home-hero-section .hero-search-block,
+.home-hero-section .hero-search-block > div,
+.home-hero-section .villa-search-form,
+.villa-collection-search,
+.villa-collection-search .villa-collection-shell {
+  overflow: visible;
+}
+
+.home-hero-section .hero-search-block,
+.villa-collection-search {
+  position: relative;
+  z-index: 2100;
+}
+
+.home-hero-section .hero-search-block:has(.villa-search-form.is-panel-open),
+.villa-collection-search:has(.villa-search-form.is-panel-open) {
+  z-index: 3200;
+}
+
+.villa-search-form,
+.villa-search-form--hero,
+.villa-search-form--listing {
+  position: relative;
+  z-index: 2200;
+  display: grid;
+  grid-template-columns: minmax(10.5rem, 1.15fr) minmax(18.5rem, 1.65fr) minmax(10.5rem, 1fr) minmax(8.75rem, 0.82fr);
+  align-items: stretch;
+  gap: 0.5rem;
+  width: min(100%, 1060px);
+  min-height: 4.35rem;
+  padding: 0.42rem;
+  overflow: visible;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08)),
+    rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 1.4rem 3.6rem rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(28px) saturate(175%);
+  -webkit-backdrop-filter: blur(28px) saturate(175%);
+}
+
+.villa-search-form--listing {
+  width: min(100%, 1120px);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.34)),
+    rgba(244, 239, 230, 0.22);
+  box-shadow:
+    0 1rem 2.8rem rgba(31, 31, 29, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74);
+}
+
+.villa-search-form.is-panel-open {
+  z-index: 3300;
+}
+
+.villa-search-form__group,
+.villa-search-form__group--dates {
+  position: relative;
+  min-width: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0.82rem;
+  background: transparent;
+}
+
+.villa-search-form__group > button,
+.villa-search-form__group label,
+.villa-search-form__group--dates {
+  min-height: 3.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  border-radius: 0.82rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.48)),
+    rgba(255, 255, 255, 0.38);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0.55rem 1.35rem rgba(31, 31, 29, 0.08);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+}
+
+.villa-search-form__group > button,
+.villa-search-form__group label {
+  padding: 0.66rem 1rem;
+}
+
+.villa-search-form__group--dates {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.villa-search-form__group--dates > button {
+  min-height: 3.5rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.villa-search-form__group--dates > button:first-child {
+  border-right: 1px solid rgba(31, 31, 29, 0.1);
+}
+
+.villa-search-form__group span,
+.villa-search-form__panel span {
+  color: #6f6a61;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.villa-search-form__group strong {
+  max-width: 100%;
+  margin-top: 0.18rem;
+  overflow: hidden;
+  color: #1f1f1d;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.94rem;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.villa-search-form__chevron {
+  right: 0.8rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+.villa-search-form__submit {
+  min-width: 0;
+  min-height: 3.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 0.82rem;
+  background:
+    linear-gradient(135deg, rgba(75, 132, 93, 0.96), rgba(50, 96, 68, 0.96)),
+    #3f704d;
+  box-shadow:
+    0 0.9rem 2rem rgba(40, 79, 55, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(18px) saturate(155%);
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+}
+
+.villa-search-form__panel {
+  position: absolute;
+  top: calc(100% + 0.58rem);
+  z-index: 4000;
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 0.92rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.66)),
+    rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 1.8rem 4.5rem rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+}
+
+.villa-search-form__panel--location {
+  left: 0;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: min(24rem, 62svh);
+  padding: 0.42rem;
+}
+
+.villa-search-form__panel--dates {
+  left: 50%;
+  width: min(48rem, calc(100vw - 2rem));
+  padding: 1.15rem 1.85rem 1.55rem;
+  transform: translateX(-50%);
+}
+
+.villa-search-form__panel--guests {
+  right: 0;
+  left: auto;
+  width: min(24rem, calc(100vw - 2rem));
+  padding: 1.1rem;
+}
+
+.villa-search-form__panel--location button,
+.villa-search-guests__row,
+.villa-search-guests__done,
+.villa-search-calendar__day:not(:disabled) {
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+
+.villa-search-form__panel--location button {
+  min-height: 3.2rem;
+  border-radius: 0.7rem;
+  padding: 0.85rem 0.9rem;
+}
+
+.villa-search-form__panel--location button:first-child,
+.villa-search-form__panel--location button:hover,
+.villa-search-guests__done:hover,
+.villa-search-guests__row button:hover {
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.villa-search-calendar {
+  gap: 1.85rem;
+}
+
+.villa-search-calendar__grid {
+  gap: 0.22rem;
+}
+
+.villa-search-calendar__day {
+  min-height: 2.25rem;
+  border-radius: 0.46rem;
+}
+
+.villa-search-calendar__day:not(:disabled):hover {
+  outline: 1px solid rgba(31, 31, 29, 0.72);
+  outline-offset: -1px;
+}
+
+.villa-search-calendar__day.is-in-range {
+  background: rgba(63, 112, 77, 0.18);
+}
+
+.villa-search-calendar__day.is-selected-start,
+.villa-search-calendar__day.is-selected-end {
+  background: rgba(63, 112, 77, 0.94);
+}
+
+.villa-search-guests__row {
+  border-radius: 0.72rem;
+  padding: 0.72rem;
+}
+
+.villa-search-guests__row + .villa-search-guests__row {
+  margin-top: 0.35rem;
+}
+
+.villa-search-guests__done {
+  border-color: rgba(255, 255, 255, 0.56);
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .villa-search-form,
+  .villa-search-form--hero,
+  .villa-search-form--listing {
+    grid-template-columns: minmax(7.7rem, 1.08fr) minmax(15rem, 1.78fr) minmax(7.7rem, 1fr) minmax(7.1rem, 0.86fr);
+    gap: 0.42rem;
+    width: min(100%, calc(100vw - 2rem));
+    min-height: 4rem;
+  }
+
+  .villa-search-form__submit {
+    grid-column: auto;
+  }
+
+  .villa-search-form__group--guests {
+    grid-column: auto;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates,
+  .villa-search-form__group--dates > button,
+  .villa-search-form__submit {
+    min-height: 3.25rem;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates > button {
+    padding: 0.55rem 0.72rem;
+  }
+
+  .villa-search-form__group strong {
+    font-size: 0.82rem;
+  }
+
+  .villa-search-form__group span,
+  .villa-search-form__panel span {
+    font-size: 0.64rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-hero-section .hero-content-wrapper {
+    overflow: visible;
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .home-hero-section .hero-search-block {
+    width: 100%;
+    padding-left: 0;
+    translate: none;
+    transform: none;
+  }
+
+  .home-hero-section .hero-search-block > div {
+    min-height: 4rem;
+    padding-right: 0;
+    translate: none;
+    transform: none;
+  }
+
+  .villa-search-form,
+  .villa-search-form--hero,
+  .villa-search-form--listing {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.85fr) minmax(0, 1.05fr) 3.15rem;
+    gap: 0.28rem;
+    width: min(100%, calc(100vw - 1.15rem));
+    min-height: 3.6rem;
+    padding: 0.32rem;
+    border-radius: 0.95rem;
+  }
+
+  .villa-search-form__group--guests,
+  .villa-search-form__submit {
+    grid-column: auto;
+  }
+
+  .villa-search-form__group,
+  .villa-search-form__group--dates {
+    border: 0;
+    background: transparent;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates,
+  .villa-search-form__group--dates > button,
+  .villa-search-form__submit {
+    min-height: 2.95rem;
+    border-radius: 0.72rem;
+  }
+
+  .villa-search-form__group > button,
+  .villa-search-form__group label,
+  .villa-search-form__group--dates > button {
+    padding: 0.46rem 0.42rem;
+  }
+
+  .villa-search-form__group--location > button,
+  .villa-search-form__group--guests > button {
+    padding-right: 1rem;
+  }
+
+  .villa-search-form__group span,
+  .villa-search-form__panel span {
+    font-size: 0.52rem;
+  }
+
+  .villa-search-form__group strong {
+    margin-top: 0.1rem;
+    font-size: 0.64rem;
+  }
+
+  .villa-search-form__chevron {
+    right: 0.28rem;
+    width: 0.72rem;
+    height: 0.72rem;
+  }
+
+  .villa-search-form__submit {
+    padding: 0;
+  }
+
+  .villa-search-form__submit span {
+    display: none;
+  }
+
+  .villa-search-form__submit svg {
+    width: 1.08rem;
+    height: 1.08rem;
+  }
+
+  .villa-search-form__panel {
+    position: fixed;
+    z-index: 5000;
+    top: auto;
+    right: 0.85rem;
+    bottom: 1rem;
+    left: 0.85rem;
+    width: auto;
+    max-height: min(70svh, 34rem);
+    transform: none;
+  }
+
+  .villa-search-form__panel--location,
+  .villa-search-form__panel--dates,
+  .villa-search-form__panel--guests {
+    width: auto;
+  }
+
+  .villa-search-form__panel--dates {
+    padding: 1rem;
+  }
+
+  .villa-search-calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .villa-search-calendar .villa-search-calendar__month:nth-child(2) {
+    display: none;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin-bottom: 0.8rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: 2.1rem;
+  }
+}
+
+/* Final pass: restore the original hero glass mood and fix date panel geometry */
+.home-hero-section .villa-search-form--hero {
+  border-color: rgba(255, 255, 255, 0.2);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)),
+    rgba(18, 19, 17, 0.28);
+  box-shadow:
+    0 1rem 2.8rem rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(22px) saturate(155%);
+  -webkit-backdrop-filter: blur(22px) saturate(155%);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group > button,
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates,
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button {
+  border-color: rgba(255, 255, 255, 0.22);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+    rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0.55rem 1.25rem rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button {
+  border-color: transparent;
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button:first-child {
+  border-right-color: rgba(255, 255, 255, 0.2);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group span {
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group strong,
+.home-hero-section .villa-search-form--hero .villa-search-form__chevron {
+  color: #fff;
+}
+
+.villa-search-form__panel--dates {
+  max-height: min(34rem, calc(100svh - 7rem));
+  overflow: auto;
+}
+
+.villa-search-form__panel--dates .villa-search-calendar__nav {
+  top: 1rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .villa-search-form__panel--dates {
+    width: min(40rem, calc(100vw - 3rem));
+    padding: 1.05rem 1.35rem 1.35rem;
+  }
+
+  .villa-search-calendar {
+    gap: 1.3rem;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin-bottom: 1rem;
+  }
+
+  .villa-search-calendar__weekdays span {
+    font-size: 0.72rem;
+  }
+
+  .villa-search-calendar__grid {
+    gap: 0.16rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: 2rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-hero-section .villa-search-form--hero {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)),
+      rgba(18, 19, 17, 0.34);
+  }
+
+  .home-hero-section .villa-search-form--hero .villa-search-form__group > button,
+  .home-hero-section .villa-search-form--hero .villa-search-form__group--dates,
+  .home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08)),
+      rgba(255, 255, 255, 0.12);
+  }
+
+  .villa-search-form__panel--dates {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.65rem !important;
+    bottom: 0.65rem !important;
+    left: 0.65rem !important;
+    width: auto !important;
+    max-height: min(76svh, 35rem);
+    padding: 1rem 0.9rem 1.15rem;
+    transform: none !important;
+    border-radius: 1.15rem;
+  }
+
+  .villa-search-form__panel--dates .villa-search-calendar__nav {
+    top: 0.8rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .villa-search-calendar__nav:first-child {
+    left: 0.85rem;
+  }
+
+  .villa-search-calendar__nav:last-child {
+    right: 0.85rem;
+  }
+
+  .villa-search-calendar {
+    width: 100%;
+    gap: 0;
+  }
+
+  .villa-search-calendar__month {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin: 0 2.35rem 0.9rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  .villa-search-calendar__weekdays {
+    margin-bottom: 0.2rem;
+  }
+
+  .villa-search-calendar__weekdays span {
+    padding: 0.2rem 0;
+    font-size: 0.68rem;
+  }
+
+  .villa-search-calendar__grid {
+    gap: 0.18rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: clamp(2.15rem, 8.2vw, 2.7rem);
+    border-radius: 0.62rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* Search popover geometry guardrail: keep date picker readable after all legacy overrides */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .villa-search-form .villa-search-form__panel--dates {
+    position: absolute !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: calc(100% + 0.85rem) !important;
+    left: 50% !important;
+    width: min(40rem, calc(100vw - 2.5rem)) !important;
+    max-height: min(80svh, 34rem) !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .villa-search-form .villa-search-calendar {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .villa-search-form .villa-search-calendar .villa-search-calendar__month:nth-child(2) {
+    display: block !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .villa-search-form .villa-search-form__panel--dates {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.65rem !important;
+    bottom: 4.6rem !important;
+    left: 0.65rem !important;
+    width: auto !important;
+    max-height: min(72svh, 35rem) !important;
+    transform: none !important;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.86)),
+      rgba(255, 255, 255, 0.84) !important;
   }
 }

@@ -12,10 +12,23 @@ type AvailabilityDay = {
 
 type AvailabilityCalendarProps = {
   propertyId: string | number;
+  roomTypeId?: string | number | null;
   villaName: string;
   location: string;
   priceLabel?: string | null;
   maxGuests?: number;
+};
+
+type RateQuote = {
+  success: boolean;
+  totalLabel?: string | null;
+  averageNightlyLabel?: string | null;
+  nightlySubtotal?: number;
+  additionalGuestSubtotal?: number;
+  minStay?: number | null;
+  maxStay?: number | null;
+  isMinimumStayValid?: boolean;
+  message?: string;
 };
 
 const monthNames = [
@@ -105,6 +118,7 @@ const getMonthCells = (month: Date) => {
 
 export default function AvailabilityCalendar({
   propertyId,
+  roomTypeId,
   villaName,
   location,
   priceLabel,
@@ -117,6 +131,9 @@ export default function AvailabilityCalendar({
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isQuoteLoading, setIsQuoteLoading] = useState(false);
+  const [rateQuote, setRateQuote] = useState<RateQuote | null>(null);
+  const [quoteError, setQuoteError] = useState("");
   const [error, setError] = useState("");
 
   const rangeStart = toISODate(startOfMonth(visibleMonth));
@@ -127,6 +144,8 @@ export default function AvailabilityCalendar({
     if (!checkIn || !checkOut || nights <= 0) return false;
     return eachNight(checkIn, checkOut).every((date) => availabilityMap[date]?.available);
   }, [availabilityMap, checkIn, checkOut, nights]);
+  const isMinimumStayValid = rateQuote?.isMinimumStayValid !== false;
+  const isBookingValid = isRangeValid && isMinimumStayValid && !isQuoteLoading;
 
   const checkoutUrl = buildCheckoutUrl(propertyId, checkIn, checkOut, guests);
 
@@ -159,6 +178,58 @@ export default function AvailabilityCalendar({
     return () => controller.abort();
   }, [propertyId, rangeStart, rangeEnd]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadRateQuote() {
+      if (!isRangeValid || !checkIn || !checkOut) {
+        setRateQuote(null);
+        setQuoteError("");
+        setIsQuoteLoading(false);
+        return;
+      }
+
+      setIsQuoteLoading(true);
+      setQuoteError("");
+
+      const params = new URLSearchParams({
+        propertyId: String(propertyId),
+        checkIn,
+        checkOut,
+        guests: String(guests),
+      });
+
+      if (roomTypeId) params.set("roomTypeId", String(roomTypeId));
+
+      try {
+        const response = await fetch(`/api/lodgify/rate-quote?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Unable to load Lodgify rates.");
+        }
+
+        setRateQuote(data);
+      } catch (quoteFetchError) {
+        if (controller.signal.aborted) return;
+        setRateQuote(null);
+        setQuoteError(
+          quoteFetchError instanceof Error
+            ? quoteFetchError.message
+            : "Unable to load Lodgify rates."
+        );
+      } finally {
+        if (!controller.signal.aborted) setIsQuoteLoading(false);
+      }
+    }
+
+    loadRateQuote();
+
+    return () => controller.abort();
+  }, [checkIn, checkOut, guests, isRangeValid, propertyId, roomTypeId]);
+
   const validateRange = (start: string, end: string) => {
     if (toDate(end) <= toDate(start)) return false;
     return eachNight(start, end).every((date) => availabilityMap[date]?.available);
@@ -166,24 +237,31 @@ export default function AvailabilityCalendar({
 
   const handleDateClick = (date: string) => {
     const day = availabilityMap[date];
-    if (!day?.available) {
-      setError(day?.reason === "closed_period" ? "This date is blocked." : "This date is not available.");
+
+    if (!checkIn || (checkIn && checkOut) || toDate(date) <= toDate(checkIn)) {
+      if (!day?.available) {
+        setError(day?.reason === "closed_period" ? "This date is blocked." : "This date is not available.");
+        return;
+      }
+
+      setError("");
+      setCheckIn(date);
+      setCheckOut("");
+      setRateQuote(null);
+      setQuoteError("");
       return;
     }
 
     setError("");
-
-    if (!checkIn || (checkIn && checkOut) || toDate(date) <= toDate(checkIn)) {
-      setCheckIn(date);
-      setCheckOut("");
-      return;
-    }
 
     if (!validateRange(checkIn, date)) {
       setError("Selected range crosses unavailable dates.");
       return;
     }
 
+    setIsQuoteLoading(true);
+    setRateQuote(null);
+    setQuoteError("");
     setCheckOut(date);
   };
 
@@ -205,7 +283,9 @@ export default function AvailabilityCalendar({
             const isSelectedStart = date === checkIn;
             const isSelectedEnd = date === checkOut;
             const isInsideRange = checkIn && checkOut && toDate(date) > toDate(checkIn) && toDate(date) < toDate(checkOut);
-            const isDisabled = isOutside || isPast || !day?.available;
+            const isCheckoutCandidate = Boolean(checkIn && !checkOut && toDate(date) > toDate(checkIn));
+            const isValidCheckout = isCheckoutCandidate && validateRange(checkIn, date);
+            const isDisabled = isOutside || isPast || (!day?.available && !isValidCheckout);
 
             return (
               <button
@@ -247,9 +327,16 @@ export default function AvailabilityCalendar({
                 : "Select check-in date"}
           </span>
         </div>
-        <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); }}>
-          Clear dates
-        </button>
+        <div className="villa-calendar-section__actions">
+          <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}>
+            Clear dates
+          </button>
+          {isBookingValid && (
+            <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+              {rateQuote?.totalLabel ? `Book for ${rateQuote.totalLabel}` : "Book Now"}
+            </a>
+          )}
+        </div>
       </div>
 
       <div className="villa-calendar">
@@ -282,6 +369,11 @@ export default function AvailabilityCalendar({
       </div>
 
       {error && <p className="villa-calendar__error">{error}</p>}
+      {quoteError && isRangeValid && (
+        <p className="villa-calendar__error">
+          Lodgify rates are unavailable right now. The final price will still be confirmed in checkout.
+        </p>
+      )}
       <p className="villa-calendar__note">Final rates, minimum stay, taxes, and payment are confirmed by Lodgify at booking.</p>
 
       <StickyBookingBar
@@ -293,11 +385,18 @@ export default function AvailabilityCalendar({
         guests={Math.min(guests, maxGuests)}
         maxGuests={maxGuests}
         nights={nights}
-        isValid={isRangeValid}
-        error={error}
+        isValid={isBookingValid}
+        error={isQuoteLoading ? "Checking Lodgify rates..." : error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "") || quoteError}
+        rateQuote={rateQuote}
+        isQuoteLoading={isQuoteLoading}
         checkoutUrl={checkoutUrl}
-        onGuestChange={(value) => setGuests(Math.min(value, maxGuests))}
-        onClearDates={() => { setCheckIn(""); setCheckOut(""); setError(""); }}
+        onGuestChange={(value) => {
+          setIsQuoteLoading(true);
+          setRateQuote(null);
+          setQuoteError("");
+          setGuests(Math.min(value, maxGuests));
+        }}
+        onClearDates={() => { setCheckIn(""); setCheckOut(""); setError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}
       />
     </section>
   );
