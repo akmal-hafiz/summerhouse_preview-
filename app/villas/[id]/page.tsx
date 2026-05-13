@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "@/components/common/Navbar";
+import { FiHeart, FiMenu, FiSearch, FiUser } from "react-icons/fi";
 import Footer from "@/components/common/Footer";
 import AvailabilityCalendar from "@/components/booking/AvailabilityCalendar";
 import VillaAmenities from "@/components/booking/VillaAmenities";
@@ -12,6 +12,13 @@ interface VillaDetailPageProps {
     id: string;
   }>;
 }
+
+const villaDetailNavItems = [
+  { label: "Villas", href: "/villas" },
+  { label: "Services", href: "/services" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
 
 export async function generateMetadata({ params }: VillaDetailPageProps) {
   const { id } = await params;
@@ -33,7 +40,6 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
   if (!villa) {
     return (
       <main className="villa-detail-page">
-        <Navbar />
         <section className="villa-detail-missing">
           <h1>Villa not found</h1>
           <Link href="/villas">Back to villa collection</Link>
@@ -53,79 +59,130 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
     : `${villa.address || villa.city}, Indonesia`;
 
   return (
-    <main className="villa-detail-page">
-      <Navbar />
+    <main className="villa-detail-page villa-detail-page--preview">
+      <section className="villa-detail-stage">
+        <div className="villa-detail-frame">
+          <header className="villa-detail-mini-header">
+            <div className="villa-detail-mini-header__brand">
+              <Link href="/" className="villa-detail-mini-logo">SUMMERHOUSE</Link>
+              <span>Bali private stays</span>
+            </div>
 
-      <section className="villa-detail-hero">
-        <div className="villa-detail-shell">
+            <nav className="villa-detail-mini-nav" aria-label="Villa detail navigation">
+              {villaDetailNavItems.map((item) => (
+                <Link href={item.href} key={item.href}>{item.label}</Link>
+              ))}
+            </nav>
+
+            <div className="villa-detail-mini-actions">
+              <Link href="/villas" className="villa-detail-mini-link">Book our Villas</Link>
+              <button type="button" className="villa-detail-icon-button" aria-label="Search villas">
+                <FiSearch aria-hidden="true" />
+              </button>
+              <button type="button" className="villa-detail-icon-button" aria-label={`Save ${villa.name}`}>
+                <FiHeart aria-hidden="true" />
+              </button>
+              <button type="button" className="villa-detail-icon-button" aria-label="Open user profile">
+                <FiUser aria-hidden="true" />
+              </button>
+              <details className="villa-detail-mobile-menu">
+                <summary aria-label="Open navigation">
+                  <FiMenu aria-hidden="true" />
+                </summary>
+                <div className="villa-detail-mobile-menu__panel">
+                  {villaDetailNavItems.map((item) => (
+                    <Link href={item.href} key={`mobile-${item.href}`}>{item.label}</Link>
+                  ))}
+                  <Link href="/villas">Book our Villas</Link>
+                </div>
+              </details>
+            </div>
+          </header>
+
           <div className="villa-detail-hero-copy">
             <Link href="/villas" className="villa-detail-back">Villa collection</Link>
-            <h1>{villa.name}</h1>
+            <h1>Enjoy life in {villa.name}</h1>
             <p className="villa-detail-location-line">{villa.address || `${villa.city}, ${villa.country}`}</p>
             <div className="villa-detail-facts" aria-label="Villa quick facts">
-              <span>{villa.guests} guests</span>
+              <span>{villa.city || "Bali"}</span>
+              <span>Private villa</span>
+              <span>Max {villa.guests} guests</span>
               <span>{villa.bedrooms} beds</span>
-              <span>{villa.bathrooms} bath</span>
-              {villa.priceLabel && <span>from {villa.priceLabel} / night</span>}
             </div>
           </div>
 
-          <VillaPhotoGallery villaName={villa.name} photos={photos} />
-        </div>
-      </section>
-
-      <section className="villa-detail-body">
-        <div className="villa-detail-shell villa-detail-airbnb-layout">
-          <article className="villa-detail-content">
-            <section className="villa-detail-section villa-detail-intro">
-              <div className="villa-detail-host-line">
-                <div>
-                  <h2>Entire villa in {villa.city || "Bali"}</h2>
-                  <p>{villa.guests} guests - {villa.bedrooms} beds - {villa.bathrooms} bath</p>
+          <VillaPhotoGallery
+            villaName={villa.name}
+            photos={photos}
+            sideContent={(
+              <aside className="villa-detail-reserve-card">
+                <div className="villa-detail-reserve-price">
+                  {villa.maxPriceLabel && <del>{villa.maxPriceLabel}</del>}
+                  <strong>{villa.priceLabel || "Rate on request"}</strong>
+                  <span>/ night</span>
                 </div>
-              </div>
-              <div
-                className="villa-detail-description"
-                dangerouslySetInnerHTML={{ __html: villa.descriptionHtml }}
-              />
-            </section>
+                <div className="villa-detail-reserve-fields">
+                  <a href="#availability">
+                    <span className="material-symbols-outlined">calendar_month</span>
+                    <small>Check in</small>
+                    <strong>Add date</strong>
+                  </a>
+                  <a href="#availability">
+                    <span className="material-symbols-outlined">event_available</span>
+                    <small>Check out</small>
+                    <strong>Add date</strong>
+                  </a>
+                  <a href="#availability" className="is-wide">
+                    <span className="material-symbols-outlined">group</span>
+                    <small>Guests</small>
+                    <strong>Up to {villa.guests} guests</strong>
+                  </a>
+                </div>
+                <a href="#availability" className="villa-detail-reserve-cta">Check availability</a>
+                <p>Final rates, taxes, minimum stay, and payment are confirmed by Lodgify.</p>
+              </aside>
+            )}
+          />
 
-            <section className="villa-detail-section">
-              <div className="villa-detail-section-heading">
-                <h2>What this place offers</h2>
-              </div>
-              <VillaAmenities groups={villa.amenityGroups || []} preview={amenitiesPreview} />
-            </section>
-
-            <section className="villa-detail-section">
-              <div className="villa-detail-section-heading">
-                <h2>Where you'll be</h2>
-                <p>{villa.address || `${villa.city}, ${villa.country}`}</p>
-              </div>
-              <div className="villa-detail-map">
-                <iframe
-                  title={`${villa.name} map`}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+          <div className="villa-detail-main-grid">
+            <article className="villa-detail-content">
+              <section className="villa-detail-section villa-detail-intro">
+                <div className="villa-detail-section-heading">
+                  <p className="villa-detail-section-label">Description</p>
+                  <h2>Entire villa in {villa.city || "Bali"}</h2>
+                </div>
+                <div
+                  className="villa-detail-description"
+                  dangerouslySetInnerHTML={{ __html: villa.descriptionHtml }}
                 />
-              </div>
-            </section>
-          </article>
+              </section>
 
-          <aside className="villa-detail-reserve-card">
-            <div>
-              <span>Starting from</span>
-              <strong>{villa.priceLabel || "Rate on request"}</strong>
-              <p>per night before final Lodgify fees and taxes</p>
-            </div>
-            <a href="#availability">Check availability</a>
-            <small>Dates, minimum stay, and payment are confirmed by Lodgify.</small>
-          </aside>
-        </div>
+              <section className="villa-detail-section">
+                <div className="villa-detail-section-heading">
+                  <p className="villa-detail-section-label">What this place offers</p>
+                  <h2>Considered comforts for your stay.</h2>
+                </div>
+                <VillaAmenities groups={villa.amenityGroups || []} preview={amenitiesPreview} />
+              </section>
 
-        <div className="villa-detail-shell">
-          <article className="villa-detail-content">
+              <section className="villa-detail-section">
+                <div className="villa-detail-section-heading">
+                  <p className="villa-detail-section-label">Location</p>
+                  <h2>Where you'll be</h2>
+                  <span>{villa.address || `${villa.city}, ${villa.country}`}</span>
+                </div>
+                <div className="villa-detail-map">
+                  <iframe
+                    title={`${villa.name} map`}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+                  />
+                </div>
+              </section>
+            </article>
+          </div>
+
             <AvailabilityCalendar
               propertyId={villa.id}
               roomTypeId={villa.roomTypeId}
@@ -161,7 +218,6 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
                 </div>
               </section>
             )}
-          </article>
         </div>
       </section>
 

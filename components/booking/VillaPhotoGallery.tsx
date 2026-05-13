@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 
 type VillaPhoto = {
   url: string;
@@ -11,30 +12,69 @@ type VillaPhoto = {
 type VillaPhotoGalleryProps = {
   villaName: string;
   photos: VillaPhoto[];
+  sideContent?: ReactNode;
 };
 
-export default function VillaPhotoGallery({ villaName, photos }: VillaPhotoGalleryProps) {
+const getPhotoKey = (photo: VillaPhoto, index: number, scope: string) => {
+  const source = `${photo.url || "missing-url"}-${photo.caption || "uncaptioned"}`;
+  return `${scope}-${index}-${source}`;
+};
+
+export default function VillaPhotoGallery({ villaName, photos, sideContent }: VillaPhotoGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const preview = photos.slice(0, 5);
+  const mainPhoto = photos[0];
+  const sidePhotos = photos.slice(1, 3);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
 
   return (
     <>
       <div className="villa-detail-photo-grid">
-        {preview.map((photo, index) => (
-          <figure key={`${photo.url}-${index}`} className={index === 0 ? "is-main" : ""}>
+        {mainPhoto && (
+          <figure className="is-main">
             <Image
-              src={photo.url}
-              alt={photo.caption || `${villaName} image ${index + 1}`}
+              src={mainPhoto.url}
+              alt={mainPhoto.caption || `${villaName} main image`}
               fill
-              priority={index === 0}
-              sizes={index === 0 ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, 50vw"}
+              priority
+              sizes="(min-width: 1024px) 58vw, 100vw"
               className="villa-detail-image"
               unoptimized
             />
+            {photos.length > 3 && (
+              <button type="button" className="villa-photo-grid__show" onClick={() => setIsOpen(true)}>
+                Show all photos
+              </button>
+            )}
           </figure>
-        ))}
-        {photos.length > 5 && (
-          <button type="button" className="villa-photo-grid__show" onClick={() => setIsOpen(true)}>
+        )}
+
+        <div className="villa-detail-photo-grid__side">
+          {sidePhotos.map((photo, index) => (
+            <figure key={getPhotoKey(photo, index + 1, "side-photo")}>
+              <Image
+                src={photo.url}
+                alt={photo.caption || `${villaName} image ${index + 2}`}
+                fill
+                sizes="(min-width: 1024px) 28vw, 100vw"
+                className="villa-detail-image"
+                unoptimized
+              />
+            </figure>
+          ))}
+          {sideContent && <div className="villa-detail-photo-grid__booking">{sideContent}</div>}
+        </div>
+        {photos.length > 3 && (
+          <button type="button" className="villa-photo-grid__show villa-photo-grid__show--mobile" onClick={() => setIsOpen(true)}>
             Show all photos
           </button>
         )}
@@ -49,7 +89,7 @@ export default function VillaPhotoGallery({ villaName, photos }: VillaPhotoGalle
             </div>
             <div className="villa-photo-modal__grid">
               {photos.map((photo, index) => (
-                <figure key={`${photo.url}-modal-${index}`}>
+                <figure key={getPhotoKey(photo, index, "modal-photo")}>
                   <Image
                     src={photo.url}
                     alt={photo.caption || `${villaName} image ${index + 1}`}
