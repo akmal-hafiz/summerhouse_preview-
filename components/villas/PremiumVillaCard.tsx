@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { IconType } from "react-icons";
 import { FiDroplet, FiHeart, FiHome, FiMapPin, FiUsers } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
-import { readSavedVillaIds, writeSavedVillaIds } from "./savedVillas";
+import { readSavedVillaIds, subscribeSavedVillas, toggleSavedVillaId } from "./savedVillas";
 
 type PremiumVillaCardProps = {
   villa: VillaSearchResult;
@@ -31,6 +31,9 @@ export default function PremiumVillaCard({
 
   useEffect(() => {
     setIsSaved(readSavedVillaIds().includes(villaId));
+    return subscribeSavedVillas(({ ids }) => {
+      setIsSaved(ids.includes(villaId));
+    });
   }, [villaId]);
 
   const facts = useMemo(() => ([
@@ -45,13 +48,9 @@ export default function PremiumVillaCard({
   ]);
 
   const toggleSaved = () => {
-    const savedIds = readSavedVillaIds();
-    const nextSaved = !savedIds.includes(villaId);
-    const nextIds = nextSaved ? [...savedIds, villaId] : savedIds.filter((id) => id !== villaId);
-
-    writeSavedVillaIds(nextIds);
-    setIsSaved(nextSaved);
-    onSavedChange?.(villaId, nextSaved);
+    const result = toggleSavedVillaId(villaId);
+    setIsSaved(result.saved);
+    onSavedChange?.(villaId, result.saved);
   };
 
   return (

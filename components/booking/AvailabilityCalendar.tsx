@@ -64,6 +64,8 @@ export default function AvailabilityCalendar({
   const [rateQuote, setRateQuote] = useState<RateQuote | null>(null);
   const [quoteError, setQuoteError] = useState("");
   const [error, setError] = useState("");
+  const [availabilityError, setAvailabilityError] = useState("");
+  const [availabilityRetryKey, setAvailabilityRetryKey] = useState(0);
 
   const rangeStart = formatISODate(startOfMonth(visibleMonth));
   const rangeEnd = formatISODate(endOfMonth(addMonths(visibleMonth, 1)));
@@ -83,7 +85,7 @@ export default function AvailabilityCalendar({
 
     async function loadAvailability() {
       setIsLoading(true);
-      setError("");
+      setAvailabilityError("");
 
       try {
         const response = await fetch(
@@ -95,7 +97,7 @@ export default function AvailabilityCalendar({
         setAvailabilityMap(data.map || {});
       } catch (fetchError) {
         if (controller.signal.aborted) return;
-        setError(fetchError instanceof Error ? fetchError.message : "Availability unavailable.");
+        setAvailabilityError(fetchError instanceof Error ? fetchError.message : "Availability unavailable.");
         setAvailabilityMap({});
       } finally {
         if (!controller.signal.aborted) setIsLoading(false);
@@ -105,7 +107,7 @@ export default function AvailabilityCalendar({
     loadAvailability();
 
     return () => controller.abort();
-  }, [propertyId, rangeStart, rangeEnd]);
+  }, [propertyId, rangeStart, rangeEnd, availabilityRetryKey]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -166,6 +168,10 @@ export default function AvailabilityCalendar({
 
   const handleDateClick = (date: string) => {
     const day = availabilityMap[date];
+    if (availabilityError) {
+      setError("Availability is not loaded yet. Please retry before selecting dates.");
+      return;
+    }
 
     if (!checkIn || (checkIn && checkOut) || parseISODate(date) <= parseISODate(checkIn)) {
       if (!day?.available) {
@@ -261,7 +267,16 @@ export default function AvailabilityCalendar({
             Clear dates
           </button>
           {isBookingValid && (
-            <a href={checkoutUrl} target="_blank" rel="noopener noreferrer">
+            <a
+              href={checkoutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-booking-property-id={propertyId}
+              data-booking-check-in={checkIn}
+              data-booking-check-out={checkOut}
+              data-booking-guests={guests}
+              data-booking-quote-status={rateQuote?.totalLabel ? "quoted" : quoteError ? "quote-fallback" : "available"}
+            >
               {rateQuote?.totalLabel ? `Book for ${rateQuote.totalLabel}` : "Book Now"}
             </a>
           )}
@@ -298,6 +313,20 @@ export default function AvailabilityCalendar({
       </div>
 
       {error && <p className="villa-calendar__error">{error}</p>}
+      {availabilityError && (
+        <div className="villa-calendar__error villa-calendar__error--retry">
+          <span>{availabilityError}</span>
+          <button
+            type="button"
+            onClick={() => {
+              setError("");
+              setAvailabilityRetryKey((current) => current + 1);
+            }}
+          >
+            Retry availability
+          </button>
+        </div>
+      )}
       {quoteError && isRangeValid && (
         <p className="villa-calendar__error">
           Lodgify rates are unavailable right now. The final price will still be confirmed in checkout.
@@ -315,10 +344,12 @@ export default function AvailabilityCalendar({
         maxGuests={maxGuests}
         nights={nights}
         isValid={isBookingValid}
-        error={isQuoteLoading ? "Checking Lodgify rates..." : error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "") || quoteError}
+        error={isQuoteLoading ? "Checking Lodgify rates..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "") || quoteError}
         rateQuote={rateQuote}
         isQuoteLoading={isQuoteLoading}
         checkoutUrl={checkoutUrl}
+        propertyId={propertyId}
+        quoteStatus={rateQuote?.totalLabel ? "quoted" : quoteError ? "quote-fallback" : "available"}
         onGuestChange={(value) => {
           setIsQuoteLoading(true);
           setRateQuote(null);

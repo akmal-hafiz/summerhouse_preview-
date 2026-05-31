@@ -194,14 +194,23 @@ async function getSearchResultForProperty(
 }
 
 export async function searchAvailableVillas(params: VillaSearchParams = {}) {
-  const properties = await fetchProperties();
+  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
   const hasDates = isValidDateRange(params.checkIn, params.checkOut);
   const guests = normalizeGuestCount(params);
   const availabilityByProperty: Record<string, ReturnType<typeof buildAvailabilityMapFromItems>> = {};
+  const candidateProperties = properties.filter((property) => {
+    if (!matchesLocation(property, params.location)) return false;
+
+    const comparablePrice = getComparablePrice(property);
+    if (params.minPrice && comparablePrice && comparablePrice < params.minPrice) return false;
+    if (params.maxPrice && comparablePrice && comparablePrice > params.maxPrice) return false;
+
+    return true;
+  });
 
   if (hasDates) {
     const availabilityItems = await fetchAvailabilityItems(params.checkIn as string, params.checkOut as string);
-    properties.forEach((property) => {
+    candidateProperties.forEach((property) => {
       if (!property.id) return;
       availabilityByProperty[String(property.id)] = buildAvailabilityMapFromItems(
         availabilityItems || [],
@@ -212,18 +221,14 @@ export async function searchAvailableVillas(params: VillaSearchParams = {}) {
     });
   }
 
-  const detailed = await Promise.all(properties.map(async (property) => {
+  const detailed = await Promise.all(candidateProperties.map(async (property) => {
     if (!property.id) return null;
     const rooms = await fetchPropertyRooms(property.id);
     return getSearchResultForProperty(property, rooms, availabilityByProperty, hasDates, params);
   }));
 
   return compact(detailed).filter((villa) => {
-    const property = properties.find((item) => String(item.id) === String(villa.id)) || {};
-    if (!matchesLocation(property, params.location)) return false;
     if (guests > villa.capacity) return false;
-    if (params.minPrice && villa.priceValue && villa.priceValue < params.minPrice) return false;
-    if (params.maxPrice && villa.priceValue && villa.priceValue > params.maxPrice) return false;
     if (!villa.isAvailableForSearch) return false;
     return true;
   });

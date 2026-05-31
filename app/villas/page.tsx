@@ -23,12 +23,28 @@ const numberParam = (value: string | string[] | undefined) => {
 };
 
 async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFilters>> }) {
-  const villas = await searchAvailableVillas(filters);
+  let villas: Awaited<ReturnType<typeof searchAvailableVillas>> = [];
+
+  try {
+    villas = await searchAvailableVillas(filters);
+  } catch (error) {
+    console.error("[villas:list]", {
+      message: error instanceof Error ? error.message : "Unknown villa search error",
+    });
+
+    return (
+      <div className="villa-collection-empty villa-collection-empty--error">
+        <p>We could not refresh live villa availability right now. Please try again in a moment.</p>
+        <Link href="/villas">Reload villa collection</Link>
+      </div>
+    );
+  }
 
   if (villas.length === 0) {
     return (
       <div className="villa-collection-empty">
         <p>No villas match those dates yet. Try another stay window or location.</p>
+        <Link href="/villas">Clear filters</Link>
       </div>
     );
   }
@@ -59,11 +75,23 @@ async function getFilters(searchParams: Promise<Record<string, string | string[]
 }
 
 export default async function VillasPage({ searchParams }: VillasPageProps) {
-  const [filters, options] = await Promise.all([
+  const [filters, optionsResult] = await Promise.allSettled([
     getFilters(searchParams),
     getVillaSearchOptions(),
   ]);
-  const hasActiveSearch = Boolean(filters.location || filters.checkIn || filters.checkOut || filters.children || filters.minPrice || filters.maxPrice);
+  const resolvedFilters = filters.status === "fulfilled" ? filters.value : {
+    location: "",
+    checkIn: "",
+    checkOut: "",
+    adults: 1,
+    children: 0,
+    infants: 0,
+    pets: 0,
+    minPrice: undefined,
+    maxPrice: undefined,
+  };
+  const options = optionsResult.status === "fulfilled" ? optionsResult.value : { locations: [], priceRange: { min: null, max: null } };
+  const hasActiveSearch = Boolean(resolvedFilters.location || resolvedFilters.checkIn || resolvedFilters.checkOut || resolvedFilters.children || resolvedFilters.minPrice || resolvedFilters.maxPrice);
 
   return (
     <div className="villa-collection-page">
@@ -97,7 +125,7 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
           <div className="villa-collection-shell">
             <VillaSearchForm
               variant="listing"
-              initialValues={filters}
+              initialValues={resolvedFilters}
               locations={options.locations}
             />
           </div>
@@ -106,7 +134,7 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
         <section className="villa-collection-list">
           <div className="villa-collection-shell">
             <Suspense fallback={<VillaGridLoading />}>
-              <VillaList filters={filters} />
+              <VillaList filters={resolvedFilters} />
             </Suspense>
           </div>
         </section>

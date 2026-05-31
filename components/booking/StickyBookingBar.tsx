@@ -20,6 +20,8 @@ type StickyBookingBarProps = {
   } | null;
   isQuoteLoading?: boolean;
   checkoutUrl: string;
+  propertyId?: string | number;
+  quoteStatus?: "quoted" | "quote-fallback" | "available";
   onGuestChange: (guests: number) => void;
   onClearDates: () => void;
 };
@@ -38,6 +40,8 @@ export default function StickyBookingBar({
   rateQuote,
   isQuoteLoading = false,
   checkoutUrl,
+  propertyId,
+  quoteStatus = "available",
   onGuestChange,
   onClearDates,
 }: StickyBookingBarProps) {
@@ -96,6 +100,11 @@ export default function StickyBookingBar({
           className={!isValid ? "is-disabled" : ""}
           target="_blank"
           rel="noopener noreferrer"
+          data-booking-property-id={propertyId}
+          data-booking-check-in={checkIn || ""}
+          data-booking-check-out={checkOut || ""}
+          data-booking-guests={guests}
+          data-booking-quote-status={quoteStatus}
         >
           {bookingLabel}
         </a>

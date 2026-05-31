@@ -1,5 +1,11 @@
 import type { LodgifyId } from "./types";
 
+const DEFAULT_LODGIFY_CHECKOUT_URL = "https://lodgify.com/v2/direct-booking";
+
+function getCheckoutBaseUrl() {
+  return process.env.NEXT_PUBLIC_LODGIFY_CHECKOUT_BASE_URL || DEFAULT_LODGIFY_CHECKOUT_URL;
+}
+
 export function buildLodgifyCheckoutUrl({
   propertyId,
   checkIn,
@@ -11,7 +17,7 @@ export function buildLodgifyCheckoutUrl({
   checkOut?: string;
   guests?: number;
 }) {
-  const url = new URL("https://lodgify.com/v2/direct-booking");
+  const url = new URL(getCheckoutBaseUrl());
   url.searchParams.set("propertyId", String(propertyId));
 
   if (checkIn) {

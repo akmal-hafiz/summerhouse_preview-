@@ -6,10 +6,14 @@ export async function GET() {
     const options = await getVillaSearchOptions();
     return NextResponse.json({ success: true, ...options });
   } catch (error) {
+    console.error("[lodgify:search-options]", {
+      message: error instanceof Error ? error.message : "Unknown search options error",
+    });
+
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unable to load search options.",
+        error: "Search filters are temporarily limited. Please try again.",
       },
       { status: 500 }
     );

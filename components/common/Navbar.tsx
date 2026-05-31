@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { FiHeart, FiMenu, FiSearch, FiUser } from "react-icons/fi";
+import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
 
 const navbarNavItems = [
   { label: "Villas", href: "/villas" },
@@ -17,6 +18,8 @@ interface NavbarProps {
 
 export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [savedCount, setSavedCount] = useState(0);
+  const [isSavedCountReady, setIsSavedCountReady] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,6 +32,12 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setSavedCount(getSavedVillasCount());
+    setIsSavedCountReady(true);
+    return subscribeSavedVillas(({ count }) => setSavedCount(count));
   }, []);
 
   return (
@@ -61,9 +70,16 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
         <button type="button" className="global-icon-button" aria-label="Search villas">
           <FiSearch aria-hidden="true" />
         </button>
-        <button type="button" className="global-icon-button" aria-label="Save villas">
+        <Link
+          href="/saved-villas"
+          className={`global-icon-button global-icon-button--saved ${savedCount > 0 ? "has-saved-count" : ""}`}
+          aria-label={savedCount > 0 ? `Saved villas, ${savedCount} selected` : "Saved villas"}
+        >
           <FiHeart aria-hidden="true" />
-        </button>
+          {isSavedCountReady && savedCount > 0 && (
+            <span className="global-icon-button__badge" aria-hidden="true">{savedCount}</span>
+          )}
+        </Link>
         <button type="button" className="global-icon-button" aria-label="User profile">
           <FiUser aria-hidden="true" />
         </button>

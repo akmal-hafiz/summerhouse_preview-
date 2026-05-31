@@ -10222,3 +10222,84 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     min-height: 2.6rem !important;
   }
 }
+
+/* Production hardening polish: realtime saved badge + graceful fallback states. */
+.global-icon-button--saved {
+  position: relative;
+  text-decoration: none;
+}
+
+.global-icon-button--saved.has-saved-count {
+  color: #ffffff;
+}
+
+.global-mini-header.is-scrolled .global-icon-button--saved.has-saved-count {
+  color: #2e5c45;
+}
+
+.global-icon-button__badge {
+  position: absolute;
+  top: -0.32rem;
+  right: -0.28rem;
+  display: grid;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  background: #2e5c45;
+  color: #fff;
+  padding: 0 0.28rem;
+  font-size: 0.62rem;
+  font-weight: 850;
+  line-height: 1;
+  box-shadow: 0 0.5rem 1rem rgba(46, 92, 69, 0.28);
+  animation: savedBadgePulse 260ms ease-out;
+}
+
+@keyframes savedBadgePulse {
+  0% { transform: scale(0.72); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.villa-search-form__notice {
+  display: block;
+  padding: 0.8rem 0.95rem;
+  color: rgba(31, 31, 29, 0.58);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.villa-calendar__error--retry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.villa-calendar__error--retry button,
+.villa-collection-empty a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  border: 1px solid rgba(138, 60, 45, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #2e5c45;
+  padding: 0 1rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 820;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.villa-collection-empty {
+  gap: 1.1rem;
+}
+
+.villa-collection-empty--error {
+  border-color: rgba(138, 60, 45, 0.14);
+  background: rgba(255, 250, 245, 0.82);
+}

@@ -36,6 +36,8 @@ export default function VillaSearchForm({
 }: VillaSearchFormProps) {
   const router = useRouter();
   const [locations, setLocations] = useState(providedLocations);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(providedLocations.length === 0);
+  const [locationError, setLocationError] = useState("");
   const [activePanel, setActivePanel] = useState<"location" | "dates" | "guests" | null>(null);
   const [visibleMonth, setVisibleMonth] = useState(() => new Date());
   const [location, setLocation] = useState(initialValues?.location || "");
@@ -49,15 +51,35 @@ export default function VillaSearchForm({
   const [maxPrice, setMaxPrice] = useState(initialValues?.maxPrice ? String(initialValues.maxPrice) : "");
 
   useEffect(() => {
-    if (providedLocations.length > 0) return;
+    if (providedLocations.length > 0) {
+      setLocations(providedLocations);
+      setIsLoadingLocations(false);
+      setLocationError("");
+      return;
+    }
 
+    setIsLoadingLocations(true);
+    setLocationError("");
     fetch("/api/lodgify/search-options")
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data.locations)) setLocations(data.locations);
+      .then((response) => {
+        if (!response.ok) throw new Error("Unable to load locations.");
+        return response.json();
       })
-      .catch(() => setLocations([]));
-  }, [providedLocations.length]);
+      .then((data) => {
+        if (Array.isArray(data.locations) && data.locations.length > 0) {
+          setLocations(data.locations);
+          return;
+        }
+
+        setLocations([]);
+        setLocationError("Location filters are limited right now. You can still search all villas.");
+      })
+      .catch(() => {
+        setLocations([]);
+        setLocationError("Location filters are limited right now. You can still search all villas.");
+      })
+      .finally(() => setIsLoadingLocations(false));
+  }, [providedLocations]);
 
   const togglePanel = (panel: "location" | "dates" | "guests") => {
     setActivePanel(activePanel === panel ? null : panel);
@@ -67,6 +89,8 @@ export default function VillaSearchForm({
     const total = adults + children;
     return `${total} ${total === 1 ? "adult" : "guests"}${infants ? `, ${infants} infant` : ""}${pets ? `, ${pets} pet` : ""}`;
   }, [adults, children, infants, pets]);
+
+  const locationOptions = locations.length > 0 ? locations : ["All Bali villas"];
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -183,12 +207,18 @@ export default function VillaSearchForm({
 
       {activePanel === "location" && (
         <div className="villa-search-form__panel villa-search-form__panel--location">
-          {locations.map((item) => (
+          {isLoadingLocations && (
+            <span className="villa-search-form__notice">Loading live Lodgify locations...</span>
+          )}
+          {!isLoadingLocations && locationError && (
+            <span className="villa-search-form__notice">{locationError}</span>
+          )}
+          {!isLoadingLocations && locationOptions.map((item) => (
             <button
               type="button"
               key={item}
               onClick={() => {
-                setLocation(item);
+                setLocation(item === "All Bali villas" ? "" : item);
                 setActivePanel(null);
               }}
             >

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import PremiumVillaCard from "./PremiumVillaCard";
-import { readSavedVillaIds } from "./savedVillas";
+import { readSavedVillaIds, subscribeSavedVillas } from "./savedVillas";
 
 type SavedVillasClientProps = {
   villas: VillaSearchResult[];
@@ -17,6 +17,7 @@ export default function SavedVillasClient({ villas }: SavedVillasClientProps) {
   useEffect(() => {
     setSavedIds(readSavedVillaIds());
     setIsReady(true);
+    return subscribeSavedVillas(({ ids }) => setSavedIds(ids));
   }, []);
 
   const savedVillas = useMemo(() => {
