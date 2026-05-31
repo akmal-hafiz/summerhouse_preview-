@@ -30,7 +30,6 @@ const VillaCard = ({ property, variant = 'desktop', height }: VillaCardProps) =>
                         src={property.imageUrl || "/homepage_villa/VillaZen.webp"} 
                         alt={property.name} 
                         fill 
-                        unoptimized={true}
                         className="object-cover" 
                     />
                 </div>
@@ -74,7 +73,6 @@ const VillaCard = ({ property, variant = 'desktop', height }: VillaCardProps) =>
                     src={property.imageUrl || "/homepage_villa/VillaZen.webp"} 
                     alt={property.name} 
                     fill 
-                    unoptimized={true}
                     className="object-cover transition-transform duration-700 group-hover:scale-105" 
                 />
                 {property.isFeatured && (

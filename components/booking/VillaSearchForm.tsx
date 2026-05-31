@@ -4,6 +4,14 @@ import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
+import {
+  addMonths,
+  buildMonthCells,
+  formatISODate,
+  isPastDate,
+  monthNames,
+  parseISODate,
+} from "@/lib/date";
 
 type VillaSearchFormProps = {
   variant?: "hero" | "listing";
@@ -19,48 +27,6 @@ type VillaSearchFormProps = {
     maxPrice?: number;
   };
   locations?: string[];
-};
-
-const toISODate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const toDate = (value: string) => {
-  const [year, month, day] = value.split("-").map(Number);
-  return new Date(year, month - 1, day);
-};
-
-const addDays = (date: Date, amount: number) => {
-  const next = new Date(date);
-  next.setDate(next.getDate() + amount);
-  return next;
-};
-
-const addMonths = (date: Date, amount: number) => {
-  const next = new Date(date);
-  next.setMonth(next.getMonth() + amount);
-  return next;
-};
-
-const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
-const buildMonthCells = (month: Date) => {
-  const first = new Date(month.getFullYear(), month.getMonth(), 1);
-  const last = new Date(month.getFullYear(), month.getMonth() + 1, 0);
-  const startOffset = (first.getDay() + 6) % 7;
-  const cells: Date[] = [];
-
-  for (let i = startOffset; i > 0; i -= 1) cells.push(addDays(first, -i));
-  for (let day = 1; day <= last.getDate(); day += 1) cells.push(new Date(month.getFullYear(), month.getMonth(), day));
-  while (cells.length % 7 !== 0) cells.push(addDays(cells[cells.length - 1], 1));
-
-  return cells;
 };
 
 export default function VillaSearchForm({
@@ -120,7 +86,7 @@ export default function VillaSearchForm({
   };
 
   const handleDateClick = (date: string) => {
-    if (!checkIn || (checkIn && checkOut) || toDate(date) <= toDate(checkIn)) {
+    if (!checkIn || (checkIn && checkOut) || parseISODate(date) <= parseISODate(checkIn)) {
       setCheckIn(date);
       setCheckOut("");
       return;
@@ -132,8 +98,6 @@ export default function VillaSearchForm({
 
   const renderDateMonth = (month: Date) => {
     const cells = buildMonthCells(month);
-    const today = new Date(new Date().setHours(0, 0, 0, 0));
-
     return (
       <div className="villa-search-calendar__month">
         <h4>{monthNames[month.getMonth()]} {month.getFullYear()}</h4>
@@ -142,12 +106,12 @@ export default function VillaSearchForm({
         </div>
         <div className="villa-search-calendar__grid">
           {cells.map((cell) => {
-            const date = toISODate(cell);
+            const date = formatISODate(cell);
             const isOutside = cell.getMonth() !== month.getMonth();
-            const isPast = cell < today;
+            const isPast = isPastDate(cell);
             const isStart = date === checkIn;
             const isEnd = date === checkOut;
-            const isRange = checkIn && checkOut && toDate(date) > toDate(checkIn) && toDate(date) < toDate(checkOut);
+            const isRange = checkIn && checkOut && parseISODate(date) > parseISODate(checkIn) && parseISODate(date) < parseISODate(checkOut);
 
             return (
               <button

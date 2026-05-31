@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type AmenityGroup = {
   key: string;
@@ -27,6 +28,7 @@ const iconForGroup = (key: string) => {
 export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesProps) {
   const [isOpen, setIsOpen] = useState(false);
   const visibleItems = groups.flatMap((group) => group.items.map((item) => ({ group, item }))).slice(0, 12);
+  useScrollLock(isOpen);
 
   if (groups.length === 0) return null;
 

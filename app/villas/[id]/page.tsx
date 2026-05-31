@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: VillaDetailPageProps) {
   const villa = await getVillaDetail(id);
 
   return {
-    title: `${villa?.name || "Villa"} | Summerhouse Bali`,
+    title: villa?.name || "Villa",
     description: villa?.descriptionText || "Explore this Summerhouses Bali villa.",
   };
 }
@@ -208,7 +208,6 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
                           fill
                           sizes="(min-width: 1024px) 20vw, 100vw"
                           className="villa-detail-image"
-                          unoptimized
                         />
                       </figure>
                       <span>{item.location}</span>

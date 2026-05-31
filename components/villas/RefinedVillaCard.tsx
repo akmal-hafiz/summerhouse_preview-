@@ -38,7 +38,6 @@ const RefinedVillaCard = ({ property, index }: RefinedVillaCardProps) => {
             src={property.imageUrl || "/homepage_villa/VillaZen.webp"} 
             alt={property.name} 
             fill 
-            unoptimized
             priority={index < 3}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className={styles.image} 

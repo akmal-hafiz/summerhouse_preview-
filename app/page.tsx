@@ -1,17 +1,23 @@
 import Navbar from "@/components/common/Navbar";
 import Hero from "@/components/home/Hero";
-import Introduction from "@/components/home/Introduction";
 import Footer from "@/components/common/Footer";
-import VillaCollection from "@/components/home/VillaCollection";
+import MobileHomepage from "@/components/home/MobileHomepage";
+import DesktopHomepage from "@/components/home/DesktopHomepage";
 
 export default function Home() {
   return (
-    <div className="min-h-[100dvh] flex flex-col overflow-x-hidden bg-[#FAFAF9]">
+    <div className="summerhouses-main-layout">
       <Navbar />
-      <main className="flex-1">
+      <main className="summerhouses-main-content">
         <Hero />
-        <Introduction />
-        <VillaCollection />
+        {/* Desktop Layout Showcase */}
+        <div className="desktop-only">
+          <DesktopHomepage />
+        </div>
+        {/* Premium 1:1 Stitch Mobile Homepage Canvas */}
+        <div className="mobile-only">
+          <MobileHomepage />
+        </div>
       </main>
       <Footer />
     </div>

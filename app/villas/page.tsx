@@ -1,14 +1,14 @@
 import React, { Suspense } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import VillaGridLoading from "@/components/villas/VillaGridLoading";
 import VillaSearchForm from "@/components/booking/VillaSearchForm";
+import PremiumVillaCard from "@/components/villas/PremiumVillaCard";
 import { getVillaSearchOptions, searchAvailableVillas } from "@/lib/lodgify";
 
 export const metadata = {
-  title: "Villa Collection | Summerhouse Bali",
+  title: "Villa Collection",
   description: "Explore Summerhouses Bali villas connected to live Lodgify property data.",
 };
 
@@ -36,64 +36,9 @@ async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFi
   return (
     <div className="villa-collection-grid">
       {villas.map((villa, index) => (
-        <VillaCard key={villa.id} villa={villa} index={index} />
+        <PremiumVillaCard key={villa.id} villa={villa} priority={index < 6} />
       ))}
     </div>
-  );
-}
-
-function VillaCard({ villa, index }: { villa: any; index: number }) {
-  const facts = [
-    villa.guests ? `${villa.guests} guests` : null,
-    villa.bedrooms ? `${villa.bedrooms} beds` : null,
-    villa.bathrooms ? `${villa.bathrooms} bath` : null,
-  ].filter(Boolean);
-  const amenities = Array.isArray(villa.amenitiesPreview) ? villa.amenitiesPreview.filter(Boolean).slice(0, 4) : [];
-
-  return (
-    <article className={`villa-collection-card villa-collection-card--airbnb ${index === 0 ? "villa-collection-card-featured" : ""}`}>
-      <Link href={`/villas/${villa.id}`} className="villa-collection-card-link">
-        <figure className="villa-collection-card-media">
-          <Image
-            src={villa.imageUrl}
-            alt={villa.name}
-            fill
-            priority={index < 3}
-            sizes={index === 0 ? "(min-width: 1024px) 62vw, 100vw" : "(min-width: 1024px) 31vw, 100vw"}
-            className="villa-collection-card-image"
-            unoptimized
-          />
-          <span className="villa-collection-card-action">View villa</span>
-        </figure>
-
-        <div className="villa-collection-card-body">
-          <div className="villa-collection-card-title-row">
-            <h2>{villa.name}</h2>
-            {villa.rating > 0 && (
-              <span className="villa-collection-card-rating">
-                <span aria-hidden="true">★</span> {villa.rating}
-              </span>
-            )}
-          </div>
-          <div className="villa-collection-card-meta">
-            <span>Villa</span>
-            {facts.length > 0 ? facts.map((fact) => <span key={fact}>{fact}</span>) : <span>Details inside</span>}
-          </div>
-          {amenities.length > 0 && (
-            <p className="villa-collection-card-amenities">{amenities.join(" · ")}</p>
-          )}
-          <p className="villa-collection-card-price">
-            {villa.priceLabel ? (
-              <>
-                from <strong>{villa.priceLabel}</strong> per night
-              </>
-            ) : (
-              "Rate on request"
-            )}
-          </p>
-        </div>
-      </Link>
-    </article>
   );
 }
 
@@ -129,13 +74,12 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
           <div className="villa-collection-shell">
             <div className="villa-collection-hero-copy">
               <p className="villa-collection-eyebrow">Summerhouses Bali</p>
-              <h1>Private villas, selected for a slower island rhythm.</h1>
+              <h1>Find a villa that fits your journey.</h1>
               <p>
-                Browse homes connected to live Lodgify inventory, then open each villa
-                for details, amenities, location, and the direct booking path.
+                Browse live Lodgify homes by location, dates, and guest count, then
+                open each villa for details, availability, and the direct booking path.
               </p>
             </div>
-
           </div>
         </header>
 
@@ -145,6 +89,7 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
               <span>{hasActiveSearch ? "Search results" : "Collection"}</span>
               <strong>{hasActiveSearch ? "Available homes from Lodgify" : "All available homes"}</strong>
             </div>
+            <Link href="/saved-villas">Saved villas</Link>
           </div>
         </section>
 

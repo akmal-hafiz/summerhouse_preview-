@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type VillaPhoto = {
   url: string;
@@ -25,16 +26,7 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
   const mainPhoto = photos[0];
   const sidePhotos = photos.slice(1, 3);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen]);
+  useScrollLock(isOpen);
 
   return (
     <>
@@ -48,7 +40,6 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
               priority
               sizes="(min-width: 1024px) 58vw, 100vw"
               className="villa-detail-image"
-              unoptimized
             />
             {photos.length > 3 && (
               <button type="button" className="villa-photo-grid__show" onClick={() => setIsOpen(true)}>
@@ -67,7 +58,6 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
                 fill
                 sizes="(min-width: 1024px) 28vw, 100vw"
                 className="villa-detail-image"
-                unoptimized
               />
             </figure>
           ))}
@@ -96,7 +86,6 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
                     fill
                     sizes="(min-width: 900px) 45vw, 100vw"
                     className="villa-detail-image"
-                    unoptimized
                   />
                   {photo.caption && <figcaption>{photo.caption}</figcaption>}
                 </figure>

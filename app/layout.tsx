@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Playfair_Display } from "next/font/google";
+import { getMetadataBase } from "@/lib/site";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -16,9 +17,36 @@ const playfair = Playfair_Display({
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
-  title: "Summerhouse Bali",
+  metadataBase: getMetadataBase(),
+  title: {
+    default: "Summerhouse Bali",
+    template: "%s | Summerhouse Bali",
+  },
   description: "Luxury villas in Bali",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Summerhouse Bali",
+    title: "Summerhouse Bali",
+    description: "Luxury villas in Bali",
+    url: "/",
+    images: [
+      {
+        url: "/Hero_Section.png",
+        width: 1200,
+        height: 630,
+        alt: "Summerhouse Bali private villas",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Summerhouse Bali",
+    description: "Luxury villas in Bali",
+    images: ["/Hero_Section.png"],
+  },
 };
 
 import SmoothScrolling from "@/components/common/SmoothScrolling";

@@ -3,7 +3,7 @@ import Footer from "@/components/common/Footer";
 import Contact from "@/components/contact/Contact";
 
 export const metadata = {
-  title: "Contact | Summerhouse Bali",
+  title: "Contact",
   description: "Connect with our team for bookings, inquiries, and more.",
 };
 

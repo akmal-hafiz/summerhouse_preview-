@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!article) {
     return {
-      title: "Article Not Found | Summerhouses Journal",
+      title: "Article Not Found",
       description: "This Summerhouses Journal story is not available.",
     };
   }
 
-  const title = `${article.title} | Summerhouses Journal`;
+  const title = article.title;
 
   return {
     title,
