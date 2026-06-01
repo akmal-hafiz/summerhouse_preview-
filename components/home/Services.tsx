@@ -1,407 +1,180 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
-import Magnetic from '@/components/common/Magnetic';
-import { ManagementStatsSection } from './ManagementStatsSection';
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import styles from "./Services.module.css";
 
-// Character-by-character reveal component
-const CharacterReveal = ({ text, className }: { text: string, className?: string }) => {
-    const characters = text.split("");
-    return (
-        <span className={className}>
-            {characters.map((char, index) => (
-                <motion.span
-                    key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ 
-                        duration: 0.6, 
-                        delay: index * 0.03, 
-                        ease: [0.22, 1, 0.36, 1] 
-                    }}
-                    style={{ display: 'inline-block', whiteSpace: char === " " ? "pre" : "normal" }}
-                >
-                    {char}
-                </motion.span>
-            ))}
-        </span>
-    );
+const servicePillars = [
+  {
+    title: "Villa booking",
+    text: "Clear guidance on the right home, area, and stay rhythm before you make a decision.",
+  },
+  {
+    title: "Concierge assistance",
+    text: "Drivers, dining, wellness, and daily details arranged through people who know the island.",
+  },
+  {
+    title: "Family and group stays",
+    text: "Homes selected for comfort, privacy, sleeping arrangements, and the way people actually gather.",
+  },
+  {
+    title: "Romantic escapes",
+    text: "Quiet villas, soft arrivals, and thoughtful recommendations for honeymoons and slower celebrations.",
+  },
+];
+
+const journey = [
+  {
+    step: "01",
+    title: "Tell us what matters",
+    text: "Share your dates, guests, neighborhood preference, and the feeling you want from the stay.",
+  },
+  {
+    step: "02",
+    title: "Choose with confidence",
+    text: "We help you compare homes clearly, from bedroom setup and location to atmosphere and practical fit.",
+  },
+  {
+    step: "03",
+    title: "Arrive without friction",
+    text: "The small details are prepared before you land, so the first hour already feels calm.",
+  },
+  {
+    step: "04",
+    title: "Live Bali your way",
+    text: "From dinner plans to quiet days at home, our support stays available without crowding the experience.",
+  },
+];
+
+const guestReasons = [
+  "Straightforward villa guidance",
+  "Local recommendations with taste",
+  "Thoughtful arrival support",
+  "Homes prepared for real life, not only photos",
+];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 26 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.28 },
+  transition: { duration: 0.82, ease: [0.22, 1, 0.36, 1] as const },
 };
 
-const managementServicesData = [
-  { 
-    title: "Villa Maintenance", 
-    videoUrl: "https://videos.pexels.com/video-files/3121459/3121459-uhd_2560_1440_24fps.mp4",
-    briefs: [
-      { id: "01", title: "Preventive Care", text: "Routine inspections that catch issues before they become costs. We treat your structure like our own." },
-      { id: "02", title: "Pristine Standards", text: "Gardens, pools, and technical systems maintained to peak aesthetic and functional performance." },
-      { id: "03", title: "Asset Longevity", text: "Quality repairs and premium materials ensure your property's value grows over time." }
-    ]
-  },
-  { 
-    title: "Staff Training", 
-    videoUrl: "https://videos.pexels.com/video-files/6606013/6606013-uhd_2560_1440_25fps.mp4",
-    briefs: [
-      { id: "01", title: "Service Etiquette", text: "Training local teams in the art of subtle, high-end hospitality that anticipates guest needs." },
-      { id: "02", title: "Global Standards", text: "Rigorous housekeeping protocols and maintenance checks to ensure international quality." },
-      { id: "03", title: "Communication", text: "Fluency in service and hospitality English to ensure guests feel understood and cared for." }
-    ]
-  },
-  { 
-    title: "Financial Optimization", 
-    videoUrl: "https://videos.pexels.com/video-files/3195442/3195442-uhd_2560_1440_25fps.mp4",
-    briefs: [
-      { id: "01", title: "Yield Management", text: "Strategic dynamic pricing that reacts to Bali's demand cycles in real-time for maximum occupancy." },
-      { id: "02", title: "Absolute Transparency", text: "Detailed monthly financial reporting and cost management you can access from anywhere." },
-      { id: "03", title: "ROI Performance", text: "Focused on high-value bookings that respect your property while maximizing your revenue." }
-    ]
-  },
-  { 
-    title: "Guest Experience", 
-    videoUrl: "https://videos.pexels.com/video-files/4919736/4919736-uhd_2560_1440_25fps.mp4",
-    briefs: [
-      { id: "01", title: "Seamless Arrivals", text: "From airport transfers to personalized welcomes, every guest journey starts perfectly." },
-      { id: "02", title: "24/7 Concierge", text: "A dedicated team handling every request, from private chefs to specialized island tours." },
-      { id: "03", title: "Review Leadership", text: "Proactive guest relation management that consistently secures 5-star ratings and repeat stays." }
-    ]
-  }
-];
-
-const testimonials = [
-  {
-    id: 1,
-    name: "Martin Radowski",
-    quote: "“Summerhouse turned my empty villa into a fully booked asset.”",
-    text: "I didn't have to do a thing. Bookings came in, guests were handled, and the transfers arrived on time. It's the kind of partnership I didn't know I needed.",
-    image: "/homepage_villa/curated-2-detail.webp"
-  },
-  {
-    id: 2,
-    name: "Daniel Blaned",
-    quote: "“Occupancy went from 40% to 85% in six months.”",
-    text: "The team handled everything — pricing, guest relations, maintenance. I just received the transfers. I finally feel like my property is working for me, not the other way around.",
-    image: "/homepage_villa/curated-3-corner.webp"
-  },
-  {
-    id: 3,
-    name: "Olivia Rodru",
-    quote: "“I was skeptical at first. Now I'm opening a second property with them.”",
-    text: "What won me over wasn't the pitch — it was the execution. Transparent reporting, proactive communication, and a team that genuinely cares about the property.",
-    image: "/homepage_villa/curated-4-view.webp"
-  },
-  {
-    id: 4,
-    name: "Jane Hiness",
-    quote: "“They treat my villa like it's their own.”",
-    text: "That peace of mind is worth more than the numbers — though the numbers are excellent too. My villa has never looked better, and neither has my annual return.",
-    image: "/homepage_villa/curated-5-lounge.webp"
-  }
-];
-
 export default function Services() {
-  const [activeId, setActiveId] = useState(1);
-  const activeTestimonial = testimonials.find(t => t.id === activeId) || testimonials[0];
-
-  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const parallaxRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-      target: parallaxRef,
-      offset: ["start end", "end start"]
-  });
-
-  // Subtle Parallax Dampening for Desktop
-  const smoothProgress = useSpring(scrollYProgress, {
-      stiffness: 100,
-      damping: 30,
-      restDelta: 0.001
-  });
-
-  const yParallax = useTransform(smoothProgress, [0, 1], isMobile ? ["0%", "0%"] : ["-15%", "15%"]);
-
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      const current = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
-      if (duration) {
-        setProgress((current / duration) * 100);
-      }
-    }
-  };
-
-  const handleVideoEnd = () => {
-    setActiveVideoIndex((prev) => (prev + 1) % managementServicesData.length);
-    setProgress(0);
-  };
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.src = managementServicesData[activeVideoIndex].videoUrl;
-      videoRef.current.load();
-      videoRef.current.play().catch(e => console.log("Auto-play prevented", e));
-    }
-  }, [activeVideoIndex]);
-
   return (
-    <div className="services-page-shell w-full bg-[#FAF9F6] flex flex-col gap-y-[90px] md:gap-y-[120px] lg:gap-y-[160px] overflow-x-hidden">
-
-      {/* ============================================== */}
-      {/* 1. HERO & INTRO GROUP (Wrapped to prevent gap) */}
-      {/* ============================================== */}
-      <div className="w-full">
-        <section className="services-hero-section w-full min-h-0px md:min-h-0px lg:min-h-[460px] touch-pan-y flex flex-col justify-center items-center translate-y-12">
-          <div className="services-hero-copy max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col items-center text-center -translate-y-6 lg:translate-y-16">
-            <motion.h1
-              className="text-[34px] md:text-6xl lg:text-[72px] leading-[1.25] md:leading-[1.18] lg:leading-[1.12] text-[#446B4A] tracking-tight font-medium text-center"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              <CharacterReveal text="Your villa. Our obsession." />
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="text-[#5a5651] text-[13px] md:text-[16px] lg:text-[17px] leading-[1.7] lg:leading-[1.8] font-light max-w-[800px] text-center"
-              style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
-            >
-              You built something beautiful. Let us make sure the world knows it — and that it earns exactly what it deserves.
-            </motion.p>
-          </div>
-        </section>
-
-      {/* ============================================== */}
-      {/* 2. STEWARDSHIP & BRIEFING GRID                 */}
-      {/* ============================================== */}
-      <section className="services-rhythm-section w-full min-h-[800px] flex justify-center items-center touch-pan-y">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="services-content-grid grid grid-cols-1 lg:grid-cols-[1.618fr_1fr] gap-12 lg:gap-[6vw] items-center">
-
-            {/* Left: Video Area */}
-            <div className="flex flex-col">
-              {/* Top Navigation Bar */}
-              <div className="w-full bg-[#FAFAF9] h-[50px] lg:h-[70px] flex items-center justify-between px-2 md:px-4 z-20 shadow-sm border border-[#1a1a19]/5 rounded-t-[12px]">
-                <div className="w-full flex items-center justify-between h-full">
-                  {managementServicesData.map((service, index) => (
-                    <motion.div
-                      key={index}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex-1 flex flex-col items-center justify-center cursor-pointer h-full relative group"
-                      onClick={() => { setActiveVideoIndex(index); setProgress(0); }}
-                    >
-                      <span className={`text-[9px] md:text-[11px] lg:text-[12px] tracking-wide transition-all text-center px-1 ${activeVideoIndex === index ? 'text-black font-bold' : 'text-gray-400 group-hover:text-gray-600'}`} style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}>
-                        {service.title}
-                      </span>
-                      {/* Progress Bar Line */}
-                      <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-gray-100 overflow-hidden">
-                        <div
-                          className="h-full bg-[#1a1a19] transition-all duration-75"
-                          style={{ width: activeVideoIndex === index ? `${progress}%` : activeVideoIndex > index ? '100%' : '0%' }}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Video Container with Curve */}
-              <div className="w-full aspect-[16/10] relative overflow-hidden group shadow-sm" style={{ borderBottomLeftRadius: '10% 5%', borderBottomRightRadius: '10% 5%' }}>
-                <div className="absolute inset-0 bg-black/20 z-10 pointer-events-none" />
-                <video
-                  ref={videoRef}
-                  muted
-                  playsInline
-                  onTimeUpdate={handleTimeUpdate}
-                  onEnded={handleVideoEnd}
-                  className="w-full h-full object-cover transition-opacity duration-1000"
-                />
-                {/* Navigation Dots Indicator (Floating on Video) */}
-                <div className="absolute top-4 left-0 w-full z-20 px-6 flex justify-between pointer-events-none">
-                  {managementServicesData.map((_, index) => (
-                    <div key={`dot-${index}`} className="flex-1 flex justify-center">
-                      <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 shadow-lg ${activeVideoIndex === index ? 'bg-white scale-[1.5]' : 'bg-white/40'}`} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Briefing Area */}
-            <div className="flex flex-col">
-              <div className="services-brief-panel border-l border-[#C7A58A]/30 pl-6 md:pl-8 lg:pl-12 flex translate-x-14  lg:translate-x-0 flex-col">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeVideoIndex}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="services-brief-list flex flex-col"
-                  >
-                    {managementServicesData[activeVideoIndex].briefs.map((brief, bIndex) => (
-                      <motion.div 
-                        key={bIndex} 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: bIndex * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                        className="services-brief-item relative"
-                      >
-                        <div className="absolute -left-[28px] md:-left-[36px] lg:-left-[52px] top-1.5 w-2 h-2 rounded-full bg-[#2E2E2C]" />
-                        <span className="text-[10px] md:text-[11px] font-bold tracking-[0.2em] uppercase text-[#8F8A84] block" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                          Brief {brief.id}
-                        </span>
-                        <h4 className={`text-[22px] md:text-[26px] text-[#1a1a19] ${bIndex === 0 || bIndex === 2 ? 'italic' : ''}`} style={{ fontFamily: 'var(--font-playfair), serif' }}>
-                          {brief.title}
-                        </h4>
-                        <p className="text-[#5a5651] text-[14px] md:text-[15px] leading-[1.8] font-light md:w-[650px] lg:w-fit w-[250px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                          {brief.text}
-                        </p>
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-      <ManagementStatsSection />
-      </div>
-
-      {/* ============================================== */}
-      {/* 3. CLIENT REVIEWS SECTION                      */}
-      {/* ============================================== */}
-      <section className="services-rhythm-section w-full flex justify-center items-center touch-pan-y">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="services-review-layout flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-[4vw]">
-
-            {/* Left: Text */}
-            <div className="services-review-copy w-full lg:w-[38.2%] flex flex-col justify-center translate-x-5 md:translate-x-6 lg:translate-x-0px">
-              <span className="text-[14px] text-[#1a1a19] font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                What villa owners say
-              </span>
-
-              <div className="min-h-[160px] lg:min-h-[180px] flex flex-col">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`text-${activeTestimonial.id}`}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.4 }}
-                    className="services-testimonial-stack flex flex-col flex-1"
-                  >
-                    <h2 className="text-[28px] md:text-[30px] lg:text-[44px] w-[330px] md:w-[500px] lg:w-fit leading-[1.15] text-[#1a1a19] tracking-tight font-medium" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                      {activeTestimonial.quote}
-                    </h2>
-                    <p className="text-[14px] md:text-[16px] text-[#68635c] leading-[1.6] lg:leading-[1.7] max-w-[95%]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                      {activeTestimonial.text}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Right: Image */}
-            <div className="w-[90%] md:w-[98%] lg:w-[61.8%] aspect-[5/3] lg:aspect-[16/10] relative rounded-[16px] overflow-hidden bg-[#e0dcd5]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`img-${activeTestimonial.id}`}
-                  initial={{ opacity: 0, scale: 1.05 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.6 }}
-                  className="absolute inset-0 w-full h-full"
-                >
-                  <Image src={activeTestimonial.image} alt={activeTestimonial.name} fill className="object-cover" />
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-          </div>
-
-          {/* Tabs at the bottom */}
-          <div className="services-testimonial-tabs grid grid-cols-2 lg:flex w-full items-end justify-between translate-x-5 md:translate-x-6 lg:translate-x-0 translate-y-5 md:translate-y-3 lg:translate-y-10">
-            {testimonials.map((t, idx) => (
-              <motion.div
-                key={t.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={() => setActiveId(t.id)}
-                className={`flex-1 cursor-pointer pb-4 border-b transition-colors duration-300 ${activeId === t.id ? 'border-[#1a1a19]' : 'border-[#1a1a19]/10'}`}
-              >
-                <span className={`text-[15px] lg:text-[14px] transition-colors duration-300 ${activeId === t.id ? 'text-[#1a1a19] font-medium' : 'text-[#8F8A84] font-normal'}`} style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                  {t.name}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================== */}
-      {/* 4. FINAL CTA SECTION (PARALLAX)                */}
-      {/* ============================================== */}
-      <section ref={parallaxRef} className="services-cta-section w-full relative overflow-hidden touch-pan-y flex flex-col justify-center min-h-[560px] lg:min-h-[760px]">
-        <motion.div
-          className="absolute inset-0 w-full h-[140%] -top-[20%] bg-cover bg-center bg-no-repeat"
-          style={{ 
-              backgroundImage: 'url(/homepage_villa/curated-6-exterior.webp)',
-              y: yParallax
-          }}
+    <div className={styles.servicesPage}>
+      <section className={styles.hero}>
+        <Image
+          src="/homepage_villa/curated-1-main.webp"
+          alt="Private Bali villa pool prepared for guests"
+          fill
+          priority
+          sizes="100vw"
+          className={styles.heroImage}
         />
-        <div className="absolute inset-0 bg-black/40 lg:bg-gradient-to-r lg:from-[#1a1a19] lg:via-[#1a1a19]/80 lg:to-transparent z-10" />
+        <div className={styles.heroOverlay} />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className={styles.heroContent}
+        >
+          <p className={styles.eyebrow}>Guest services</p>
+          <h1>Everything around the stay, handled with quiet precision.</h1>
+          <p>
+            From choosing the right villa to arranging the details that make Bali feel effortless, our service
+            is designed around how you want to arrive, gather, rest, and explore.
+          </p>
+        </motion.div>
+      </section>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-4 md:px-6 lg:px-8 w-full flex flex-col items-center lg:items-start justify-center text-center translate-x-0 md:translate-x-0 lg:translate-x-10 lg:text-left">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="services-cta-copy flex flex-col items-center lg:items-start -translate-y-6 lg:-translate-y-12"
-          >
-            <span className="text-white text-[13px] md:text-[16px] block font-medium tracking-wide" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-              For villa owners
-            </span>
-            <h2 className="text-white text-[42px] md:text-[72px] lg:text-[88px] leading-[1.1] md:leading-[1.05] font-medium tracking-tight max-w-[800px]" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-              Your property <br className="lg:hidden" /> deserves better.
-            </h2>
-            <p className="text-white/80 text-[14px] md:text-[17px] leading-[1.6] max-w-[350px] lg:max-w-[480px] font-light" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-              Most villas in Bali sit half-empty. Yours doesn't have to. Partner with us and let's change that together.
-            </p>
-
-            <Magnetic>
-              <button className="bg-white rounded-full h-[64px] w-[320px] lg:w-max lg:px-8 flex items-center justify-between lg:justify-center lg:gap-4 transition-all hover:bg-gray-100 hover:scale-105 duration-300 shadow-xl px-6">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a19]" />
-                <span className="text-[#1a1a19] text-[15px] font-bold" style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}>
-                  Partner with Summerhouse
-                </span>
-                <div className="w-1.5 h-1.5 rounded-full bg-[#1a1a19]" />
-              </button>
-            </Magnetic>
-          </motion.div>
+      <section className={styles.overview}>
+        <motion.div {...fadeUp} className={styles.overviewIntro}>
+          <div className={styles.motionContents}>
+            <p className={styles.eyebrow}>What we help with</p>
+            <h2>Hospitality that begins before the booking.</h2>
+          </div>
+        </motion.div>
+        <div className={styles.pillarGrid}>
+          {servicePillars.map((item, index) => (
+            <motion.article
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: index * 0.06 }}
+              key={item.title}
+              className={styles.pillarCard}
+            >
+              <div className={styles.motionContents}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </motion.article>
+          ))}
         </div>
       </section>
 
+      <section className={styles.detailBlocks}>
+        <motion.figure {...fadeUp} className={styles.detailImage}>
+          <Image
+            src="/homepage_villa/curated-8.webp"
+            alt="Calm Bali villa living room prepared for a private stay"
+            width={1400}
+            height={1050}
+            sizes="(min-width: 1024px) 48vw, 100vw"
+            className={styles.coverImage}
+          />
+        </motion.figure>
+        <motion.div {...fadeUp} className={styles.detailCopy}>
+          <div className={styles.motionContents}>
+            <p className={styles.eyebrow}>Why guests love it</p>
+            <h2>Less arranging. More being there.</h2>
+            <p>
+              A good stay should not feel like project management. We help guests move from questions to clarity,
+              then from arrival to ease, with a team that understands both villa life and Bali's daily rhythm.
+            </p>
+            <div className={styles.reasonList}>
+              {guestReasons.map((reason) => (
+                <span key={reason}>{reason}</span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      <section className={styles.journey}>
+        <div className={styles.journeyHeader}>
+          <p className={styles.eyebrow}>Guest journey</p>
+          <h2>What happens after you reach out.</h2>
+        </div>
+        <div className={styles.journeyRows}>
+          {journey.map((item) => (
+            <motion.article {...fadeUp} key={item.step} className={styles.journeyRow}>
+              <div className={styles.motionContents}>
+                <span>{item.step}</span>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.cta}>
+        <Image
+          src="/homepage_villa/curated-4-view.webp"
+          alt="Bali villa terrace looking toward the pool"
+          fill
+          sizes="100vw"
+          className={styles.heroImage}
+        />
+        <div className={styles.ctaOverlay} />
+        <div className={styles.ctaContent}>
+          <p className={styles.eyebrow}>Ready when you are</p>
+          <h2>Tell us the stay you have in mind. We will help shape the rest.</h2>
+          <Link href="/contact">Plan your stay</Link>
+        </div>
+      </section>
     </div>
   );
 }

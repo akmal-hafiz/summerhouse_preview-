@@ -400,6 +400,19 @@ img {
   width: 100%;
 }
 
+.services-route-shell {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  overflow-x: clip;
+  background: #f5f1ea;
+}
+
+.services-route-main {
+  flex: 1;
+  width: 100%;
+}
+
 /* About editorial service stack refinements */
 .about-personalized-header {
   min-height: auto !important;

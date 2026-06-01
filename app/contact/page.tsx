@@ -4,7 +4,7 @@ import Contact from "@/components/contact/Contact";
 
 export const metadata = {
   title: "Contact",
-  description: "Connect with our team for bookings, inquiries, and more.",
+  description: "Contact the Summerhouses Bali team for private villa guidance, guest support, and thoughtful stay planning.",
 };
 
 export default function ContactPage() {
