@@ -413,6 +413,19 @@ img {
   width: 100%;
 }
 
+.gallery-route-shell {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  overflow-x: clip;
+  background: #f6f4f0;
+}
+
+.gallery-route-main {
+  flex: 1;
+  width: 100%;
+}
+
 /* About editorial service stack refinements */
 .about-personalized-header {
   min-height: auto !important;

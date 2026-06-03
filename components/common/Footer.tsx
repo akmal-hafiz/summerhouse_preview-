@@ -14,6 +14,7 @@ const FOOTER_LINKS = {
     { label: "List Your Property", href: "/list-your-property" },
   ],
   navigation: [
+    { label: "Gallery", href: "/gallery" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],

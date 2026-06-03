@@ -7,6 +7,7 @@ import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/s
 
 const navbarNavItems = [
   { label: "Villas", href: "/villas" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Services", href: "/services" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
