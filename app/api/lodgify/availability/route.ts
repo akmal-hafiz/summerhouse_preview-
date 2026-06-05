@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isISODate, isValidDateRange, parseISODate } from "@/lib/date";
 import { getAvailabilityMap, isRangeAvailable } from "@/lib/lodgify";
+import { logServerError } from "@/lib/security/logger";
+import { rateLimitRequest } from "@/lib/security/rateLimit";
+import { isValidPublicId, validateDateWindow, validateStayRange } from "@/lib/security/validation";
 
 const PUBLIC_ERROR = "Availability is temporarily unavailable. Please try again.";
 
-function isValidPropertyId(value: string | null) {
-  return Boolean(value && /^[a-zA-Z0-9_-]+$/.test(value));
-}
-
 export async function GET(request: NextRequest) {
+  const limited = rateLimitRequest(request, { key: "lodgify-availability", limit: 90, windowMs: 60_000 });
+  if (limited) return limited;
+
   const searchParams = request.nextUrl.searchParams;
   const propertyId = searchParams.get("propertyId");
   const start = searchParams.get("start");
@@ -16,16 +17,9 @@ export async function GET(request: NextRequest) {
   const checkIn = searchParams.get("checkIn") || undefined;
   const checkOut = searchParams.get("checkOut") || undefined;
 
-  if (!isValidPropertyId(propertyId) || !isISODate(start) || !isISODate(end)) {
+  if (!isValidPublicId(propertyId) || !validateDateWindow(start, end, 370)) {
     return NextResponse.json(
       { success: false, error: "Please choose a valid villa and date window." },
-      { status: 400 }
-    );
-  }
-
-  if (parseISODate(end) < parseISODate(start)) {
-    return NextResponse.json(
-      { success: false, error: "Please choose a valid availability window." },
       { status: 400 }
     );
   }
@@ -35,7 +29,7 @@ export async function GET(request: NextRequest) {
   const safeEnd = end as string;
 
   if (checkIn || checkOut) {
-    if (!isValidDateRange(checkIn, checkOut)) {
+    if (!validateStayRange(checkIn, checkOut, 90)) {
       return NextResponse.json(
         { success: false, error: "Please choose a valid check-in and check-out date." },
         { status: 400 }
@@ -55,11 +49,10 @@ export async function GET(request: NextRequest) {
       rangeAvailable: checkIn && checkOut ? isRangeAvailable(map, checkIn, checkOut) : null,
     });
   } catch (error) {
-    console.error("[lodgify:availability]", {
+    logServerError("[lodgify:availability]", error, {
       propertyId,
       start: safeStart,
       end: safeEnd,
-      message: error instanceof Error ? error.message : "Unknown availability error",
     });
 
     return NextResponse.json(

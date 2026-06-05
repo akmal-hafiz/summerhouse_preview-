@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Playfair_Display } from "next/font/google";
 import { getMetadataBase } from "@/lib/site";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
 const outfit = Outfit({

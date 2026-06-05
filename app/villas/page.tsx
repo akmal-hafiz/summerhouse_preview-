@@ -6,10 +6,13 @@ import VillaGridLoading from "@/components/villas/VillaGridLoading";
 import VillaSearchForm from "@/components/booking/VillaSearchForm";
 import PremiumVillaCard from "@/components/villas/PremiumVillaCard";
 import { getVillaSearchOptions, searchAvailableVillas } from "@/lib/lodgify";
+import { isISODate, isValidDateRange } from "@/lib/date";
+import { clampInteger, safeString } from "@/lib/security/validation";
+import { logServerError } from "@/lib/security/logger";
 
 export const metadata = {
   title: "Villa Collection",
-  description: "Explore Summerhouses Bali villas connected to live Lodgify property data.",
+  description: "Explore private Summerhouses Bali villas by location, dates, guests, photos, amenities, and availability.",
 };
 
 type VillasPageProps = {
@@ -17,9 +20,10 @@ type VillasPageProps = {
 };
 
 const firstParam = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
-const numberParam = (value: string | string[] | undefined) => {
+const numberParam = (value: string | string[] | undefined, min = 0, max = 40) => {
   const numeric = Number(firstParam(value));
-  return Number.isFinite(numeric) && numeric > 0 ? numeric : undefined;
+  if (!Number.isFinite(numeric)) return undefined;
+  return clampInteger(numeric, min, max, min);
 };
 
 async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFilters>> }) {
@@ -28,9 +32,7 @@ async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFi
   try {
     villas = await searchAvailableVillas(filters);
   } catch (error) {
-    console.error("[villas:list]", {
-      message: error instanceof Error ? error.message : "Unknown villa search error",
-    });
+    logServerError("[villas:list]", error);
 
     return (
       <div className="villa-collection-empty villa-collection-empty--error">
@@ -52,7 +54,7 @@ async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFi
   return (
     <div className="villa-collection-grid">
       {villas.map((villa, index) => (
-        <PremiumVillaCard key={villa.id} villa={villa} priority={index < 6} />
+        <PremiumVillaCard key={villa.id} villa={villa} priority={index < 3} />
       ))}
     </div>
   );
@@ -60,17 +62,20 @@ async function VillaList({ filters }: { filters: Awaited<ReturnType<typeof getFi
 
 async function getFilters(searchParams: Promise<Record<string, string | string[] | undefined>>) {
   const params = await searchParams;
+  const checkIn = firstParam(params.checkIn) || "";
+  const checkOut = firstParam(params.checkOut) || "";
+  const hasValidRange = isValidDateRange(checkIn, checkOut);
 
   return {
-    location: firstParam(params.location) || "",
-    checkIn: firstParam(params.checkIn) || "",
-    checkOut: firstParam(params.checkOut) || "",
-    adults: numberParam(params.adults) || 1,
-    children: numberParam(params.children) || 0,
-    infants: numberParam(params.infants) || 0,
-    pets: numberParam(params.pets) || 0,
-    minPrice: numberParam(params.minPrice),
-    maxPrice: numberParam(params.maxPrice),
+    location: safeString(firstParam(params.location), 80),
+    checkIn: hasValidRange || isISODate(checkIn) ? checkIn : "",
+    checkOut: hasValidRange ? checkOut : "",
+    adults: numberParam(params.adults, 1, 40) || 1,
+    children: numberParam(params.children, 0, 20) || 0,
+    infants: numberParam(params.infants, 0, 10) || 0,
+    pets: numberParam(params.pets, 0, 10) || 0,
+    minPrice: numberParam(params.minPrice, 0, 1_000_000_000),
+    maxPrice: numberParam(params.maxPrice, 0, 1_000_000_000),
   };
 }
 
@@ -104,8 +109,8 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
               <p className="villa-collection-eyebrow">Summerhouses Bali</p>
               <h1>Find a villa that fits your journey.</h1>
               <p>
-                Browse live Lodgify homes by location, dates, and guest count, then
-                open each villa for details, availability, and the direct booking path.
+                Explore private Bali stays by neighborhood, dates, and guests, then
+                open each villa to see photos, amenities, availability, and reserve with ease.
               </p>
             </div>
           </div>
@@ -115,7 +120,7 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
           <div className="villa-collection-shell villa-collection-toolbar-inner">
             <div>
               <span>{hasActiveSearch ? "Search results" : "Collection"}</span>
-              <strong>{hasActiveSearch ? "Available homes from Lodgify" : "All available homes"}</strong>
+              <strong>{hasActiveSearch ? "Stays that match your trip" : "All available stays"}</strong>
             </div>
             <Link href="/saved-villas">Saved villas</Link>
           </div>

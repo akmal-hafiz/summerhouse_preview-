@@ -1,5 +1,6 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import StickyBookingBar from "./StickyBookingBar";
 import {
@@ -15,7 +16,7 @@ import {
   parseISODate,
   startOfMonth,
 } from "@/lib/date";
-import { buildLodgifyCheckoutUrl } from "@/lib/lodgify/booking";
+import { buildBookingWhatsAppUrl, buildLodgifyCheckoutUrl } from "@/lib/lodgify/booking";
 
 type AvailabilityDay = {
   date: string;
@@ -65,6 +66,7 @@ export default function AvailabilityCalendar({
   const [quoteError, setQuoteError] = useState("");
   const [error, setError] = useState("");
   const [availabilityError, setAvailabilityError] = useState("");
+  const [bookingError, setBookingError] = useState("");
   const [availabilityRetryKey, setAvailabilityRetryKey] = useState(0);
 
   const rangeStart = formatISODate(startOfMonth(visibleMonth));
@@ -78,7 +80,19 @@ export default function AvailabilityCalendar({
   const isMinimumStayValid = rateQuote?.isMinimumStayValid !== false;
   const isBookingValid = isRangeValid && isMinimumStayValid && !isQuoteLoading;
 
-  const checkoutUrl = buildLodgifyCheckoutUrl({ propertyId, checkIn, checkOut, guests });
+  const checkoutUrl = useMemo(() => {
+    try {
+      return buildLodgifyCheckoutUrl({ propertyId, checkIn, checkOut, guests });
+    } catch {
+      return "";
+    }
+  }, [checkIn, checkOut, guests, propertyId]);
+  const whatsAppFallbackUrl = useMemo(() => buildBookingWhatsAppUrl({
+    villaName,
+    checkIn,
+    checkOut,
+    guests,
+  }), [checkIn, checkOut, guests, villaName]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -139,7 +153,7 @@ export default function AvailabilityCalendar({
         const data = await response.json();
 
         if (!response.ok || !data.success) {
-          throw new Error(data.error || "Unable to load Lodgify rates.");
+          throw new Error(data.error || "Unable to load rates.");
         }
 
         setRateQuote(data);
@@ -149,7 +163,7 @@ export default function AvailabilityCalendar({
         setQuoteError(
           quoteFetchError instanceof Error
             ? quoteFetchError.message
-            : "Unable to load Lodgify rates."
+            : "Unable to load rates."
         );
       } finally {
         if (!controller.signal.aborted) setIsQuoteLoading(false);
@@ -180,6 +194,7 @@ export default function AvailabilityCalendar({
       }
 
       setError("");
+      setBookingError("");
       setCheckIn(date);
       setCheckOut("");
       setRateQuote(null);
@@ -197,7 +212,36 @@ export default function AvailabilityCalendar({
     setIsQuoteLoading(true);
     setRateQuote(null);
     setQuoteError("");
+    setBookingError("");
     setCheckOut(date);
+  };
+
+  const validateBookingDetails = () => {
+    if (!propertyId) return "Villa booking information is missing. Please contact us via WhatsApp.";
+    if (!checkIn || !checkOut) return "Please choose your check-in and check-out dates first.";
+    if (nights <= 0 || parseISODate(checkOut) <= parseISODate(checkIn)) {
+      return "Please choose a valid check-out date after check-in.";
+    }
+    if (!Number.isFinite(guests) || guests < 1) return "Please choose at least one guest.";
+    if (guests > maxGuests) return `This villa accepts up to ${maxGuests} guests.`;
+    if (availabilityError) return "Availability is temporarily unavailable. Please retry or contact us via WhatsApp.";
+    if (!isRangeValid) return "Selected dates are not available. Please choose another date range.";
+    if (!isMinimumStayValid) return rateQuote?.message || "Selected dates do not meet the minimum stay rule.";
+    if (!checkoutUrl) return "Booking is temporarily unavailable. Please contact us via WhatsApp.";
+    return "";
+  };
+
+  const handleBookNow = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const validationMessage = validateBookingDetails();
+
+    if (validationMessage) {
+      setBookingError(validationMessage);
+      setError(validationMessage);
+      return;
+    }
+
+    window.location.href = checkoutUrl;
   };
 
   const renderMonth = (month: Date) => {
@@ -263,14 +307,13 @@ export default function AvailabilityCalendar({
           </span>
         </div>
         <div className="villa-calendar-section__actions">
-          <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}>
+          <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); setBookingError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}>
             Clear dates
           </button>
           {isBookingValid && (
             <a
               href={checkoutUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={handleBookNow}
               data-booking-property-id={propertyId}
               data-booking-check-in={checkIn}
               data-booking-check-out={checkOut}
@@ -294,7 +337,7 @@ export default function AvailabilityCalendar({
         </button>
         <div className="villa-calendar__months">
           {isLoading ? (
-            <div className="villa-calendar__loading">Checking Lodgify availability...</div>
+            <div className="villa-calendar__loading">Checking availability...</div>
           ) : (
             <>
               {renderMonth(visibleMonth)}
@@ -312,7 +355,15 @@ export default function AvailabilityCalendar({
         </button>
       </div>
 
-      {error && <p className="villa-calendar__error">{error}</p>}
+      {error && !bookingError && <p className="villa-calendar__error">{error}</p>}
+      {bookingError && (
+        <p className="villa-calendar__error">
+          {bookingError}{" "}
+          <a href={whatsAppFallbackUrl} target="_blank" rel="noopener noreferrer">
+            Contact us via WhatsApp.
+          </a>
+        </p>
+      )}
       {availabilityError && (
         <div className="villa-calendar__error villa-calendar__error--retry">
           <span>{availabilityError}</span>
@@ -320,6 +371,7 @@ export default function AvailabilityCalendar({
             type="button"
             onClick={() => {
               setError("");
+              setBookingError("");
               setAvailabilityRetryKey((current) => current + 1);
             }}
           >
@@ -329,10 +381,10 @@ export default function AvailabilityCalendar({
       )}
       {quoteError && isRangeValid && (
         <p className="villa-calendar__error">
-          Lodgify rates are unavailable right now. The final price will still be confirmed in checkout.
+          Rates are unavailable right now. The final price will still be confirmed in secure checkout.
         </p>
       )}
-      <p className="villa-calendar__note">Final rates, minimum stay, taxes, and payment are confirmed by Lodgify at booking.</p>
+      <p className="villa-calendar__note">Final rates, minimum stay, taxes, and payment are confirmed at booking.</p>
 
       <StickyBookingBar
         villaName={villaName}
@@ -344,19 +396,22 @@ export default function AvailabilityCalendar({
         maxGuests={maxGuests}
         nights={nights}
         isValid={isBookingValid}
-        error={isQuoteLoading ? "Checking Lodgify rates..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "") || quoteError}
+        error={isQuoteLoading ? "Checking rates..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "") || quoteError}
         rateQuote={rateQuote}
         isQuoteLoading={isQuoteLoading}
         checkoutUrl={checkoutUrl}
+        whatsAppFallbackUrl={whatsAppFallbackUrl}
         propertyId={propertyId}
         quoteStatus={rateQuote?.totalLabel ? "quoted" : quoteError ? "quote-fallback" : "available"}
+        onBookNow={handleBookNow}
         onGuestChange={(value) => {
           setIsQuoteLoading(true);
           setRateQuote(null);
           setQuoteError("");
+          setBookingError("");
           setGuests(Math.min(value, maxGuests));
         }}
-        onClearDates={() => { setCheckIn(""); setCheckOut(""); setError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}
+        onClearDates={() => { setCheckIn(""); setCheckOut(""); setError(""); setBookingError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}
       />
     </section>
   );

@@ -1,5 +1,7 @@
 "use client";
 
+import type { MouseEvent } from "react";
+
 type StickyBookingBarProps = {
   villaName: string;
   location: string;
@@ -20,8 +22,10 @@ type StickyBookingBarProps = {
   } | null;
   isQuoteLoading?: boolean;
   checkoutUrl: string;
+  whatsAppFallbackUrl?: string;
   propertyId?: string | number;
   quoteStatus?: "quoted" | "quote-fallback" | "available";
+  onBookNow?: (event: MouseEvent<HTMLAnchorElement>) => void;
   onGuestChange: (guests: number) => void;
   onClearDates: () => void;
 };
@@ -40,8 +44,10 @@ export default function StickyBookingBar({
   rateQuote,
   isQuoteLoading = false,
   checkoutUrl,
+  whatsAppFallbackUrl,
   propertyId,
   quoteStatus = "available",
+  onBookNow,
   onGuestChange,
   onClearDates,
 }: StickyBookingBarProps) {
@@ -52,7 +58,7 @@ export default function StickyBookingBar({
       : "Check dates";
   const summaryLabel = isValid
     ? isQuoteLoading
-      ? "Checking Lodgify rates..."
+      ? "Checking rates..."
       : rateQuote?.totalLabel
         ? `${nights} ${nights === 1 ? "night" : "nights"} - ${rateQuote.totalLabel}`
         : `${nights} ${nights === 1 ? "night" : "nights"} selected`
@@ -92,14 +98,13 @@ export default function StickyBookingBar({
       <div className="villa-booking-bar__summary">
         <span>{summaryLabel}</span>
         {isValid && rateQuote?.averageNightlyLabel && (
-          <small>{rateQuote.averageNightlyLabel} average per night from Lodgify rates</small>
+          <small>{rateQuote.averageNightlyLabel} average per night</small>
         )}
         <a
           href={isValid ? checkoutUrl : undefined}
+          onClick={onBookNow}
           aria-disabled={!isValid}
           className={!isValid ? "is-disabled" : ""}
-          target="_blank"
-          rel="noopener noreferrer"
           data-booking-property-id={propertyId}
           data-booking-check-in={checkIn || ""}
           data-booking-check-out={checkOut || ""}
@@ -108,6 +113,11 @@ export default function StickyBookingBar({
         >
           {bookingLabel}
         </a>
+        {!isValid && error && whatsAppFallbackUrl && (
+          <small>
+            Need help? <a href={whatsAppFallbackUrl} target="_blank" rel="noopener noreferrer">WhatsApp us</a>.
+          </small>
+        )}
       </div>
     </div>
   );

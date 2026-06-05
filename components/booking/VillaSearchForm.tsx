@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
+import HierarchicalLocationPicker, { getSelectedLocationLabel } from "./HierarchicalLocationPicker";
 import {
   addMonths,
   buildMonthCells,
@@ -35,6 +36,7 @@ export default function VillaSearchForm({
   locations: providedLocations = [],
 }: VillaSearchFormProps) {
   const router = useRouter();
+  const providedLocationsKey = useMemo(() => providedLocations.join("\u001f"), [providedLocations]);
   const [locations, setLocations] = useState(providedLocations);
   const [isLoadingLocations, setIsLoadingLocations] = useState(providedLocations.length === 0);
   const [locationError, setLocationError] = useState("");
@@ -79,7 +81,7 @@ export default function VillaSearchForm({
         setLocationError("Location filters are limited right now. You can still search all villas.");
       })
       .finally(() => setIsLoadingLocations(false));
-  }, [providedLocations]);
+  }, [providedLocationsKey]);
 
   const togglePanel = (panel: "location" | "dates" | "guests") => {
     setActivePanel(activePanel === panel ? null : panel);
@@ -90,21 +92,30 @@ export default function VillaSearchForm({
     return `${total} ${total === 1 ? "adult" : "guests"}${infants ? `, ${infants} infant` : ""}${pets ? `, ${pets} pet` : ""}`;
   }, [adults, children, infants, pets]);
 
-  const locationOptions = locations.length > 0 ? locations : ["All Bali villas"];
+  const locationOptions = locations;
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const params = new URLSearchParams();
+    const safeAdults = Math.min(40, Math.max(1, Math.floor(adults || 1)));
+    const safeChildren = Math.min(20, Math.max(0, Math.floor(children || 0)));
+    const safeInfants = Math.min(10, Math.max(0, Math.floor(infants || 0)));
+    const safePets = Math.min(10, Math.max(0, Math.floor(pets || 0)));
+    const safeMinPrice = Number(minPrice);
+    const safeMaxPrice = Number(maxPrice);
+    const hasCompleteDateRange = checkIn && checkOut && parseISODate(checkOut) > parseISODate(checkIn);
 
     if (location) params.set("location", location);
-    if (checkIn) params.set("checkIn", checkIn);
-    if (checkOut) params.set("checkOut", checkOut);
-    if (adults) params.set("adults", String(adults));
-    if (children) params.set("children", String(children));
-    if (infants) params.set("infants", String(infants));
-    if (pets) params.set("pets", String(pets));
-    if (minPrice) params.set("minPrice", minPrice);
-    if (maxPrice) params.set("maxPrice", maxPrice);
+    if (hasCompleteDateRange) {
+      params.set("checkIn", checkIn);
+      params.set("checkOut", checkOut);
+    }
+    params.set("adults", String(safeAdults));
+    if (safeChildren) params.set("children", String(safeChildren));
+    if (safeInfants) params.set("infants", String(safeInfants));
+    if (safePets) params.set("pets", String(safePets));
+    if (Number.isFinite(safeMinPrice) && safeMinPrice >= 0) params.set("minPrice", String(Math.floor(safeMinPrice)));
+    if (Number.isFinite(safeMaxPrice) && safeMaxPrice >= 0) params.set("maxPrice", String(Math.floor(safeMaxPrice)));
 
     router.push(`/villas?${params.toString()}`);
   };
@@ -176,7 +187,7 @@ export default function VillaSearchForm({
       <div className="villa-search-form__group villa-search-form__group--location">
         <button type="button" onClick={() => togglePanel("location")}>
           <span>Location</span>
-          <strong>{location || "Location"}</strong>
+          <strong>{getSelectedLocationLabel(location)}</strong>
           <FiChevronDown aria-hidden="true" className="villa-search-form__chevron" />
         </button>
       </div>
@@ -207,24 +218,14 @@ export default function VillaSearchForm({
 
       {activePanel === "location" && (
         <div className="villa-search-form__panel villa-search-form__panel--location">
-          {isLoadingLocations && (
-            <span className="villa-search-form__notice">Loading live Lodgify locations...</span>
-          )}
-          {!isLoadingLocations && locationError && (
-            <span className="villa-search-form__notice">{locationError}</span>
-          )}
-          {!isLoadingLocations && locationOptions.map((item) => (
-            <button
-              type="button"
-              key={item}
-              onClick={() => {
-                setLocation(item === "All Bali villas" ? "" : item);
-                setActivePanel(null);
-              }}
-            >
-              {item}
-            </button>
-          ))}
+          <HierarchicalLocationPicker
+            locations={locationOptions}
+            selectedLocation={location}
+            isLoading={isLoadingLocations}
+            error={locationError}
+            onSelect={(item) => setLocation(item)}
+            onClose={() => setActivePanel(null)}
+          />
         </div>
       )}
 

@@ -113,7 +113,7 @@ export async function getRateQuoteForProperty({
     maxStay,
     isMinimumStayValid,
     message: isMinimumStayValid
-      ? "Rate total from Lodgify rates calendar. Final taxes, fees, and payment are confirmed by Lodgify checkout."
+      ? "Rate total prepared. Final taxes, fees, and payment are confirmed at checkout."
       : `Minimum stay is ${minStay} nights for these dates.`,
     breakdown,
   };

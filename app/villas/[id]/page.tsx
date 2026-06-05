@@ -139,7 +139,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
                   </a>
                 </div>
                 <a href="#availability" className="villa-detail-reserve-cta">Check availability</a>
-                <p>Final rates, taxes, minimum stay, and payment are confirmed by Lodgify.</p>
+                <p>Final rates, taxes, minimum stay, and payment are confirmed at booking.</p>
               </aside>
             )}
           />
