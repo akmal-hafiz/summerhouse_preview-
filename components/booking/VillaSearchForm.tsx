@@ -36,9 +36,9 @@ export default function VillaSearchForm({
   locations: providedLocations = [],
 }: VillaSearchFormProps) {
   const router = useRouter();
-  const providedLocationsKey = useMemo(() => providedLocations.join("\u001f"), [providedLocations]);
-  const [locations, setLocations] = useState(providedLocations);
-  const [isLoadingLocations, setIsLoadingLocations] = useState(providedLocations.length === 0);
+  const hasProvidedLocations = providedLocations.length > 0;
+  const [fetchedLocations, setFetchedLocations] = useState<string[]>([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(!hasProvidedLocations);
   const [locationError, setLocationError] = useState("");
   const [activePanel, setActivePanel] = useState<"location" | "dates" | "guests" | null>(null);
   const [visibleMonth, setVisibleMonth] = useState(() => new Date());
@@ -53,35 +53,44 @@ export default function VillaSearchForm({
   const [maxPrice, setMaxPrice] = useState(initialValues?.maxPrice ? String(initialValues.maxPrice) : "");
 
   useEffect(() => {
-    if (providedLocations.length > 0) {
-      setLocations(providedLocations);
+    if (hasProvidedLocations) {
       setIsLoadingLocations(false);
       setLocationError("");
       return;
     }
 
+    const controller = new AbortController();
+
     setIsLoadingLocations(true);
     setLocationError("");
-    fetch("/api/lodgify/search-options")
+    fetch("/api/lodgify/search-options", { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Unable to load locations.");
         return response.json();
       })
       .then((data) => {
+        if (controller.signal.aborted) return;
+
         if (Array.isArray(data.locations) && data.locations.length > 0) {
-          setLocations(data.locations);
+          setFetchedLocations(data.locations);
           return;
         }
 
-        setLocations([]);
+        setFetchedLocations([]);
         setLocationError("Location filters are limited right now. You can still search all villas.");
       })
-      .catch(() => {
-        setLocations([]);
+      .catch((error) => {
+        if (controller.signal.aborted || error?.name === "AbortError") return;
+
+        setFetchedLocations([]);
         setLocationError("Location filters are limited right now. You can still search all villas.");
       })
-      .finally(() => setIsLoadingLocations(false));
-  }, [providedLocationsKey]);
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoadingLocations(false);
+      });
+
+    return () => controller.abort();
+  }, [hasProvidedLocations]);
 
   const togglePanel = (panel: "location" | "dates" | "guests") => {
     setActivePanel(activePanel === panel ? null : panel);
@@ -92,7 +101,7 @@ export default function VillaSearchForm({
     return `${total} ${total === 1 ? "adult" : "guests"}${infants ? `, ${infants} infant` : ""}${pets ? `, ${pets} pet` : ""}`;
   }, [adults, children, infants, pets]);
 
-  const locationOptions = locations;
+  const locationOptions = hasProvidedLocations ? providedLocations : fetchedLocations;
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
