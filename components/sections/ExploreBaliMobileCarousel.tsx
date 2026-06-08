@@ -84,6 +84,10 @@ export default function ExploreBaliMobileCarousel() {
                 <span key={highlight}>{highlight}</span>
               ))}
             </div>
+            <div className="bali-collection-card__best">
+              <small>Best for</small>
+              <strong>{item.bestFor.join(" / ")}</strong>
+            </div>
             <div className="bali-collection-card__meta">
               <span>{item.villaCount}</span>
               <span>{item.price}</span>
