@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import ExploreBaliBookSection from '@/components/sections/ExploreBaliBookSection';
 
 export default function MobileHomepage() {
-  const [activePropertyIndex, setActivePropertyIndex] = useState(0);
 
   const showcaseProperties = [
     {
       name: "Ubud zen river house",
       details: "Villa • 4 guests • 3 beds • 1 bath. Kitchen • WiFi • air conditioning • Hot Tub",
-      price: "from Rp 2.000.000 per night",
+      price: "from Rp 3.000.000 per night",
       image: "/homepage_villa/VillaZen.webp",
     },
     {
       name: "Casaluna Loft I",
-      details: "Effectively manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
+      details: "Effortlessly manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
       price: "from Rp 1.300.000 per night",
       image: "/homepage_villa/curated-3-corner.webp",
     },
     {
       name: "Casaluna Loft III",
-      details: "Effectively manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
+      details: "Effortlessly manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
       price: "from Rp 2.000.000 per night",
       image: "/homepage_villa/curated-8.webp",
     }
@@ -65,6 +65,7 @@ export default function MobileHomepage() {
               </div>
             </div>
             <p className="mobile-category-metadata">Villa • 4 guests • 3 beds • 1 bath</p>
+            <p className="mobile-category-metadata" style={{ marginTop: '-8px', textTransform: 'none', letterSpacing: 'normal' }}>Kitchen • Wifi • Air conditioning • Hot Tub</p>
             <p className="mobile-category-price">from <strong>Rp 3.000.000</strong> per night</p>
           </motion.div>
 
@@ -72,7 +73,7 @@ export default function MobileHomepage() {
           <motion.div whileTap={{ scale: 0.98 }} className="mobile-category-card">
             <div className="mobile-category-header-tag">
               <span>Loft Villas</span>
-              <span className="badge-num">6789+</span>
+              <span className="badge-num">678+</span>
             </div>
             <div className="mobile-category-image-wrapper">
               <Image
@@ -92,6 +93,7 @@ export default function MobileHomepage() {
               </div>
             </div>
             <p className="mobile-category-metadata">Villa • 4 guests • 2 beds • 2 bath</p>
+            <p className="mobile-category-metadata" style={{ marginTop: '-8px', textTransform: 'none', letterSpacing: 'normal' }}>Kitchen • Wifi • Air conditioning • Hot Tub</p>
             <p className="mobile-category-price">from <strong>Rp 1.300.000</strong> per night</p>
           </motion.div>
 
@@ -119,6 +121,7 @@ export default function MobileHomepage() {
               </div>
             </div>
             <p className="mobile-category-metadata">Villa • 2 guests • 1 beds • 1 bath</p>
+            <p className="mobile-category-metadata" style={{ marginTop: '-8px', textTransform: 'none', letterSpacing: 'normal' }}>Kitchen • Wifi • Air conditioning • Hot Tub</p>
             <p className="mobile-category-price">from <strong>Rp 2.000.000</strong> per night</p>
           </motion.div>
         </div>
@@ -140,7 +143,7 @@ export default function MobileHomepage() {
         <div className="mobile-bawa-layout">
           {/* Title and Location info */}
           <div className="mobile-bawa-title-block">
-            <p className="mobile-bawa-villa-name">Casarosa Villa</p>
+            <p className="mobile-bawa-villa-name">Bawa House</p>
             <p className="mobile-bawa-villa-loc">Ubud, Gianyar Regency, Bali</p>
           </div>
 
@@ -184,7 +187,7 @@ export default function MobileHomepage() {
               </div>
             </div>
             <p className="mobile-bawa-explore-desc">
-              Explore Bhirawa Residence, the perfect tool for effortlessly managing your property Inv...
+              Explore Bhirawa Residence, the perfect tool for effortlessly managing your property inv...
             </p>
             <div className="mobile-bawa-pills-row">
               <span className="mobile-bawa-pill">5 Bedrooms</span>
@@ -214,7 +217,7 @@ export default function MobileHomepage() {
             <span>PROPERTIES</span>
           </h2>
           <p className="mobile-featured-desc">
-            SummerHouses is a property discovery platform focused on thoughtfully curated houses, apartments, and villas across Indonesia.
+            curated selection of the world's most exceptional private estates. From Mediterranean sanctuaries to brutalist masterpieces, each property is chosen for its architectural integrity and soul.
           </p>
         </div>
 
@@ -321,7 +324,7 @@ export default function MobileHomepage() {
                     </div>
                   </div>
                   <p className="mobile-small-card-details">
-                    Villa • 4 guests • 3 beds • 1 bath. Kitchen • Wifi • Air conditioning • Hot Tub
+                    Villa • 4 guests • 2 beds • 1 bath. Kitchen • Wifi • Air conditioning • Hot Tub
                   </p>
                   <div className="mobile-small-card-pills">
                     <span className="mobile-small-card-pill">5 Bedrooms</span>
@@ -361,7 +364,7 @@ export default function MobileHomepage() {
                     Villa • 4 guests • 2 beds • 2 bath. Kitchen • Wifi • Air conditioning • Hot Tub
                   </p>
                   <div className="mobile-small-card-pills">
-                    <span className="mobile-small-card-pill">5 Bedrooms</span>
+                    <span className="mobile-small-card-pill">3 Bedrooms</span>
                     <span className="mobile-small-card-pill">4 Bathrooms</span>
                     <span className="mobile-small-card-pill">2 Kitchen</span>
                   </div>
@@ -374,60 +377,8 @@ export default function MobileHomepage() {
         </div>
       </section>
 
-      {/* SECTION 4: Split Panel Interactive Showcase adaptation */}
-      <section className="mobile-section mobile-section-border-y" style={{ paddingBottom: '96px' }}>
-        <div className="mobile-split-showcase-layout">
-          
-          {/* Main Visual Image Card with Text */}
-          <div className="mobile-showcase-left">
-            <Image
-              src="/homepage_villa/curated-1-main.webp"
-              alt="Bawa House Feature Large"
-              fill
-              sizes="320px"
-              className="object-cover"
-            />
-            <div className="mobile-showcase-left-overlay"></div>
-            
-            <div className="mobile-showcase-left-content">
-              <h3 className="mobile-showcase-left-title">BAWA HOUSE</h3>
-              <p className="mobile-showcase-left-price">RP 10 million / Night</p>
-            </div>
-          </div>
-
-          {/* Interactive selection stack */}
-          <div className="mobile-showcase-right">
-            {showcaseProperties.map((item, idx) => {
-              const isActive = activePropertyIndex === idx;
-              return (
-                <div 
-                  key={idx} 
-                  className="mobile-showcase-item"
-                  onClick={() => setActivePropertyIndex(idx)}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0, paddingRight: '12px' }}>
-                    <h4 className="mobile-showcase-item-title">{item.name}</h4>
-                    <p className="mobile-showcase-item-desc">
-                      {isActive 
-                        ? item.details 
-                        : item.details.slice(0, 60) + "..."}
-                    </p>
-                    {isActive && (
-                      <p className="mobile-showcase-item-price">{item.price}</p>
-                    )}
-                  </div>
-                  
-                  {/* Indicator */}
-                  <div className="mobile-showcase-active-indicator" style={{ opacity: isActive ? 1 : 0.2 }}>
-                    {isActive && <div className="mobile-showcase-active-indicator-dot" />}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </section>
+      {/* SECTION 4: Mobile and tablet Bali Collection Carousel */}
+      <ExploreBaliBookSection staticFallback />
 
     </div>
   );

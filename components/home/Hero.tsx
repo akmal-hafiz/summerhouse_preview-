@@ -78,7 +78,8 @@ export default function Hero() {
           {/* Supporting Copy (Right Block) */}
           <div className="hero-text-block-right">
             <p className="hero-description">
-              Seamlessly navigate the global real estate market. Our expert team is here to guide you every step of the way.
+            Curated homes in Bali
+            For a slower rhythm.
             </p>
           </div>
         </div>

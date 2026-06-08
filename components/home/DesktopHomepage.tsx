@@ -1,30 +1,30 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import ExploreBaliBookSection from '@/components/sections/ExploreBaliBookSection';
 
 export default function DesktopHomepage() {
-  const [activePropertyIndex, setActivePropertyIndex] = useState(0);
 
   const showcaseProperties = [
     {
       name: "Ubud zen river house",
       details: "Villa • 4 guests • 3 beds • 1 bath. Kitchen • WiFi • air conditioning • Hot Tub",
-      price: "from Rp 2.000.000 per night",
+      price: "from Rp 3.000.000 per night",
       image: "/homepage_villa/VillaZen.webp",
       thumb: "/homepage_villa/curated-5-lounge.webp"
     },
     {
       name: "Casaluna Loft I",
-      details: "Effectively manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
+      details: "Effortlessly manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
       price: "from Rp 1.300.000 per night",
       image: "/homepage_villa/curated-3-corner.webp",
       thumb: "/homepage_villa/curated-3-corner.webp"
     },
     {
       name: "Casaluna Loft III",
-      details: "Effectively manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
+      details: "Effortlessly manage your real estate portfolio, reduce vacancies, and create AI-driven advertiser campaigns to reach highly targeted stays...",
       price: "from Rp 2.000.000 per night",
       image: "/homepage_villa/curated-8.webp",
       thumb: "/homepage_villa/curated-8.webp"
@@ -39,7 +39,7 @@ export default function DesktopHomepage() {
         <div className="desktop-container-shell">
           <div className="desktop-intro-header-row">
             <div>
-              <h1 className="desktop-brand-title">SUMMERHOUSES</h1>
+              <h1 className="text-[70px] text-[#446B4A]">A home, not a hotel</h1>
               
               {/* Navigation arrows block */}
               <div className="desktop-brand-nav-row">
@@ -64,7 +64,7 @@ export default function DesktopHomepage() {
             </div>
             
             <p className="desktop-brand-copy">
-              SummerHouses is a property discovery platform focused on thoughtfully curated houses, apartments, and villas across Indonesia. Space that invites you to rethink, slow down, and experience life in a way that feels natural and personal.
+            We curate private villas and design-led apartments that keep only what matters. Comfort, Simplicity, and Ease. Spaces that let you settle in, slow down, and experience Bali in a way that feels natural and personal.
             </p>
           </div>
 
@@ -93,6 +93,7 @@ export default function DesktopHomepage() {
                 </div>
               </div>
               <p className="desktop-villa-metadata">Villa • 4 guests • 3 beds • 1 bath</p>
+              <p className="desktop-villa-metadata" style={{ marginTop: '-8px', textTransform: 'none', letterSpacing: 'normal' }}>Kitchen • Wifi • Air conditioning • Hot Tub</p>
               <p className="desktop-villa-price">from <strong>Rp 3.000.000</strong> per night</p>
             </motion.div>
 
@@ -100,7 +101,7 @@ export default function DesktopHomepage() {
             <motion.div whileHover={{ y: -4 }} className="desktop-villa-card">
               <div className="desktop-villa-card-header-tag">
                 <span>Loft Villas</span>
-                <span className="badge-num">6789+</span>
+                <span className="badge-num">678+</span>
               </div>
               <div className="desktop-villa-image-wrapper">
                 <Image
@@ -120,6 +121,7 @@ export default function DesktopHomepage() {
                 </div>
               </div>
               <p className="desktop-villa-metadata">Villa • 4 guests • 2 beds • 2 bath</p>
+              <p className="desktop-villa-metadata" style={{ marginTop: '-8px', textTransform: 'none', letterSpacing: 'normal' }}>Kitchen • Wifi • Air conditioning • Hot Tub</p>
               <p className="desktop-villa-price">from <strong>Rp 1.300.000</strong> per night</p>
             </motion.div>
 
@@ -147,6 +149,7 @@ export default function DesktopHomepage() {
                 </div>
               </div>
               <p className="desktop-villa-metadata">Villa • 2 guests • 1 beds • 1 bath</p>
+              <p className="desktop-villa-metadata" style={{ marginTop: '-8px', textTransform: 'none', letterSpacing: 'normal' }}>Kitchen • Wifi • Air conditioning • Hot Tub</p>
               <p className="desktop-villa-price">from <strong>Rp 2.000.000</strong> per night</p>
             </motion.div>
           </div>
@@ -160,8 +163,6 @@ export default function DesktopHomepage() {
             <h2 className="desktop-bawa-title">BAWA HOUSE</h2>
             <div className="desktop-bawa-subtitle-col">
               <div className="desktop-bawa-sub-bar-stack">
-                <span className="desktop-bawa-sub-bar">// BEST DEALS FEATURED PROPERTIES</span>
-                <span className="desktop-bawa-sub-bar">SPOTLIGHT TYPE A CLUSTER</span>
               </div>
               <h3 className="desktop-bawa-subtitle">CURATED LUXURY STAYS</h3>
             </div>
@@ -171,7 +172,7 @@ export default function DesktopHomepage() {
             {/* Left Column: Title and Large Villa Image */}
             <div className="desktop-bawa-left-col">
               <div className="desktop-bawa-title-block">
-                <p className="desktop-bawa-villa-name">Casarosa Villa</p>
+                <p className="desktop-bawa-villa-name">Bawa House</p>
                 <p className="desktop-bawa-villa-loc">Ubud, Gianyar Regency, Bali</p>
               </div>
               <div className="desktop-bawa-large-img-wrapper">
@@ -216,7 +217,7 @@ export default function DesktopHomepage() {
                   </div>
                 </div>
                 <p className="desktop-bawa-explore-desc">
-                  Explore Bhirawa Residence, the perfect tool for effortlessly managing your property Inv...
+                  Explore Bhirawa Residence, the perfect tool for effortlessly managing your property inv...
                 </p>
                 <div className="desktop-bawa-pills-row">
                   <span className="desktop-bawa-pill">5 Bedrooms</span>
@@ -249,7 +250,7 @@ export default function DesktopHomepage() {
               <span>PROPERTIES</span>
             </h2>
             <p className="desktop-featured-desc">
-              SummerHouses is a property discovery platform focused on thoughtfully curated houses, apartments, and villas across Indonesia.
+              curated selection of the world's most exceptional private estates. From Mediterranean sanctuaries to brutalist masterpieces, each property is chosen for its architectural integrity and soul.
             </p>
           </div>
 
@@ -314,7 +315,7 @@ export default function DesktopHomepage() {
                       </div>
                     </div>
                     <p className="desktop-small-card-details">
-                      Villa • 4 guests • 3 beds • 1 bath. Kitchen • Wifi • Air conditioning • Hot Tub
+                      Villa • 4 guests • 2 beds • 1 bath. Kitchen • Wifi • Air conditioning • Hot Tub
                     </p>
                     <div className="desktop-small-card-pills">
                       <span className="desktop-small-card-pill">5 Bedrooms</span>
@@ -354,7 +355,7 @@ export default function DesktopHomepage() {
                       Villa • 4 guests • 2 beds • 2 bath. Kitchen • Wifi • Air conditioning • Hot Tub
                     </p>
                     <div className="desktop-small-card-pills">
-                      <span className="desktop-small-card-pill">5 Bedrooms</span>
+                      <span className="desktop-small-card-pill">3 Bedrooms</span>
                       <span className="desktop-small-card-pill">4 Bathrooms</span>
                       <span className="desktop-small-card-pill">2 Kitchen</span>
                     </div>
@@ -409,74 +410,8 @@ export default function DesktopHomepage() {
         </div>
       </section>
 
-      {/* SECTION 4: Split Panel Showcase */}
-      <section className="desktop-section desktop-section-border-y">
-        <div className="desktop-container-shell">
-          <div className="desktop-split-showcase-grid">
-            
-            {/* Left Panel: Large full image with text overlay */}
-            <div className="desktop-showcase-left">
-              <Image
-                src="/homepage_villa/curated-1-main.webp"
-                alt="Bawa House Feature Large"
-                fill
-                sizes="640px"
-                className="object-cover"
-              />
-              <div className="desktop-showcase-left-overlay"></div>
-              
-              <div className="desktop-showcase-left-content">
-                <h3 className="desktop-showcase-left-title">BAWA HOUSE</h3>
-                <p className="desktop-showcase-left-price">RP 10 million / Night</p>
-              </div>
-            </div>
-
-            {/* Right Panel: Pinned dark navy card selection list */}
-            <div className="desktop-showcase-right">
-              <div>
-                {showcaseProperties.map((item, idx) => {
-                  const isActive = activePropertyIndex === idx;
-                  return (
-                    <div 
-                      key={idx} 
-                      className="desktop-showcase-item"
-                      onClick={() => setActivePropertyIndex(idx)}
-                    >
-                      <div className="u-flex-col">
-                        <h4 className="desktop-showcase-item-title">{item.name}</h4>
-                        <p className="desktop-showcase-item-desc">
-                          {isActive 
-                            ? item.details 
-                            : item.details.slice(0, 75) + "..."}
-                        </p>
-                        {isActive && (
-                          <p className="desktop-showcase-item-price">{item.price}</p>
-                        )}
-                      </div>
-                      
-                      {/* Active check-square indicator */}
-                      <div className="desktop-showcase-active-indicator" style={{ opacity: isActive ? 1 : 0.2 }}>
-                        {isActive && <div className="desktop-showcase-active-indicator-dot" />}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Floating lower thumbnail */}
-              <div className="desktop-showcase-thumb">
-                <Image
-                  src={showcaseProperties[activePropertyIndex].thumb}
-                  alt="Active Property Thumbnail"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
+      {/* SECTION 4: Desktop 3D Bali Collection Flip Book */}
+      <ExploreBaliBookSection />
 
     </div>
   );

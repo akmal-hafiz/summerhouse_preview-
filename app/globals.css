@@ -10658,3 +10658,352 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     height: 2.1rem;
   }
 }
+
+/* ==========================================================================
+   BALI FLIPBOOK & COLLECTION SECTION (Vanilla CSS)
+   ========================================================================== */
+
+.bali-collection-section {
+  position: relative;
+  overflow: hidden;
+  background: #FAFAF9;
+  color: #1f1f1d;
+  padding: clamp(5.5rem, 8vw, 8.5rem) 0;
+}
+
+.bali-collection-shell {
+  width: min(100% - 2rem, 1360px);
+  margin: 0 auto;
+}
+
+.bali-collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  gap: clamp(1.5rem, 4vw, 4.5rem) !important;
+}
+
+.bali-collection-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bali-collection-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(31, 31, 29, 0.56);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.bali-collection-kicker::before {
+  content: "";
+  width: 2.4rem;
+  height: 1px;
+  background: rgba(68, 107, 74, 0.44);
+}
+
+.bali-collection-stacked-title {
+  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-size: 56px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #0b1c30;
+  margin: 0;
+  line-height: 0.95;
+  display: flex;
+  flex-direction: column;
+}
+
+.bali-collection-desc {
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #76777d;
+  margin: 0;
+}
+
+.bali-book-desktop {
+  position: relative;
+}
+
+.bali-book-stage,
+.bali-book-canvas-skeleton {
+  position: relative;
+  min-height: min(78vh, 820px);
+  border: 1px solid rgba(68, 107, 74, 0.1);
+  border-radius: 48px;
+  background: #F5F3F1;
+  box-shadow: 0 34px 95px rgba(31, 31, 29, 0.07);
+}
+
+.bali-book-canvas-shell {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.bali-book-canvas-shell canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.bali-book-controls {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 2.2rem;
+  right: 2.2rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.bali-book-controls button,
+.bali-book-cta {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(68, 107, 74, 0.22) !important;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.64) !important;
+  color: #446B4A !important;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 0 1.6rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(68, 107, 74, 0.06) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.bali-book-cta {
+  position: absolute;
+  right: 0;
+  background: rgba(255, 255, 255, 0.64) !important;
+  color: #446B4A !important;
+}
+
+.bali-book-controls button:hover,
+.bali-book-cta:hover {
+  border-color: rgba(68, 107, 74, 0.35) !important;
+  transform: translateY(-2px);
+  background: rgba(68, 107, 74, 0.08) !important;
+  color: #3b5e40 !important;
+}
+
+.bali-book-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 3rem;
+  border: 1px solid rgba(68, 107, 74, 0.14) !important;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62) !important;
+  padding: 0 0.9rem;
+  box-shadow: 0 14px 32px rgba(31, 31, 29, 0.06) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+.bali-book-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  min-height: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(68, 107, 74, 0.22) !important;
+  padding: 0;
+  box-shadow: none;
+  cursor: pointer;
+  transition: width 180ms ease, background 180ms ease;
+}
+
+.bali-book-dot.is-active {
+  width: 1.45rem;
+  background: #446B4A !important;
+}
+
+.bali-book-instruction {
+  margin: 1.25rem 0 0;
+  color: rgba(31, 31, 29, 0.48) !important;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.bali-collection-carousel {
+  display: grid;
+  grid-auto-columns: minmax(17.5rem, 82vw);
+  grid-auto-flow: column;
+  gap: 1rem;
+  margin-inline: -1rem;
+  overflow-x: auto;
+  padding: 0 1rem 0.5rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.bali-collection-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.bali-collection-card {
+  overflow: hidden;
+  border: 1px solid rgba(68, 107, 74, 0.13);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 16px 36px rgba(31, 31, 29, 0.04);
+  transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+
+.bali-collection-card__image {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.bali-collection-card__photo {
+  object-fit: cover;
+  transition: transform 380ms ease;
+}
+
+.bali-collection-card:hover .bali-collection-card__photo {
+  transform: scale(1.05);
+}
+
+.bali-collection-card__body {
+  padding: 1.6rem;
+}
+
+.bali-collection-card__eyebrow {
+  color: #446B4A;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.bali-collection-card h3 {
+  margin: 0.5rem 0 0.35rem;
+  color: #171717;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.bali-collection-card p {
+  margin: 0;
+  color: rgba(31, 31, 29, 0.82);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.55;
+  min-height: 2.8rem;
+}
+
+.bali-collection-card__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+  border-top: 1px solid rgba(68, 107, 74, 0.08);
+  padding-top: 0.95rem;
+}
+
+.bali-collection-card__meta span {
+  color: rgba(31, 31, 29, 0.54);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bali-collection-card__link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.15rem;
+  border-radius: 999px;
+  background: #446B4A;
+  color: #fffefa;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  padding: 0 1.1rem;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1023px) {
+  .bali-collection-section {
+    padding: clamp(4rem, 10vw, 5.8rem) 0;
+  }
+
+  .bali-collection-shell {
+    width: min(100%, 100vw);
+    padding-inline: clamp(1rem, 4vw, 2rem);
+  }
+
+  .bali-collection-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .bali-collection-stacked-title {
+    font-size: 36px;
+  }
+
+  .bali-collection-desc {
+    max-width: none;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .bali-collection-carousel {
+    grid-auto-columns: minmax(18rem, 42vw);
+    margin-inline: calc(clamp(1rem, 4vw, 2rem) * -1);
+    padding-inline: clamp(1rem, 4vw, 2rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .bali-collection-carousel {
+    grid-auto-columns: minmax(17.5rem, 84vw);
+  }
+
+  .bali-collection-card {
+    border-radius: 24px;
+  }
+
+  .bali-collection-card h3 {
+    font-size: 1.9rem;
+  }
+
+  .bali-collection-card p {
+    min-height: auto;
+  }
+}
