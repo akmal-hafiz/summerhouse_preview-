@@ -3,7 +3,8 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import {
   FiArrowUpRight,
   FiChevronDown,
@@ -16,7 +17,11 @@ import {
   FiSmile,
   FiStar,
   FiSun,
+  FiUsers,
+  FiTool,
   FiWifi,
+  FiAward,
+  FiMap,
 } from "react-icons/fi";
 import styles from "./AboutEditorialSections.module.css";
 
@@ -41,33 +46,63 @@ type AboutProps = {
 };
 
 const defaultDestinations: AboutDestination[] = [
-  { name: "Canggu", villas: 16, latitude: -8.6478, longitude: 115.1385 },
-  { name: "Ubud", villas: 4, latitude: -8.5243, longitude: 115.255 },
-  { name: "Pererenan", villas: 3, latitude: -8.6371, longitude: 115.1335 },
-  { name: "Umalas", villas: 3, latitude: -8.659, longitude: 115.1543 },
+  { name: "Canggu", villas: 4, latitude: -8.6478, longitude: 115.1385 },
+  { name: "Canggu - Berawa", villas: 15, latitude: -8.6601, longitude: 115.1437 },
+  { name: "Canggu - Padonan", villas: 4, latitude: -8.6300, longitude: 115.1500 },
+  { name: "Pererenan", villas: 6, latitude: -8.6371, longitude: 115.1335 },
+  { name: "Ubud", villas: 2, latitude: -8.5243, longitude: 115.255 },
+  { name: "Umalas", villas: 4, latitude: -8.659, longitude: 115.1543 },
+  { name: "Kerobokan", villas: 1, latitude: -8.6500, longitude: 115.1700 },
+  { name: "Legian", villas: 1, latitude: -8.6980, longitude: 115.1670 },
 ];
+
+const destinationImages: Record<string, string> = {
+  "Canggu": "/homepage_villa/curated-6-exterior.webp",
+  "Canggu - Berawa": "/homepage_villa/curated-1-main.webp",
+  "Canggu - Padonan": "/homepage_villa/CactusEstate.webp",
+  "Pererenan": "/homepage_villa/villaarta.webp",
+  "Ubud": "/homepage_villa/curated-8.webp",
+  "Umalas": "/homepage_villa/88east.webp",
+  "Kerobokan": "/homepage_villa/officiana17.webp",
+  "Legian": "/homepage_villa/curated-4-view.webp",
+};
+
+const getDestinationImage = (name: string, index: number) => {
+  if (destinationImages[name]) {
+    return destinationImages[name];
+  }
+  const fallbacks = [
+    "/homepage_villa/curated-6-exterior.webp",
+    "/homepage_villa/curated-1-main.webp",
+    "/homepage_villa/CactusEstate.webp",
+    "/homepage_villa/villaarta.webp",
+    "/homepage_villa/curated-8.webp",
+    "/homepage_villa/88east.webp",
+    "/homepage_villa/officiana17.webp",
+    "/homepage_villa/curated-4-view.webp",
+  ];
+  return fallbacks[index % fallbacks.length];
+};
+
 
 const storyRows = [
   {
-    id: "premium-villas",
-    value: "Premium",
-    title: "Luxury villas",
-    text: "Private homes chosen for atmosphere, privacy, light, and the small details that make a stay feel personal.",
-    icon: FiHome,
+    id: "happy-guests",
+    value: "200+",
+    text: "Happy guests accommodated",
+    icon: FiSmile,
   },
   {
-    id: "curated-destinations",
-    value: "Bali",
-    title: "Curated destinations",
-    text: "Bali neighborhoods selected with care, from quiet residential lanes to homes close to restaurants, beaches, and local rhythms.",
-    icon: FiCompass,
+    id: "loyal-visitors",
+    value: "26%",
+    text: "Loyal repeat visitors hosted",
+    icon: FiUsers,
   },
   {
     id: "guest-support",
     value: "24/7",
-    title: "Exceptional guest experience",
-    text: "Clear communication, calm arrivals, and local recommendations handled by people who know the homes before you arrive.",
-    icon: FiSmile,
+    text: "Professional guest support",
+    icon: FiTool,
   },
 ];
 
@@ -79,68 +114,110 @@ const featurePills = [
   { id: "local-expertise", label: "Local Expertise", icon: FiCompass },
 ];
 
-const galleryImages = [
+const galleryItems = [
   {
+    type: "image",
     id: "gallery-dining",
     src: "/homepage_villa/officiana17.webp",
     alt: "Villa dining and kitchen area prepared for guests",
     label: "Dining Room",
+    index: "01",
     className: styles.galleryDining,
   },
   {
+    type: "text",
+    id: "editorial-text-1",
+    label: "02 / Space",
+    title: "Slow Spaces",
+    text: "Villas designed around the natural rhythm of the day, where light and shade form their own architecture.",
+    className: styles.galleryText1,
+  },
+  {
+    type: "image",
     id: "gallery-bedroom",
     src: "/homepage_villa/88east.webp",
     alt: "Summerhouses villa bedroom with soft textures",
     label: "Bedroom",
+    index: "03",
     className: styles.galleryBedroom,
   },
   {
+    type: "image",
     id: "gallery-workspace",
     src: "/homepage_villa/villaarta.webp",
     alt: "Warm villa interior detail with tropical modern styling",
     label: "Creative Workspace",
+    index: "04",
     className: styles.galleryWorkspace,
   },
   {
+    type: "image",
     id: "gallery-kitchen",
     src: "/homepage_villa/CactusEstate.webp",
     alt: "Bright villa pool courtyard in Bali",
     label: "Kitchen",
+    index: "05",
     className: styles.galleryKitchen,
   },
   {
+    type: "text",
+    id: "editorial-text-2",
+    label: "06 / Rest",
+    title: "Silent Corners",
+    text: "Quiet nooks created for reading, writing, or simply watching the tropical afternoon breeze.",
+    className: styles.galleryText2,
+  },
+  {
+    type: "image",
     id: "gallery-living",
     src: "/homepage_villa/curated-5-lounge.webp",
     alt: "Summerhouses villa lounge with warm natural details",
     label: "Living Room",
+    index: "07",
     className: styles.galleryLiving,
   },
   {
+    type: "image",
     id: "gallery-guest-bedroom",
     src: "/homepage_villa/VillaZen.webp",
     alt: "Tropical villa suite with serene island atmosphere",
     label: "Guest Bedroom",
+    index: "08",
     className: styles.galleryGuestBedroom,
   },
   {
+    type: "image",
     id: "gallery-foyer",
     src: "/homepage_villa/curated-3-corner.webp",
     alt: "Quiet villa architectural corner with tropical planting",
     label: "Decorative Foyer",
+    index: "09",
     className: styles.galleryFoyer,
   },
   {
+    type: "text",
+    id: "editorial-text-3",
+    label: "10 / Bath",
+    title: "Open-Air Rituals",
+    text: "Private bathrooms that let you bathe under the stars, enclosed by lush greenery and stone.",
+    className: styles.galleryText3,
+  },
+  {
+    type: "image",
     id: "gallery-office",
     src: "/homepage_villa/curated-2-detail.webp",
     alt: "Summerhouses villa detail with calm work-friendly atmosphere",
     label: "Home Office",
+    index: "11",
     className: styles.galleryOffice,
   },
   {
+    type: "image",
     id: "gallery-bathroom",
     src: "/homepage_villa/curated-8.webp",
     alt: "Summerhouses villa garden and pool deck",
     label: "Bathroom",
+    index: "12",
     className: styles.galleryBathroom,
   },
 ];
@@ -246,15 +323,189 @@ const faqs = [
 ];
 
 const fadeUp = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 16 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.22 },
-  transition: { duration: 0.78, ease: [0.22, 1, 0.36, 1] as const },
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 1.0, ease: [0.16, 1, 0.3, 1] as const },
 };
 
+const zoomInVariant = {
+  initial: { opacity: 0, scale: 0.92, y: 20 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: (index % 3) * 0.08,
+    },
+  }),
+  viewport: { once: true, amount: 0.12 },
+};
+
+const heroStaggerContainer = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const heroChildVariant = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+};
+
+const storyHeadlineVariant = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.05,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+  viewport: { once: true, amount: 0.2 },
+};
+
+const storyCardVariant = {
+  initial: { opacity: 0, x: 28, y: 28 },
+  whileInView: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 80,
+      damping: 16,
+      mass: 1,
+      delay: 0.08,
+    },
+  },
+  viewport: { once: true, amount: 0.15 },
+};
+
+const teamQuoteVariant = {
+  initial: { opacity: 0, y: 32 },
+  whileInView: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.15,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+  viewport: { once: true, amount: 0.25 },
+};
+
+const highlightsCardVariant = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.0,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: index * 0.08,
+    },
+  }),
+  viewport: { once: true, amount: 0.15 },
+};
+
+const reviewCardVariant = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: (index % 3) * 0.06,
+    },
+  }),
+  viewport: { once: true, amount: 0.12 },
+};
+
+const destinationFactVariant = {
+  initial: { opacity: 0, y: 24 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: index * 0.08,
+    },
+  }),
+  viewport: { once: true, amount: 0.15 },
+};
+
+function CountUp({ to, duration = 1.4, decimals = 0 }: { to: number; duration?: number; decimals?: number }) {
+  const [count, setCount] = useState(to);
+  const [isMounted, setIsMounted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.4 });
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    setCount(0);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && isInView && !hasAnimated.current) {
+      hasAnimated.current = true;
+      let start = 0;
+      const end = to;
+      const startTime = performance.now();
+
+      const animateCount = (now: number) => {
+        const elapsed = (now - startTime) / 1000;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        const currentCount = start + (end - start) * easeProgress;
+
+        setCount(Number(currentCount.toFixed(decimals)));
+
+        if (progress < 1) {
+          requestAnimationFrame(animateCount);
+        } else {
+          setCount(end);
+        }
+      };
+
+      requestAnimationFrame(animateCount);
+    }
+  }, [isMounted, isInView, to, duration, decimals]);
+
+  return <span ref={ref}>{count.toFixed(decimals)}</span>;
+}
+
 export default function About({ destinations = [] }: AboutProps) {
+  const storySectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: storySectionRef,
+    offset: ["start end", "end start"],
+  });
+  const storyParallaxY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
+
   const destinationItems = destinations.length ? destinations : defaultDestinations;
   const totalVillas = destinationItems.reduce((total, destination) => total + destination.villas, 0) || 43;
+  const loopItems = [
+    ...destinationItems.map((dest, idx) => ({ ...dest, uniqueId: `${dest.name}-primary-${idx}` })),
+    ...destinationItems.map((dest, idx) => ({ ...dest, uniqueId: `${dest.name}-mirror-${idx}` })),
+  ];
   const trustStats = [
     { id: "active-villas", value: String(totalVillas), label: "Premium Villas" },
     { id: "support", value: "24/7", label: "Guest Support" },
@@ -269,28 +520,79 @@ export default function About({ destinations = [] }: AboutProps) {
     <div className={styles.aboutShell}>
       <section className={styles.heroSection}>
         <div className={styles.heroInner}>
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.82, ease: [0.22, 1, 0.36, 1] }}
-            className={styles.heroCopy}
-          >
-            <p className={styles.locationPill}>
-              <FiMapPin aria-hidden="true" />
-              Bali private stays
-            </p>
-            <h1>Private homes for a slower kind of island living.</h1>
-            <p>
-              We curate Bali villas for travelers who want more than a beautiful room. They want a home that
-              feels considered, cared for, and quietly connected to the island around it.
-            </p>
-            <Link href="/villas" className={styles.primaryCta}>
-              <span>
-                <FiArrowUpRight aria-hidden="true" />
-              </span>
-              Explore Villas
-            </Link>
-          </motion.div>
+          <div className={styles.heroLeftColumn}>
+            <motion.div
+              variants={heroStaggerContainer}
+              initial="initial"
+              animate="animate"
+              className={styles.heroCopy}
+            >
+              <motion.p variants={heroChildVariant} className={styles.locationPill}>
+                <FiMapPin aria-hidden="true" />
+                Bali private stays
+              </motion.p>
+              <motion.h1 variants={heroChildVariant}>Private homes for a slower kind of island living.</motion.h1>
+              <motion.p variants={heroChildVariant}>
+                We curate Bali villas for travelers who want more than a beautiful room. They want a home that
+                feels considered, cared for, and quietly connected to the island around it.
+              </motion.p>
+
+              <motion.div variants={heroChildVariant} className={styles.guestStack}>
+                <div className={styles.avatarGroup}>
+                  <div className={styles.guestAvatar}>
+                    <Image
+                      src="/Found_myself..jpg"
+                      alt="Guest profile photo"
+                      fill
+                      sizes="32px"
+                      className={styles.avatarImg}
+                    />
+                  </div>
+                  <div className={styles.guestAvatar}>
+                    <Image
+                      src="/homepage_villa/curated-2-detail.webp"
+                      alt="Guest profile photo"
+                      fill
+                      sizes="32px"
+                      className={styles.avatarImg}
+                    />
+                  </div>
+                  <div className={styles.guestAvatar}>
+                    <Image
+                      src="/homepage_villa/curated-6-exterior.webp"
+                      alt="Guest profile photo"
+                      fill
+                      sizes="32px"
+                      className={styles.avatarImg}
+                    />
+                  </div>
+                </div>
+                <span>Loved by 200+ happy guests accommodated</span>
+              </motion.div>
+
+              <motion.div variants={heroChildVariant}>
+                <Link href="/villas" className={styles.primaryCta}>
+                  <span>
+                    <FiArrowUpRight aria-hidden="true" />
+                  </span>
+                  Explore Villas
+                </Link>
+              </motion.div>
+            </motion.div>
+
+            <motion.div {...fadeUp} className={styles.heroStats}>
+              <div className={styles.favoriteBadge}>
+                <FiAward aria-hidden="true" />
+                <span>Guest favorite</span>
+              </div>
+              {trustStats.map((stat) => (
+                <div key={stat.id} className={styles.heroStat}>
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
 
           <motion.figure
             initial={{ opacity: 0, scale: 0.98 }}
@@ -306,48 +608,66 @@ export default function About({ destinations = [] }: AboutProps) {
               sizes="(min-width: 1100px) 48vw, 100vw"
               className={styles.coverImage}
             />
-          </motion.figure>
-
-          <motion.div {...fadeUp} className={styles.heroStats}>
-            <div className={styles.favoriteBadge}>
-              <FiStar aria-hidden="true" />
-              <span>Guest favorite</span>
+            <div className={styles.floatingMapButton} aria-label="Show villa map location">
+              <FiMap aria-hidden="true" />
             </div>
-            {trustStats.map((stat) => (
-              <div key={stat.id} className={styles.heroStat}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
-              </div>
-            ))}
-          </motion.div>
+          </motion.figure>
         </div>
       </section>
 
-      <section className={styles.storySection}>
-        <Image
-          src="/homepage_villa/curated-1-main.webp"
-          alt="Summerhouses villa living space framed by warm interiors"
-          fill
-          sizes="100vw"
-          className={styles.coverImage}
-        />
-        <div className={styles.storyOverlay} />
+      <section className={styles.storySection} ref={storySectionRef}>
+        <motion.div style={{ y: storyParallaxY }} className={styles.storyImageWrapper}>
+          <Image
+            src="/homepage_villa/curated-1-main.webp"
+            alt="Summerhouses villa living space framed by warm interiors"
+            fill
+            sizes="100vw"
+            className={styles.coverImage}
+            priority
+          />
+          <div className={styles.storyOverlay} />
+        </motion.div>
         <div className={styles.storyInner}>
-          <motion.div {...fadeUp} className={styles.storyHeadline}>
-            <p className={styles.lightEyebrow}>Our story</p>
+          <motion.div
+            variants={storyHeadlineVariant}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={storyHeadlineVariant.viewport}
+            className={styles.storyHeadline}
+          >
+            <span className={styles.lightEyebrow}>• Introduction</span>
             <h2>Built around the feeling of arriving somewhere that already understands you.</h2>
           </motion.div>
 
-          <motion.div {...fadeUp} className={styles.storyCard}>
+          <motion.div
+            variants={storyCardVariant}
+            initial="initial"
+            whileInView="whileInView"
+            viewport={storyCardVariant.viewport}
+            className={styles.storyCard}
+          >
             {storyRows.map((item) => {
               const Icon = item.icon;
               return (
                 <article key={item.id} className={styles.storyRow}>
-                  <strong>{item.value}</strong>
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.text}</p>
-                  </div>
+                  <strong>
+                    {item.id === "happy-guests" ? (
+                      <>
+                        <CountUp to={200} />+
+                      </>
+                    ) : item.id === "loyal-visitors" ? (
+                      <>
+                        <CountUp to={26} />%
+                      </>
+                    ) : item.id === "guest-support" ? (
+                      <>
+                        <CountUp to={24} />/7
+                      </>
+                    ) : (
+                      item.value
+                    )}
+                  </strong>
+                  <p>{item.text}</p>
                   <div className={styles.storyIcon}>
                     <Icon aria-hidden="true" />
                   </div>
@@ -376,24 +696,32 @@ export default function About({ destinations = [] }: AboutProps) {
           </Link>
         </motion.div>
 
-        <motion.blockquote {...fadeUp} className={styles.teamQuote}>
+        <motion.blockquote
+          variants={teamQuoteVariant}
+          initial="initial"
+          whileInView="whileInView"
+          viewport={teamQuoteVariant.viewport}
+          className={styles.teamQuote}
+        >
           "Summerhouses began with a simple belief: the best stays in Bali are not the loudest ones. They
           are the homes that let the day unfold naturally, with good light, thoughtful spaces, and people
           nearby when you need them."
         </motion.blockquote>
 
         <div className={styles.pillMarquee} aria-label="Summerhouses values">
-          {valuePillItems.map((pill) => {
-            const Icon = pill.icon;
-            return (
-              <span key={pill.renderId} className={styles.valuePill}>
-                <span>
-                  <Icon aria-hidden="true" />
+          <div className={styles.pillMarqueeTrack}>
+            {valuePillItems.map((pill) => {
+              const Icon = pill.icon;
+              return (
+                <span key={pill.renderId} className={styles.valuePill}>
+                  <span>
+                    <Icon aria-hidden="true" />
+                  </span>
+                  {pill.label}
                 </span>
-                {pill.label}
-              </span>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -407,27 +735,49 @@ export default function About({ destinations = [] }: AboutProps) {
         </motion.div>
 
         <div className={styles.galleryGrid}>
-          {galleryImages.map((image, index) => (
-            <motion.figure
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (index % 4) * 0.04 }}
-              key={image.id}
-              className={`${styles.galleryItem} ${image.className}`}
-            >
-              <Image
-                key={`${image.id}-image`}
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(min-width: 1100px) 24vw, (min-width: 680px) 42vw, 88vw"
-                className={styles.coverImage}
-              />
-              <figcaption key={`${image.id}-caption`}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {image.label}
-              </figcaption>
-            </motion.figure>
-          ))}
+          {galleryItems.map((item, index) => {
+            if (item.type === "text") {
+              return (
+                <motion.div
+                  variants={zoomInVariant}
+                  custom={index}
+                  initial="initial"
+                  whileInView="whileInView"
+                  viewport={{ once: true, amount: 0.12 }}
+                  key={item.id}
+                  className={`${styles.galleryTextCard} ${item.className}`}
+                >
+                  <span className={styles.galleryTextLabel}>{item.label}</span>
+                  <h3 className={styles.galleryTextTitle}>{item.title}</h3>
+                  <p className={styles.galleryTextDesc}>{item.text}</p>
+                </motion.div>
+              );
+            }
+            return (
+              <motion.figure
+                variants={zoomInVariant}
+                custom={index}
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true, amount: 0.12 }}
+                key={item.id}
+                className={`${styles.galleryItem} ${item.className}`}
+              >
+                <Image
+                  key={`${item.id}-image`}
+                  src={item.src!}
+                  alt={item.alt!}
+                  fill
+                  sizes="(min-width: 1100px) 24vw, (min-width: 680px) 42vw, 88vw"
+                  className={styles.coverImage}
+                />
+                <figcaption key={`${item.id}-caption`}>
+                  <span>{item.index}</span>
+                  {item.label}
+                </figcaption>
+              </motion.figure>
+            );
+          })}
         </div>
       </section>
 
@@ -442,9 +792,29 @@ export default function About({ destinations = [] }: AboutProps) {
         </motion.div>
 
         <div className={styles.highlightCards}>
-          {homeHighlights.map((highlight) => (
-            <motion.article {...fadeUp} key={highlight.id} className={styles.highlightCard}>
-              <strong key={`${highlight.id}-value`}>{highlight.value}</strong>
+          {homeHighlights.map((highlight, index) => (
+            <motion.article
+              variants={highlightsCardVariant}
+              custom={index}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={highlightsCardVariant.viewport}
+              key={highlight.id}
+              className={styles.highlightCard}
+            >
+              <strong key={`${highlight.id}-value`}>
+                {highlight.id === "curated-stays" ? (
+                  <CountUp to={43} />
+                ) : highlight.id === "support" ? (
+                  <>
+                    <CountUp to={24} />/7
+                  </>
+                ) : highlight.id === "guest-sentiment" ? (
+                  <CountUp to={4.9} decimals={1} />
+                ) : (
+                  highlight.value
+                )}
+              </strong>
               <div key={`${highlight.id}-copy`}>
                 <h3>{highlight.label}</h3>
                 <p>{highlight.text}</p>
@@ -495,7 +865,7 @@ export default function About({ destinations = [] }: AboutProps) {
       <section className={styles.reviewsSection}>
         <motion.div {...fadeUp} className={styles.reviewHeader}>
           <p className={styles.darkEyebrow}>Reviews</p>
-          <h2>4.98</h2>
+          <h2><CountUp to={4.98} decimals={2} /></h2>
           <p>
             We are proud to shape stays that feel considered before arrival, calm during the visit, and easy
             to remember after check-out.
@@ -512,8 +882,11 @@ export default function About({ destinations = [] }: AboutProps) {
         <div className={styles.reviewGrid}>
           {reviewThemes.map((review, index) => (
             <motion.article
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (index % 3) * 0.05 }}
+              variants={reviewCardVariant}
+              custom={index}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={reviewCardVariant.viewport}
               key={review.id}
               className={styles.reviewCard}
             >
@@ -548,14 +921,20 @@ export default function About({ destinations = [] }: AboutProps) {
           </Link>
         </div>
         <div className={styles.faqList}>
-          {faqs.map((faq) => (
-            <details key={faq.id} className={styles.faqItem}>
-              <summary>
-                <span>{faq.question}</span>
-                <FiChevronDown aria-hidden="true" />
-              </summary>
-              <p>{faq.answer}</p>
-            </details>
+          {faqs.map((faq, index) => (
+            <motion.div
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: index * 0.06 }}
+              key={faq.id}
+            >
+              <details className={styles.faqItem}>
+                <summary>
+                  <span>{faq.question}</span>
+                  <FiChevronDown aria-hidden="true" />
+                </summary>
+                <p>{faq.answer}</p>
+              </details>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -572,31 +951,81 @@ export default function About({ destinations = [] }: AboutProps) {
           </motion.div>
 
           <div className={styles.destinationFacts}>
-            <div>
+            <motion.div
+              variants={destinationFactVariant}
+              custom={0}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={destinationFactVariant.viewport}
+            >
               <span>Featured regions</span>
-              <strong>{destinationItems.length}</strong>
-            </div>
-            <div>
+              <strong><CountUp to={destinationItems.length} /></strong>
+            </motion.div>
+            <motion.div
+              variants={destinationFactVariant}
+              custom={1}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={destinationFactVariant.viewport}
+            >
               <span>Active villa points</span>
-              <strong>{totalVillas}</strong>
-            </div>
-            <div>
+              <strong><CountUp to={totalVillas} /></strong>
+            </motion.div>
+            <motion.div
+              variants={destinationFactVariant}
+              custom={2}
+              initial="initial"
+              whileInView="whileInView"
+              viewport={destinationFactVariant.viewport}
+            >
               <span>Island focus</span>
               <strong>Bali</strong>
-            </div>
+            </motion.div>
           </div>
 
-          <LibreDestinationMap destinations={destinationItems} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.985, y: 15 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] as const }}
+          >
+            <LibreDestinationMap destinations={destinationItems} />
+          </motion.div>
 
-          <div className={styles.destinationList}>
-            {destinationItems.map((destination) => (
-              <article key={destination.name}>
-                <span>{destination.name}</span>
-                <strong>
-                  {destination.villas} {destination.villas === 1 ? "villa" : "villas"}
-                </strong>
-              </article>
-            ))}
+          <div className={styles.locationMarquee} aria-label="Summerhouses regions">
+            <div className={styles.locationMarqueeTrack}>
+              {loopItems.map((destination, idx) => {
+                const imageUrl = getDestinationImage(destination.name, idx);
+                const sizeClass = [
+                  styles.cardSizeTall,
+                  styles.cardSizeWide,
+                  styles.cardSizeSlim,
+                  styles.cardSizeSquare,
+                  styles.cardSizeTall,
+                  styles.cardSizeWide,
+                  styles.cardSizeSlim,
+                  styles.cardSizeSquare,
+                ][idx % 8];
+                return (
+                  <div key={destination.uniqueId} className={`${styles.locationCard} ${sizeClass}`}>
+                    <Image
+                      src={imageUrl}
+                      alt={`Summerhouses in ${destination.name}`}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 680px) 45vw, 75vw"
+                      className={styles.locationCardImage}
+                    />
+                    <div className={styles.locationCardOverlay} />
+                    <div className={styles.locationCardContent}>
+                      <h3>{destination.name}</h3>
+                      <span>
+                        {destination.villas} {destination.villas === 1 ? "villa" : "villas"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

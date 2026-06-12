@@ -12,41 +12,196 @@ const fadeUp = {
   transition: { duration: 0.92, ease: [0.22, 1, 0.36, 1] as const },
 };
 
-const imageMotion = {
-  initial: { opacity: 0, y: 46, scale: 0.985 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
-  viewport: { once: true, amount: 0.18 },
-  transition: { duration: 1.05, ease: [0.22, 1, 0.36, 1] as const },
+const zoomInVariant = {
+  initial: { opacity: 0, scale: 0.92, y: 20 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: (index % 3) * 0.08,
+    },
+  }),
+  viewport: { once: true, amount: 0.12 },
 };
 
-type GalleryImageProps = {
-  src: string;
-  alt: string;
-  className?: string;
-  priority?: boolean;
-  sizes?: string;
-};
-
-function GalleryImage({
-  src,
-  alt,
-  className = "",
-  priority = false,
-  sizes = "(min-width: 1024px) 50vw, 100vw",
-}: GalleryImageProps) {
-  return (
-    <motion.figure {...imageMotion} className={`${styles.imageFrame} ${className}`}>
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        priority={priority}
-        sizes={sizes}
-        className={styles.image}
-      />
-    </motion.figure>
-  );
-}
+const galleryItems = [
+  {
+    type: "image",
+    id: "gallery-hero",
+    src: "/homepage_villa/curated-6-exterior.webp",
+    alt: "Summerhouses Bali villa exterior with tropical architecture",
+    label: "Exterior",
+    index: "01",
+    className: styles.galleryHero,
+  },
+  {
+    type: "text",
+    id: "gallery-text-1",
+    label: "02 / Mood",
+    title: "Where peace has a texture.",
+    text: "Soft walls, natural shadows, and a slower pace invite the day to begin without urgency.",
+    className: styles.galleryText1,
+  },
+  {
+    type: "image",
+    id: "gallery-detail",
+    src: "/homepage_villa/curated-2-detail.webp",
+    alt: "Quiet villa bedroom details in soft light",
+    label: "Bedroom details",
+    index: "03",
+    className: styles.galleryDetail,
+  },
+  {
+    type: "image",
+    id: "gallery-lounge",
+    src: "/homepage_villa/curated-5-lounge.webp",
+    alt: "Summerhouses lounge with curved architecture",
+    label: "Arched lounge",
+    index: "04",
+    className: styles.galleryLounge,
+  },
+  {
+    type: "text",
+    id: "gallery-text-2",
+    label: "05 / Space",
+    title: "Rooms designed around quiet movement.",
+    text: "Soft lines and curved architectural thresholds guide the daylight naturally.",
+    className: styles.galleryText2,
+  },
+  {
+    type: "image",
+    id: "gallery-courtyard",
+    src: "/homepage_villa/curated-8.webp",
+    alt: "Villa interior framed by arched openings",
+    label: "Courtyard framing",
+    index: "06",
+    className: styles.galleryCourtyard,
+  },
+  {
+    type: "image",
+    id: "gallery-poolside",
+    src: "/homepage_villa/villaarta.webp",
+    alt: "Private Bali villa pool and exterior",
+    label: "Villa Arta Pool",
+    index: "07",
+    className: styles.galleryPoolside,
+  },
+  {
+    type: "text",
+    id: "gallery-text-3",
+    label: "08 / Harmony",
+    title: "Every frame is meant to feel lived in.",
+    text: "The homes are selected for proportion, mood, and the way sunlight softens across the day.",
+    className: styles.galleryText3,
+  },
+  {
+    type: "image",
+    id: "gallery-living",
+    src: "/homepage_villa/curated-1-main.webp",
+    alt: "Cinematic Summerhouses villa room with pool foreground",
+    label: "Main Lounge",
+    index: "09",
+    className: styles.galleryLiving,
+  },
+  {
+    type: "image",
+    id: "gallery-garden",
+    src: "/homepage_villa/curated-4-view.webp",
+    alt: "Sunlit Bali villa exterior at golden hour",
+    label: "Sunlit garden view",
+    index: "10",
+    className: styles.galleryGarden,
+  },
+  {
+    type: "text",
+    id: "gallery-text-4",
+    label: "11 / Rest",
+    title: "A private home should hold enough quiet.",
+    text: "A private stay should provide a gentle base for rest, letting the entire trip soften.",
+    className: styles.galleryText4,
+  },
+  {
+    type: "image",
+    id: "gallery-cactus",
+    src: "/homepage_villa/CactusEstate.webp",
+    alt: "Bright villa interior with pool and curved walls",
+    label: "Cactus Estate Courtyard",
+    index: "12",
+    className: styles.galleryCactus,
+  },
+  {
+    type: "image",
+    id: "gallery-dining",
+    src: "/homepage_villa/officiana17.webp",
+    alt: "Minimal villa bedroom with calm neutral tones",
+    label: "Officiana dining",
+    index: "13",
+    className: styles.galleryDining,
+  },
+  {
+    type: "text",
+    id: "gallery-text-5",
+    label: "14 / Light",
+    title: "Clean lines and warm light.",
+    text: "Open spaces and minimal detailing give room to breathe and exhale.",
+    className: styles.galleryText5,
+  },
+  {
+    type: "image",
+    id: "gallery-glasshouse",
+    src: "/homepage_villa/glass_house.png",
+    alt: "Summerhouses villa framed by tropical glass architecture",
+    label: "Glass House exterior",
+    index: "15",
+    className: styles.galleryGlasshouse,
+  },
+  {
+    type: "image",
+    id: "gallery-pooldeck",
+    src: "/homepage_villa/TKR03549-HDR.webp",
+    alt: "Panoramic Summerhouses villa bedroom and pool",
+    label: "Summerhouses Pool Deck",
+    index: "16",
+    className: styles.galleryPooldeck,
+  },
+  {
+    type: "text",
+    id: "gallery-text-6",
+    label: "17 / Touch",
+    title: "Architecture soft at the edges.",
+    text: "Every threshold is an invitation to move slowly: from water to room, from daylight to evening.",
+    className: styles.galleryText6,
+  },
+  {
+    type: "image",
+    id: "gallery-mimosa",
+    src: "/homepage_villa/rumahmimosa.webp",
+    alt: "Elegant Summerhouses villa interior in warm tones",
+    label: "Rumah Mimosa Interior",
+    index: "18",
+    className: styles.galleryMimosa,
+  },
+  {
+    type: "image",
+    id: "gallery-east",
+    src: "/homepage_villa/88east.webp",
+    alt: "Summerhouses private villa with pool and lounge setting",
+    label: "88 East suite",
+    index: "19",
+    className: styles.galleryEast,
+  },
+  {
+    type: "text",
+    id: "gallery-text-7",
+    label: "20 / Presence",
+    title: "The best spaces do not demand attention.",
+    text: "They let the island breathe through them, remaining quiet and considered.",
+    className: styles.galleryText7,
+  },
+];
 
 export default function GalleryPage() {
   return (
@@ -62,153 +217,52 @@ export default function GalleryPage() {
         </motion.p>
       </section>
 
-      <section className={styles.heroImageSection}>
-        <GalleryImage
-          src="/homepage_villa/curated-6-exterior.webp"
-          alt="Summerhouses Bali villa exterior with tropical architecture"
-          priority
-          sizes="100vw"
-          className={styles.heroImage}
-        />
-        <motion.p {...fadeUp} className={styles.heroCaption}>
-          Architecture, shade, and open air shape the first impression before the stay begins.
-        </motion.p>
-      </section>
-
-      <section className={`${styles.editorialBlock} ${styles.editorialBlockA}`}>
-        <GalleryImage
-          src="/homepage_villa/curated-2-detail.webp"
-          alt="Quiet villa bedroom details in soft light"
-          className={styles.portraitSmall}
-        />
-        <motion.div {...fadeUp} className={styles.textBlock}>
-          <span>01 / Arrival mood</span>
-          <h2>Where peace has a texture.</h2>
-          <p>
-            Soft walls, natural shadows, and a slower pace invite the day to begin without urgency.
-          </p>
-        </motion.div>
-      </section>
-
-      <section className={styles.floatingPair}>
-        <GalleryImage
-          src="/homepage_villa/curated-5-lounge.webp"
-          alt="Summerhouses lounge with curved architecture"
-          className={styles.floatOne}
-        />
-        <motion.div {...fadeUp} className={`${styles.textBlock} ${styles.floatText}`}>
-          <span>Graceful arcs</span>
-          <h2>Rooms designed around quiet movement.</h2>
-        </motion.div>
-        <GalleryImage
-          src="/homepage_villa/curated-8.webp"
-          alt="Villa interior framed by arched openings"
-          className={styles.floatTwo}
-        />
-      </section>
-
-      <section className={styles.splitStory}>
-        <motion.div {...fadeUp} className={styles.textBlock}>
-          <span>02 / Unrivaled sophistication</span>
-          <h2>Every frame is meant to feel lived in, not staged.</h2>
-          <p>
-            The homes are selected for proportion, mood, and the way sunlight softens across the day.
-          </p>
-        </motion.div>
-        <GalleryImage
-          src="/homepage_villa/villaarta.webp"
-          alt="Private Bali villa pool and exterior"
-          className={styles.landscapeLarge}
-        />
-      </section>
-
-      <section className={styles.wideShowcase}>
-        <GalleryImage
-          src="/homepage_villa/curated-1-main.webp"
-          alt="Cinematic Summerhouses villa room with pool foreground"
-          sizes="(min-width: 1024px) 78vw, 100vw"
-          className={styles.wideImage}
-        />
-        <motion.div {...fadeUp} className={styles.wideCaption}>
-          <h2>Ethereal harmony</h2>
-          <p>
-            The best spaces do not demand attention. They let the island breathe through them.
-          </p>
-        </motion.div>
-      </section>
-
-      <section className={styles.quoteComposition}>
-        <GalleryImage
-          src="/homepage_villa/curated-4-view.webp"
-          alt="Sunlit Bali villa exterior at golden hour"
-          className={styles.quoteImage}
-        />
-        <motion.div {...fadeUp} className={styles.quoteBlock}>
-          <span>Summerhouses / Calm stays</span>
-          <h2>Absolute Tranquility</h2>
-          <p>
-            A private home should hold enough quiet for the whole trip to soften.
-          </p>
-        </motion.div>
-      </section>
-
-      <section className={styles.fullInterior}>
-        <GalleryImage
-          src="/homepage_villa/CactusEstate.webp"
-          alt="Bright villa interior with pool and curved walls"
-          sizes="100vw"
-          className={styles.interiorImage}
-        />
-      </section>
-
-      <section className={styles.floatingPairAlt}>
-        <GalleryImage
-          src="/homepage_villa/officiana17.webp"
-          alt="Minimal villa bedroom with calm neutral tones"
-          className={styles.altOne}
-        />
-        <motion.div {...fadeUp} className={`${styles.textBlock} ${styles.altText}`}>
-          <span>Heavenly whites</span>
-          <h2>Clean lines, warm light, and room to exhale.</h2>
-        </motion.div>
-        <GalleryImage
-          src="/homepage_villa/glass_house.png"
-          alt="Summerhouses villa framed by tropical glass architecture"
-          className={styles.altTwo}
-        />
-      </section>
-
-      <section className={styles.panoramaStrip}>
-        <GalleryImage
-          src="/homepage_villa/TKR03549-HDR.webp"
-          alt="Panoramic Summerhouses villa bedroom and pool"
-          sizes="100vw"
-          className={styles.panoramaImage}
-        />
-      </section>
-
-      <section className={styles.featureHighlight}>
-        <motion.div {...fadeUp} className={styles.textBlock}>
-          <span>03 / Sculptural warmth</span>
-          <h2>Architecture that feels soft at the edges.</h2>
-          <p>
-            Every threshold is an invitation to move slowly: from water to room, from daylight to evening.
-          </p>
-        </motion.div>
-        <GalleryImage
-          src="/homepage_villa/rumahmimosa.webp"
-          alt="Elegant Summerhouses villa interior in warm tones"
-          className={styles.featureImage}
-        />
-      </section>
-
-      <section className={styles.finalShowcase}>
-        <GalleryImage
-          src="/homepage_villa/88east.webp"
-          alt="Summerhouses private villa with pool and lounge setting"
-          sizes="100vw"
-          className={styles.finalImage}
-        />
+      <section className={styles.gallerySection}>
+        <div className={styles.galleryGrid}>
+          {galleryItems.map((item, index) => {
+            if (item.type === "text") {
+              return (
+                <motion.div
+                  variants={zoomInVariant}
+                  custom={index}
+                  initial="initial"
+                  whileInView="whileInView"
+                  viewport={{ once: true, amount: 0.12 }}
+                  key={item.id}
+                  className={`${styles.galleryTextCard} ${item.className}`}
+                >
+                  <span className={styles.galleryTextLabel}>{item.label}</span>
+                  <h3 className={styles.galleryTextTitle}>{item.title}</h3>
+                  <p className={styles.galleryTextDesc}>{item.text}</p>
+                </motion.div>
+              );
+            }
+            return (
+              <motion.figure
+                variants={zoomInVariant}
+                custom={index}
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true, amount: 0.12 }}
+                key={item.id}
+                className={`${styles.galleryItem} ${item.className}`}
+              >
+                <Image
+                  key={`${item.id}-image`}
+                  src={item.src!}
+                  alt={item.alt!}
+                  fill
+                  sizes="(min-width: 1100px) 24vw, (min-width: 680px) 42vw, 88vw"
+                  className={styles.coverImage}
+                />
+                <figcaption key={`${item.id}-caption`}>
+                  <span>{item.index}</span>
+                  {item.label}
+                </figcaption>
+              </motion.figure>
+            );
+          })}
+        </div>
       </section>
 
       <section className={styles.reserveCta}>

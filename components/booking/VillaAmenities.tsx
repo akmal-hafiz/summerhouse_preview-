@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
 type AmenityGroup = {
@@ -51,31 +52,35 @@ export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesP
         Show all {groups.reduce((total, group) => total + group.items.length, 0)} amenities
       </button>
 
-      {isOpen && (
-        <div className="villa-modal" role="dialog" aria-modal="true" aria-label="All amenities">
-          <div className="villa-modal__panel villa-modal__panel--amenities">
-            <div className="villa-modal__header">
-              <h2>What this place offers</h2>
-              <button type="button" onClick={() => setIsOpen(false)} aria-label="Close amenities">Close</button>
-            </div>
+      {isOpen && createPortal(
+        <div className="villa-modal" data-lenis-prevent role="dialog" aria-modal="true" aria-label="All amenities">
+          <div className="villa-modal__backdrop" onClick={() => setIsOpen(false)} />
+          <div className="villa-modal__scroll" data-lenis-prevent>
+            <div className="villa-modal__panel villa-modal__panel--amenities">
+              <div className="villa-modal__header">
+                <h2>What this place offers</h2>
+                <button type="button" onClick={() => setIsOpen(false)} aria-label="Close amenities">Close</button>
+              </div>
 
-            <div className="villa-amenities-modal__groups">
-              {groups.map((group) => (
-                <section key={group.key}>
-                  <h3>
-                    <span className="material-symbols-outlined">{iconForGroup(group.key)}</span>
-                    {group.title}
-                  </h3>
-                  <div>
-                    {group.items.map((item) => (
-                      <p key={`${group.key}-${item}`}>{item}</p>
-                    ))}
-                  </div>
-                </section>
-              ))}
+              <div className="villa-amenities-modal__groups">
+                {groups.map((group) => (
+                  <section key={group.key}>
+                    <h3>
+                      <span className="material-symbols-outlined">{iconForGroup(group.key)}</span>
+                      {group.title}
+                    </h3>
+                    <div>
+                      {group.items.map((item) => (
+                        <p key={`${group.key}-${item}`}>{item}</p>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
