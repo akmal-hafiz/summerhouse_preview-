@@ -11088,3 +11088,30 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     margin-top: 1rem;
   }
 }
+
+/* Mobile Search Filter Bar CSS Grid & Truncation Polish for Hero Section */
+@media (max-width: 767px) {
+  /* Swap columns: location gets more space (1.38fr / minmax(6.35rem)) than dates (1.05fr / minmax(4.9rem)) */
+  .villa-search-form--hero {
+    grid-template-columns: minmax(6.35rem, 1.38fr) minmax(4.9rem, 1.05fr) minmax(4.55rem, 1fr) 3.15rem !important;
+  }
+
+  /* Ensure text truncation behaves correctly and does not break the layout */
+  .villa-search-form--hero .villa-search-form__group strong {
+    display: block !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+    transition: all 0.2s ease !important;
+  }
+
+  /* Fallback transition/reveal on hover or active press to show full text */
+  .villa-search-form--hero .villa-search-form__group button:hover strong,
+  .villa-search-form--hero .villa-search-form__group button:active strong {
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    line-height: 1.15 !important;
+  }
+}
