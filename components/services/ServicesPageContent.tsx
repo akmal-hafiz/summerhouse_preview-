@@ -582,43 +582,7 @@ export default function ServicesPageContent() {
         </div>
       </motion.section>
 
-      {/* ── 6. BIG NUMBERS STATS SECTION ── */}
-      <motion.section 
-        className={styles.statsSection}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-120px" }}
-        variants={fadeUpVariants}
-      >
-        <div className={styles.statsInner}>
-          <h3 className={styles.statsTitle}>
-            In 5 years, <span className={styles.accentText}>SUMMERHOUSE</span> has managed <strong>50 RENTAL PROPERTIES</strong> and has welcomed <strong>1000+ SATISFIED GUESTS</strong>.
-          </h3>
-          <div className={styles.statsCountersGrid}>
-            <div className={styles.counterBlock}>
-              <div className={styles.counterHeader}>
-                <strong>81%</strong>
-              </div>
-              <span className={styles.counterLabel}>Average Monthly Occupancy</span>
-            </div>
-            <div className={styles.counterBlock}>
-              <div className={styles.counterHeader}>
-                <span>up to</span>
-                <strong>65%</strong>
-              </div>
-              <span className={styles.counterLabel}>Annual Profit Increase</span>
-            </div>
-            <div className={styles.counterBlock}>
-              <div className={styles.counterHeader}>
-                <strong>95%</strong>
-              </div>
-              <span className={styles.counterLabel}>Guests Satisfaction</span>
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ── 7. FAQ SECTION ── */}
+      {/* ── 6. FAQ SECTION ── */}
       <motion.section 
         className={styles.faq}
         initial="hidden"
@@ -660,7 +624,7 @@ export default function ServicesPageContent() {
         </div>
       </motion.section>
 
-      {/* ── 8. BOOK APPOINTMENT CTA ── */}
+      {/* ── 7. BOOK APPOINTMENT CTA ── */}
       <motion.section 
         className={styles.bottomCta}
         initial="hidden"

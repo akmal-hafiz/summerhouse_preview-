@@ -215,7 +215,7 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
       {validDestinations.length === 0 && (
         <div className={styles.mapFallback}>
           <strong>Bali destination map</strong>
-          <span>Live Lodgify coordinates will appear here when available.</span>
+          <span>Live property coordinates will appear here when available.</span>
         </div>
       )}
     </div>

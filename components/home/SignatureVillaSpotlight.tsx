@@ -42,7 +42,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
           <div className="mobile-bawa-subtitle-col">
             <div className="mobile-bawa-sub-bar-stack">
               <span className="mobile-bawa-sub-bar">// {villa.eyebrow.toUpperCase()}</span>
-              <span className="mobile-bawa-sub-bar">LIVE LODGIFY COLLECTION</span>
+              <span className="mobile-bawa-sub-bar">EXCLUSIVE PRIVATE ESTATE</span>
             </div>
             <h3 className="mobile-bawa-subtitle">{villa.title.toUpperCase()}</h3>
           </div>
@@ -96,7 +96,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
           <div className="desktop-bawa-subtitle-col">
             <div className="desktop-bawa-sub-bar-stack">
               <span className="desktop-bawa-sub-bar">// {villa.eyebrow.toUpperCase()}</span>
-              <span className="desktop-bawa-sub-bar">LIVE LODGIFY COLLECTION</span>
+              <span className="desktop-bawa-sub-bar">EXCLUSIVE PRIVATE ESTATE</span>
             </div>
             <h3 className="desktop-bawa-subtitle">{villa.title.toUpperCase()}</h3>
           </div>
