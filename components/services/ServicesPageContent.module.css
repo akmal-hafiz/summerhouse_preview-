@@ -48,7 +48,7 @@
   border: 0;
   height: 1px;
   background-color: var(--color-line-soft);
-  margin: clamp(4rem, 8vw, 7rem) 0;
+  margin: clamp(5.5rem, 9vw, 9.5rem) 0;
 }
 
 /* ─── BUTTONS ─── */
@@ -204,7 +204,7 @@
 
 /* ─── 2. PERKS SECTION ─── */
 .perks {
-  padding: clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -263,7 +263,7 @@
 
 /* ─── 3. SPECIALTIES SECTION ─── */
 .specialties {
-  padding: clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -640,7 +640,7 @@
 
 /* ─── 5. DETAILED SERVICES DEEP DIVE ─── */
 .deepDiveSection {
-  padding: clamp(4rem, 8vw, 8rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -805,7 +805,7 @@
 
 /* ─── 7. FAQ SECTION ─── */
 .faq {
-  padding: clamp(4rem, 8vw, 8rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -996,7 +996,7 @@
 /* ─── 0. HERO SECTION ─── */
 .heroSection {
   position: relative;
-  margin: 7rem 4vw 4rem;
+  margin: 7rem 4vw clamp(5.5rem, 9vw, 9.5rem);
   border-radius: 2.5rem;
   overflow: hidden;
   height: 80vh;

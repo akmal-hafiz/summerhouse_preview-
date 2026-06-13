@@ -10568,6 +10568,12 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   margin: 0 auto;
 }
 
+@media (min-width: 1024px) {
+  .bali-collection-section .bali-collection-shell {
+    width: min(100% - 2rem, 1480px) !important;
+  }
+}
+
 .bali-collection-header {
   display: flex;
   justify-content: space-between;
@@ -10628,7 +10634,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 .bali-book-stage,
 .bali-book-canvas-skeleton {
   position: relative;
-  min-height: min(78vh, 820px);
+  min-height: min(86vh, 920px);
   border: 1px solid rgba(68, 107, 74, 0.1);
   border-radius: 48px;
   background: #F5F3F1;
