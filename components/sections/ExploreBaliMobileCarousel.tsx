@@ -26,9 +26,15 @@ function mergeCollectionImages(collections: BaliCollectionItem[], remoteCollecti
   });
 }
 
-export default function ExploreBaliMobileCarousel() {
+type ExploreBaliMobileCarouselProps = {
+  collections?: BaliCollectionItem[];
+};
+
+export default function ExploreBaliMobileCarousel({
+  collections: providedCollections = baliCollections,
+}: ExploreBaliMobileCarouselProps) {
   const [remoteImages, setRemoteImages] = useState<CollectionImageSet[]>([]);
-  const collections = useMemo(() => mergeCollectionImages(baliCollections, remoteImages), [remoteImages]);
+  const collections = useMemo(() => mergeCollectionImages(providedCollections, remoteImages), [providedCollections, remoteImages]);
 
   useEffect(() => {
     const controller = new AbortController();

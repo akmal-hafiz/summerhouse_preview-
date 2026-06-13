@@ -25,23 +25,18 @@ const BASE_LOCATION_TREE: LocationNode[] = [
     label: "Canggu",
     value: "Canggu",
     children: [
-      { id: "bali-canggu-berawa", label: "Berawa", value: "Berawa" },
-      { id: "bali-canggu-padonan", label: "Padonan", value: "Padonan" },
-      { id: "bali-canggu-batu-bolong", label: "Batu Bolong", value: "Batu Bolong" },
-      { id: "bali-canggu-echo-beach", label: "Echo Beach", value: "Echo Beach" },
+      { id: "bali-canggu-berawa", label: "Berawa", value: "Canggu - Berawa" },
+      { id: "bali-canggu-padonan", label: "Padonan", value: "Canggu - Padonan" },
     ],
   },
-  { id: "bali-ubud", label: "Ubud", value: "Ubud" },
-  { id: "bali-umalas", label: "Umalas", value: "Umalas" },
-  { id: "bali-kerobokan", label: "Kerobokan", value: "Kerobokan" },
-  { id: "bali-seminyak", label: "Seminyak", value: "Seminyak" },
-  { id: "bali-legian", label: "Legian", value: "Legian" },
   { id: "bali-pererenan", label: "Pererenan", value: "Pererenan" },
-  { id: "bali-jimbaran", label: "Jimbaran", value: "Jimbaran" },
-  { id: "bali-uluwatu", label: "Uluwatu", value: "Uluwatu" },
-  { id: "bali-sanur", label: "Sanur", value: "Sanur" },
-  { id: "bali-nusa-dua", label: "Nusa Dua", value: "Nusa Dua" },
+  { id: "bali-umalas", label: "Umalas", value: "Umalas" },
+  { id: "bali-ubud", label: "Ubud", value: "Ubud" },
+  { id: "bali-kerobokan", label: "Kerobokan", value: "Kerobokan" },
+  { id: "bali-legian", label: "Legian", value: "Legian" },
 ];
+
+const LOCATION_ORDER = ["Canggu", "Berawa", "Padonan", "Pererenan", "Umalas", "Ubud", "Kerobokan", "Legian"];
 
 type SearchResult = {
   node: LocationNode;
@@ -57,6 +52,13 @@ function compactLocationLabel(value: string) {
     .replace(/^indonesia,\s*/i, "")
     .replace(/^bali,\s*/i, "")
     .replace(/^canggu\s*-\s*/i, "")
+    .trim();
+}
+
+function cleanLiveCityLabel(value: string) {
+  return value
+    .replace(/^indonesia,\s*/i, "")
+    .replace(/^bali,\s*/i, "")
     .trim();
 }
 
@@ -104,28 +106,62 @@ function pathLabel(path: LocationNode[]) {
   return path.map((node) => node.label).join(" - ");
 }
 
-function mergeLiveLocations(baseTree: LocationNode[], locations: string[]) {
-  const known = new Set<string>();
-  const visit = (nodes: LocationNode[]) => {
-    nodes.forEach((node) => {
-      known.add(normalize(node.label));
-      if (node.value) known.add(normalize(node.value));
-      if (node.children) visit(node.children);
-    });
-  };
-  visit(baseTree);
+function sortLocationNodes(nodes: LocationNode[]) {
+  return [...nodes].sort((a, b) => {
+    const aIndex = LOCATION_ORDER.indexOf(a.label);
+    const bIndex = LOCATION_ORDER.indexOf(b.label);
+    if (aIndex !== -1 || bIndex !== -1) {
+      return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+    }
 
-  const liveNodes: LocationNode[] = locations
-    .filter((location) => isUsefulLiveLocation(location, known))
-    .map(compactLocationLabel)
-    .slice(0, 10)
-    .map((location) => ({
-      id: `live-${normalize(location).replace(/\s+/g, "-")}`,
+    return a.label.localeCompare(b.label);
+  });
+}
+
+function buildLiveLocationTree(locations: string[]) {
+  const cityValues = Array.from(
+    new Set(
+      locations
+        .map(cleanLiveCityLabel)
+        .map((location) => location.trim())
+        .filter((location) => isUsefulLiveLocation(location, new Set()))
+    )
+  );
+
+  if (cityValues.length === 0) return BASE_LOCATION_TREE;
+
+  const topLevel = new Map<string, LocationNode>();
+  const childMap = new Map<string, LocationNode[]>();
+
+  cityValues.forEach((location) => {
+    const cangguMatch = location.match(/^Canggu\s*-\s*(.+)$/i);
+    if (cangguMatch) {
+      const childLabel = cangguMatch[1].trim();
+      if (!topLevel.has("Canggu")) {
+        topLevel.set("Canggu", { id: "bali-canggu", label: "Canggu", value: "Canggu", children: [] });
+      }
+
+      const children = childMap.get("Canggu") || [];
+      children.push({
+        id: `bali-canggu-${normalize(childLabel).replace(/\s+/g, "-")}`,
+        label: childLabel,
+        value: location,
+      });
+      childMap.set("Canggu", children);
+      return;
+    }
+
+    topLevel.set(location, {
+      id: `bali-${normalize(location).replace(/\s+/g, "-")}`,
       label: location,
       value: location,
-    }));
+    });
+  });
 
-  return liveNodes.length ? [...baseTree, ...liveNodes] : baseTree;
+  return sortLocationNodes(Array.from(topLevel.values()).map((node) => {
+    const children = childMap.get(node.label);
+    return children?.length ? { ...node, children: sortLocationNodes(children) } : node;
+  }));
 }
 
 export function getSelectedLocationLabel(value: string) {
@@ -146,7 +182,7 @@ export default function HierarchicalLocationPicker({
 }: HierarchicalLocationPickerProps) {
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const tree = useMemo(() => mergeLiveLocations(BASE_LOCATION_TREE, locations), [locations]);
+  const tree = useMemo(() => buildLiveLocationTree(locations), [locations]);
   const activeNode = activeNodeId ? findNodeById(tree, activeNodeId) : null;
   const visibleNodes = activeNode?.children || tree;
   const results = searchTerm.trim() ? collectSearchResults(tree, searchTerm).slice(0, 12) : [];

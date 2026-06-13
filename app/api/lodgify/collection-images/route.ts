@@ -8,10 +8,13 @@ import { rateLimitRequest } from "@/lib/security/rateLimit";
 
 const AREA_ALIASES: Record<string, string[]> = {
   ubud: ["ubud"],
-  canggu: ["canggu", "berawa", "padonan", "batu bolong", "echo beach"],
-  uluwatu: ["uluwatu", "ungasan", "pecatu", "bingin"],
-  seminyak: ["seminyak"],
-  "nusa-dua": ["nusa dua", "nusadua", "tanjung benoa", "benoa"],
+  canggu: ["canggu"],
+  "canggu-berawa": ["canggu berawa", "berawa"],
+  "canggu-padonan": ["canggu padonan", "padonan"],
+  pererenan: ["pererenan"],
+  umalas: ["umalas"],
+  kerobokan: ["kerobokan"],
+  legian: ["legian"],
 };
 
 function normalizeText(value: string) {

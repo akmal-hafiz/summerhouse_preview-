@@ -668,11 +668,25 @@ img {
   justify-content: center;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
 }
 
 .sh-footer-submit:hover {
-  background-color: #7A8B7B;
+  background-color: #38583d;
+  transform: scale(1.06);
+}
+
+.sh-footer-submit:active {
+  transform: scale(0.96);
+}
+
+.sh-footer-submit-icon {
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.sh-footer-submit:hover .sh-footer-submit-icon {
+  transform: translate(2px, -2px);
 }
 
 .sh-footer-right-block {
@@ -716,11 +730,13 @@ img {
   color: #555555;
   font-size: 14px;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-block;
 }
 
 .sh-footer-link:hover {
   color: #446B4A !important;
+  transform: translateX(4px);
 }
 
 .sh-footer-link-disabled {
@@ -745,13 +761,15 @@ img {
   color: #555555;
   font-size: 14px;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-block;
   word-break: break-all;
 }
 
 .sh-inquiry-email:hover,
 .sh-inquiry-phone:hover {
   color: #446B4A !important;
+  transform: translateX(4px);
 }
 
 .sh-footer-socials {
@@ -773,13 +791,23 @@ img {
   font-weight: 500;
   color: #1c1b18;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
 }
 
 .sh-footer-social-btn:hover {
   background-color: #446B4A;
   border-color: #446B4A;
   color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(68, 107, 74, 0.15);
+}
+
+.sh-footer-social-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(68, 107, 74, 0.15);
 }
 
 .sh-footer-bottom {
@@ -826,6 +854,7 @@ img {
 
   .sh-footer-socials {
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }
 
@@ -837,6 +866,48 @@ img {
 
   .sh-footer-newsletter-title {
     font-size: 20px;
+  }
+
+  .sh-footer-social-btn {
+    padding: 0.5rem 1.25rem;
+    font-size: 13px;
+  }
+
+  .sh-footer-logo-img {
+    width: 280px;
+    margin-left: -30px;
+  }
+
+  .sh-footer-brand-logo {
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sh-footer-columns {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .sh-footer-socials {
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .sh-footer-social-btn {
+    flex: 1 1 0%;
+    padding: 0.5rem 0.75rem;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .sh-footer-logo-img {
+    width: 240px;
+    margin-left: -25px;
+  }
+
+  .sh-footer-brand-logo {
+    height: 36px;
   }
 }
 
@@ -4628,6 +4699,38 @@ img {
   color: #0b1c30;
 }
 
+.homepage-stay-tabs.homepage-stay-tabs--mobile {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  margin: 18px 0 12px;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(68, 107, 74, 0.16);
+  box-shadow: 0 8px 24px rgba(11, 28, 48, 0.04);
+  box-sizing: border-box;
+}
+
+.homepage-stay-tabs.homepage-stay-tabs--mobile button {
+  flex: 1 1 0%;
+  padding: 8px 2px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 999px;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+.homepage-stay-mode-desc.homepage-stay-mode-desc--mobile {
+  margin: 16px 0 24px;
+  color: #76777d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 /* SECTION 2: Bawa House mobile adaptation */
 .mobile-bawa-header-row {
   display: flex;
@@ -4720,6 +4823,13 @@ img {
   background-color: #d7cfc5;
 }
 
+a.mobile-bawa-large-img-wrapper,
+a.desktop-bawa-large-img-wrapper {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .mobile-bawa-mid-img {
   position: relative;
   height: 160px;
@@ -4734,6 +4844,14 @@ img {
   line-height: 1.6;
   color: #76777d;
   margin: 0;
+}
+
+.signature-villa-label {
+  display: block;
+  color: #0b1c30;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 6px;
 }
 
 .mobile-bawa-details-block {
@@ -4794,7 +4912,7 @@ img {
   background-color: #d7cfc5;
 }
 
-/* SECTION 3: Featured Properties mobile adaptation */
+/* SECTION 3: Featured Collection mobile adaptation */
 .mobile-featured-header {
   display: flex;
   flex-direction: column;
@@ -4964,6 +5082,10 @@ img {
   line-height: 1.5;
   color: #76777d;
   margin: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .mobile-premium-pills-row {
@@ -4974,6 +5096,9 @@ img {
 }
 
 .mobile-premium-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 9px;
   font-weight: 500;
   color: #5a5651;
@@ -4981,6 +5106,14 @@ img {
   border-radius: 99px;
   padding: 4px 8px;
   background-color: transparent;
+}
+
+.mobile-premium-pill svg,
+.mobile-small-card-pill svg {
+  width: 11px;
+  height: 11px;
+  color: #446B4A;
+  flex-shrink: 0;
 }
 
 /* Stacked compact list */
@@ -5060,9 +5193,10 @@ img {
   font-size: 11px;
   color: #76777d;
   margin: 4px 0;
-  white-space: nowrap;
+  display: -webkit-box;
   overflow: hidden;
-  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .mobile-small-card-pills {
@@ -5072,6 +5206,9 @@ img {
 }
 
 .mobile-small-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 8px;
   font-weight: 600;
   color: #5a5651;
@@ -5098,6 +5235,69 @@ img {
   width: 26px;
   height: 26px;
   border-radius: 6px;
+}
+
+.mobile-featured-collection-section {
+  overflow: hidden;
+}
+
+.mobile-featured-scroll {
+  display: grid;
+  grid-auto-columns: minmax(18rem, 86vw);
+  grid-auto-flow: column;
+  gap: 16px;
+  margin-inline: -20px;
+  overflow-x: auto;
+  padding: 2px 20px 8px;
+  scroll-padding-inline: 20px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.mobile-featured-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-featured-scroll-item {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.mobile-featured-scroll-item .mobile-featured-large-card,
+.mobile-featured-scroll-item .mobile-small-row-card-wrapper {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.mobile-featured-scroll-item .mobile-premium-card,
+.mobile-featured-scroll-item .mobile-small-row-card {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.mobile-featured-scroll-item .mobile-premium-img-wrapper {
+  height: 190px;
+}
+
+.mobile-featured-scroll-item .mobile-small-row-card {
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+}
+
+.mobile-featured-scroll-item .mobile-small-card-img {
+  width: 100%;
+  height: 168px;
+  border-radius: 12px;
+}
+
+.mobile-featured-scroll-item .mobile-small-card-details {
+  display: -webkit-box;
+  white-space: normal;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 /* SECTION 4: Split Panel Mobile Adaptation */
@@ -5279,6 +5479,75 @@ img {
   color: #5a5651;
   font-weight: 400;
   margin: 0;
+}
+
+.desktop-stay-heading {
+  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-size: clamp(48px, 4.8vw, 70px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  color: #446B4A;
+  margin: 0;
+}
+
+.homepage-stay-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  margin-top: 24px;
+  border: 1px solid rgba(68, 107, 74, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 12px 32px rgba(11, 28, 48, 0.05);
+}
+
+.homepage-stay-tabs button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #5a5651;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 12px 18px;
+  transition: background-color 220ms ease, color 220ms ease, transform 220ms ease;
+}
+
+.homepage-stay-tabs button:hover {
+  color: #0b1c30;
+  transform: translateY(-1px);
+}
+
+.homepage-stay-tabs button.is-active {
+  background: #0b1c30;
+  color: #ffffff;
+}
+
+.homepage-stay-mode-desc {
+  max-width: 640px;
+  margin: -28px 0 36px;
+  color: #76777d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.homepage-stay-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.homepage-stay-card-link:hover {
+  color: inherit;
+}
+
+.desktop-villa-amenity-line,
+.mobile-villa-amenity-line {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  margin-top: -8px !important;
 }
 
 .desktop-brand-nav-ctrls {
@@ -5581,7 +5850,7 @@ img {
   background-color: #d7cfc5;
 }
 
-/* SECTION 3: Featured Properties Split Layout */
+/* SECTION 3: Featured Collection Split Layout */
 .desktop-featured-header {
   display: flex;
   justify-content: space-between;
@@ -5765,6 +6034,10 @@ img {
   line-height: 1.5;
   color: #76777d;
   margin: 6px 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .desktop-small-card-pills {
@@ -5774,6 +6047,9 @@ img {
 }
 
 .desktop-small-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 9px;
   font-weight: 600;
   color: #5a5651;
@@ -5885,6 +6161,10 @@ img {
   line-height: 1.6;
   color: #76777d;
   margin: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .desktop-premium-pills-row {
@@ -5895,6 +6175,9 @@ img {
 }
 
 .desktop-premium-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 10px;
   font-weight: 500;
   color: #5a5651;
@@ -5902,6 +6185,73 @@ img {
   border-radius: 99px;
   padding: 5px 12px;
   background-color: transparent;
+}
+
+.desktop-premium-pill svg,
+.desktop-small-card-pill svg {
+  width: 12px;
+  height: 12px;
+  color: #446B4A;
+  flex-shrink: 0;
+}
+
+.desktop-featured-collection-section .desktop-featured-header {
+  margin-bottom: 54px;
+}
+
+.desktop-featured-collection-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  gap: 42px;
+  align-items: stretch;
+}
+
+.desktop-featured-large-card,
+.desktop-small-row-card-wrapper,
+.mobile-featured-large-card,
+.mobile-small-row-card-wrapper {
+  color: inherit;
+  text-decoration: none;
+}
+
+.desktop-featured-large-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desktop-featured-collection-stack {
+  gap: 22px;
+}
+
+.desktop-featured-large-card .desktop-premium-card {
+  height: 100%;
+  min-height: 600px;
+  padding: 22px;
+}
+
+.desktop-featured-large-card .desktop-premium-img-wrapper {
+  height: 390px;
+}
+
+.desktop-featured-large-card img,
+.desktop-small-row-card-wrapper img,
+.mobile-featured-large-card img,
+.mobile-small-row-card-wrapper img {
+  transition: transform 620ms ease;
+}
+
+.desktop-featured-large-card:hover img,
+.desktop-small-row-card-wrapper:hover img,
+.mobile-featured-large-card:hover img,
+.mobile-small-row-card-wrapper:hover img {
+  transform: scale(1.045);
+}
+
+.desktop-featured-large-card:hover .desktop-premium-card,
+.desktop-small-row-card-wrapper:hover .desktop-small-row-card {
+  box-shadow: 0 18px 46px rgba(11, 28, 48, 0.08);
 }
 
 /* SECTION 4: Split Panel Showcase */

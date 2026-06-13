@@ -707,10 +707,26 @@ function createGalleryTexture(item: BaliCollectionItem, images: HTMLImageElement
     context.fillRect(i4X, r3Y, r3RW, r3H);
     context.restore();
 
-    // "EXPLORE →" label at bottom
+    // "EXPLORE" label at bottom
     context.fillStyle = offWhite;
     context.font = "800 14px Arial";
-    context.fillText("EXPLORE  \u2192", i4X + 20, r3Y + r3H - 22);
+    context.fillText("EXPLORE", i4X + 20, r3Y + r3H - 22);
+
+    // Draw clean vector arrow manually to prevent emoji translation on mobile/OS
+    const textWidth = context.measureText("EXPLORE").width;
+    const arrowX = i4X + 20 + textWidth + 8;
+    const arrowY = r3Y + r3H - 27; // Center line of text
+    context.strokeStyle = offWhite;
+    context.lineWidth = 2.5;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+    context.beginPath();
+    context.moveTo(arrowX, arrowY);
+    context.lineTo(arrowX + 8, arrowY);
+    context.lineTo(arrowX + 5, arrowY - 3);
+    context.moveTo(arrowX + 8, arrowY);
+    context.lineTo(arrowX + 5, arrowY + 3);
+    context.stroke();
   } else {
     context.fillStyle = "rgba(68, 107, 74, 0.035)";
     roundedRect(context, i4X, r3Y, r3RW, r3H, R);
@@ -851,9 +867,9 @@ function createBackCoverTexture() {
   return canvas.toDataURL("image/png");
 }
 
-async function buildBookPages() {
+async function buildBookPages(sourceCollections: BaliCollectionItem[]) {
   const remoteImageSets = await fetchCollectionImageSets();
-  const collections = mergeCollectionImages(baliCollections, remoteImageSets);
+  const collections = mergeCollectionImages(sourceCollections, remoteImageSets);
   const collectionImages = await Promise.all(collections.map((item) => loadCollectionImages(item)));
   const galleryTextures = collections.map((item, index) => createGalleryTexture(item, collectionImages[index] ?? []));
   const infoTextures = collections.map((item, index) => createInfoTexture(item, collectionImages[index] ?? []));
@@ -1084,7 +1100,7 @@ function BookExperience({
 }) {
   return (
     <>
-      <group rotation-x={-Math.PI / 4} scale={1.58}>
+      <group rotation-x={0} scale={1.58}>
         <Book page={page} pages={pages} setPage={setPage} />
       </group>
       <hemisphereLight args={["#fff7ea", "#9f8e7c", 0.48]} />
@@ -1097,11 +1113,11 @@ function BookExperience({
         shadow-bias={-0.00008}
       />
       <spotLight position={[-3.4, 2.2, 4]} intensity={0.26} angle={0.38} penumbra={0.85} />
-      <mesh position-y={-1.82} rotation-x={-Math.PI / 2} receiveShadow>
+      <mesh position-y={-1.5} rotation-x={-Math.PI / 2} receiveShadow>
         <planeGeometry args={[100, 100]} />
         <shadowMaterial transparent opacity={0.14} />
       </mesh>
-      <Html position={[0, -2.42, 0]} center>
+      <Html position={[0, -2.0, 0]} center>
         <span className="bali-book-page-count">
           {page === 0 ? "Cover" : page === pages.length ? "Back cover" : `Destination ${page}`}
         </span>
@@ -1110,15 +1126,19 @@ function BookExperience({
   );
 }
 
-export default function BaliFlipBook() {
+type BaliFlipBookProps = {
+  collections?: BaliCollectionItem[];
+};
+
+export default function BaliFlipBook({ collections = baliCollections }: BaliFlipBookProps) {
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState<BookPageData[]>([]);
-  const activeCollection = baliCollections[Math.max(0, Math.min(baliCollections.length - 1, page - 1))] ?? baliCollections[0];
+  const activeCollection = collections[Math.max(0, Math.min(collections.length - 1, page - 1))] ?? collections[0];
 
   useEffect(() => {
     let isMounted = true;
 
-    buildBookPages()
+    buildBookPages(collections)
       .then((builtPages) => {
         if (isMounted) {
           setPages(builtPages);
@@ -1133,7 +1153,7 @@ export default function BaliFlipBook() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [collections]);
 
   useEffect(() => {
     if (page === 0) {
@@ -1154,7 +1174,7 @@ export default function BaliFlipBook() {
           <Canvas
             shadows
             dpr={[1, 1.5]}
-            camera={{ position: [-0.18, 0.96, 4.82], fov: 39 }}
+            camera={{ position: [-0.18, 0, 5.2], fov: 39 }}
             gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
           >
             <Suspense fallback={null}>

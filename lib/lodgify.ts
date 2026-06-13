@@ -1,7 +1,11 @@
 export type {
   AvailabilityDay,
   AvailabilityStatus,
+  FeaturedCollectionVilla,
+  HomepageStayGroup,
+  HomepageStayVilla,
   LodgifyRateQuote,
+  SignatureVilla,
   VillaSearchResult,
   VillaSearchParams,
   VillaSummary,
@@ -25,6 +29,10 @@ export {
 
 export {
   getProperties,
+  getHomepageBaliCollections,
+  getHomepageFeaturedVillas,
+  getHomepageSignatureVilla,
+  getHomepageStayGroups,
   getPropertyById,
   getPropertyImages,
   getPropertyRooms,

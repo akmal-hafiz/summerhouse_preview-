@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
 import ExploreBaliMobileCarousel from "@/components/sections/ExploreBaliMobileCarousel";
+import { baliCollections as fallbackCollections, type BaliCollectionItem } from "@/data/baliCollections";
 
 const BaliFlipBook = dynamic(() => import("@/components/three/BaliFlipBook"), {
   ssr: false,
@@ -26,7 +27,15 @@ function useDesktopCanvas() {
   return isDesktop;
 }
 
-export default function ExploreBaliBookSection({ staticFallback = false }: { staticFallback?: boolean }) {
+type ExploreBaliBookSectionProps = {
+  staticFallback?: boolean;
+  collections?: BaliCollectionItem[];
+};
+
+export default function ExploreBaliBookSection({
+  staticFallback = false,
+  collections = fallbackCollections,
+}: ExploreBaliBookSectionProps) {
   const isDesktop = useDesktopCanvas();
 
   return (
@@ -48,11 +57,11 @@ export default function ExploreBaliBookSection({ staticFallback = false }: { sta
 
         {isDesktop && !staticFallback ? (
           <div className="bali-book-desktop" aria-label="Interactive Bali destination flip book">
-            <BaliFlipBook />
+            <BaliFlipBook collections={collections} />
             <p className="bali-book-instruction">Turn the pages and explore Bali.</p>
           </div>
         ) : (
-          <ExploreBaliMobileCarousel />
+          <ExploreBaliMobileCarousel collections={collections} />
         )}
       </div>
     </section>

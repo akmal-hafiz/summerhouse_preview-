@@ -237,62 +237,39 @@ const amenities = [
   { id: "safety-care", label: "Safety & Care", icon: FiShield },
 ];
 
-const reviewThemes = [
+const testimonials = [
   {
-    id: "quiet-arrivals",
-    author: "Guest note",
-    location: "Arrival experience",
-    date: "Recent stay",
-    title: "Quiet arrivals",
-    text: "Guests often value that the first moments feel simple: clear directions, a ready home, and a team that responds without fuss.",
+    id: "review-1",
+    author: "Naomi S.",
+    location: "Stockholm, Sweden",
+    stars: 5,
+    text: "It felt like a private retreat. Everything was effortless — from check-in to the little design touches.",
+    avatar: "/Found_myself..jpg",
   },
   {
-    id: "homes-with-atmosphere",
-    author: "Guest note",
-    location: "Villa atmosphere",
-    date: "Recent stay",
-    title: "Homes with atmosphere",
-    text: "The villas are chosen for the way light, privacy, and materials make daily life feel slower and more personal.",
+    id: "review-2",
+    author: "Carlos N.",
+    location: "Lisbon, Portugal",
+    stars: 4,
+    text: "A perfect spot to disconnect and breathe. Quiet, clean, and designed with so much care. I loved every day there",
+    avatar: "/homepage_villa/curated-7.webp",
   },
   {
-    id: "local-recommendations",
-    author: "Guest note",
-    location: "Island guidance",
-    date: "Recent stay",
-    title: "Local recommendations",
-    text: "From restaurants to drivers and island plans, the stay feels easier because the surrounding details are already understood.",
+    id: "review-3",
+    author: "Emma L.",
+    location: "London, UK",
+    stars: 5,
+    text: "The architectural design is stunning. Mornings spent by the pool with the sound of the jungle were absolute bliss.",
+    avatar: "/homepage_villa/curated-2-detail.webp",
   },
   {
-    id: "longer-stays",
-    author: "Guest note",
-    location: "Longer stays",
-    date: "Recent stay",
-    title: "Comfort for longer stays",
-    text: "Families, couples, and guests working between waves appreciate homes that support both rest and ordinary routines.",
-  },
-  {
-    id: "calm-service",
-    author: "Guest note",
-    location: "Hospitality",
-    date: "Recent stay",
-    title: "Service that stays calm",
-    text: "Requests are handled with warmth and restraint, so the experience feels hosted, not over-managed.",
-  },
-  {
-    id: "sense-of-bali",
-    author: "Guest note",
-    location: "Bali rhythm",
-    date: "Recent stay",
-    title: "A real sense of Bali",
-    text: "Each home is presented as a quiet base for living with the island, not just passing through it.",
-  },
-];
-
-const reviewStats = [
-  { id: "cleanliness", value: "4.9", label: "Cleanliness" },
-  { id: "accuracy", value: "5.0", label: "Accuracy" },
-  { id: "check-in", value: "5.0", label: "Check-in" },
-  { id: "communication", value: "5.0", label: "Communication" },
+    id: "review-4",
+    author: "Marc K.",
+    location: "Munich, Germany",
+    stars: 5,
+    text: "Exceeded all expectations. The team was incredibly helpful, booking local drivers and suggesting hidden beach clubs.",
+    avatar: "/homepage_villa/curated-6-exterior.webp",
+  }
 ];
 
 const faqs = [
@@ -493,6 +470,23 @@ function CountUp({ to, duration = 1.4, decimals = 0 }: { to: number; duration?: 
 }
 
 export default function About({ destinations = [] }: AboutProps) {
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveReviewIndex((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handlePrev = () => {
+    setActiveReviewIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const handleNext = () => {
+    setActiveReviewIndex((prev) => (prev + 1) % testimonials.length);
+  };
+
   const storySectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: storySectionRef,
@@ -862,51 +856,131 @@ export default function About({ destinations = [] }: AboutProps) {
         </motion.div>
       </section>
 
-      <section className={styles.reviewsSection}>
-        <motion.div {...fadeUp} className={styles.reviewHeader}>
-          <p className={styles.darkEyebrow}>Reviews</p>
-          <h2><CountUp to={4.98} decimals={2} /></h2>
-          <p>
-            We are proud to shape stays that feel considered before arrival, calm during the visit, and easy
-            to remember after check-out.
-          </p>
-        </motion.div>
-        <div className={styles.reviewStatsRow}>
-          {reviewStats.map((stat) => (
-            <div key={stat.id}>
-              <strong>{stat.value}</strong>
-              <span>{stat.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className={styles.reviewGrid}>
-          {reviewThemes.map((review, index) => (
-            <motion.article
-              variants={reviewCardVariant}
-              custom={index}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={reviewCardVariant.viewport}
-              key={review.id}
-              className={styles.reviewCard}
-            >
-              <div key={`${review.id}-header`} className={styles.reviewCardHeader}>
-                <span className={styles.reviewAvatar}>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <strong>{review.author}</strong>
-                  <span>{review.location}</span>
-                </div>
-                <em>5.0</em>
+      <section className={styles.newReviewsSection}>
+        <div className={styles.newReviewsContainer}>
+          {/* Header */}
+          <div className={styles.newReviewsHeader}>
+            <span className={styles.newReviewsKicker}>Reviews</span>
+            <h2 className={styles.newReviewsHeading}>What do our guests say</h2>
+          </div>
+
+          {/* Grid Layout (2-column on desktop, stacked on mobile) */}
+          <div className={styles.newReviewsGrid}>
+            
+            {/* Left Card: Summary Rating Dashboard */}
+            <div className={styles.ratingSummaryCard}>
+              <div className={styles.ratingBigRow}>
+                <span className={styles.ratingStarIcon}>★</span>
+                <span className={styles.ratingValueBig}>4.8</span>
               </div>
-              <h3 key={`${review.id}-title`}>{review.title}</h3>
-              <p key={`${review.id}-text`}>{review.text}</p>
-              <time key={`${review.id}-date`}>{review.date}</time>
-            </motion.article>
-          ))}
+              
+              <div className={styles.ratingMetricRows}>
+                <div className={styles.metricRow}>
+                  <span className={styles.metricLabel}>Cleanliness</span>
+                  <div className={styles.metricBarTrack}>
+                    <div className={styles.metricBarFill} style={{ width: "98%" }} />
+                  </div>
+                  <span className={styles.metricVal}>4.9</span>
+                </div>
+                
+                <div className={styles.metricRow}>
+                  <span className={styles.metricLabel}>Location</span>
+                  <div className={styles.metricBarTrack}>
+                    <div className={styles.metricBarFill} style={{ width: "94%" }} />
+                  </div>
+                  <span className={styles.metricVal}>4.7</span>
+                </div>
+                
+                <div className={styles.metricRow}>
+                  <span className={styles.metricLabel}>Value</span>
+                  <div className={styles.metricBarTrack}>
+                    <div className={styles.metricBarFill} style={{ width: "96%" }} />
+                  </div>
+                  <span className={styles.metricVal}>4.8</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Active Testimonial Card */}
+            <div className={styles.activeTestimonialBlock}>
+              <div className={styles.testimonialContentArea}>
+                <motion.div
+                  key={activeReviewIndex}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {/* Star Rating */}
+                  <div className={styles.testimonialStars}>
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <span 
+                        key={idx} 
+                        className={idx < testimonials[activeReviewIndex].stars ? styles.starSolid : styles.starOutline}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Quote Text */}
+                  <blockquote className={styles.testimonialQuoteText}>
+                    “{testimonials[activeReviewIndex].text}”
+                  </blockquote>
+
+                  {/* Author Info Group */}
+                  <div className={styles.testimonialAuthorRow}>
+                    <div className={styles.authorAvatarWrapper}>
+                      <Image
+                        src={testimonials[activeReviewIndex].avatar}
+                        alt={testimonials[activeReviewIndex].author}
+                        fill
+                        sizes="48px"
+                        className="object-cover rounded-full"
+                      />
+                    </div>
+                    <div className={styles.authorMeta}>
+                      <strong className={styles.authorName}>{testimonials[activeReviewIndex].author}</strong>
+                      <span className={styles.authorLocation}>{testimonials[activeReviewIndex].location}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Navigation Arrows on the right side */}
+              <div className={styles.testimonialNavCtrls}>
+                <button 
+                  type="button" 
+                  onClick={handlePrev} 
+                  className={styles.testimonialNavArrow} 
+                  aria-label="Previous review"
+                >
+                  ↑
+                </button>
+                <button 
+                  type="button" 
+                  onClick={handleNext} 
+                  className={styles.testimonialNavArrow} 
+                  aria-label="Next review"
+                >
+                  ↓
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Centered CTA Button */}
+          <div className={styles.ctaButtonWrapper}>
+            <a 
+              href="https://www.airbnb.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className={styles.airbnbCtaButton}
+            >
+              Check all 200+ reviews
+            </a>
+          </div>
         </div>
-        <Link href="/contact" className={styles.viewAllButton}>
-          View All
-        </Link>
       </section>
 
       <section className={styles.faqSection}>

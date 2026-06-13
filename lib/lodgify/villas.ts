@@ -18,12 +18,56 @@ import {
   getRoomFacts,
 } from "./normalizers";
 import { compact, unique } from "./runtime";
-import type { LodgifyProperty, LodgifyRoom, VillaDetail, VillaSearchParams, VillaSearchResult, VillaSummary } from "./types";
+import type {
+  FeaturedCollectionVilla,
+  HomepageStayGroup,
+  HomepageStayVilla,
+  LodgifyProperty,
+  LodgifyRoom,
+  SignatureVilla,
+  VillaDetail,
+  VillaSearchParams,
+  VillaSearchResult,
+  VillaSummary,
+} from "./types";
+import type { BaliCollectionItem } from "@/data/baliCollections";
 
 export const getProperties = fetchProperties;
 export const getPropertyById = fetchPropertyById;
 export const getPropertyRooms = fetchPropertyRooms;
 export const getPropertyImages = fetchPropertyImages;
+
+const DEFAULT_FEATURED_PROPERTY_IDS = ["475365", "475366", "475372", "703452"];
+const DEFAULT_FEATURED_HOME_IDS = ["796460", "475365", "475372"];
+const DEFAULT_SHORT_STAY_IDS = ["703452", "475366", "751982"];
+const DEFAULT_EXTENDED_STAY_IDS = ["796460", "761507", "762712"];
+const FALLBACK_COLLECTION_IMAGES = [
+  "/homepage_villa/VillaZen.webp",
+  "/homepage_villa/curated-3-corner.webp",
+  "/homepage_villa/CactusEstate.webp",
+  "/homepage_villa/curated-8.webp",
+  "/homepage_villa/rumahmimosa.webp",
+];
+
+function getConfiguredFeaturedPropertyIds() {
+  const configured = process.env.FEATURED_PROPERTY_IDS || process.env.HOMEPAGE_FEATURED_PROPERTY_IDS || "";
+  const ids = configured
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  return ids.length ? ids : DEFAULT_FEATURED_PROPERTY_IDS;
+}
+
+function getConfiguredIds(envKey: string, fallback: string[]) {
+  const configured = process.env[envKey] || "";
+  const ids = configured
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  return ids.length ? ids : fallback;
+}
 
 function normalizeGuestCount(params: VillaSearchParams) {
   if (params.guests) return params.guests;
@@ -130,21 +174,12 @@ export async function getVillaSearchOptions() {
     .filter((price) => price > 0);
 
   activeProperties.forEach((property) => {
-    if (property.country_code === "ID" || /bali|canggu|ubud|seminyak|legian|kerobokan/i.test([
-      property.state,
-      property.city,
-      property.address,
-      property.name,
-    ].filter(Boolean).join(" "))) {
-      locationSet.add("Indonesia");
+    if (property.city) {
+      locationSet.add(String(property.city).trim());
     }
-
-    [property.country, property.state, property.city, property.address]
-      .filter(Boolean)
-      .forEach((value) => locationSet.add(String(value)));
   });
 
-  const priority = ["Indonesia", "Bali", "Canggu", "Canggu - Berawa", "Canggu - Padonan", "Kerobokan", "Legian", "Ubud"];
+  const priority = ["Canggu", "Canggu - Berawa", "Canggu - Padonan", "Pererenan", "Umalas", "Ubud", "Kerobokan", "Legian"];
   const locations = Array.from(locationSet).sort((a, b) => {
     const aIndex = priority.indexOf(a);
     const bIndex = priority.indexOf(b);
@@ -162,6 +197,349 @@ export async function getVillaSearchOptions() {
       max: prices.length ? Math.max(...prices) : null,
     },
   };
+}
+
+function propertyToFeaturedCollectionVilla(
+  property: LodgifyProperty,
+  rooms: LodgifyRoom[]
+): FeaturedCollectionVilla | null {
+  const summary = propertyToSummary(property);
+  if (!summary) return null;
+
+  const facts = getRoomFacts(rooms, property);
+  const images = getImageSet(property, rooms);
+  const capacity = getCapacityFromRooms(rooms, property) || facts.guests || summary.guests;
+
+  return {
+    id: summary.id,
+    name: summary.name,
+    location: property.city || property.location?.name || "Bali",
+    description: summary.description,
+    imageUrl: images[0] || summary.imageUrl,
+    priceLabel: summary.priceLabel,
+    guests: capacity,
+    bedrooms: facts.bedrooms || summary.bedrooms,
+    bathrooms: facts.bathrooms || summary.bathrooms,
+    href: `/villas/${summary.id}`,
+  };
+}
+
+export async function getHomepageFeaturedVillas(limit = 4) {
+  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
+  const configuredIds = getConfiguredFeaturedPropertyIds();
+  const configuredSet = new Set(configuredIds.map(String));
+  const configuredProperties = configuredIds
+    .map((id) => properties.find((property) => String(property.id) === id))
+    .filter((property): property is LodgifyProperty => Boolean(property));
+  const fallbackProperties = properties.filter((property) => property.is_featured || !configuredSet.has(String(property.id)));
+  const seenPropertyIds = new Set<string>();
+  const selectedProperties = [...configuredProperties, ...fallbackProperties].filter((property) => {
+    if (!property.id) return false;
+    const id = String(property.id);
+    if (seenPropertyIds.has(id)) return false;
+    seenPropertyIds.add(id);
+    return true;
+  }).slice(0, limit);
+
+  const villas = await Promise.all(
+    selectedProperties.map(async (property) => {
+      if (!property.id) return null;
+      const rooms = await fetchPropertyRooms(property.id);
+      return propertyToFeaturedCollectionVilla(property, rooms);
+    })
+  );
+
+  return compact(villas);
+}
+
+function propertyToHomepageStayVilla(
+  property: LodgifyProperty,
+  rooms: LodgifyRoom[]
+): HomepageStayVilla | null {
+  const featured = propertyToFeaturedCollectionVilla(property, rooms);
+  if (!featured) return null;
+
+  return {
+    ...featured,
+    amenitiesPreview: getAmenityPreview(rooms),
+    priceValue: getComparablePrice(property),
+  };
+}
+
+async function getHomepageVillaFromProperty(property: LodgifyProperty) {
+  if (!property.id) return null;
+  const rooms = await fetchPropertyRooms(property.id);
+  return propertyToHomepageStayVilla(property, rooms);
+}
+
+function propertiesByConfiguredIds(properties: LodgifyProperty[], ids: string[]) {
+  return ids
+    .map((id) => properties.find((property) => String(property.id) === id))
+    .filter((property): property is LodgifyProperty => Boolean(property));
+}
+
+async function buildStayGroup(
+  properties: LodgifyProperty[],
+  id: HomepageStayGroup["id"],
+  label: string,
+  description: string,
+  configuredIds: string[],
+  fallbackProperties: LodgifyProperty[],
+) {
+  const seen = new Set<string>();
+  const candidates = [...propertiesByConfiguredIds(properties, configuredIds), ...fallbackProperties]
+    .filter((property) => {
+      if (!property.id) return false;
+      const propertyId = String(property.id);
+      if (seen.has(propertyId)) return false;
+      seen.add(propertyId);
+      return true;
+    })
+    .slice(0, 8);
+
+  const villas = compact(await Promise.all(candidates.map(getHomepageVillaFromProperty))).slice(0, 3);
+
+  return {
+    id,
+    label,
+    description,
+    villas,
+  };
+}
+
+export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
+  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
+  const byPriceAsc = [...properties].sort((a, b) => getComparablePrice(a) - getComparablePrice(b));
+  const byPriceDesc = [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
+  const extendedFallback = properties
+    .filter((property) => /pererenan|umalas|berawa|canggu/i.test([property.city, property.name].filter(Boolean).join(" ")))
+    .sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
+
+  return Promise.all([
+    buildStayGroup(
+      properties,
+      "short-stays",
+      "Short Stays",
+      "Weekend escapes and easy Bali breaks for a lighter, flexible stay.",
+      getConfiguredIds("SHORT_STAY_PROPERTY_IDS", DEFAULT_SHORT_STAY_IDS),
+      byPriceAsc,
+    ),
+    buildStayGroup(
+      properties,
+      "extended-stays",
+      "Extended Stays",
+      "Private homes made for settling in, working slowly, and living with more room.",
+      getConfiguredIds("EXTENDED_STAY_PROPERTY_IDS", DEFAULT_EXTENDED_STAY_IDS),
+      extendedFallback,
+    ),
+    buildStayGroup(
+      properties,
+      "featured-homes",
+      "Featured Homes",
+      "Handpicked SummerHouse stays with standout design, setting, and guest comfort.",
+      getConfiguredIds("FEATURED_HOME_PROPERTY_IDS", DEFAULT_FEATURED_HOME_IDS),
+      byPriceDesc,
+    ),
+  ]);
+}
+
+function getSignatureSubtitle(villa: HomepageStayVilla) {
+  const location = villa.location ? ` in ${villa.location}` : "";
+  return `Our most exclusive estate in the current SummerHouse collection${location}.`;
+}
+
+export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null> {
+  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
+  const [property] = [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
+  if (!property?.id) return null;
+
+  const rooms = await fetchPropertyRooms(property.id);
+  const villa = propertyToHomepageStayVilla(property, rooms);
+  if (!villa) return null;
+
+  const images = getImageSet(property, rooms);
+  return {
+    ...villa,
+    eyebrow: "Signature Villa",
+    title: "Most Exclusive Stay",
+    subtitle: getSignatureSubtitle(villa),
+    description: "A five-bedroom tropical estate with private pool, full-villa comfort, and a calmer Pererenan rhythm.",
+    address: property.city ? `${property.city}, Bali` : "Bali",
+    images,
+  };
+}
+
+function getCollectionProfile(city: string) {
+  const normalized = city.toLowerCase();
+  if (normalized.includes("berawa")) {
+    return {
+      category: "Cafe Coastline",
+      moods: ["Beach", "Cafes", "Design", "Social"],
+      description: "Stylish homes close to cafes, beach clubs, and the polished rhythm of Berawa.",
+      highlights: ["Beach Clubs", "Cafe Culture", "Design Villas", "Easy Dining"],
+      bestFor: ["Friends", "Couples", "Lifestyle Stays"],
+      facts: [
+        { label: "Mood", value: "Social coastal living" },
+        { label: "Pace", value: "Easy and connected" },
+        { label: "Stay style", value: "Design villas" },
+      ],
+    };
+  }
+
+  if (normalized.includes("pererenan")) {
+    return {
+      category: "Quiet Coast",
+      moods: ["Surf", "Village", "Privacy", "Slow Living"],
+      description: "A quieter coastal pocket for surf mornings, private villas, and slower evenings.",
+      highlights: ["Surf Mornings", "Village Calm", "Private Pools", "Dining Nearby"],
+      bestFor: ["Longer Stays", "Couples", "Families"],
+      facts: [
+        { label: "Mood", value: "Quiet coastal calm" },
+        { label: "Pace", value: "Slow and spacious" },
+        { label: "Stay style", value: "Private estates" },
+      ],
+    };
+  }
+
+  if (normalized.includes("padonan")) {
+    return {
+      category: "Calm Canggu",
+      moods: ["Local", "Quiet", "Modern", "Practical"],
+      description: "Design-led homes in a calmer Canggu neighborhood with easy access to the coast.",
+      highlights: ["Quiet Lanes", "Modern Lofts", "Local Rhythm", "Canggu Access"],
+      bestFor: ["Remote Work", "Couples", "Slow Trips"],
+      facts: [
+        { label: "Mood", value: "Residential calm" },
+        { label: "Pace", value: "Balanced and practical" },
+        { label: "Stay style", value: "Modern homes" },
+      ],
+    };
+  }
+
+  if (normalized.includes("umalas")) {
+    return {
+      category: "Leafy Privacy",
+      moods: ["Leafy", "Private", "Central", "Relaxed"],
+      description: "Leafy villas with quiet privacy, central access, and a softer rhythm for private downtime.",
+      highlights: ["Leafy Streets", "Private Pools", "Central Access", "Quiet Dining"],
+      bestFor: ["Families", "Couples", "Long Stays"],
+      facts: [
+        { label: "Mood", value: "Soft privacy" },
+        { label: "Pace", value: "Calm and central" },
+        { label: "Stay style", value: "Private villas" },
+      ],
+    };
+  }
+
+  if (normalized.includes("ubud")) {
+    return {
+      category: "Jungle Retreats",
+      moods: ["Jungle", "Wellness", "River", "Culture"],
+      description: "Peaceful villas surrounded by rice fields, rivers, and tropical jungle.",
+      highlights: ["River Views", "Jungle Calm", "Wellness Rituals", "Cultural Days"],
+      bestFor: ["Couples", "Wellness", "Nature Lovers"],
+      facts: [
+        { label: "Mood", value: "Restorative nature" },
+        { label: "Pace", value: "Slow and quiet" },
+        { label: "Stay style", value: "Jungle villas" },
+      ],
+    };
+  }
+
+  if (normalized.includes("legian")) {
+    return {
+      category: "Classic Bali Base",
+      moods: ["Beach", "Dining", "Convenient", "Classic"],
+      description: "A practical coastal base close to restaurants, beaches, and classic Bali energy.",
+      highlights: ["Beach Access", "Restaurants", "Easy Transport", "Classic Bali"],
+      bestFor: ["Families", "First Trips", "Beach Days"],
+      facts: [
+        { label: "Mood", value: "Classic coastal Bali" },
+        { label: "Pace", value: "Easy and active" },
+        { label: "Stay style", value: "Convenient homes" },
+      ],
+    };
+  }
+
+  if (normalized.includes("kerobokan")) {
+    return {
+      category: "Connected Hideaway",
+      moods: ["Central", "Quiet", "Dining", "Access"],
+      description: "A connected Bali hideaway with easy routes to Umalas, Canggu, and nearby dining.",
+      highlights: ["Central Access", "Quiet Streets", "Dining Nearby", "Private Villas"],
+      bestFor: ["Longer Stays", "Small Groups", "Easy Access"],
+      facts: [
+        { label: "Mood", value: "Connected calm" },
+        { label: "Pace", value: "Flexible and easy" },
+        { label: "Stay style", value: "Private homes" },
+      ],
+    };
+  }
+
+  return {
+    category: "Bali Living",
+    moods: ["Private", "Comfort", "Design", "Ease"],
+    description: "A SummerHouse destination shaped by comfort, privacy, and thoughtful Bali living.",
+    highlights: ["Private Villas", "Calm Design", "Guest Comfort", "Easy Stays"],
+    bestFor: ["Couples", "Families", "Friends"],
+    facts: [
+      { label: "Mood", value: "Private Bali living" },
+      { label: "Pace", value: "Easy and personal" },
+      { label: "Stay style", value: "Curated homes" },
+    ],
+  };
+}
+
+export async function getHomepageBaliCollections(limit = 6): Promise<BaliCollectionItem[]> {
+  const properties = (await fetchProperties()).filter((property) => property.is_active !== false && property.city);
+  const grouped = new Map<string, LodgifyProperty[]>();
+
+  properties.forEach((property) => {
+    const city = String(property.city).trim();
+    if (!city) return;
+    if (!grouped.has(city)) grouped.set(city, []);
+    grouped.get(city)?.push(property);
+  });
+
+  const cityEntries = Array.from(grouped.entries())
+    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
+    .slice(0, limit);
+
+  const collections = await Promise.all(cityEntries.map(async ([city, cityProperties], index) => {
+    const profile = getCollectionProfile(city);
+    const sortedByPrice = [...cityProperties].sort((a, b) => getComparablePrice(a) - getComparablePrice(b));
+    const minPrice = sortedByPrice.find((property) => getComparablePrice(property) > 0);
+    const imageSources = await Promise.all(
+      cityProperties.slice(0, 3).map(async (property) => {
+        if (!property.id) return [];
+        const rooms = await fetchPropertyRooms(property.id);
+        return getImageSet(property, rooms);
+      })
+    );
+    const galleryImages = unique([...imageSources.flat(), ...FALLBACK_COLLECTION_IMAGES]).slice(0, 7);
+    const id = city.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+    return {
+      id,
+      location: city,
+      category: profile.category,
+      tag: profile.category,
+      moods: profile.moods,
+      description: profile.description,
+      highlights: profile.highlights,
+      bestFor: profile.bestFor,
+      facts: profile.facts,
+      villaCount: `${cityProperties.length} ${cityProperties.length === 1 ? "villa" : "villas"}`,
+      price: minPrice ? `From ${getRealPriceLabel(minPrice)} / night` : "Price confirmed at booking",
+      cta: `Explore Villas in ${city}`,
+      href: `/villas?location=${encodeURIComponent(city)}`,
+      image: galleryImages[0] || FALLBACK_COLLECTION_IMAGES[index % FALLBACK_COLLECTION_IMAGES.length],
+      imageAlt: `SummerHouse villa collection in ${city}`,
+      galleryImages,
+    };
+  }));
+
+  return collections;
 }
 
 async function getSearchResultForProperty(

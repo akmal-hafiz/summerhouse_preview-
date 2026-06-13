@@ -122,6 +122,39 @@ export type VillaSearchResult = VillaSummary & {
   isAvailableForSearch: boolean;
 };
 
+export type FeaturedCollectionVilla = {
+  id: LodgifyId;
+  name: string;
+  location: string;
+  description: string;
+  imageUrl: string;
+  priceLabel: string | null;
+  guests: number | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  href: string;
+};
+
+export type HomepageStayVilla = FeaturedCollectionVilla & {
+  amenitiesPreview: string[];
+  priceValue: number;
+};
+
+export type HomepageStayGroup = {
+  id: "short-stays" | "extended-stays" | "featured-homes";
+  label: string;
+  description: string;
+  villas: HomepageStayVilla[];
+};
+
+export type SignatureVilla = HomepageStayVilla & {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  address: string;
+  images: string[];
+};
+
 export type VillaDetail = {
   id: LodgifyId;
   name: string;

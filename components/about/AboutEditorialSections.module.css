@@ -936,175 +936,311 @@
   color: #fffefa;
 }
 
-.reviewsSection {
+.newReviewsSection {
   border-top: 1px solid var(--about-line);
+  background-color: #ffffff;
+  padding-top: clamp(4rem, 8vw, 7.5rem);
+  padding-bottom: clamp(4rem, 8vw, 7.5rem);
+  width: 100%;
 }
 
-.reviewHeader {
-  display: grid;
-  justify-items: center;
-  max-width: 43rem;
+.newReviewsContainer {
+  width: min(100%, 1280px);
   margin-inline: auto;
+  padding-inline: 24px;
+  box-sizing: border-box;
+}
+
+.newReviewsHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  margin-bottom: clamp(2.5rem, 5vw, 4.2rem);
 }
 
-.reviewHeader h2 {
-  margin-top: 0.25rem;
-  font-size: clamp(4rem, 8vw, 7.6rem);
-  letter-spacing: -0.075em;
-}
-
-.reviewHeader p {
-  max-width: 31rem;
-  margin: 0.8rem 0 0;
+.newReviewsKicker {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: var(--about-muted);
+}
+
+.newReviewsHeading {
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  line-height: 1.65;
-}
-
-.reviewStatsRow {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  width: min(100%, 34rem);
-  margin: 1.65rem auto clamp(2.5rem, 5vw, 4rem);
-}
-
-.reviewStatsRow div {
-  display: grid;
-  gap: 0.3rem;
-  justify-items: center;
-  padding-inline: 1rem;
-  border-right: 1px solid var(--about-line);
-  text-align: center;
-}
-
-.reviewStatsRow div:last-child {
-  border-right: 0;
-}
-
-.reviewStatsRow strong,
-.reviewStatsRow span {
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-}
-
-.reviewStatsRow strong {
+  font-size: clamp(2.1rem, 3.8vw, 3.5rem);
+  font-weight: 500;
   color: var(--about-ink);
-  font-size: 0.92rem;
-  font-weight: 800;
+  margin-top: 8px;
+  margin-bottom: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
-.reviewStatsRow span {
-  color: var(--about-muted);
-  font-size: 0.68rem;
-  font-weight: 700;
-}
-
-.reviewGrid {
+.newReviewsGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  width: min(100%, 78rem);
-  margin: 0 auto;
+  grid-template-columns: 420px 1fr;
+  gap: clamp(2.5rem, 5vw, 5.5rem);
+  align-items: start;
 }
 
-.reviewCard {
-  min-height: 13rem;
-  padding: 1.05rem;
-  border: 1px solid var(--about-line);
-  border-radius: 1rem;
-  background: rgba(255, 255, 252, 0.42);
+/* LEFT: Dashboard rating card */
+.ratingSummaryCard {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 32px;
+  padding: 36px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.015);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.reviewCardHeader {
+.ratingBigRow {
   display: flex;
   align-items: center;
-  gap: 0.72rem;
-  margin-bottom: 1.25rem;
-  color: var(--about-muted);
+  gap: 12px;
+}
+
+.ratingStarIcon {
+  font-size: 32px;
+  color: #1c1b18;
+}
+
+.ratingValueBig {
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.72rem;
-}
-
-.reviewAvatar {
-  display: grid;
-  flex: 0 0 auto;
-  width: 2.35rem;
-  height: 2.35rem;
-  place-items: center;
-  border-radius: 999px;
-  background: #d8c5a7;
-  color: var(--about-ink);
-  font-weight: 900;
-}
-
-.reviewCardHeader div {
-  min-width: 0;
-}
-
-.reviewCardHeader strong,
-.reviewCardHeader span,
-.reviewCardHeader em,
-.reviewCard time {
-  display: block;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-}
-
-.reviewCardHeader strong {
-  color: var(--about-ink);
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.reviewCardHeader span {
-  color: var(--about-muted);
-  font-weight: 650;
-}
-
-.reviewCardHeader em {
-  margin-left: auto;
-  color: var(--about-ink);
-  font-size: 0.72rem;
-  font-style: normal;
-  font-weight: 800;
-}
-
-.reviewCard h3 {
-  margin-bottom: 0.55rem;
-  font-size: 1rem;
-}
-
-.reviewCard p {
-  font-size: 0.79rem;
-  line-height: 1.58;
-}
-
-.reviewCard time {
-  margin-top: 1.2rem;
-  color: var(--about-muted);
-  font-size: 0.68rem;
+  font-size: 40px;
   font-weight: 700;
+  color: #1c1b18;
+  line-height: 1;
 }
 
-.viewAllButton {
+.ratingMetricRows {
   display: flex;
-  width: max-content;
-  min-height: 2.5rem;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metricRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.metricLabel {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #76777d;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.metricBarTrack {
+  flex-grow: 1;
+  height: 5px;
+  background: #e5e5ea;
+  border-radius: 99px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metricBarFill {
+  height: 100%;
+  background: #1c1b18;
+  border-radius: 99px;
+}
+
+.metricVal {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1c1b18;
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* RIGHT: Active Testimonial carousel card */
+.activeTestimonialBlock {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+  padding-top: 36px;
+  min-height: 220px;
+}
+
+.testimonialContentArea {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.testimonialStars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 18px;
+}
+
+.testimonialStars .starSolid {
+  color: #1c1b18;
+  font-size: 18px;
+}
+
+.testimonialStars .starOutline {
+  color: #e5e5ea;
+  font-size: 18px;
+}
+
+.testimonialQuoteText {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(17px, 2.1vw, 22px);
+  font-weight: 400;
+  color: #1c1b18;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+  padding: 0;
+  font-style: normal;
+}
+
+.testimonialAuthorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.authorAvatarWrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e5e5ea;
+  flex-shrink: 0;
+}
+
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorName {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1b18;
+}
+
+.authorLocation {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  color: #76777d;
+  font-weight: 400;
+}
+
+/* Navigation controls (arrow buttons stacked vertically) */
+.testimonialNavCtrls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.testimonialNavArrow {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.04);
+  color: #1c1b18;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin: clamp(2.2rem, 4vw, 3.2rem) auto 0;
-  padding: 0 1.25rem;
-  border-radius: 999px;
-  background: var(--about-ink);
-  color: #fffefa;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.78rem;
-  font-weight: 800;
-  transition: transform 220ms ease, background 220ms ease;
+  cursor: pointer;
+  transition: background-color 220ms ease, transform 220ms ease;
+  outline: none;
 }
 
-.viewAllButton:hover {
+.testimonialNavArrow:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: scale(1.05);
+}
+
+.testimonialNavArrow:active {
+  transform: scale(0.95);
+}
+
+/* CTA Link Button */
+.ctaButtonWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.airbnbCtaButton {
+  background: #1c1b18;
+  color: #ffffff;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background-color 220ms ease, transform 220ms ease;
+}
+
+.airbnbCtaButton:hover {
+  background: #2c2b28;
   transform: translateY(-2px);
-  background: var(--about-green);
+}
+
+.airbnbCtaButton:active {
+  transform: translateY(0);
+}
+
+/* MEDIA QUERIES FOR RESPONSIVE RESPONSIVENESS */
+@media (max-width: 1023px) {
+  .newReviewsGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .ratingSummaryCard {
+    max-width: 100%;
+    padding: 28px;
+    border-radius: 24px;
+  }
+  
+  .activeTestimonialBlock {
+    grid-template-columns: 1fr auto;
+    min-height: auto;
+    gap: 16px;
+    align-items: start;
+    padding-top: 0;
+  }
+  
+  .testimonialQuoteText {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 639px) {
+  .newReviewsSection {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  
+  .newReviewsContainer {
+    padding-inline: 16px;
+  }
 }
 
 .faqSection {

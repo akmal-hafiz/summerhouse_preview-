@@ -77,13 +77,13 @@ export default function VillaSearchForm({
         }
 
         setFetchedLocations([]);
-        setLocationError("Location filters are limited right now. You can still search all villas.");
+        setLocationError("Destinations are temporarily unavailable. You can still search without choosing an area.");
       })
       .catch((error) => {
         if (controller.signal.aborted || error?.name === "AbortError") return;
 
         setFetchedLocations([]);
-        setLocationError("Location filters are limited right now. You can still search all villas.");
+        setLocationError("Destinations are temporarily unavailable. You can still search without choosing an area.");
       })
       .finally(() => {
         if (!controller.signal.aborted) setIsLoadingLocations(false);
