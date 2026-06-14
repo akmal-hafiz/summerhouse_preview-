@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
@@ -31,6 +31,9 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
   const isLocked = isOpen || lightboxIndex !== null;
   useScrollLock(isLocked);
 
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
   const openLightbox = useCallback((index: number) => {
     setLightboxIndex(index);
   }, []);
@@ -46,6 +49,30 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
   const goNext = useCallback(() => {
     setLightboxIndex((prev) => (prev !== null && prev < photos.length - 1 ? prev + 1 : 0));
   }, [photos.length]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    const diffX = touchStartX.current - touchEndX.current;
+    const threshold = 50; // swipe threshold in px
+    if (diffX > threshold) {
+      // swiped left -> next
+      goNext();
+    } else if (diffX < -threshold) {
+      // swiped right -> prev
+      goPrev();
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   /* Keyboard navigation for lightbox */
   useEffect(() => {
@@ -141,7 +168,16 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
 
       {/* ── Lightbox (portaled to body) ── */}
       {lightboxIndex !== null && createPortal(
-        <div className="villa-lightbox" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Photo detail">
+        <div 
+          className="villa-lightbox" 
+          data-lenis-prevent 
+          role="dialog" 
+          aria-modal="true" 
+          aria-label="Photo detail"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="villa-lightbox__backdrop" onClick={closeLightbox} />
 
           <button type="button" className="villa-lightbox__close" onClick={closeLightbox} aria-label="Close">
