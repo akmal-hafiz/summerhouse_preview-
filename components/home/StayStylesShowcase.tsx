@@ -122,20 +122,6 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
         <div className="desktop-intro-header-row">
           <div>
             <h1 className="desktop-stay-heading">A home, not a hotel</h1>
-            <div className="desktop-brand-nav-row">
-              <div className="homepage-stay-tabs" aria-label="Choose stay style">
-                {availableGroups.map((group) => (
-                  <button
-                    type="button"
-                    key={group.id}
-                    className={group.id === activeGroup.id ? "is-active" : ""}
-                    onClick={() => setActiveGroupId(group.id)}
-                  >
-                    {group.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           <p className="desktop-brand-copy">
@@ -143,7 +129,21 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
           </p>
         </div>
 
-        <p className="homepage-stay-mode-desc">{activeGroup.description}</p>
+        <div className="desktop-stay-desc-tabs-row">
+          <p className="homepage-stay-mode-desc">{activeGroup.description}</p>
+          <div className="homepage-stay-tabs" aria-label="Choose stay style">
+            {availableGroups.map((group) => (
+              <button
+                type="button"
+                key={group.id}
+                className={group.id === activeGroup.id ? "is-active" : ""}
+                onClick={() => setActiveGroupId(group.id)}
+              >
+                {group.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="desktop-grid-3col">
           {activeGroup.villas.map((villa) => (

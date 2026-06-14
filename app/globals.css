@@ -11121,3 +11121,25 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     line-height: 1.15 !important;
   }
 }
+
+/* Reposition showcase tabs above the third card on desktop */
+@media (min-width: 1024px) {
+  .desktop-stay-desc-tabs-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 36px;
+    width: 100%;
+  }
+
+  .desktop-stay-desc-tabs-row .homepage-stay-mode-desc {
+    margin: 0 !important;
+    max-width: 640px;
+    align-self: flex-end;
+  }
+
+  .desktop-stay-desc-tabs-row .homepage-stay-tabs {
+    margin-top: 0 !important;
+    flex-shrink: 0;
+  }
+}
