@@ -84,17 +84,17 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
     const imagesLength = villa.images.length;
 
     const interval = setInterval(() => {
+      const currentStep = stepRef.current;
       setIndices((prev) => {
         const nextIndices = { ...prev };
-        if (stepRef.current === 0) {
+        if (currentStep === 0) {
           nextIndices.mid = getNextAvailableIndex(prev.mid, prev.small, imagesLength);
-          stepRef.current = 1;
         } else {
           nextIndices.small = getNextAvailableIndex(prev.small, prev.mid, imagesLength);
-          stepRef.current = 0;
         }
         return nextIndices;
       });
+      stepRef.current = currentStep === 0 ? 1 : 0;
     }, 4500); // Cycle one image every 4.5 seconds
 
     return () => clearInterval(interval);
