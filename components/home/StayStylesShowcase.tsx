@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
+import { motion } from "framer-motion";
 import type { HomepageStayGroup, HomepageStayVilla } from "@/lib/lodgify/types";
 
 type StayStylesShowcaseProps = {
@@ -93,16 +94,27 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
         </div>
 
         <div className="homepage-stay-tabs homepage-stay-tabs--mobile" aria-label="Choose stay style">
-          {availableGroups.map((group) => (
-            <button
-              type="button"
-              key={group.id}
-              className={group.id === activeGroup.id ? "is-active" : ""}
-              onClick={() => setActiveGroupId(group.id)}
-            >
-              {group.label}
-            </button>
-          ))}
+          {availableGroups.map((group) => {
+            const isActive = group.id === activeGroup.id;
+            return (
+              <button
+                type="button"
+                key={group.id}
+                className={isActive ? "is-active" : ""}
+                onClick={() => setActiveGroupId(group.id)}
+                style={{ position: "relative" }}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="activeStayTabMobile"
+                    className="homepage-stay-active-bg"
+                    transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                  />
+                )}
+                <span style={{ position: "relative", zIndex: 1 }}>{group.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         <p className="homepage-stay-mode-desc homepage-stay-mode-desc--mobile">{activeGroup.description}</p>
@@ -132,16 +144,27 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
         <div className="desktop-stay-desc-tabs-row">
           <p className="homepage-stay-mode-desc">{activeGroup.description}</p>
           <div className="homepage-stay-tabs" aria-label="Choose stay style">
-            {availableGroups.map((group) => (
-              <button
-                type="button"
-                key={group.id}
-                className={group.id === activeGroup.id ? "is-active" : ""}
-                onClick={() => setActiveGroupId(group.id)}
-              >
-                {group.label}
-              </button>
-            ))}
+            {availableGroups.map((group) => {
+              const isActive = group.id === activeGroup.id;
+              return (
+                <button
+                  type="button"
+                  key={group.id}
+                  className={isActive ? "is-active" : ""}
+                  onClick={() => setActiveGroupId(group.id)}
+                  style={{ position: "relative" }}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="activeStayTabDesktop"
+                      className="homepage-stay-active-bg"
+                      transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                    />
+                  )}
+                  <span style={{ position: "relative", zIndex: 1 }}>{group.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

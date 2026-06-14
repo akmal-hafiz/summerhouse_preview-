@@ -5514,6 +5514,7 @@ a.desktop-bawa-large-img-wrapper {
   letter-spacing: 0.02em;
   padding: 12px 18px;
   transition: background-color 220ms ease, color 220ms ease, transform 220ms ease;
+  position: relative;
 }
 
 .homepage-stay-tabs button:hover {
@@ -5522,8 +5523,17 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .homepage-stay-tabs button.is-active {
-  background: #0b1c30;
-  color: #ffffff;
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+.homepage-stay-active-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #0b1c30;
+  border-radius: 999px;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .homepage-stay-mode-desc {
@@ -11141,5 +11151,6 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   .desktop-stay-desc-tabs-row .homepage-stay-tabs {
     margin-top: 0 !important;
     flex-shrink: 0;
+    margin-right: clamp(1rem, 6.5vw, 10.5rem) !important;
   }
 }
