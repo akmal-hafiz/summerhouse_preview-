@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
 import { FiArrowRight } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { SignatureVilla } from "@/lib/lodgify/types";
 
 type SignatureVillaSpotlightProps = {
@@ -29,7 +32,74 @@ function getImage(villa: SignatureVilla, index: number) {
   return villa.images[index] || villa.imageUrl || "/homepage_villa/curated-6-exterior.webp";
 }
 
+function getNextAvailableIndex(
+  currentIndex: number,
+  excludeIndex: number,
+  length: number
+) {
+  if (length <= 3) {
+    return (currentIndex + 1) % length;
+  }
+  let next = (currentIndex + 1) % length;
+  // Exclude index 0 (large image) and excludeIndex (the other smaller image)
+  while (next === 0 || next === excludeIndex) {
+    next = (next + 1) % length;
+  }
+  return next;
+}
+
+function FadingImage({ src, alt, sizes, priority = false }: { src: string; alt: string; sizes?: string; priority?: boolean }) {
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", borderRadius: "inherit" }}>
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={src}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+        >
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className="object-cover"
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function SignatureVillaSpotlight({ villa, variant }: SignatureVillaSpotlightProps) {
+  const [indices, setIndices] = useState({ mid: 1, small: 2 });
+  const stepRef = useRef(0);
+
+  useEffect(() => {
+    if (!villa || !villa.images || villa.images.length <= 3) return;
+
+    const imagesLength = villa.images.length;
+
+    const interval = setInterval(() => {
+      setIndices((prev) => {
+        const nextIndices = { ...prev };
+        if (stepRef.current === 0) {
+          nextIndices.mid = getNextAvailableIndex(prev.mid, prev.small, imagesLength);
+          stepRef.current = 1;
+        } else {
+          nextIndices.small = getNextAvailableIndex(prev.small, prev.mid, imagesLength);
+          stepRef.current = 0;
+        }
+        return nextIndices;
+      });
+    }, 4500); // Cycle one image every 4.5 seconds
+
+    return () => clearInterval(interval);
+  }, [villa]);
+
   if (!villa) return null;
 
   const facts = formatFacts(villa);
@@ -86,7 +156,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           >
-            <Image src={getImage(villa, 1)} alt={`${villa.name} detail`} fill sizes="320px" className="object-cover" />
+            <FadingImage src={getImage(villa, indices.mid)} alt={`${villa.name} detail`} sizes="320px" />
           </motion.div>
 
           <motion.div 
@@ -126,7 +196,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           >
-            <Image src={getImage(villa, 2)} alt={`${villa.name} lifestyle`} fill sizes="320px" className="object-cover" />
+            <FadingImage src={getImage(villa, indices.small)} alt={`${villa.name} lifestyle`} sizes="320px" />
           </motion.div>
         </div>
       </section>
@@ -178,7 +248,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           >
             <div className="desktop-bawa-mid-img">
-              <Image src={getImage(villa, 1)} alt={`${villa.name} detail`} fill sizes="320px" className="object-cover" />
+              <FadingImage src={getImage(villa, indices.mid)} alt={`${villa.name} detail`} sizes="320px" />
             </div>
 
             <div className="desktop-bawa-desc-box">
@@ -200,7 +270,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             </div>
 
             <div className="desktop-bawa-small-img-wrapper">
-              <Image src={getImage(villa, 2)} alt={`${villa.name} lifestyle`} fill sizes="320px" className="object-cover" />
+              <FadingImage src={getImage(villa, indices.small)} alt={`${villa.name} lifestyle`} sizes="320px" />
             </div>
           </motion.div>
         </div>
