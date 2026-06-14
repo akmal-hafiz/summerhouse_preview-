@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { motion } from "framer-motion";
 import type { HomepageStayGroup, HomepageStayVilla } from "@/lib/lodgify/types";
@@ -75,17 +75,43 @@ function StayCard({ villa, variant }: { villa: HomepageStayVilla; variant: "desk
 
 export default function StayStylesShowcase({ groups, variant }: StayStylesShowcaseProps) {
   const availableGroups = groups.filter((group) => group.villas.length > 0);
-  const [activeGroupId, setActiveGroupId] = useState(availableGroups[0]?.id || "short-stays");
+  const [activeGroupId, setActiveGroupId] = useState<string>(availableGroups[0]?.id || "short-stays");
+  const [userInteracted, setUserInteracted] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
   const activeGroup = useMemo(
     () => availableGroups.find((group) => group.id === activeGroupId) || availableGroups[0],
     [activeGroupId, availableGroups]
   );
 
+  useEffect(() => {
+    if (userInteracted || isHovered || availableGroups.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setActiveGroupId((currentId) => {
+        const currentIndex = availableGroups.findIndex((g) => g.id === currentId);
+        const nextIndex = (currentIndex + 1) % availableGroups.length;
+        return availableGroups[nextIndex].id;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [userInteracted, isHovered, availableGroups]);
+
+  const handleTabClick = (groupId: string) => {
+    setActiveGroupId(groupId);
+    setUserInteracted(true);
+  };
+
   if (!activeGroup) return null;
 
   if (variant === "mobile") {
     return (
-      <section className="mobile-section">
+      <section 
+        className="mobile-section"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <div className="mobile-brand-header-col">
           <h1 className="mobile-brand-title">SUMMERHOUSES</h1>
           <p className="mobile-brand-copy">
@@ -101,7 +127,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
                 type="button"
                 key={group.id}
                 className={isActive ? "is-active" : ""}
-                onClick={() => setActiveGroupId(group.id)}
+                onClick={() => handleTabClick(group.id)}
                 style={{ position: "relative" }}
               >
                 {isActive && (
@@ -129,7 +155,11 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
   }
 
   return (
-    <section className="desktop-section">
+    <section 
+      className="desktop-section"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="desktop-container-shell">
         <div className="desktop-intro-header-row">
           <div>
@@ -151,7 +181,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
                   type="button"
                   key={group.id}
                   className={isActive ? "is-active" : ""}
-                  onClick={() => setActiveGroupId(group.id)}
+                  onClick={() => handleTabClick(group.id)}
                   style={{ position: "relative" }}
                 >
                   {isActive && (
