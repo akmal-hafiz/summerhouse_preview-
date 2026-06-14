@@ -11388,14 +11388,121 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   font-weight: 500;
 }
 
+/* --- AMENITIES GRID & MODAL STYLING --- */
+.villa-amenities__show {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.1rem;
+  padding: 0 2rem;
+  border: 1.5px solid #2e5c45;
+  border-radius: 99px;
+  background: transparent;
+  color: #2e5c45;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 2rem;
+  box-sizing: border-box;
+}
+
+.villa-amenities__show:hover {
+  background: #2e5c45;
+  color: #fffefa;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(46, 92, 69, 0.18);
+}
+
+.villa-amenities__show:active {
+  transform: translateY(0);
+}
+
+.villa-modal__panel--amenities {
+  max-width: 820px;
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+}
+
+.villa-amenities-modal__groups {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.25rem 3rem;
+  padding: 2.5rem 3rem;
+  box-sizing: border-box;
+}
+
+.villa-amenities-modal__groups section {
+  display: flex;
+  flex-direction: column;
+}
+
+.villa-amenities-modal__groups section h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1f1f1d;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.villa-amenities-modal__groups section h3 span {
+  color: #2e5c45;
+  font-size: 1.25rem;
+  display: inline-flex;
+}
+
+.villa-amenities-modal__groups section div {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.villa-amenities-modal__groups section p {
+  margin: 0;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.92rem;
+  color: #5f5a52;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  line-height: 1.4;
+}
+
+.villa-amenities-modal__groups section p::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2e5c45;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
 @media (max-width: 767px) {
   .villa-modal__panel {
     width: 92vw;
     border-radius: 2rem;
     background: rgba(255, 255, 255, 0.85);
   }
+  .villa-modal__panel--amenities {
+    max-width: 92vw;
+    background: rgba(255, 255, 255, 0.96) !important;
+  }
   .villa-modal__scroll {
     padding: 4vh 0;
+  }
+  .villa-amenities-modal__groups {
+    grid-template-columns: 1fr;
+    gap: 1.85rem;
+    padding: 1.75rem;
   }
   .villa-photo-modal__grid {
     grid-template-columns: repeat(2, 1fr);

@@ -26,6 +26,14 @@ const iconForGroup = (key: string) => {
   return "check_circle";
 };
 
+const formatAmenityName = (name: string) => {
+  if (!name) return "";
+  return name
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+    .trim();
+};
+
 export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesProps) {
   const [isOpen, setIsOpen] = useState(false);
   const visibleItems = groups.flatMap((group) => group.items.map((item) => ({ group, item }))).slice(0, 12);
@@ -43,7 +51,7 @@ export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesP
         {visibleItems.map(({ group, item }) => (
           <div key={`${group.key}-${item}`} className="villa-detail-amenity">
             <span className="material-symbols-outlined">{iconForGroup(group.key)}</span>
-            <span>{item}</span>
+            <span>{formatAmenityName(item)}</span>
           </div>
         ))}
       </div>
@@ -71,7 +79,7 @@ export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesP
                     </h3>
                     <div>
                       {group.items.map((item) => (
-                        <p key={`${group.key}-${item}`}>{item}</p>
+                        <p key={`${group.key}-${item}`}>{formatAmenityName(item)}</p>
                       ))}
                     </div>
                   </section>
