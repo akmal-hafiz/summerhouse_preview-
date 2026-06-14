@@ -112,14 +112,27 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="mobile-brand-header-col">
+        <motion.div 
+          className="mobile-brand-header-col"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h1 className="mobile-brand-title">SUMMERHOUSES</h1>
           <p className="mobile-brand-copy">
             Choose the kind of stay that fits your rhythm, from quick Bali escapes to longer private stays and handpicked SummerHouse homes.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="homepage-stay-tabs homepage-stay-tabs--mobile" aria-label="Choose stay style">
+        <motion.div 
+          className="homepage-stay-tabs homepage-stay-tabs--mobile" 
+          aria-label="Choose stay style"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        >
           {availableGroups.map((group) => {
             const isActive = group.id === activeGroup.id;
             return (
@@ -141,15 +154,49 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
               </button>
             );
           })}
-        </div>
+        </motion.div>
 
-        <p className="homepage-stay-mode-desc homepage-stay-mode-desc--mobile">{activeGroup.description}</p>
+        <motion.p 
+          className="homepage-stay-mode-desc homepage-stay-mode-desc--mobile"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          {activeGroup.description}
+        </motion.p>
 
-        <div className="mobile-category-row">
+        <motion.div 
+          key={activeGroupId}
+          className="mobile-category-row"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.08
+              }
+            }
+          }}
+        >
           {activeGroup.villas.map((villa) => (
-            <StayCard villa={villa} variant="mobile" key={villa.id} />
+            <motion.div
+              key={villa.id}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { 
+                  opacity: 1, 
+                  y: 0,
+                  transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+                }
+              }}
+            >
+              <StayCard villa={villa} variant="mobile" />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
     );
   }
@@ -161,7 +208,13 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="desktop-container-shell">
-        <div className="desktop-intro-header-row">
+        <motion.div 
+          className="desktop-intro-header-row"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div>
             <h1 className="desktop-stay-heading">A home, not a hotel</h1>
           </div>
@@ -169,9 +222,15 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
           <p className="desktop-brand-copy">
             Choose the kind of stay that fits your rhythm, from quick Bali escapes to longer private stays and handpicked SummerHouse homes.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="desktop-stay-desc-tabs-row">
+        <motion.div 
+          className="desktop-stay-desc-tabs-row"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        >
           <p className="homepage-stay-mode-desc">{activeGroup.description}</p>
           <div className="homepage-stay-tabs" aria-label="Choose stay style">
             {availableGroups.map((group) => {
@@ -196,13 +255,39 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
               );
             })}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="desktop-grid-3col">
+        <motion.div 
+          key={activeGroupId}
+          className="desktop-grid-3col"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.12
+              }
+            }
+          }}
+        >
           {activeGroup.villas.map((villa) => (
-            <StayCard villa={villa} variant="desktop" key={villa.id} />
+            <motion.div
+              key={villa.id}
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { 
+                  opacity: 1, 
+                  y: 0,
+                  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+                }
+              }}
+            >
+              <StayCard villa={villa} variant="desktop" />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 import ExploreBaliMobileCarousel from "@/components/sections/ExploreBaliMobileCarousel";
 import { baliCollections as fallbackCollections, type BaliCollectionItem } from "@/data/baliCollections";
@@ -41,7 +42,13 @@ export default function ExploreBaliBookSection({
   return (
     <section className="bali-collection-section">
       <div className="bali-collection-shell">
-        <div className="bali-collection-header">
+        <motion.div 
+          className="bali-collection-header"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="bali-collection-title-group">
             <span className="bali-collection-kicker">Summerhouses Journal</span>
             <h2 className="bali-collection-stacked-title">
@@ -53,15 +60,29 @@ export default function ExploreBaliBookSection({
           <p className="bali-collection-desc">
             Discover the character of Bali through its most iconic destinations, then find the perfect villa for your stay.
           </p>
-        </div>
+        </motion.div>
 
         {isDesktop && !staticFallback ? (
-          <div className="bali-book-desktop" aria-label="Interactive Bali destination flip book">
+          <motion.div 
+            className="bali-book-desktop" 
+            aria-label="Interactive Bali destination flip book"
+            initial={{ opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          >
             <BaliFlipBook collections={collections} />
             <p className="bali-book-instruction">Turn the pages and explore Bali.</p>
-          </div>
+          </motion.div>
         ) : (
-          <ExploreBaliMobileCarousel collections={collections} />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ExploreBaliMobileCarousel collections={collections} />
+          </motion.div>
         )}
       </div>
     </section>

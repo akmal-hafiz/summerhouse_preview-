@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
+import { motion } from "framer-motion";
 import type { SignatureVilla } from "@/lib/lodgify/types";
 
 type SignatureVillaSpotlightProps = {
@@ -37,7 +38,13 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
   if (variant === "mobile") {
     return (
       <section className="mobile-section mobile-section-border-y">
-        <div className="mobile-bawa-header-row">
+        <motion.div 
+          className="mobile-bawa-header-row"
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h2 className="mobile-bawa-title">{title}</h2>
           <div className="mobile-bawa-subtitle-col">
             <div className="mobile-bawa-sub-bar-stack">
@@ -46,28 +53,60 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             </div>
             <h3 className="mobile-bawa-subtitle">{villa.title.toUpperCase()}</h3>
           </div>
-        </div>
+        </motion.div>
 
         <div className="mobile-bawa-layout">
-          <div className="mobile-bawa-title-block">
+          <motion.div 
+            className="mobile-bawa-title-block"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
             <p className="mobile-bawa-villa-name">{cleanVillaName(villa.name)}</p>
             <p className="mobile-bawa-villa-loc">{villa.address || villa.location}</p>
-          </div>
+          </motion.div>
 
-          <Link className="mobile-bawa-large-img-wrapper" href={villa.href}>
-            <Image src={getImage(villa, 0)} alt={villa.name} fill sizes="320px" priority className="object-cover" />
-          </Link>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            style={{ width: "100%", display: "block" }}
+          >
+            <Link className="mobile-bawa-large-img-wrapper" href={villa.href}>
+              <Image src={getImage(villa, 0)} alt={villa.name} fill sizes="320px" priority className="object-cover" />
+            </Link>
+          </motion.div>
 
-          <div className="mobile-bawa-mid-img">
+          <motion.div 
+            className="mobile-bawa-mid-img"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          >
             <Image src={getImage(villa, 1)} alt={`${villa.name} detail`} fill sizes="320px" className="object-cover" />
-          </div>
+          </motion.div>
 
-          <div className="mobile-bawa-desc-box">
+          <motion.div 
+            className="mobile-bawa-desc-box"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
             <strong className="signature-villa-label">Why this home</strong>
             {villa.subtitle} Chosen for tropical architecture, privacy, and full-villa comfort.
-          </div>
+          </motion.div>
 
-          <div className="mobile-bawa-details-block">
+          <motion.div 
+            className="mobile-bawa-details-block"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+          >
             <div className="mobile-bawa-price-header">
               <h4 className="mobile-bawa-price-title">{formatPrice(villa)}</h4>
               <Link className="mobile-blue-square-icon-btn" href={villa.href} aria-label={`View ${villa.name}`}>
@@ -78,11 +117,17 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             <div className="mobile-bawa-pills-row">
               {facts.map((fact) => <span className="mobile-bawa-pill" key={fact}>{fact}</span>)}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mobile-bawa-small-img-wrapper">
+          <motion.div 
+            className="mobile-bawa-small-img-wrapper"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          >
             <Image src={getImage(villa, 2)} alt={`${villa.name} lifestyle`} fill sizes="320px" className="object-cover" />
-          </div>
+          </motion.div>
         </div>
       </section>
     );
@@ -91,7 +136,13 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
   return (
     <section className="desktop-section desktop-section-border-y">
       <div className="desktop-container-shell">
-        <div className="desktop-bawa-header-row">
+        <motion.div 
+          className="desktop-bawa-header-row"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h2 className="desktop-bawa-title">{title}</h2>
           <div className="desktop-bawa-subtitle-col">
             <div className="desktop-bawa-sub-bar-stack">
@@ -100,10 +151,16 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             </div>
             <h3 className="desktop-bawa-subtitle">{villa.title.toUpperCase()}</h3>
           </div>
-        </div>
+        </motion.div>
 
         <div className="desktop-bawa-grid">
-          <div className="desktop-bawa-left-col">
+          <motion.div 
+            className="desktop-bawa-left-col"
+            initial={{ opacity: 0, x: -35 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="desktop-bawa-title-block">
               <p className="desktop-bawa-villa-name">{cleanVillaName(villa.name)}</p>
               <p className="desktop-bawa-villa-loc">{villa.address || villa.location}</p>
@@ -111,9 +168,15 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             <Link className="desktop-bawa-large-img-wrapper" href={villa.href}>
               <Image src={getImage(villa, 0)} alt={villa.name} fill sizes="540px" priority className="object-cover" />
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="desktop-bawa-right-col">
+          <motion.div 
+            className="desktop-bawa-right-col"
+            initial={{ opacity: 0, x: 35 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          >
             <div className="desktop-bawa-mid-img">
               <Image src={getImage(villa, 1)} alt={`${villa.name} detail`} fill sizes="320px" className="object-cover" />
             </div>
@@ -139,7 +202,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             <div className="desktop-bawa-small-img-wrapper">
               <Image src={getImage(villa, 2)} alt={`${villa.name} lifestyle`} fill sizes="320px" className="object-cover" />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

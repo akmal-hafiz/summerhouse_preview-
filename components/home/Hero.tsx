@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import VillaSearchForm from "@/components/booking/VillaSearchForm";
 
 type HeroSlide = {
@@ -31,7 +32,12 @@ export default function Hero() {
   return (
     <section className="hero-section">
       {/* Cinematic Media/Background Wrapper */}
-      <div className="hero-media-wrapper">
+      <motion.div 
+        className="hero-media-wrapper"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
         <div className="hero-bg" />
         {activeSlide.mediaType === "video" && activeSlide.videoSrc ? (
           <video
@@ -47,7 +53,7 @@ export default function Hero() {
           </video>
         ) : null}
         <div className="hero-overlay" />
-      </div>
+      </motion.div>
 
       {/* Hero Content Shell */}
       <div className="hero-inner">
@@ -76,18 +82,33 @@ export default function Hero() {
           </div>
 
           {/* Supporting Copy (Right Block) */}
-          <div className="hero-text-block-right">
+          <motion.div 
+            className="hero-text-block-right"
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          >
             <p className="hero-description">
             Curated homes in Bali
             For a slower rhythm.
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Integrated Search/Filter Bar Container */}
-        <div className="hero-search hero-search-wrapper">
+        <motion.div 
+          className="hero-search hero-search-wrapper"
+          initial={{ opacity: 0, y: 45 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            type: "spring", 
+            stiffness: 90, 
+            damping: 14,
+            delay: 0.45 
+          }}
+        >
           <VillaSearchForm variant="hero" />
-        </div>
+        </motion.div>
 
       </div>
     </section>

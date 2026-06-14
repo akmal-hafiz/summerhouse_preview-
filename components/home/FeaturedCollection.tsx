@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FiDroplet, FiHome, FiUsers } from "react-icons/fi";
+import { motion } from "framer-motion";
 import type { FeaturedCollectionVilla } from "@/lib/lodgify/types";
 
 type FeaturedCollectionProps = {
@@ -162,25 +163,56 @@ export default function FeaturedCollection({ villas, variant }: FeaturedCollecti
   if (variant === "mobile") {
     return (
       <section className="mobile-section mobile-featured-collection-section">
-        <div className="mobile-featured-header">
+        <motion.div 
+          className="mobile-featured-header"
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h2 className="mobile-featured-stacked-title">
             <span>FEATURED</span>
             <span>COLLECTION</span>
           </h2>
           <p className="mobile-featured-desc">{description}</p>
-        </div>
+        </motion.div>
 
-        <div className="mobile-featured-scroll" aria-label="Featured SummerHouse villas">
+        <motion.div 
+          className="mobile-featured-scroll" 
+          aria-label="Featured SummerHouse villas"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.12
+              }
+            }
+          }}
+        >
           {villas.map((villa, index) => (
-            <div className="mobile-featured-scroll-item" key={villa.id}>
+            <motion.div 
+              className="mobile-featured-scroll-item" 
+              key={villa.id}
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { 
+                  opacity: 1, 
+                  y: 0,
+                  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+                }
+              }}
+            >
               {index === 0 ? (
                 <FeaturedLargeCard villa={villa} variant="mobile" />
               ) : (
                 <FeaturedSmallCard villa={villa} variant="mobile" />
               )}
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
     );
   }
@@ -188,21 +220,62 @@ export default function FeaturedCollection({ villas, variant }: FeaturedCollecti
   return (
     <section className="desktop-section desktop-featured-collection-section">
       <div className="desktop-container-shell">
-        <div className="desktop-featured-header">
+        <motion.div 
+          className="desktop-featured-header"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
           <h2 className="desktop-featured-stacked-title">
             <span>FEATURED</span>
             <span>COLLECTION</span>
           </h2>
           <p className="desktop-featured-desc">{description}</p>
-        </div>
+        </motion.div>
 
         <div className="desktop-featured-collection-grid">
-          <FeaturedLargeCard villa={primary} variant="desktop" />
-          <div className="desktop-stacked-cards desktop-featured-collection-stack">
+          <motion.div
+            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            style={{ display: "block" }}
+          >
+            <FeaturedLargeCard villa={primary} variant="desktop" />
+          </motion.div>
+
+          <motion.div 
+            className="desktop-stacked-cards desktop-featured-collection-stack"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: 0.15
+                }
+              }
+            }}
+          >
             {secondary.map((villa) => (
-              <FeaturedSmallCard villa={villa} variant="desktop" key={villa.id} />
+              <motion.div
+                key={villa.id}
+                variants={{
+                  hidden: { opacity: 0, y: 25 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+                  }
+                }}
+                style={{ display: "block", width: "100%" }}
+              >
+                <FeaturedSmallCard villa={villa} variant="desktop" />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
