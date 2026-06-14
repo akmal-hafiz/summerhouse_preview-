@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
 import { 
   FiArrowRight, 
   FiCheck, 
@@ -15,6 +15,7 @@ import {
   FiActivity, 
   FiShield, 
   FiChevronLeft, 
+  FiChevronRight,
   FiHelpCircle,
   FiPlay,
   FiX
@@ -158,35 +159,38 @@ export default function ServicesPageContent() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  // Scroll target for the inline image zoom effect
+  // Scroll target for the text separation and card fade-in effect
   const zoomSectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: rawScrollYProgress } = useScroll({
     target: zoomSectionRef,
     offset: ["start start", "end end"]
   });
 
-  // Check if screen is mobile for responsive scroll-zoom alignment
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // Smooth out raw scroll position using useSpring to filter out scroll wheel steps
+  const scrollYProgress = useSpring(rawScrollYProgress, {
+    stiffness: 75,
+    damping: 22,
+    mass: 0.35,
+    restDelta: 0.001
+  });
 
-  // Scale, width, height, and border radius mappings based on scroll progress (0 to 1 over 350vh)
-  const imageWidth = useTransform(scrollYProgress, [0.0, 0.5], [isMobile ? "18vw" : "24vw", "100vw"], { clamp: true });
-  const imageHeight = useTransform(scrollYProgress, [0.0, 0.5], ["28vh", "100vh"], { clamp: true });
-  const imageRadius = useTransform(scrollYProgress, [0.0, 0.5], ["24px", "0px"], { clamp: true });
-  
   // Explicitly translate text to push them completely off-screen
-  const textLeftX = useTransform(scrollYProgress, [0.0, 0.45], ["0vw", "-58vw"], { clamp: true });
-  const textRightX = useTransform(scrollYProgress, [0.0, 0.45], ["0vw", "58vw"], { clamp: true });
+  const textLeftX = useTransform(scrollYProgress, [0.0, 0.35], ["0vw", "-58vw"], { clamp: true });
+  const textRightX = useTransform(scrollYProgress, [0.0, 0.35], ["0vw", "58vw"], { clamp: true });
   
-  // Testimonial card entrance and exit animations (only reveals after expansion is complete at progress 0.55)
-  const cardOpacity = useTransform(scrollYProgress, [0.55, 0.65, 0.9, 0.96], [0, 1, 1, 0]);
-  const cardY = useTransform(scrollYProgress, [0.55, 0.65, 0.9, 0.96], [60, 0, 0, -30]);
-  const cardPointerEvents = useTransform(scrollYProgress, (value) => value >= 0.55 && value <= 0.96 ? "auto" : "none");
+  // Scale and opacity transformations for 3D zoom-out fly-through text effect
+  const textScale = useTransform(scrollYProgress, [0.0, 0.35], [1.0, 1.15], { clamp: true });
+  const textOpacity = useTransform(scrollYProgress, [0.0, 0.35], [1.0, 0.0], { clamp: true });
+
+  // Background scale and opacity for parallax background villa photos
+  const bgScale = useTransform(scrollYProgress, [0.0, 0.4], [1.0, 1.06], { clamp: true });
+  const bgOpacity = useTransform(scrollYProgress, [0.0, 0.3], [0.15, 1.0], { clamp: true });
+
+  // Testimonial card entrance and scale animations (remains visible until section end)
+  const cardOpacity = useTransform(scrollYProgress, [0.25, 0.45], [0, 1], { clamp: true });
+  const cardY = useTransform(scrollYProgress, [0.25, 0.45], [50, 0], { clamp: true });
+  const cardScale = useTransform(scrollYProgress, [0.25, 0.45], [0.95, 1.0], { clamp: true });
+  const cardPointerEvents = useTransform(scrollYProgress, (value) => value >= 0.25 ? "auto" : "none");
 
   const handleNextTestimonial = () => {
     setActiveTestimonial((prev) => (prev + 1) % ownerTestimonials.length);
@@ -332,37 +336,23 @@ export default function ServicesPageContent() {
         </motion.div>
       </motion.section>
 
-      {/* ── 4. INTERACTIVE SCROLL-ZOOM TESTIMONIAL SECTION ── */}
+      {/* ── 4. INTERACTIVE SCROLL-LINKED TESTIMONIAL SECTION (Apple Glass + Parallax Villa Background) ── */}
       <section ref={zoomSectionRef} className={styles.interactiveZoomSection}>
         <div className={styles.stickyZoomContainer}>
           
-          {/* Scroll Zoom Text Headline */}
-          <div className={styles.zoomHeadline}>
-            <motion.span style={{ x: textLeftX }} className={styles.wordLeft}>
-              Better
-            </motion.span>
-            
-            {/* Transparent spacer that matches the initial image width */}
-            <div className={styles.imageSpacer} />
-            
-            <motion.span style={{ x: textRightX }} className={styles.wordRight}>
-              Managed
-            </motion.span>
-          </div>
-
-          {/* Centered Image Container (Absolutely positioned overlay, centers its child) */}
-          <div className={styles.imageWrapperContainer}>
-            <motion.div 
-              style={{ width: imageWidth, height: imageHeight, borderRadius: imageRadius }}
-              className={styles.inlineZoomImageWrapper}
-            >
-              {ownerTestimonials.map((item, idx) => (
+          {/* Villa Background Image (fades on active testimonial change, scales on scroll) */}
+          <div className={styles.stickyBgContainer}>
+            {ownerTestimonials.map((item, idx) => (
+              <motion.div
+                key={item.owner}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: idx === activeTestimonial ? 1 : 0 }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+                style={{ position: "absolute", inset: 0 }}
+              >
                 <motion.div
-                  key={item.owner}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: idx === activeTestimonial ? 1 : 0 }}
-                  transition={{ duration: 0.6, ease: "easeInOut" }}
-                  style={{ position: "absolute", inset: 0 }}
+                  style={{ scale: bgScale, opacity: bgOpacity }}
+                  className={styles.bgImageWrapper}
                 >
                   <Image 
                     src={item.image} 
@@ -370,101 +360,110 @@ export default function ServicesPageContent() {
                     fill
                     priority={idx === 0}
                     sizes="100vw"
-                    className={styles.zoomImage}
+                    className={styles.stickyBgImage}
                   />
+                  <div className={styles.stickyBgOverlay} />
                 </motion.div>
-              ))}
-              <div className={styles.testimonialOverlay} />
-            </motion.div> 
+              </motion.div>
+            ))}
           </div>
 
-          {/* Testimonial Card (Wide Glassmorphism Card) */}
+          {/* Scroll Zoom Text Headline */}
+          <div className={styles.zoomHeadline}>
+            <motion.span style={{ x: textLeftX, scale: textScale, opacity: textOpacity }} className={styles.wordLeft}>
+              Better
+            </motion.span>
+            
+            {/* Transparent spacer that matches the gap between text */}
+            <div className={styles.imageSpacer} />
+            
+            <motion.span style={{ x: textRightX, scale: textScale, opacity: textOpacity }} className={styles.wordRight}>
+              Managed
+            </motion.span>
+          </div>
+
+          {/* Testimonial Card (Glassmorphism Card centered vertically/horizontally) */}
           <motion.div 
-            style={{ opacity: cardOpacity, y: cardY, pointerEvents: cardPointerEvents }}
+            style={{ opacity: cardOpacity, y: cardY, scale: cardScale, pointerEvents: cardPointerEvents }}
             className={styles.testimonialCardWrapper}
           >
-            {/* Nav controls on the left */}
-            <div className={styles.cardNavSide}>
-              <button onClick={handlePrevTestimonial} className={styles.cardNavBtnPrev} aria-label="Previous testimonial">
-                <FiChevronUp />
-              </button>
-              <button onClick={handleNextTestimonial} className={styles.cardNavBtnNext} aria-label="Next testimonial">
-                <FiChevronDown />
-              </button>
-            </div>
-            
-            {/* Card Content */}
-            <div className={styles.cardContentMain}>
-              <div className={styles.cardTextCol}>
-                <div>
-                  <span className={styles.cardEyebrow}>Villa Owner Partnership</span>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeTestimonial}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -15 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <p className={styles.cardQuote}>
-                        “{ownerTestimonials[activeTestimonial].quote}”
-                      </p>
-                      
-                      {/* Operational Performance Metrics Grid */}
-                      <div className={styles.cardMetricsGrid}>
-                        {ownerTestimonials[activeTestimonial].metrics.map((metric, midx) => (
-                          <div key={midx} className={styles.metricItem}>
-                            <strong>{metric.value}</strong>
-                            <span>{metric.label}</span>
-                          </div>
-                        ))}
-                      </div>
+            <div className={styles.testimonialContentArea}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTestimonial}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {/* Villa Tag */}
+                  <div className={styles.testimonialVillaTag}>
+                    <span>{ownerTestimonials[activeTestimonial].villa}</span>
+                  </div>
 
-                      <div className={styles.cardAuthorBlock}>
-                        <div className={styles.cardAvatarMobile}>
-                          <Image
-                            src={ownerTestimonials[activeTestimonial].portrait}
-                            alt={ownerTestimonials[activeTestimonial].owner}
-                            width={44}
-                            height={44}
-                            className={styles.avatarImg}
-                          />
-                        </div>
-                        <div className={styles.authorMeta}>
-                          <strong>{ownerTestimonials[activeTestimonial].owner}</strong>
-                          <span>{ownerTestimonials[activeTestimonial].role} — {ownerTestimonials[activeTestimonial].location}</span>
-                        </div>
+                  {/* Quote Text */}
+                  <blockquote className={styles.testimonialQuoteText}>
+                    “{ownerTestimonials[activeTestimonial].quote}”
+                  </blockquote>
+
+                  {/* Owner Metrics Grid */}
+                  <div className={styles.ownerMetricsGrid}>
+                    {ownerTestimonials[activeTestimonial].metrics.map((metric, midx) => (
+                      <div key={midx} className={styles.ownerMetricItem}>
+                        <strong>{metric.value}</strong>
+                        <span>{metric.label}</span>
                       </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-                <div className={styles.cardCounter}>
-                  {String(activeTestimonial + 1).padStart(2, "0")} / {String(ownerTestimonials.length).padStart(2, "0")}
-                </div>
-              </div>
-              
-              <div className={styles.cardImageCol}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTestimonial}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
-                    className={styles.cardPortraitWrapper}
-                  >
-                    <Image
-                      src={ownerTestimonials[activeTestimonial].portrait}
-                      alt={ownerTestimonials[activeTestimonial].owner}
-                      fill
-                      sizes="350px"
-                      className={styles.cardPortrait}
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    ))}
+                  </div>
+
+                  {/* Author Info Group */}
+                  <div className={styles.testimonialAuthorRow}>
+                    <div className={styles.authorAvatarWrapper}>
+                      <Image
+                        src={ownerTestimonials[activeTestimonial].portrait}
+                        alt={ownerTestimonials[activeTestimonial].owner}
+                        fill
+                        sizes="48px"
+                        className="object-cover rounded-full"
+                      />
+                    </div>
+                    <div className={styles.authorMeta}>
+                      <strong className={styles.authorName}>{ownerTestimonials[activeTestimonial].owner}</strong>
+                      <span className={styles.authorLocation}>
+                        {ownerTestimonials[activeTestimonial].role} — {ownerTestimonials[activeTestimonial].location}
+                      </span>
+                      <span className={styles.authorVilla}>
+                        Owner of {ownerTestimonials[activeTestimonial].villa}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Navigation Arrows on the right side of the card */}
+            <div className={styles.testimonialNavCtrls}>
+              <button 
+                type="button" 
+                onClick={handlePrevTestimonial} 
+                className={styles.testimonialNavArrow} 
+                aria-label="Previous testimonial"
+              >
+                <FiChevronUp className={styles.navIconDesktop} />
+                <FiChevronLeft className={styles.navIconMobile} />
+              </button>
+              <button 
+                type="button" 
+                onClick={handleNextTestimonial} 
+                className={styles.testimonialNavArrow} 
+                aria-label="Next testimonial"
+              >
+                <FiChevronDown className={styles.navIconDesktop} />
+                <FiChevronRight className={styles.navIconMobile} />
+              </button>
             </div>
           </motion.div>
+
         </div>
       </section>
 

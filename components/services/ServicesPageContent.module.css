@@ -340,8 +340,8 @@
 /* ─── 4. INTERACTIVE SCROLL-ZOOM TESTIMONIAL SECTION ─── */
 .interactiveZoomSection {
   position: relative;
-  height: 350vh; /* Extended scroll track length */
-  background: #ffffff; /* Pure white background for Phase 1 */
+  height: 280vh; /* Optimized scroll track length */
+  background: var(--color-cream-bg);
 }
 
 .stickyZoomContainer {
@@ -353,7 +353,40 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #ffffff;
+  background: var(--color-cream-bg);
+}
+
+/* Villa Background Container & Parallax Scaling */
+.stickyBgContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.bgImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.stickyBgImage {
+  object-fit: cover;
+}
+
+.stickyBgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    #fcfbfa 0%,
+    rgba(252, 251, 250, 0.15) 30%,
+    rgba(252, 251, 250, 0.15) 70%,
+    #fcfbfa 100%
+  );
+  z-index: 2;
 }
 
 .zoomHeadline {
@@ -367,7 +400,8 @@
   gap: clamp(1.5rem, 3.5vw, 4rem);
   padding: 0 5vw;
   box-sizing: border-box;
-  background: #ffffff;
+  background: transparent; /* Changed from white to transparent to show BG */
+  z-index: 3;
 }
 
 .wordLeft {
@@ -400,199 +434,120 @@
   flex-shrink: 0;
 }
 
-.imageWrapperContainer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.inlineZoomImageWrapper {
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-  z-index: 2;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-  background-color: #e4e0da;
-}
-
-.zoomImage {
-  object-fit: cover;
-}
-
-.testimonialVillaName {
-  font-size: 0.75rem !important;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--color-green-accent) !important;
-  margin-top: 0.2rem;
-  letter-spacing: 0.05em;
-}
-
-.cardMetricsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin: 1.2rem 0;
-  border-top: 1px solid var(--color-line-soft);
-  border-bottom: 1px solid var(--color-line-soft);
-  padding: 1rem 0;
-}
-
-.metricItem {
-  display: flex;
-  flex-direction: column;
-}
-
-.metricItem strong {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--color-green-accent);
-}
-
-.metricItem span {
-  font-size: 0.75rem;
-  color: var(--color-muted-grey);
-}
-
-/* Wide Horizontal Testimonial Card */
+/* Wide Horizontal Testimonial Card (Apple-style frosted glass) */
 .testimonialCardWrapper {
   position: absolute;
-  bottom: 60px;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  margin: 0 auto;
+  margin: auto;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(24px) saturate(120%);
-  border-radius: 24px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
-  display: flex;
-  overflow: hidden;
-  width: min(90vw, 880px);
-  height: 460px; /* Increased from 400px to prevent text cut-off */
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-/* Nav controls on the left of the card */
-.cardNavSide {
-  width: 65px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  flex-shrink: 0;
-}
-
-.cardNavBtnNext {
-  height: 50%;
-  background-color: #d8eea9; /* light green/yellow from mockup */
-  border: 0;
-  color: #1c1b18;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  transition: background-color 0.2s ease;
-}
-
-.cardNavBtnNext:hover {
-  background-color: #cbeb96;
-}
-
-.cardNavBtnNext svg {
-  transition: transform 0.2s ease;
-}
-
-.cardNavBtnNext:hover svg {
-  transform: translateY(2px);
-}
-
-.cardNavBtnPrev {
-  height: 50%;
-  background-color: #1c1b18; /* black */
-  border: 0;
-  color: #ffffff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  transition: opacity 0.2s ease;
-}
-
-.cardNavBtnPrev:hover {
-  opacity: 0.9;
-}
-
-.cardNavBtnPrev svg {
-  transition: transform 0.2s ease;
-}
-
-.cardNavBtnPrev:hover svg {
-  transform: translateY(-2px);
-}
-
-/* Card Content main layout */
-.cardContentMain {
-  flex-grow: 1;
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.45) 0%, 
+    rgba(255, 255, 255, 0.2) 100%
+  ); /* Translucent gradient */
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border-radius: 32px;
+  box-shadow: 
+    0 30px 70px rgba(28, 27, 24, 0.12), 
+    0 10px 20px rgba(28, 27, 24, 0.04), 
+    inset 0 1px 0px 0px rgba(255, 255, 255, 0.6), /* Top edge light reflection */
+    inset 0 -1px 0px 0px rgba(0, 0, 0, 0.05); /* Bottom edge shadow */
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  padding: 2.2rem; /* Reduced slightly to give more breathing room */
-  gap: 2.2rem;
-  background: transparent; /* Changed from solid white to show glassmorphism */
+  grid-template-columns: 1fr auto;
+  overflow: hidden;
+  width: min(92vw, 840px);
+  height: max-content;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  padding: 44px;
+  box-sizing: border-box;
+  gap: 32px;
+  align-items: start;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 
-.cardTextCol {
+.testimonialCardWrapper:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 35px 80px rgba(28, 27, 24, 0.16), 
+    0 12px 24px rgba(28, 27, 24, 0.06), 
+    inset 0 1px 0px 0px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0px 0px rgba(0, 0, 0, 0.08);
+}
+
+.testimonialContentArea {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  position: relative;
 }
 
-.cardEyebrow {
-  font-size: 0.75rem;
+.testimonialVillaTag {
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--color-green-accent);
-  margin-bottom: 0.5rem;
-  display: block;
+  color: #446B4A; /* Forest green */
+  margin-bottom: 12px;
+  letter-spacing: 0.08em;
 }
 
-.cardQuote {
-  font-size: clamp(1rem, 1.2vw, 1.25rem);
-  line-height: 1.45;
-  font-weight: 550;
+.testimonialQuoteText {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(16px, 1.8vw, 20px);
+  font-weight: 400;
   color: var(--color-ink-dark);
-  margin: 0.5rem 0 1rem 0;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+  padding: 0;
   font-style: italic;
-  letter-spacing: -0.01em;
 }
 
-.cardAuthorBlock {
+.ownerMetricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 1.2rem 0;
+}
+
+.ownerMetricItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.ownerMetricItem strong {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #446B4A; /* Forest green */
+  line-height: 1.2;
+}
+
+.ownerMetricItem span {
+  font-size: 0.8rem;
+  color: var(--color-muted-grey);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.testimonialAuthorRow {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 12px;
+  margin-top: 10px;
 }
 
-.cardAvatarMobile {
-  display: none; /* Hidden on desktop */
-  width: 44px;
-  height: 44px;
+.authorAvatarWrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   overflow: hidden;
-  border: 1.5px solid var(--color-green-accent);
+  background: #e5e5ea;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.avatarImg {
-  object-fit: cover;
 }
 
 .authorMeta {
@@ -600,42 +555,72 @@
   flex-direction: column;
 }
 
-.authorMeta strong {
-  font-size: 0.98rem;
+.authorName {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 15px;
   font-weight: 700;
   color: var(--color-ink-dark);
 }
 
-.authorMeta span {
-  font-size: 0.82rem;
+.authorLocation {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
   color: var(--color-muted-grey);
+  font-weight: 400;
 }
 
-.cardCounter {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--color-muted-grey);
-  font-variant-numeric: tabular-nums;
-  opacity: 0.8;
+.authorVilla {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  color: #446B4A; /* Forest Green */
+  font-weight: 600;
+  margin-top: 2px;
 }
 
-/* Right card image column */
-.cardImageCol {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-  overflow: hidden;
+/* Navigation controls (arrow buttons stacked vertically) */
+.testimonialNavCtrls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.cardPortraitWrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.testimonialNavArrow {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-ink-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  outline: none;
 }
 
-.cardPortrait {
-  object-fit: cover;
+.testimonialNavArrow:hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+}
+
+.testimonialNavArrow:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.navIconDesktop {
+  display: block;
+}
+
+.navIconMobile {
+  display: none;
 }
 
 /* ─── 5. DETAILED SERVICES DEEP DIVE ─── */
@@ -1270,42 +1255,39 @@
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  .testimonialCardWrapper {
-    flex-direction: column-reverse;
-    height: auto;
-    width: 92vw;
-    bottom: 20px;
-  }
-  .cardNavSide {
-    width: 100%;
-    height: 50px;
-    flex-direction: row;
-  }
-  .cardNavBtnNext,
-  .cardNavBtnPrev {
-    width: 50%;
-    height: 100%;
-  }
-  .cardAvatarMobile {
-    display: block;
-  }
-  .cardAuthorBlock {
-    margin-top: 0.75rem;
-  }
-  .cardContentMain {
-    grid-template-columns: 1fr;
-    padding: 1.5rem;
-    gap: 1.5rem;
-  }
-  .cardImageCol {
-    display: none;
-  }
   .wordLeft,
   .wordRight {
     font-size: clamp(2rem, 6vw, 4.5rem);
   }
   .imageSpacer {
     width: 18vw;
+  }
+  .testimonialCardWrapper {
+    grid-template-columns: 1fr;
+    height: max-content;
+    width: 92vw;
+    padding: 24px;
+    gap: 20px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  .testimonialNavCtrls {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+    gap: 20px;
+  }
+  .testimonialNavArrow {
+    width: 44px;
+    height: 44px;
+  }
+  .testimonialQuoteText {
+    font-size: clamp(15px, 4.2vw, 17px);
+    margin-bottom: 12px;
   }
 
   .heroSection {
