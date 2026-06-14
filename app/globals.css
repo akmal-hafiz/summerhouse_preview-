@@ -10761,10 +10761,10 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 .bali-book-canvas-skeleton {
   position: relative;
   min-height: min(86vh, 920px);
-  border: 1px solid rgba(68, 107, 74, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 48px;
-  background: #F5F3F1;
-  box-shadow: 0 34px 95px rgba(31, 31, 29, 0.07);
+  background: radial-gradient(circle at center, #1b291d 0%, #080d09 100%);
+  box-shadow: 0 40px 110px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .bali-book-canvas-shell {
@@ -10780,98 +10780,250 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   height: 100% !important;
 }
 
-.bali-book-controls {
+/* Elegant Floating Control Deck styling */
+.bali-book-control-deck {
   position: absolute;
-  bottom: 2.2rem;
-  left: 2.2rem;
-  right: 2.2rem;
-  z-index: 10;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: rgba(250, 250, 249, 0.85);
+  border: 1px solid rgba(68, 107, 74, 0.16);
+  border-radius: 999px;
+  padding: 0.5rem 0.6rem 0.5rem 1.2rem;
+  box-shadow: 0 20px 48px rgba(31, 31, 29, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  user-select: none;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 15px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.bali-book-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bali-book-nav-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  pointer-events: none;
-}
-
-.bali-book-controls button,
-.bali-book-cta {
-  display: inline-flex;
-  min-height: 3rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(68, 107, 74, 0.22) !important;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.64) !important;
-  color: #446B4A !important;
-  font-family: "Hanken Grotesk", sans-serif;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 0 1.6rem;
-  text-decoration: none;
-  text-transform: uppercase;
-  box-shadow: 0 10px 30px rgba(68, 107, 74, 0.06) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid rgba(68, 107, 74, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  color: #446B4A;
   cursor: pointer;
-  pointer-events: auto;
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
-}
-
-.bali-book-cta {
-  position: absolute;
-  right: 0;
-  background: rgba(255, 255, 255, 0.64) !important;
-  color: #446B4A !important;
-}
-
-.bali-book-controls button:hover,
-.bali-book-cta:hover {
-  border-color: rgba(68, 107, 74, 0.35) !important;
-  transform: translateY(-2px);
-  background: rgba(68, 107, 74, 0.08) !important;
-  color: #3b5e40 !important;
-}
-
-.bali-book-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 3rem;
-  border: 1px solid rgba(68, 107, 74, 0.14) !important;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.62) !important;
-  padding: 0 0.9rem;
-  box-shadow: 0 14px 32px rgba(31, 31, 29, 0.06) !important;
-  backdrop-filter: blur(18px) !important;
-}
-
-.bali-book-dot {
-  width: 0.45rem;
-  height: 0.45rem;
-  min-height: 0;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(68, 107, 74, 0.22) !important;
   padding: 0;
-  box-shadow: none;
-  cursor: pointer;
-  transition: width 180ms ease, background 180ms ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.bali-book-dot.is-active {
-  width: 1.45rem;
-  background: #446B4A !important;
+.bali-book-nav-btn:hover:not(:disabled) {
+  background: #446B4A;
+  color: #fafaf9;
+  border-color: #446B4A;
+  transform: scale(1.05);
+}
+
+.bali-book-nav-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.bali-book-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.bali-book-page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #446B4A;
+  min-width: 4.8rem;
+  justify-content: center;
+}
+
+.bali-book-page-indicator .current-page {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.bali-book-page-indicator .page-separator {
+  opacity: 0.4;
+}
+
+.bali-book-page-indicator .total-pages {
+  opacity: 0.6;
+}
+
+.bali-book-deck-divider {
+  width: 1px;
+  height: 1.5rem;
+  background: rgba(68, 107, 74, 0.15);
+}
+
+/* Quick Jump Dropdown */
+.bali-book-toc-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bali-book-toc-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0 1.6rem 0 0.25rem;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #446B4A;
+  cursor: pointer;
+  outline: none;
+  transition: color 200ms ease;
+}
+
+.bali-book-toc-select:hover {
+  color: #2e4a32;
+}
+
+.bali-book-toc-arrow {
+  position: absolute;
+  right: 0.25rem;
+  pointer-events: none;
+  color: #446B4A;
+  display: flex;
+  align-items: center;
+}
+
+/* Explore CTA inside deck */
+.bali-book-deck-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #446B4A;
+  border-radius: 999px;
+  padding: 0.5rem 1.25rem;
+  color: #fafaf9 !important;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(68, 107, 74, 0.15);
+  transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bali-book-deck-cta:hover {
+  background: #345239;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(68, 107, 74, 0.22);
+}
+
+.bali-book-deck-cta:active {
+  transform: translateY(0);
 }
 
 .bali-book-instruction {
-  margin: 1.25rem 0 0;
-  color: rgba(31, 31, 29, 0.48) !important;
-  font-size: 0.78rem;
+  margin: 1.5rem 0 0;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-align: center;
   text-transform: uppercase;
+}
+
+.bali-book-page-count {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Unified dynamic loading screen */
+.bali-book-loading-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  background: radial-gradient(circle at center, rgba(27, 41, 29, 0.96) 0%, rgba(8, 13, 9, 0.99) 100%);
+  border-radius: inherit;
+  z-index: 100;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.bali-book-loading-spinner {
+  width: 52px;
+  height: 52px;
+  border: 3.5px solid rgba(255, 255, 255, 0.07);
+  border-top-color: #446B4A;
+  border-radius: 50%;
+  animation: spinnerSpin 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.bali-book-loading-text {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #FAFAF9;
+  letter-spacing: 0.02em;
+  margin-top: 0.25rem;
+}
+
+.bali-book-loading-subtext {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+  animation: pulseFade 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes spinnerSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseFade {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 0.85;
+  }
 }
 
 .bali-collection-carousel {

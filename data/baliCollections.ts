@@ -18,6 +18,10 @@ export type BaliCollectionItem = {
   image: string;
   imageAlt: string;
   galleryImages: string[];
+  lifestylePillars?: Array<{
+    title: string;
+    description: string;
+  }>;
 };
 
 export const baliCollections: BaliCollectionItem[] = [
@@ -48,6 +52,11 @@ export const baliCollections: BaliCollectionItem[] = [
       "/homepage_villa/rumahmimosa.webp",
       "/homepage_villa/villaarta.webp",
     ],
+    lifestylePillars: [
+      { title: "Beach Clubs", description: "World-class venues for golden hour sunset sessions." },
+      { title: "Bespoke Cafes", description: "Artisan coffee roasters and high-end brunch spots." },
+      { title: "Surf Culture", description: "Warm waters perfect for longboards and beach breaks." }
+    ]
   },
   {
     id: "pererenan",
@@ -76,6 +85,11 @@ export const baliCollections: BaliCollectionItem[] = [
       "/homepage_villa/curated-7.webp",
       "/homepage_villa/curated-8.webp",
     ],
+    lifestylePillars: [
+      { title: "Surf Mornings", description: "Uncrowded reef breaks at dawn with local surfers." },
+      { title: "Village Calm", description: "Quiet pathways and traditional lanes blending into green fields." },
+      { title: "Private Pools", description: "Secluded sanctuary spaces designed for absolute quietude." }
+    ]
   },
   {
     id: "canggu",
@@ -104,6 +118,11 @@ export const baliCollections: BaliCollectionItem[] = [
       "/homepage_villa/curated-5-lounge.webp",
       "/homepage_villa/curated-2-detail.webp",
     ],
+    lifestylePillars: [
+      { title: "Creative Hub", description: "A lively intersection of creators, surfers, and nomads." },
+      { title: "Sunset Scene", description: "Relaxed bonfires and golden hours on natural black sand." },
+      { title: "Cafe Hopping", description: "An endless playground of design-focused, organic eateries." }
+    ]
   },
   {
     id: "canggu-padonan",
@@ -132,6 +151,11 @@ export const baliCollections: BaliCollectionItem[] = [
       "/homepage_villa/curated-6-exterior.webp",
       "/homepage_villa/curated-7.webp",
     ],
+    lifestylePillars: [
+      { title: "Residential Peace", description: "Tranquil neighborhoods nestled away from the main strip." },
+      { title: "Modern Lofts", description: "Architectural spaces with concrete lines and open layouts." },
+      { title: "Coast Access", description: "Spacious country roads winding down to the Canggu shoreline." }
+    ]
   },
   {
     id: "umalas",
@@ -160,6 +184,11 @@ export const baliCollections: BaliCollectionItem[] = [
       "/homepage_villa/curated-2-detail.webp",
       "/homepage_villa/curated-3-corner.webp",
     ],
+    lifestylePillars: [
+      { title: "Leafy Streets", description: "Scenic bamboo-lined pathways with a residential feel." },
+      { title: "Softer Rhythm", description: "A quiet, green enclave nestled between Seminyak and Canggu." },
+      { title: "Cozy Bakeries", description: "Small french patisseries and cafes with zero rush." }
+    ]
   },
   {
     id: "ubud",
@@ -188,5 +217,10 @@ export const baliCollections: BaliCollectionItem[] = [
       "/homepage_villa/curated-8.webp",
       "/homepage_villa/rumahmimosa.webp",
     ],
-  },
+    lifestylePillars: [
+      { title: "Jungle Canyons", description: "Deep ravines, wild palms, and soundscapes of flowing rivers." },
+      { title: "Wellness Shalas", description: "World-renowned sound healing, yoga, and holistic therapy." },
+      { title: "Heritage Craft", description: "Ancient temples, terraced rice paddies, and stone-carving villages." }
+    ]
+  }
 ];

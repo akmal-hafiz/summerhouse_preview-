@@ -88,6 +88,33 @@ function resolveTexturePath(texture: string) {
   return `${BOOK_TEXTURE_PATH}/${texture}.jpg`;
 }
 
+let cachedFontSans = "";
+let cachedFontSerif = "";
+
+function getFontSans() {
+  if (cachedFontSans) return cachedFontSans;
+  if (typeof window !== "undefined") {
+    const val = window.getComputedStyle(document.body).getPropertyValue("--font-dm-sans");
+    if (val) {
+      cachedFontSans = val.trim();
+      return cachedFontSans;
+    }
+  }
+  return "Arial, sans-serif";
+}
+
+function getFontSerif() {
+  if (cachedFontSerif) return cachedFontSerif;
+  if (typeof window !== "undefined") {
+    const val = window.getComputedStyle(document.body).getPropertyValue("--font-playfair");
+    if (val) {
+      cachedFontSerif = val.trim();
+      return cachedFontSerif;
+    }
+  }
+  return "Georgia, serif";
+}
+
 function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
   context.beginPath();
   context.moveTo(x + radius, y);
@@ -132,8 +159,10 @@ function drawWrappedText(
 function drawPills(context: CanvasRenderingContext2D, items: string[], x: number, y: number, maxWidth: number) {
   let currentX = x;
   let currentY = y;
+  const fontSans = getFontSans();
 
   items.forEach((item) => {
+    context.font = `800 22px ${fontSans}`;
     const width = Math.min(maxWidth, context.measureText(item).width + 46);
     if (currentX + width > x + maxWidth) {
       currentX = x;
@@ -147,7 +176,7 @@ function drawPills(context: CanvasRenderingContext2D, items: string[], x: number
     context.lineWidth = 1.5;
     context.stroke();
     context.fillStyle = "#446B4A";
-    context.font = "800 22px Arial";
+    context.font = `800 22px ${fontSans}`;
     context.fillText(item.toUpperCase(), currentX + 22, currentY + 29);
     currentX += width + 12;
   });
@@ -244,37 +273,46 @@ async function loadCollectionImages(item: BaliCollectionItem) {
 
 function createCoverTexture() {
   const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1600;
+  canvas.width = 2400;
+  canvas.height = 3200;
   const context = canvas.getContext("2d");
   if (!context) {
     return "";
   }
+  context.scale(2, 2);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+
+  const W = 1200;
+  const H = 1600;
 
   context.fillStyle = "#FAFAF9";
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, W, H);
 
-  const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+  const gradient = context.createLinearGradient(0, 0, 0, H);
   gradient.addColorStop(0, "rgba(68, 107, 74, 0.08)");
   gradient.addColorStop(0.52, "rgba(250, 250, 249, 0)");
   gradient.addColorStop(1, "rgba(68, 107, 74, 0.14)");
   context.fillStyle = gradient;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, W, H);
 
   context.strokeStyle = "rgba(68, 107, 74, 0.22)";
   context.lineWidth = 3;
-  context.strokeRect(78, 78, canvas.width - 156, canvas.height - 156);
+  context.strokeRect(78, 78, W - 156, H - 156);
+
+  const fontSans = getFontSans();
+  const fontSerif = getFontSerif();
 
   context.fillStyle = "#446B4A";
-  context.font = "700 38px Arial";
+  context.font = `700 38px ${fontSans}`;
   context.fillText("SUMMERHOUSES", 120, 180);
 
   context.fillStyle = "#446B4A";
-  context.font = "500 122px Georgia";
+  context.font = `500 122px ${fontSerif}`;
   drawWrappedText(context, "Bali Destination Guide", 120, 570, 820, 132);
 
   context.fillStyle = "rgba(68, 107, 74, 0.82)";
-  context.font = "500 38px Arial";
+  context.font = `500 38px ${fontSans}`;
   drawWrappedText(
     context,
     "Discover the character of Bali through its most iconic destinations, then find the perfect villa for your stay.",
@@ -289,37 +327,45 @@ function createCoverTexture() {
   context.fill();
 
   context.fillStyle = "#FAFAF9";
-  context.font = "700 34px Arial";
+  context.font = `700 34px ${fontSans}`;
   context.fillText("EXPLORE BALI", 170, 1398);
-  drawSheen(context, canvas.width, canvas.height);
+  drawSheen(context, W, H);
 
   return canvas.toDataURL("image/png");
 }
 
 function createGalleryTexture(item: BaliCollectionItem, images: HTMLImageElement[]) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1600;
+  canvas.width = 2400;
+  canvas.height = 3200;
   const context = canvas.getContext("2d");
   if (!context) {
     return "";
   }
+  context.scale(2, 2);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+
+  const W = 1200;
+  const H = 1600;
 
   const imageSet = images.length > 0 ? images : [];
   const brandGreen = "#446B4A";
   const offWhite = "#FAFAF9";
   const M = 72;
-  const G = 16;
-  const cw = canvas.width - M * 2;
-  const R = 20;
+  const cw = W - M * 2;
+  const R = 24;
+
+  const fontSans = getFontSans();
+  const fontSerif = getFontSerif();
 
   // ─── Page background ───
   context.fillStyle = offWhite;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, W, H);
 
   // Subtle diagonal texture for premium print feel
   context.save();
-  context.strokeStyle = "rgba(68, 107, 74, 0.022)";
+  context.strokeStyle = "rgba(68, 107, 74, 0.02)";
   context.lineWidth = 1;
   for (let i = -1600; i < 1200; i += 48) {
     context.beginPath();
@@ -333,7 +379,7 @@ function createGalleryTexture(item: BaliCollectionItem, images: HTMLImageElement
   // HEADER BAR
   // ═══════════════════════════════════════════
   context.fillStyle = brandGreen;
-  context.font = "800 18px Arial";
+  context.font = `800 18px ${fontSans}`;
   const brandLabel = "SUMMERHOUSES";
   context.fillText(brandLabel, M, M + 22);
 
@@ -342,15 +388,15 @@ function createGalleryTexture(item: BaliCollectionItem, images: HTMLImageElement
   context.arc(M + brandW + 16, M + 17, 3, 0, Math.PI * 2);
   context.fill();
 
-  context.font = "500 18px Arial";
+  context.font = `500 18px ${fontSans}`;
   context.fillStyle = "rgba(68, 107, 74, 0.55)";
-  context.fillText("BALI COLLECTION", M + brandW + 30, M + 22);
+  context.fillText("BALI LIFESTYLE GUIDE", M + brandW + 30, M + 22);
 
   context.save();
-  context.font = "800 18px Arial";
+  context.font = `800 18px ${fontSans}`;
   context.fillStyle = "rgba(68, 107, 74, 0.28)";
   context.textAlign = "right";
-  const collIdx = baliCollections.indexOf(item);
+  const collIdx = baliCollections.findIndex((c) => c.id === item.id);
   context.fillText(`NO. ${String(collIdx + 1 > 0 ? collIdx + 1 : 1).padStart(2, "0")}`, M + cw, M + 22);
   context.restore();
 
@@ -362,384 +408,126 @@ function createGalleryTexture(item: BaliCollectionItem, images: HTMLImageElement
   context.stroke();
 
   // ═══════════════════════════════════════════
-  // ROW 1 — Hero Image (60%) + Stats Card (40%)
+  // COLUMN 1 — Tall Hero Image (65% width)
   // ═══════════════════════════════════════════
-  const r1Y = M + 58;
-  const r1H = 480;
-  const r1LW = 636;
-  const r1RW = cw - r1LW - G;
+  const mainY = M + 60;
+  const heroW = 660;
+  const heroH = 1260;
 
-  // ── Hero Image Card (Left) ──
   if (imageSet[0]) {
-    context.fillStyle = "rgba(0, 0, 0, 0.045)";
-    roundedRect(context, M + 5, r1Y + 5, r1LW, r1H, R);
+    // Elegant drop shadow for the image card
+    context.save();
+    context.shadowColor = "rgba(30, 48, 34, 0.08)";
+    context.shadowBlur = 30;
+    context.shadowOffsetY = 12;
+    context.fillStyle = offWhite;
+    roundedRect(context, M, mainY, heroW, heroH, R);
     context.fill();
+    context.restore();
 
-    drawImageCover(context, imageSet[0], M, r1Y, r1LW, r1H, R);
+    drawImageCover(context, imageSet[0], M, mainY, heroW, heroH, R);
 
-    // Multi-layer gradient overlay for text legibility
-    const grad = context.createLinearGradient(M, r1Y + r1H * 0.35, M, r1Y + r1H);
+    // Subtle dark gradient at the bottom of the photo for legibility
+    const grad = context.createLinearGradient(M, mainY + heroH * 0.7, M, mainY + heroH);
     grad.addColorStop(0, "rgba(30, 48, 34, 0)");
-    grad.addColorStop(0.55, "rgba(30, 48, 34, 0.28)");
-    grad.addColorStop(1, "rgba(30, 48, 34, 0.78)");
+    grad.addColorStop(1, "rgba(30, 48, 34, 0.35)");
     context.fillStyle = grad;
     context.save();
-    roundedRect(context, M, r1Y, r1LW, r1H, R);
+    roundedRect(context, M, mainY, heroW, heroH, R);
     context.clip();
-    context.fillRect(M, r1Y, r1LW, r1H);
+    context.fillRect(M, mainY, heroW, heroH);
     context.restore();
 
-    // Top vignette for pill badge
-    const topGrad = context.createLinearGradient(M, r1Y, M, r1Y + 90);
-    topGrad.addColorStop(0, "rgba(30, 48, 34, 0.22)");
-    topGrad.addColorStop(1, "rgba(30, 48, 34, 0)");
-    context.fillStyle = topGrad;
-    context.save();
-    roundedRect(context, M, r1Y, r1LW, r1H, R);
-    context.clip();
-    context.fillRect(M, r1Y, r1LW, 90);
-    context.restore();
+    // Corner accent lines inside the image
+    context.strokeStyle = "rgba(250, 250, 249, 0.18)";
+    context.lineWidth = 1.5;
+    roundedRect(context, M + 15, mainY + 15, heroW - 30, heroH - 30, R - 4);
+    context.stroke();
 
-    // "FEATURED DESTINATION" pill badge
-    const pillLabel = "FEATURED DESTINATION";
-    context.font = "800 13px Arial";
-    const pillW = context.measureText(pillLabel).width + 28;
-    context.fillStyle = "rgba(250, 250, 249, 0.16)";
-    roundedRect(context, M + 24, r1Y + 22, pillW, 30, 15);
+    // Capsule tag top-left of photo
+    context.fillStyle = "rgba(250, 250, 249, 0.22)";
+    roundedRect(context, M + 30, mainY + 30, 150, 32, 16);
     context.fill();
-    context.strokeStyle = "rgba(250, 250, 249, 0.28)";
-    context.lineWidth = 1;
-    context.stroke();
     context.fillStyle = offWhite;
-    context.fillText(pillLabel, M + 38, r1Y + 42);
-
-    // Location name at bottom
-    context.fillStyle = offWhite;
-    context.font = "500 52px Georgia";
-    context.fillText(item.location, M + 28, r1Y + r1H - 52);
-
-    // Tag below location
-    context.fillStyle = "rgba(250, 250, 249, 0.65)";
-    context.font = "800 15px Arial";
-    context.fillText(item.tag.toUpperCase(), M + 30, r1Y + r1H - 24);
-
-    // Inner framing border
-    context.strokeStyle = "rgba(250, 250, 249, 0.06)";
-    context.lineWidth = 1;
-    roundedRect(context, M + 10, r1Y + 10, r1LW - 20, r1H - 20, R - 4);
-    context.stroke();
+    context.font = `800 12px ${fontSans}`;
+    context.textAlign = "center";
+    context.fillText("JOURNAL SCENE", M + 105, mainY + 50);
+    context.textAlign = "left"; // reset
   } else {
     context.fillStyle = "rgba(68, 107, 74, 0.04)";
-    roundedRect(context, M, r1Y, r1LW, r1H, R);
+    roundedRect(context, M, mainY, heroW, heroH, R);
     context.fill();
   }
 
-  // ── Stats Card (Right, solid green) ──
-  const sX = M + r1LW + G;
+  // ═══════════════════════════════════════════
+  // COLUMN 2 — Lifestyle Pillars (Right side)
+  // ═══════════════════════════════════════════
+  const col2X = M + heroW + 40;
+  const col2W = cw - heroW - 40;
 
-  context.fillStyle = "rgba(0, 0, 0, 0.05)";
-  roundedRect(context, sX + 5, r1Y + 5, r1RW, r1H, R);
-  context.fill();
-
+  // Destination Tag
   context.fillStyle = brandGreen;
-  roundedRect(context, sX, r1Y, r1RW, r1H, R);
-  context.fill();
+  context.font = `800 14px ${fontSans}`;
+  context.fillText(item.tag.toUpperCase(), col2X, mainY + 30);
 
-  // Dot pattern decoration (top-right corner)
-  for (let dr = 0; dr < 5; dr++) {
-    for (let dc = 0; dc < 5; dc++) {
-      context.fillStyle = "rgba(250, 250, 249, 0.06)";
-      context.beginPath();
-      context.arc(sX + r1RW - 28 - dc * 16, r1Y + 28 + dr * 16, 2.5, 0, Math.PI * 2);
-      context.fill();
-    }
-  }
-
-  // L-shaped corner accent (top-left)
-  context.strokeStyle = "rgba(250, 250, 249, 0.12)";
-  context.lineWidth = 1.5;
-  context.beginPath();
-  context.moveTo(sX + 24, r1Y + 24);
-  context.lineTo(sX + 24, r1Y + 52);
-  context.stroke();
-  context.beginPath();
-  context.moveTo(sX + 24, r1Y + 24);
-  context.lineTo(sX + 52, r1Y + 24);
-  context.stroke();
-
-  // "THE DESTINATION" label
-  context.fillStyle = "rgba(250, 250, 249, 0.45)";
-  context.font = "800 13px Arial";
-  context.fillText("THE DESTINATION", sX + 32, r1Y + 80);
-
-  // Location name
-  context.fillStyle = offWhite;
-  context.font = "500 36px Georgia";
-  drawWrappedText(context, item.location.toUpperCase(), sX + 32, r1Y + 128, r1RW - 64, 42);
+  // Large Location title
+  context.fillStyle = "#1E3022";
+  context.font = `600 56px ${fontSerif}`;
+  const locTitleY = drawWrappedText(context, item.location, col2X, mainY + 95, col2W, 64);
 
   // Divider line
-  context.strokeStyle = "rgba(250, 250, 249, 0.14)";
-  context.lineWidth = 1;
-  context.beginPath();
-  context.moveTo(sX + 32, r1Y + 186);
-  context.lineTo(sX + r1RW - 32, r1Y + 186);
-  context.stroke();
-
-  // Villa count (large)
-  context.fillStyle = offWhite;
-  context.font = "800 60px Arial";
-  context.fillText(item.villaCount, sX + 32, r1Y + 262);
-
-  // "CURATED VILLAS" subtitle
-  context.fillStyle = "rgba(250, 250, 249, 0.55)";
-  context.font = "700 16px Arial";
-  context.fillText("CURATED VILLAS", sX + 32, r1Y + 294);
-
-  // Price
-  context.fillStyle = offWhite;
-  context.font = "700 20px Arial";
-  context.fillText(item.price, sX + 32, r1Y + 340);
-
-  // "PREMIUM SELECTION" label + rating dots
-  context.fillStyle = "rgba(250, 250, 249, 0.4)";
-  context.font = "800 12px Arial";
-  context.fillText("PREMIUM SELECTION", sX + 32, r1Y + r1H - 62);
-
-  for (let i = 0; i < 5; i++) {
-    context.fillStyle = i < 4 ? offWhite : "rgba(250, 250, 249, 0.18)";
-    context.beginPath();
-    context.arc(sX + 38 + i * 22, r1Y + r1H - 36, 6, 0, Math.PI * 2);
-    context.fill();
-  }
-
-  // Compass decoration (bottom-right)
-  context.strokeStyle = "rgba(250, 250, 249, 0.09)";
+  context.strokeStyle = "rgba(68, 107, 74, 0.16)";
   context.lineWidth = 1.5;
   context.beginPath();
-  context.arc(sX + r1RW - 52, r1Y + r1H - 52, 26, 0, Math.PI * 2);
-  context.stroke();
-  context.beginPath();
-  context.moveTo(sX + r1RW - 52, r1Y + r1H - 78);
-  context.lineTo(sX + r1RW - 52, r1Y + r1H - 26);
-  context.stroke();
-  context.beginPath();
-  context.moveTo(sX + r1RW - 78, r1Y + r1H - 52);
-  context.lineTo(sX + r1RW - 26, r1Y + r1H - 52);
+  context.moveTo(col2X, locTitleY + 30);
+  context.lineTo(col2X + 160, locTitleY + 30);
   context.stroke();
 
-  // ═══════════════════════════════════════════
-  // ROW 2 — Image 2 (32%) + Image 3 (68%)
-  // ═══════════════════════════════════════════
-  const r2Y = r1Y + r1H + G;
-  const r2H = 380;
-  const r2LW = 338;
-  const r2RW = cw - r2LW - G;
+  // Section Header
+  context.fillStyle = "rgba(68, 107, 74, 0.5)";
+  context.font = `800 13px ${fontSans}`;
+  context.fillText("LIFESTYLE PILLARS", col2X, locTitleY + 75);
 
-  // ── Image 2 Card (Left, portrait) ──
-  if (imageSet[1]) {
-    context.fillStyle = "rgba(0, 0, 0, 0.04)";
-    roundedRect(context, M + 4, r2Y + 4, r2LW, r2H, R);
-    context.fill();
-
-    drawImageCover(context, imageSet[1], M, r2Y, r2LW, r2H, R);
-
-    // Bottom gradient
-    const g2 = context.createLinearGradient(M, r2Y + r2H * 0.55, M, r2Y + r2H);
-    g2.addColorStop(0, "rgba(30, 48, 34, 0)");
-    g2.addColorStop(1, "rgba(30, 48, 34, 0.5)");
-    context.fillStyle = g2;
-    context.save();
-    roundedRect(context, M, r2Y, r2LW, r2H, R);
-    context.clip();
-    context.fillRect(M, r2Y, r2LW, r2H);
-    context.restore();
-
-    // Number badge bottom-left
-    context.fillStyle = "rgba(250, 250, 249, 0.14)";
-    roundedRect(context, M + 16, r2Y + r2H - 46, 44, 30, 15);
-    context.fill();
-    context.fillStyle = offWhite;
-    context.font = "800 13px Arial";
-    context.fillText("02", M + 28, r2Y + r2H - 26);
-  } else {
-    context.fillStyle = "rgba(68, 107, 74, 0.035)";
-    roundedRect(context, M, r2Y, r2LW, r2H, R);
-    context.fill();
-    context.strokeStyle = "rgba(68, 107, 74, 0.08)";
-    context.lineWidth = 1;
-    context.stroke();
-  }
-
-  // ── Image 3 Card (Right, landscape, larger) ──
-  const i3X = M + r2LW + G;
-  if (imageSet[2]) {
-    context.fillStyle = "rgba(0, 0, 0, 0.04)";
-    roundedRect(context, i3X + 4, r2Y + 4, r2RW, r2H, R);
-    context.fill();
-
-    drawImageCover(context, imageSet[2], i3X, r2Y, r2RW, r2H, R);
-
-    // Subtle gradient overlay
-    const g3 = context.createLinearGradient(i3X, r2Y + r2H * 0.6, i3X, r2Y + r2H);
-    g3.addColorStop(0, "rgba(30, 48, 34, 0)");
-    g3.addColorStop(1, "rgba(30, 48, 34, 0.38)");
-    context.fillStyle = g3;
-    context.save();
-    roundedRect(context, i3X, r2Y, r2RW, r2H, R);
-    context.clip();
-    context.fillRect(i3X, r2Y, r2RW, r2H);
-    context.restore();
-
-    // "GALLERY VIEW" badge top-right
-    const gvLabel = "GALLERY VIEW";
-    context.font = "800 12px Arial";
-    const gvW = context.measureText(gvLabel).width + 24;
-    context.fillStyle = "rgba(250, 250, 249, 0.14)";
-    roundedRect(context, i3X + r2RW - gvW - 16, r2Y + 16, gvW, 28, 14);
-    context.fill();
-    context.fillStyle = offWhite;
-    context.fillText(gvLabel, i3X + r2RW - gvW - 4, r2Y + 35);
-
-    // Location label at bottom-left
-    context.fillStyle = "rgba(250, 250, 249, 0.85)";
-    context.font = "500 28px Georgia";
-    context.fillText(item.location, i3X + 24, r2Y + r2H - 24);
-  } else {
-    context.fillStyle = "rgba(68, 107, 74, 0.035)";
-    roundedRect(context, i3X, r2Y, r2RW, r2H, R);
-    context.fill();
-    context.strokeStyle = "rgba(68, 107, 74, 0.08)";
-    context.lineWidth = 1;
-    context.stroke();
-  }
-
-  // ═══════════════════════════════════════════
-  // ROW 3 — Atmosphere Card (60%) + Image 4 (40%)
-  // ═══════════════════════════════════════════
-  const r3Y = r2Y + r2H + G;
-  const r3H = 368;
-  const r3LW = 636;
-  const r3RW = cw - r3LW - G;
-
-  // ── Atmosphere Card (Left) ──
-  context.fillStyle = "rgba(0, 0, 0, 0.025)";
-  roundedRect(context, M + 4, r3Y + 4, r3LW, r3H, R);
-  context.fill();
-
-  context.fillStyle = "rgba(68, 107, 74, 0.03)";
-  roundedRect(context, M, r3Y, r3LW, r3H, R);
-  context.fill();
-  context.strokeStyle = "rgba(68, 107, 74, 0.10)";
-  context.lineWidth = 1.5;
-  context.stroke();
-
-  // L-shaped corner accents
-  context.strokeStyle = "rgba(68, 107, 74, 0.14)";
-  context.lineWidth = 1.5;
-  context.beginPath();
-  context.moveTo(M + r3LW - 38, r3Y + 16);
-  context.lineTo(M + r3LW - 16, r3Y + 16);
-  context.lineTo(M + r3LW - 16, r3Y + 38);
-  context.stroke();
-  context.beginPath();
-  context.moveTo(M + 16, r3Y + r3H - 38);
-  context.lineTo(M + 16, r3Y + r3H - 16);
-  context.lineTo(M + 38, r3Y + r3H - 16);
-  context.stroke();
-
-  // Header
-  context.fillStyle = brandGreen;
-  context.font = "800 15px Arial";
-  context.fillText("ATMOSPHERE & VIBES", M + 32, r3Y + 42);
-
-  // Line under header
-  context.strokeStyle = "rgba(68, 107, 74, 0.08)";
-  context.lineWidth = 1;
-  context.beginPath();
-  context.moveTo(M + 32, r3Y + 56);
-  context.lineTo(M + r3LW - 32, r3Y + 56);
-  context.stroke();
-
-  // Mood items in two columns
-  const moods = item.moods.slice(0, 6);
-  const moodColW = (r3LW - 96) / 2;
-  moods.forEach((mood, idx) => {
-    const col = idx % 2;
-    const row = Math.floor(idx / 2);
-    const mx = M + 42 + col * moodColW;
-    const my = r3Y + 100 + row * 68;
-
+  // Render the pillars
+  let pillarY = locTitleY + 120;
+  const pillars = item.lifestylePillars || baliCollections.find((c) => c.id === item.id)?.lifestylePillars || [];
+  
+  pillars.slice(0, 3).forEach((pillar, idx) => {
+    // Pillar title with numeral
     context.fillStyle = brandGreen;
-    context.beginPath();
-    context.arc(mx, my - 5, 5, 0, Math.PI * 2);
-    context.fill();
+    context.font = `800 21px ${fontSans}`;
+    context.fillText(`0${idx + 1}. ${pillar.title.toUpperCase()}`, col2X, pillarY);
 
-    context.font = "800 19px Arial";
-    context.fillStyle = brandGreen;
-    context.fillText(mood.toUpperCase(), mx + 18, my);
-
-    context.strokeStyle = "rgba(68, 107, 74, 0.05)";
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(mx + 18, my + 14);
-    context.lineTo(mx + moodColW - 24, my + 14);
-    context.stroke();
+    // Pillar description
+    context.fillStyle = "#4A544C";
+    context.font = `500 17px ${fontSans}`;
+    const descY = drawWrappedText(context, pillar.description, col2X, pillarY + 28, col2W, 26);
+    
+    // Increment Y
+    pillarY = descY + 54;
   });
 
-  // ── Image 4 Card (Right) ──
-  const i4X = M + r3LW + G;
-  const i4Src = imageSet[3] ?? imageSet[0] ?? null;
-  if (i4Src) {
-    context.fillStyle = "rgba(0, 0, 0, 0.04)";
-    roundedRect(context, i4X + 4, r3Y + 4, r3RW, r3H, R);
-    context.fill();
-
-    drawImageCover(context, i4Src, i4X, r3Y, r3RW, r3H, R);
-
-    // Gradient overlay at bottom
-    const g4 = context.createLinearGradient(i4X, r3Y + r3H * 0.5, i4X, r3Y + r3H);
-    g4.addColorStop(0, "rgba(30, 48, 34, 0)");
-    g4.addColorStop(1, "rgba(30, 48, 34, 0.55)");
-    context.fillStyle = g4;
-    context.save();
-    roundedRect(context, i4X, r3Y, r3RW, r3H, R);
-    context.clip();
-    context.fillRect(i4X, r3Y, r3RW, r3H);
-    context.restore();
-
-    // "EXPLORE" label at bottom
-    context.fillStyle = offWhite;
-    context.font = "800 14px Arial";
-    context.fillText("EXPLORE", i4X + 20, r3Y + r3H - 22);
-
-    // Draw clean vector arrow manually to prevent emoji translation on mobile/OS
-    const textWidth = context.measureText("EXPLORE").width;
-    const arrowX = i4X + 20 + textWidth + 8;
-    const arrowY = r3Y + r3H - 27; // Center line of text
-    context.strokeStyle = offWhite;
-    context.lineWidth = 2.5;
-    context.lineCap = "round";
-    context.lineJoin = "round";
-    context.beginPath();
-    context.moveTo(arrowX, arrowY);
-    context.lineTo(arrowX + 8, arrowY);
-    context.lineTo(arrowX + 5, arrowY - 3);
-    context.moveTo(arrowX + 8, arrowY);
-    context.lineTo(arrowX + 5, arrowY + 3);
-    context.stroke();
-  } else {
-    context.fillStyle = "rgba(68, 107, 74, 0.035)";
-    roundedRect(context, i4X, r3Y, r3RW, r3H, R);
-    context.fill();
-    context.strokeStyle = "rgba(68, 107, 74, 0.08)";
-    context.lineWidth = 1;
-    context.stroke();
-  }
+  // Bottom stamp/accent
+  const stampY = Math.max(pillarY, mainY + heroH - 120);
+  context.strokeStyle = "rgba(68, 107, 74, 0.08)";
+  context.lineWidth = 1.5;
+  context.beginPath();
+  context.arc(col2X + col2W / 2, stampY + 40, 45, 0, Math.PI * 2);
+  context.stroke();
+  
+  context.save();
+  context.textAlign = "center";
+  context.fillStyle = "rgba(68, 107, 74, 0.4)";
+  context.font = `800 10px ${fontSans}`;
+  context.fillText("SUMMERHOUSES", col2X + col2W / 2, stampY + 38);
+  context.font = `500 9px ${fontSerif}`;
+  context.fillText("BALI", col2X + col2W / 2, stampY + 52);
+  context.restore();
 
   // ═══════════════════════════════════════════
   // FOOTER ACCENT STRIP
   // ═══════════════════════════════════════════
-  const footerY = r3Y + r3H + G + 12;
+  const footerY = mainY + heroH + 28;
 
   context.strokeStyle = "rgba(68, 107, 74, 0.08)";
   context.lineWidth = 1;
@@ -750,119 +538,181 @@ function createGalleryTexture(item: BaliCollectionItem, images: HTMLImageElement
 
   context.save();
   context.fillStyle = "rgba(68, 107, 74, 0.35)";
-  context.font = "700 13px Arial";
-  const hlText = item.highlights.slice(0, 3).join("  \u00B7  ");
+  context.font = `700 13px ${fontSans}`;
+  const hlText = item.highlights.slice(0, 4).join("  \u00B7  ");
   context.textAlign = "center";
-  context.fillText(hlText, canvas.width / 2, footerY + 28);
+  context.fillText(hlText, W / 2, footerY + 28);
   context.restore();
 
-  drawSheen(context, canvas.width, canvas.height);
+  drawSheen(context, W, H);
   return canvas.toDataURL("image/png");
 }
 
 function createInfoTexture(item: BaliCollectionItem, images: HTMLImageElement[]) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1600;
+  canvas.width = 2400;
+  canvas.height = 3200;
   const context = canvas.getContext("2d");
   if (!context) {
     return "";
   }
+  context.scale(2, 2);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+
+  const W = 1200;
+  const H = 1600;
 
   context.fillStyle = "#FAFAF9";
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, W, H);
 
   const wash = context.createRadialGradient(840, 240, 0, 840, 240, 820);
   wash.addColorStop(0, "rgba(68, 107, 74, 0.08)");
   wash.addColorStop(1, "rgba(68, 107, 74, 0)");
   context.fillStyle = wash;
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, W, H);
 
   context.strokeStyle = "rgba(68, 107, 74, 0.22)";
   context.lineWidth = 3;
-  context.strokeRect(92, 92, canvas.width - 184, canvas.height - 184);
+  context.strokeRect(92, 92, W - 184, H - 184);
+
+  const fontSans = getFontSans();
+  const fontSerif = getFontSerif();
 
   context.fillStyle = "#446B4A";
-  context.font = "800 28px Arial";
+  context.font = `800 28px ${fontSans}`;
   context.fillText(item.tag.toUpperCase(), 136, 190);
 
   context.fillStyle = "#446B4A";
-  context.font = "500 132px Georgia";
+  context.font = `500 132px ${fontSerif}`;
   const titleEndY = drawWrappedText(context, item.location, 136, 366, 760, 128);
 
   context.fillStyle = "rgba(68, 107, 74, 0.85)";
-  context.font = "500 35px Arial";
-  drawWrappedText(context, item.description, 136, titleEndY + 100, 760, 54);
+  context.font = `500 35px ${fontSans}`;
+  const descEndY = drawWrappedText(context, item.description, 136, titleEndY + 80, 760, 54);
 
-  context.font = "800 22px Arial";
+  // Dynamic Spacing Calculation
+  const moodY = descEndY + 70;
+  context.font = `800 22px ${fontSans}`;
   context.fillStyle = "rgba(68, 107, 74, 0.64)";
-  context.fillText("MOOD", 136, 842);
-  drawPills(context, item.moods.slice(0, 4), 136, 866, 720);
+  context.fillText("MOOD", 136, moodY);
+  
+  const moodPillsY = moodY + 24;
+  const moodPillsEndY = drawPills(context, item.moods.slice(0, 4), 136, moodPillsY, 720);
 
+  const highlightsY = moodPillsEndY + 54;
   context.fillStyle = "#446B4A";
-  context.font = "800 25px Arial";
-  context.fillText("HIGHLIGHT EXPERIENCES", 136, 1046);
-  context.font = "700 27px Arial";
+  context.font = `800 25px ${fontSans}`;
+  context.fillText("HIGHLIGHT EXPERIENCES", 136, highlightsY);
+  
+  context.font = `700 27px ${fontSans}`;
   context.fillStyle = "rgba(68, 107, 74, 0.82)";
-  item.highlights.slice(0, 4).forEach((highlight, index) => {
+  
+  const highlightsItems = item.highlights.slice(0, 4);
+  highlightsItems.forEach((highlight, index) => {
     const x = 136 + (index % 2) * 410;
-    const y = 1106 + Math.floor(index / 2) * 60;
+    const y = highlightsY + 54 + Math.floor(index / 2) * 56;
     context.fillText(`- ${highlight}`, x, y);
   });
+  const highlightsEndY = highlightsY + 54 + Math.ceil(highlightsItems.length / 2) * 56;
 
-  context.font = "800 25px Arial";
+  const bestForY = highlightsEndY + 40;
+  context.font = `800 25px ${fontSans}`;
   context.fillStyle = "#446B4A";
-  context.fillText("BEST FOR", 136, 1268);
-  drawPills(context, item.bestFor, 136, 1298, 560);
+  context.fillText("BEST FOR", 136, bestForY);
+  
+  const bestForPillsY = bestForY + 28;
+  const bestForPillsEndY = drawPills(context, item.bestFor, 136, bestForPillsY, 560);
 
-  context.fillStyle = "rgba(68, 107, 74, 0.08)";
-  roundedRect(context, 690, 1286, 296, 150, 30);
+  // Draw the Local Vibe & Facts Card in the bottom right corner
+  const cardW = 420;
+  const cardH = 320;
+  const cardX = W - 92 - cardW; // 688
+  const cardY = H - 92 - cardH; // 1188
+
+  // Background and border
+  context.fillStyle = "rgba(68, 107, 74, 0.045)";
+  roundedRect(context, cardX, cardY, cardW, cardH, 24);
   context.fill();
+  context.strokeStyle = "rgba(68, 107, 74, 0.22)";
+  context.lineWidth = 2;
+  context.stroke();
+
+  // Card Header
   context.fillStyle = "#446B4A";
-  context.font = "800 30px Arial";
-  context.fillText(item.villaCount, 724, 1350);
-  context.font = "700 24px Arial";
-  context.fillStyle = "rgba(68, 107, 74, 0.78)";
-  context.fillText(item.price, 724, 1398);
+  context.font = `800 24px ${fontSans}`;
+  context.fillText("LOCAL PROFILE", cardX + 24, cardY + 44);
 
-  context.fillStyle = "#446B4A";
-  roundedRect(context, 690, 1460, 318, 76, 38);
-  context.fill();
+  context.strokeStyle = "rgba(68, 107, 74, 0.14)";
+  context.beginPath();
+  context.moveTo(cardX + 24, cardY + 58);
+  context.lineTo(cardX + cardW - 24, cardY + 58);
+  context.stroke();
 
-  context.fillStyle = "#FAFAF9";
-  context.font = "800 23px Arial";
-  context.fillText("EXPLORE VILLAS", 744, 1507);
-  drawSheen(context, canvas.width, canvas.height);
+  // Draw local facts in rows
+  const facts = item.facts || [];
+  facts.slice(0, 3).forEach((fact, idx) => {
+    const rowY = cardY + 104 + idx * 72;
+    
+    // Label
+    context.fillStyle = "rgba(68, 107, 74, 0.65)";
+    context.font = `800 17px ${fontSans}`;
+    context.fillText(fact.label.toUpperCase(), cardX + 24, rowY);
 
+    // Value
+    context.fillStyle = "#1E3022";
+    context.font = `700 23px ${fontSans}`;
+    context.fillText(fact.value, cardX + 142, rowY);
+
+    // Inner divider line (except last row)
+    if (idx < 2) {
+      context.strokeStyle = "rgba(68, 107, 74, 0.06)";
+      context.beginPath();
+      context.moveTo(cardX + 24, rowY + 20);
+      context.lineTo(cardX + cardW - 24, rowY + 20);
+      context.stroke();
+    }
+  });
+
+  drawSheen(context, W, H);
   return canvas.toDataURL("image/png");
 }
 
 function createBackCoverTexture() {
   const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1600;
+  canvas.width = 2400;
+  canvas.height = 3200;
   const context = canvas.getContext("2d");
   if (!context) {
     return "";
   }
+  context.scale(2, 2);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+
+  const W = 1200;
+  const H = 1600;
+
+  const fontSans = getFontSans();
+  const fontSerif = getFontSerif();
 
   context.fillStyle = "#446B4A";
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillRect(0, 0, W, H);
   context.fillStyle = "rgba(250, 250, 249, 0.08)";
-  context.fillRect(86, 86, canvas.width - 172, canvas.height - 172);
+  context.fillRect(86, 86, W - 172, H - 172);
 
   context.fillStyle = "#FAFAF9";
-  context.font = "500 108px Georgia";
+  context.font = `500 108px ${fontSerif}`;
   drawWrappedText(context, "Find your Bali rhythm.", 120, 650, 760, 118);
 
   context.fillStyle = "rgba(250, 250, 249, 0.82)";
-  context.font = "500 38px Arial";
+  context.font = `500 38px ${fontSans}`;
   drawWrappedText(context, "Explore the full villa collection and filter by destination, dates, and guests.", 120, 1030, 820, 56);
 
   context.fillStyle = "#FAFAF9";
-  context.font = "800 34px Arial";
+  context.font = `800 34px ${fontSans}`;
   context.fillText("SUMMERHOUSES BALI", 120, 1380);
-  drawSheen(context, canvas.width, canvas.height);
+  drawSheen(context, W, H);
 
   return canvas.toDataURL("image/png");
 }
@@ -906,8 +756,8 @@ function Page({ number, front, back, page, opened, bookClosed, totalPages, setPa
 
   picture.colorSpace = SRGBColorSpace;
   picture2.colorSpace = SRGBColorSpace;
-  picture.anisotropy = 4;
-  picture2.anisotropy = 4;
+  picture.anisotropy = 8;
+  picture2.anisotropy = 8;
 
   const group = useRef<Group>(null);
   const turnedAt = useRef(0);
@@ -1098,9 +948,22 @@ function BookExperience({
   pages: BookPageData[];
   setPage: (page: number) => void;
 }) {
+  const groupRef = useRef<Group>(null);
+
+  useFrame((state, delta) => {
+    if (!groupRef.current) return;
+    
+    // Smooth mouse parallax tilt for depth
+    const targetY = state.pointer.x * 0.16; // Yaw
+    const targetX = -state.pointer.y * 0.08; // Pitch
+    
+    easing.damp(groupRef.current.rotation, "y", targetY, 0.25, delta);
+    easing.damp(groupRef.current.rotation, "x", targetX, 0.25, delta);
+  });
+
   return (
     <>
-      <group rotation-x={0} scale={1.58}>
+      <group ref={groupRef} scale={1.58}>
         <Book page={page} pages={pages} setPage={setPage} />
       </group>
       <hemisphereLight args={["#fff7ea", "#9f8e7c", 0.48]} />
@@ -1128,32 +991,50 @@ function BookExperience({
 
 type BaliFlipBookProps = {
   collections?: BaliCollectionItem[];
+  page: number;
+  setPage: (page: number) => void;
+  onTotalPagesDetected?: (total: number) => void;
 };
 
-export default function BaliFlipBook({ collections = baliCollections }: BaliFlipBookProps) {
-  const [page, setPage] = useState(0);
+export default function BaliFlipBook({
+  collections = baliCollections,
+  page,
+  setPage,
+  onTotalPagesDetected,
+}: BaliFlipBookProps) {
   const [pages, setPages] = useState<BookPageData[]>([]);
-  const activeCollection = collections[Math.max(0, Math.min(collections.length - 1, page - 1))] ?? collections[0];
 
   useEffect(() => {
     let isMounted = true;
 
-    buildBookPages(collections)
-      .then((builtPages) => {
-        if (isMounted) {
-          setPages(builtPages);
+    const initBook = async () => {
+      // Wait for premium fonts to load to prevent fallback canvas rendering
+      if (typeof window !== "undefined" && "fonts" in document) {
+        try {
+          await document.fonts.ready;
+        } catch (e) {
+          console.warn("Failed to wait for fonts to load:", e);
         }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setPages([]);
-        }
-      });
+      }
+
+      const builtPages = await buildBookPages(collections);
+      if (isMounted) {
+        setPages(builtPages);
+      }
+    };
+
+    initBook();
 
     return () => {
       isMounted = false;
     };
   }, [collections]);
+
+  useEffect(() => {
+    if (pages.length > 0 && onTotalPagesDetected) {
+      onTotalPagesDetected(pages.length);
+    }
+  }, [pages, onTotalPagesDetected]);
 
   useEffect(() => {
     if (page === 0) {
@@ -1173,7 +1054,7 @@ export default function BaliFlipBook({ collections = baliCollections }: BaliFlip
         {pages.length > 0 ? (
           <Canvas
             shadows
-            dpr={[1, 1.5]}
+            dpr={[1, 2]}
             camera={{ position: [-0.18, 0, 5.2], fov: 39 }}
             gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
           >
@@ -1182,14 +1063,12 @@ export default function BaliFlipBook({ collections = baliCollections }: BaliFlip
             </Suspense>
           </Canvas>
         ) : (
-          <div className="bali-book-loading">Preparing private Bali journal...</div>
+          <div className="bali-book-loading-container">
+            <div className="bali-book-loading-spinner" />
+            <span className="bali-book-loading-text">Preparing Bali Journal...</span>
+            <span className="bali-book-loading-subtext">Please wait</span>
+          </div>
         )}
-      </div>
-
-      <div className="bali-book-controls" aria-label="Bali collection book controls">
-        <Link className="bali-book-cta" href={activeCollection.href}>
-          {activeCollection.cta}
-        </Link>
       </div>
     </div>
   );
