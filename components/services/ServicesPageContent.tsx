@@ -382,87 +382,89 @@ export default function ServicesPageContent() {
             </motion.span>
           </div>
 
-          {/* Testimonial Card (Glassmorphism Card centered vertically/horizontally) */}
-          <motion.div 
-            style={{ opacity: cardOpacity, y: cardY, scale: cardScale, pointerEvents: cardPointerEvents }}
-            className={styles.testimonialCardWrapper}
-          >
-            <div className={styles.testimonialContentArea}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTestimonial}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {/* Villa Tag */}
-                  <div className={styles.testimonialVillaTag}>
-                    <span>{ownerTestimonials[activeTestimonial].villa}</span>
-                  </div>
+          {/* Testimonial Card Centering Wrapper (Resolves absolute positioning stretch bug on iOS devices) */}
+          <div className={styles.testimonialCardCenteringWrapper}>
+            <motion.div 
+              style={{ opacity: cardOpacity, y: cardY, scale: cardScale, pointerEvents: cardPointerEvents }}
+              className={styles.testimonialCardWrapper}
+            >
+              <div className={styles.testimonialContentArea}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTestimonial}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {/* Villa Tag */}
+                    <div className={styles.testimonialVillaTag}>
+                      <span>{ownerTestimonials[activeTestimonial].villa}</span>
+                    </div>
 
-                  {/* Quote Text */}
-                  <blockquote className={styles.testimonialQuoteText}>
-                    “{ownerTestimonials[activeTestimonial].quote}”
-                  </blockquote>
+                    {/* Quote Text */}
+                    <blockquote className={styles.testimonialQuoteText}>
+                      “{ownerTestimonials[activeTestimonial].quote}”
+                    </blockquote>
 
-                  {/* Owner Metrics Grid */}
-                  <div className={styles.ownerMetricsGrid}>
-                    {ownerTestimonials[activeTestimonial].metrics.map((metric, midx) => (
-                      <div key={midx} className={styles.ownerMetricItem}>
-                        <strong>{metric.value}</strong>
-                        <span>{metric.label}</span>
+                    {/* Owner Metrics Grid */}
+                    <div className={styles.ownerMetricsGrid}>
+                      {ownerTestimonials[activeTestimonial].metrics.map((metric, midx) => (
+                        <div key={midx} className={styles.ownerMetricItem}>
+                          <strong>{metric.value}</strong>
+                          <span>{metric.label}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Author Info Group */}
+                    <div className={styles.testimonialAuthorRow}>
+                      <div className={styles.authorAvatarWrapper}>
+                        <Image
+                          src={ownerTestimonials[activeTestimonial].portrait}
+                          alt={ownerTestimonials[activeTestimonial].owner}
+                          fill
+                          sizes="48px"
+                          className="object-cover rounded-full"
+                        />
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Author Info Group */}
-                  <div className={styles.testimonialAuthorRow}>
-                    <div className={styles.authorAvatarWrapper}>
-                      <Image
-                        src={ownerTestimonials[activeTestimonial].portrait}
-                        alt={ownerTestimonials[activeTestimonial].owner}
-                        fill
-                        sizes="48px"
-                        className="object-cover rounded-full"
-                      />
+                      <div className={styles.authorMeta}>
+                        <strong className={styles.authorName}>{ownerTestimonials[activeTestimonial].owner}</strong>
+                        <span className={styles.authorLocation}>
+                          {ownerTestimonials[activeTestimonial].role} — {ownerTestimonials[activeTestimonial].location}
+                        </span>
+                        <span className={styles.authorVilla}>
+                          Owner of {ownerTestimonials[activeTestimonial].villa}
+                        </span>
+                      </div>
                     </div>
-                    <div className={styles.authorMeta}>
-                      <strong className={styles.authorName}>{ownerTestimonials[activeTestimonial].owner}</strong>
-                      <span className={styles.authorLocation}>
-                        {ownerTestimonials[activeTestimonial].role} — {ownerTestimonials[activeTestimonial].location}
-                      </span>
-                      <span className={styles.authorVilla}>
-                        Owner of {ownerTestimonials[activeTestimonial].villa}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-            {/* Navigation Arrows on the right side of the card */}
-            <div className={styles.testimonialNavCtrls}>
-              <button 
-                type="button" 
-                onClick={handlePrevTestimonial} 
-                className={styles.testimonialNavArrow} 
-                aria-label="Previous testimonial"
-              >
-                <FiChevronUp className={styles.navIconDesktop} />
-                <FiChevronLeft className={styles.navIconMobile} />
-              </button>
-              <button 
-                type="button" 
-                onClick={handleNextTestimonial} 
-                className={styles.testimonialNavArrow} 
-                aria-label="Next testimonial"
-              >
-                <FiChevronDown className={styles.navIconDesktop} />
-                <FiChevronRight className={styles.navIconMobile} />
-              </button>
-            </div>
-          </motion.div>
+              {/* Navigation Arrows on the right side of the card */}
+              <div className={styles.testimonialNavCtrls}>
+                <button 
+                  type="button" 
+                  onClick={handlePrevTestimonial} 
+                  className={styles.testimonialNavArrow} 
+                  aria-label="Previous testimonial"
+                >
+                  <FiChevronUp className={styles.navIconDesktop} />
+                  <FiChevronLeft className={styles.navIconMobile} />
+                </button>
+                <button 
+                  type="button" 
+                  onClick={handleNextTestimonial} 
+                  className={styles.testimonialNavArrow} 
+                  aria-label="Next testimonial"
+                >
+                  <FiChevronDown className={styles.navIconDesktop} />
+                  <FiChevronRight className={styles.navIconMobile} />
+                </button>
+              </div>
+            </motion.div>
+          </div>
 
         </div>
       </section>
