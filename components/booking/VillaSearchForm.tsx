@@ -1,7 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
 import HierarchicalLocationPicker, { getSelectedLocationLabel } from "./HierarchicalLocationPicker";
@@ -36,11 +36,39 @@ export default function VillaSearchForm({
   locations: providedLocations = [],
 }: VillaSearchFormProps) {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const hasProvidedLocations = providedLocations.length > 0;
   const [fetchedLocations, setFetchedLocations] = useState<string[]>([]);
   const [isLoadingLocations, setIsLoadingLocations] = useState(!hasProvidedLocations);
   const [locationError, setLocationError] = useState("");
   const [activePanel, setActivePanel] = useState<"location" | "dates" | "guests" | null>(null);
+
+  // Close active panel on clicking outside the search form
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (formRef.current && !formRef.current.contains(e.target as Node)) {
+        setActivePanel(null);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("touchstart", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, []);
+
+  // Close active panel on pressing Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActivePanel(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const [visibleMonth, setVisibleMonth] = useState(() => new Date());
   const [location, setLocation] = useState(initialValues?.location || "");
   const [checkIn, setCheckIn] = useState(initialValues?.checkIn || "");
@@ -190,6 +218,7 @@ export default function VillaSearchForm({
 
   return (
     <form
+      ref={formRef}
       className={`villa-search-form villa-search-form--${variant} ${activePanel ? "is-panel-open" : ""}`}
       onSubmit={submitSearch}
     >

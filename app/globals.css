@@ -11400,6 +11400,17 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     padding: 0.75rem;
     gap: 0.75rem;
   }
+  .villa-photo-modal__grid figcaption {
+    padding: 0.5rem;
+    font-size: 0.65rem;
+    line-height: 1.25;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .villa-lightbox__nav {
     display: none;
   }

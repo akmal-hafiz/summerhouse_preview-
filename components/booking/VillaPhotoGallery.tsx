@@ -74,17 +74,25 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
     touchEndX.current = null;
   };
 
-  /* Keyboard navigation for lightbox */
+  /* Keyboard navigation for modal & lightbox */
   useEffect(() => {
-    if (lightboxIndex === null) return;
+    if (!isOpen && lightboxIndex === null) return;
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
+      if (e.key === "Escape") {
+        if (lightboxIndex !== null) {
+          closeLightbox();
+        } else if (isOpen) {
+          setIsOpen(false);
+        }
+      }
+      if (lightboxIndex !== null) {
+        if (e.key === "ArrowLeft") goPrev();
+        if (e.key === "ArrowRight") goNext();
+      }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [lightboxIndex, closeLightbox, goPrev, goNext]);
+  }, [isOpen, lightboxIndex, closeLightbox, goPrev, goNext]);
 
   return (
     <>
