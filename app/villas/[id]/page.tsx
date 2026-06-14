@@ -153,7 +153,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
                 </div>
                 <div
                   className="villa-detail-description"
-                  dangerouslySetInnerHTML={{ __html: villa.descriptionHtml }}
+                  dangerouslySetInnerHTML={{ __html: formatDescriptionHtml(villa.descriptionHtml) }}
                 />
               </section>
 
@@ -223,4 +223,79 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
       <Footer />
     </main>
   );
+}
+
+function formatDescriptionHtml(html: string): string {
+  if (!html) return "";
+
+  let cleaned = html
+    .replace(/<p>/gi, "")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<br\s*\/?>/gi, "\n");
+
+  const rawLines = cleaned.split("\n");
+  let result = "";
+  let inList = false;
+
+  for (let line of rawLines) {
+    let trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const plainText = trimmed
+      .replace(/&nbsp;/gi, " ")
+      .replace(/<[^>]*>/g, "")
+      .trim();
+
+    if (!plainText) continue;
+
+    const cleanTextForCheck = plainText
+      .replace(/^[-*•·—\s]+/, "")
+      .replace(/[-*•·—\s]+$/, "")
+      .trim();
+
+    const isHeading = 
+      (cleanTextForCheck.length > 3 && cleanTextForCheck === cleanTextForCheck.toUpperCase() && !/^\d+$/.test(cleanTextForCheck)) ||
+      /^(?:The Space|Layout|Neighborhood|Details To Note|Entire Place Use|Rules|Amenities|Getting around|For coffee & slow mornings|For dining|For movement & wellness|For the Beach|Shops & essentials|Guest access|Other things to note|About the property):?$/i.test(cleanTextForCheck) ||
+      /^\d+\.\s+[A-Za-z]/i.test(cleanTextForCheck) ||
+      /^(?:<strong>|<b>)(.*?)(?:<\/strong>|<\/b>):?$/i.test(trimmed);
+
+    const isListItem = !isHeading && (
+      trimmed.startsWith("-") || 
+      trimmed.startsWith("*") || 
+      trimmed.startsWith("•") || 
+      trimmed.startsWith("·") ||
+      trimmed.startsWith("—")
+    );
+
+    if (isHeading) {
+      if (inList) {
+        result += "</ul>\n";
+        inList = false;
+      }
+      result += `<h3 class="description-heading">${cleanTextForCheck}</h3>\n`;
+    } else if (isListItem) {
+      if (!inList) {
+        result += `<ul class="description-list">\n`;
+        inList = true;
+      }
+      const content = trimmed.replace(/^[-*•·—\s]+/, "").trim();
+      if (content.endsWith(":")) {
+        result += `  <li class="description-list-heading"><strong>${content}</strong></li>\n`;
+      } else {
+        result += `  <li>${content}</li>\n`;
+      }
+    } else {
+      if (inList) {
+        result += "</ul>\n";
+        inList = false;
+      }
+      result += `<p>${trimmed}</p>\n`;
+    }
+  }
+
+  if (inList) {
+    result += "</ul>\n";
+  }
+
+  return result;
 }
