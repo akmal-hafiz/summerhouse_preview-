@@ -4607,8 +4607,32 @@ img {
   }
 
   .villa-detail-page--preview .villa-detail-hero-copy h1 {
-    font-size: clamp(2.55rem, 15vw, 4.1rem) !important;
-    line-height: 0.9 !important;
+    font-size: clamp(1.65rem, 6.5vw, 2.25rem) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.02em !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .villa-detail-page--preview .villa-detail-location-line {
+    font-size: 0.78rem !important;
+    margin-top: 0.55rem !important;
+    color: var(--villa-preview-muted) !important;
+    line-height: 1.4 !important;
+  }
+
+  .villa-detail-page--preview .villa-detail-facts {
+    margin-top: 0.65rem !important;
+    font-size: 0.74rem !important;
+    color: var(--villa-preview-muted) !important;
+    letter-spacing: 0.02em !important;
+    gap: 0.45rem 0.65rem !important;
+  }
+
+  .villa-detail-page--preview .villa-detail-facts span:not(:last-child)::after {
+    content: "•" !important;
+    margin-left: 0.65rem !important;
+    color: #c0bab1 !important;
   }
 
   .villa-detail-page--preview .villa-detail-photo-grid {
@@ -4621,11 +4645,24 @@ img {
   }
 
   .villa-detail-page--preview .villa-detail-photo-grid__side {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.55rem !important;
   }
 
   .villa-detail-page--preview .villa-detail-photo-grid__side figure {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 1.45 / 1 !important;
+  }
+
+  .villa-detail-page--preview .villa-detail-photo-grid__booking {
+    grid-column: 1 / -1 !important;
+    margin-top: 0.45rem !important;
+  }
+
+  .villa-detail-page--preview .villa-detail-reserve-card {
+    border: 1px solid rgba(28, 27, 24, 0.08) !important;
+    box-shadow: 0 8px 24px rgba(28, 27, 24, 0.04) !important;
+    padding: 1.25rem !important;
+    border-radius: 0.85rem !important;
   }
 
   .villa-detail-page--preview .villa-detail-main-grid {
