@@ -133,6 +133,7 @@ export type FeaturedCollectionVilla = {
   bedrooms: number | null;
   bathrooms: number | null;
   href: string;
+  images?: string[];
 };
 
 export type HomepageStayVilla = FeaturedCollectionVilla & {

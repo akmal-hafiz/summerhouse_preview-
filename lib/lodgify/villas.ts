@@ -221,6 +221,7 @@ function propertyToFeaturedCollectionVilla(
     bedrooms: facts.bedrooms || summary.bedrooms,
     bathrooms: facts.bathrooms || summary.bathrooms,
     href: `/villas/${summary.id}`,
+    images: images,
   };
 }
 

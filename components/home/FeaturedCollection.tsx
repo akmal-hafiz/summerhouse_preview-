@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { FiDroplet, FiHome, FiUsers } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { FeaturedCollectionVilla } from "@/lib/lodgify/types";
 
 type FeaturedCollectionProps = {
@@ -62,21 +65,94 @@ function ArrowIcon() {
   );
 }
 
-function FeaturedLargeCard({ villa, variant }: { villa: FeaturedCollectionVilla; variant: "desktop" | "mobile" }) {
+function useCardSlideshow(
+  images: string[] | undefined,
+  variant: "desktop" | "mobile",
+  index: number,
+  isHovered: boolean
+) {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+
+    if (variant === "desktop") {
+      if (!isHovered) {
+        setActiveIndex(0);
+        return;
+      }
+
+      const interval = setInterval(() => {
+        setActiveIndex((prev) => (prev + 1) % images.length);
+      }, 2500);
+
+      return () => clearInterval(interval);
+    } else {
+      const offsetTimeout = setTimeout(() => {
+        const interval = setInterval(() => {
+          setActiveIndex((prev) => (prev + 1) % images.length);
+        }, 5500);
+
+        return () => clearInterval(interval);
+      }, index * 1800);
+
+      return () => clearTimeout(offsetTimeout);
+    }
+  }, [images, variant, index, isHovered]);
+
+  return activeIndex;
+}
+
+function CardFadingImage({ src, alt, sizes, priority = false }: { src: string; alt: string; sizes?: string; priority?: boolean }) {
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", borderRadius: "inherit" }}>
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={src}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+        >
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes={sizes}
+            priority={priority}
+            className="object-cover"
+          />
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function FeaturedLargeCard({ villa, variant, index }: { villa: FeaturedCollectionVilla; variant: "desktop" | "mobile"; index: number }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const activeIndex = useCardSlideshow(villa.images, variant, index, isHovered);
   const facts = formatFacts(villa);
   const prefix = variant === "desktop" ? "desktop" : "mobile";
+  
+  const displayImage = villa.images && villa.images.length > 0
+    ? villa.images[activeIndex]
+    : villa.imageUrl;
 
   return (
-    <Link className={`${prefix}-featured-large-card`} href={villa.href}>
+    <Link 
+      className={`${prefix}-featured-large-card`} 
+      href={villa.href}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <span className={`${prefix}-premium-location`}>{villa.location}</span>
       <div className={`${prefix}-premium-card`}>
         <div className={`${prefix}-premium-img-wrapper`}>
-          <Image
-            src={villa.imageUrl}
+          <CardFadingImage
+            src={displayImage}
             alt={villa.name}
-            fill
             sizes={variant === "desktop" ? "680px" : "86vw"}
-            className="object-cover"
             priority={variant === "desktop"}
           />
         </div>
@@ -110,21 +186,30 @@ function FeaturedLargeCard({ villa, variant }: { villa: FeaturedCollectionVilla;
   );
 }
 
-function FeaturedSmallCard({ villa, variant }: { villa: FeaturedCollectionVilla; variant: "desktop" | "mobile" }) {
+function FeaturedSmallCard({ villa, variant, index }: { villa: FeaturedCollectionVilla; variant: "desktop" | "mobile"; index: number }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const activeIndex = useCardSlideshow(villa.images, variant, index, isHovered);
   const facts = formatFacts(villa);
   const prefix = variant === "desktop" ? "desktop" : "mobile";
 
+  const displayImage = villa.images && villa.images.length > 0
+    ? villa.images[activeIndex]
+    : villa.imageUrl;
+
   return (
-    <Link className={`${prefix}-small-row-card-wrapper`} href={villa.href}>
+    <Link 
+      className={`${prefix}-small-row-card-wrapper`} 
+      href={villa.href}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <span className={`${prefix}-small-card-location`}>{villa.location}</span>
       <div className={`${prefix}-small-row-card`}>
         <div className={`${prefix}-small-card-img`}>
-          <Image
-            src={villa.imageUrl}
+          <CardFadingImage
+            src={displayImage}
             alt={villa.name}
-            fill
             sizes={variant === "desktop" ? "160px" : "46vw"}
-            className="object-cover"
           />
         </div>
         <div className={`${prefix}-small-card-body`}>
@@ -206,9 +291,9 @@ export default function FeaturedCollection({ villas, variant }: FeaturedCollecti
               }}
             >
               {index === 0 ? (
-                <FeaturedLargeCard villa={villa} variant="mobile" />
+                <FeaturedLargeCard villa={villa} variant="mobile" index={index} />
               ) : (
-                <FeaturedSmallCard villa={villa} variant="mobile" />
+                <FeaturedSmallCard villa={villa} variant="mobile" index={index} />
               )}
             </motion.div>
           ))}
@@ -242,7 +327,7 @@ export default function FeaturedCollection({ villas, variant }: FeaturedCollecti
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             style={{ display: "block" }}
           >
-            <FeaturedLargeCard villa={primary} variant="desktop" />
+            <FeaturedLargeCard villa={primary} variant="desktop" index={0} />
           </motion.div>
 
           <motion.div 
@@ -259,7 +344,7 @@ export default function FeaturedCollection({ villas, variant }: FeaturedCollecti
               }
             }}
           >
-            {secondary.map((villa) => (
+            {secondary.map((villa, idx) => (
               <motion.div
                 key={villa.id}
                 variants={{
@@ -272,7 +357,7 @@ export default function FeaturedCollection({ villas, variant }: FeaturedCollecti
                 }}
                 style={{ display: "block", width: "100%" }}
               >
-                <FeaturedSmallCard villa={villa} variant="desktop" />
+                <FeaturedSmallCard villa={villa} variant="desktop" index={idx + 1} />
               </motion.div>
             ))}
           </motion.div>
