@@ -27,7 +27,7 @@ const zoomInVariant = {
   viewport: { once: true, amount: 0.12 },
 };
 
-const galleryItems = [
+const defaultGalleryItems = [
   {
     type: "image",
     id: "gallery-hero",
@@ -203,7 +203,44 @@ const galleryItems = [
   },
 ];
 
-export default function GalleryPage() {
+type GalleryPageProps = {
+  items?: Array<{
+    type: "image" | "text" | "video";
+    src?: string | null;
+    alt?: string | null;
+    label?: string | null;
+    title?: string | null;
+    text?: string | null;
+    video_url?: string | null;
+    video_poster?: string | null;
+  }> | null;
+};
+
+const CMS_CLASS_BY_INDEX = [
+  styles.galleryItem1, styles.galleryText1, styles.galleryItem2, styles.galleryItem3,
+  styles.galleryText2, styles.galleryItem4, styles.galleryItem5, styles.galleryText3,
+  styles.galleryItem6, styles.galleryItem7, styles.galleryText4, styles.galleryItem8,
+  styles.galleryItem9, styles.galleryText5, styles.galleryItem10, styles.galleryItem11,
+  styles.galleryText6, styles.galleryItem12, styles.galleryItem13, styles.galleryText7,
+].filter(Boolean);
+
+export default function GalleryPage({ items: itemsProp }: GalleryPageProps = {}) {
+  const galleryItems = itemsProp && itemsProp.length
+    ? itemsProp.map((item, i) => ({
+        id: `cms-gallery-${i}`,
+        type: item.type,
+        src: item.src ?? null,
+        alt: item.alt ?? "",
+        label: item.label ?? String(i + 1).padStart(2, "0"),
+        title: item.title ?? "",
+        text: item.text ?? "",
+        video_url: item.video_url ?? null,
+        video_poster: item.video_poster ?? null,
+        index: String(i + 1).padStart(2, "0"),
+        className: CMS_CLASS_BY_INDEX[i % CMS_CLASS_BY_INDEX.length] || "",
+      }))
+    : defaultGalleryItems;
+
   return (
     <div className={styles.galleryPage}>
       <section className={styles.intro}>
@@ -235,6 +272,35 @@ export default function GalleryPage() {
                   <h3 className={styles.galleryTextTitle}>{item.title}</h3>
                   <p className={styles.galleryTextDesc}>{item.text}</p>
                 </motion.div>
+              );
+            }
+            if (item.type === "video" && "video_url" in item && item.video_url) {
+              return (
+                <motion.figure
+                  variants={zoomInVariant}
+                  custom={index}
+                  initial="initial"
+                  whileInView="whileInView"
+                  viewport={{ once: true, amount: 0.12 }}
+                  key={item.id}
+                  className={`${styles.galleryItem} ${item.className}`}
+                >
+                  <video
+                    className={styles.coverImage}
+                    src={item.video_url}
+                    poster={("video_poster" in item ? item.video_poster : null) || undefined}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                  <figcaption key={`${item.id}-caption`}>
+                    <span>{item.index}</span>
+                    {item.label}
+                  </figcaption>
+                </motion.figure>
               );
             }
             return (

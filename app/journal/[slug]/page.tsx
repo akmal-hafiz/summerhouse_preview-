@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ArticlePage from "@/components/journal/ArticlePage";
-import {
-  getAllSlugs,
-  getArticleBySlug,
-  getRelatedArticles,
-} from "@/data/articles";
+import { getAllSlugs } from "@/data/articles";
+import { getArticleForSlug, getRelatedArticlesForSlug } from "@/lib/journal";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -17,7 +14,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleForSlug(slug);
 
   if (!article) {
     return {
@@ -58,13 +55,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function JournalArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleForSlug(slug);
 
   if (!article) {
     notFound();
   }
 
-  const relatedArticles = getRelatedArticles(article.slug, 3);
+  const relatedArticles = await getRelatedArticlesForSlug(article.slug, 3);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",

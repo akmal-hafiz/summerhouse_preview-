@@ -1,4 +1,5 @@
 import { isValidDateRange } from "@/lib/date";
+import { getCmsBaliCollections, getHomepageVillaSelections, type CmsHomepageSlots } from "@/lib/cms";
 import { fetchAvailabilityItems, fetchProperties, fetchPropertyById, fetchPropertyImages, fetchPropertyRooms } from "./client";
 import { buildAvailabilityMapFromItems, isRangeAvailable } from "./availability";
 import { getDirectBookingUrl } from "./booking";
@@ -67,6 +68,23 @@ function getConfiguredIds(envKey: string, fallback: string[]) {
     .filter(Boolean);
 
   return ids.length ? ids : fallback;
+}
+
+function getSlotIds(slots: CmsHomepageSlots | null, slot: keyof CmsHomepageSlots): string[] {
+  if (!slots?.[slot]?.length) return [];
+  return slots[slot]!.map((row) => row.lodgify_property_id).filter(Boolean);
+}
+
+async function resolveSlotIds(
+  slot: keyof CmsHomepageSlots,
+  envKey: string,
+  fallback: string[],
+  cachedSlots?: CmsHomepageSlots | null,
+): Promise<string[]> {
+  const slots = cachedSlots !== undefined ? cachedSlots : await getHomepageVillaSelections();
+  const cmsIds = getSlotIds(slots, slot);
+  if (cmsIds.length) return cmsIds;
+  return getConfiguredIds(envKey, fallback);
 }
 
 function normalizeGuestCount(params: VillaSearchParams) {
@@ -226,8 +244,12 @@ function propertyToFeaturedCollectionVilla(
 }
 
 export async function getHomepageFeaturedVillas(limit = 4) {
-  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
-  const configuredIds = getConfiguredFeaturedPropertyIds();
+  const [properties, slots] = await Promise.all([
+    fetchProperties().then((all) => all.filter((property) => property.is_active !== false)),
+    getHomepageVillaSelections(),
+  ]);
+  const cmsIds = getSlotIds(slots, "featured_collection");
+  const configuredIds = cmsIds.length ? cmsIds : getConfiguredFeaturedPropertyIds();
   const configuredSet = new Set(configuredIds.map(String));
   const configuredProperties = configuredIds
     .map((id) => properties.find((property) => String(property.id) === id))
@@ -309,12 +331,19 @@ async function buildStayGroup(
 }
 
 export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
-  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
+  const [properties, slots] = await Promise.all([
+    fetchProperties().then((all) => all.filter((property) => property.is_active !== false)),
+    getHomepageVillaSelections(),
+  ]);
   const byPriceAsc = [...properties].sort((a, b) => getComparablePrice(a) - getComparablePrice(b));
   const byPriceDesc = [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
   const extendedFallback = properties
     .filter((property) => /pererenan|umalas|berawa|canggu/i.test([property.city, property.name].filter(Boolean).join(" ")))
     .sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
+
+  const shortIds = await resolveSlotIds("short_stays", "SHORT_STAY_PROPERTY_IDS", DEFAULT_SHORT_STAY_IDS, slots);
+  const extendedIds = await resolveSlotIds("extended_stays", "EXTENDED_STAY_PROPERTY_IDS", DEFAULT_EXTENDED_STAY_IDS, slots);
+  const featuredHomeIds = await resolveSlotIds("featured_homes", "FEATURED_HOME_PROPERTY_IDS", DEFAULT_FEATURED_HOME_IDS, slots);
 
   return Promise.all([
     buildStayGroup(
@@ -322,7 +351,7 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "short-stays",
       "Short Stays",
       "Weekend escapes and easy Bali breaks for a lighter, flexible stay.",
-      getConfiguredIds("SHORT_STAY_PROPERTY_IDS", DEFAULT_SHORT_STAY_IDS),
+      shortIds,
       byPriceAsc,
     ),
     buildStayGroup(
@@ -330,7 +359,7 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "extended-stays",
       "Extended Stays",
       "Private homes made for settling in, working slowly, and living with more room.",
-      getConfiguredIds("EXTENDED_STAY_PROPERTY_IDS", DEFAULT_EXTENDED_STAY_IDS),
+      extendedIds,
       extendedFallback,
     ),
     buildStayGroup(
@@ -338,7 +367,7 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "featured-homes",
       "Featured Homes",
       "Handpicked SummerHouse stays with standout design, setting, and guest comfort.",
-      getConfiguredIds("FEATURED_HOME_PROPERTY_IDS", DEFAULT_FEATURED_HOME_IDS),
+      featuredHomeIds,
       byPriceDesc,
     ),
   ]);
@@ -350,8 +379,16 @@ function getSignatureSubtitle(villa: HomepageStayVilla) {
 }
 
 export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null> {
-  const properties = (await fetchProperties()).filter((property) => property.is_active !== false);
-  const [property] = [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
+  const [properties, slots] = await Promise.all([
+    fetchProperties().then((all) => all.filter((property) => property.is_active !== false)),
+    getHomepageVillaSelections(),
+  ]);
+
+  const signatureIds = getSlotIds(slots, "signature");
+  const cmsPick = signatureIds.length
+    ? properties.find((p) => String(p.id) === signatureIds[0])
+    : null;
+  const property = cmsPick || [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a))[0];
   if (!property?.id) return null;
 
   const rooms = await fetchPropertyRooms(property.id);
@@ -492,6 +529,11 @@ function getCollectionProfile(city: string) {
 }
 
 export async function getHomepageBaliCollections(limit = 6): Promise<BaliCollectionItem[]> {
+  const cms = await getCmsBaliCollections();
+  if (cms && cms.length) {
+    return cms.slice(0, limit);
+  }
+
   const properties = (await fetchProperties()).filter((property) => property.is_active !== false && property.city);
   const grouped = new Map<string, LodgifyProperty[]>();
 

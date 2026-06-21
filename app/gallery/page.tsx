@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import GalleryPage from "@/components/gallery/GalleryPage";
+import { getCmsGalleryItems } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -24,12 +25,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GalleryRoute() {
+export default async function GalleryRoute() {
+  const items = await getCmsGalleryItems();
+
   return (
     <div className="gallery-route-shell">
       <Navbar alwaysSolid={true} />
       <main className="gallery-route-main">
-        <GalleryPage />
+        <GalleryPage items={items} />
       </main>
       <Footer />
     </div>

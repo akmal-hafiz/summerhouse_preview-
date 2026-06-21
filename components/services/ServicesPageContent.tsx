@@ -74,7 +74,7 @@ const ownerTestimonials = [
 ];
 
 // ── SUB-SERVICES DATA FOR SECTION 1 (Operational) ──
-const operationalServices = [
+const defaultOperationalServices = [
   { title: "Scheduling & Managing Cleaning", text: "Upholding the highest standards with our housekeepers, gardeners, and maintenance team." },
   { title: "HR Management", text: "Streamlining hiring, training, workplace morale, payroll, and performance supervision." },
   { title: "Staff Training & Supervising", text: "Supervisor-led training programs aimed at boosting productivity and guest satisfaction." },
@@ -88,7 +88,7 @@ const operationalServices = [
 ];
 
 // ── SUB-SERVICES DATA FOR SECTION 2 (Sales & Marketing) ──
-const marketingServices = [
+const defaultMarketingServices = [
   { title: "Financial Forecasting", text: "Detailing potential revenue and profit projections to help you make informed decisions." },
   { title: "Revenue Strategy", text: "Deploying data-driven strategies to set realistic goals and maximize villa performance." },
   { title: "Property Profile Copywriting", text: "Producing engaging villa descriptions to build trust with potential guests." },
@@ -102,7 +102,7 @@ const marketingServices = [
 ];
 
 // ── SUB-SERVICES DATA FOR SECTION 3 (Project Management) ──
-const projectServices = [
+const defaultProjectServices = [
   { title: "Finding the Right Properties", text: "Meticulously inspecting properties for location, rental demand, and profitability." },
   { title: "Notary & Legal Counsel", text: "Ensuring full compliance with local regulations, permits, and short-term rental laws." },
   { title: "Project Assessment & Consultation", text: "Pinpointing necessary renovations to transform properties into high-yield rentals." },
@@ -115,7 +115,7 @@ const projectServices = [
 ];
 
 // ── FAQS DATA ──
-const faqs = [
+const defaultFaqs = [
   {
     question: "How does Summerhouse manage villas they do not own?",
     answer: "Summerhouse Bali acts as an end-to-end property management partner. We represent external owners, taking care of daily operations, marketing, bookings, and guest concierge while delivering comprehensive financial reports and returns directly to the owner."
@@ -154,7 +154,28 @@ const staggerContainer: any = {
   }
 };
 
-export default function ServicesPageContent() {
+type ServiceCardProp = { title: string; text: string };
+type FaqProp = { question: string; answer: string };
+
+type ServicesPageContentProps = {
+  operationalServices?: ServiceCardProp[] | null;
+  marketingServices?: ServiceCardProp[] | null;
+  projectServices?: ServiceCardProp[] | null;
+  faqs?: FaqProp[] | null;
+};
+
+export default function ServicesPageContent({
+  operationalServices: opProp,
+  marketingServices: mkProp,
+  projectServices: prProp,
+  faqs: faqsProp,
+}: ServicesPageContentProps = {}) {
+  const operationalServices = opProp && opProp.length ? opProp : defaultOperationalServices;
+  const marketingServices = mkProp && mkProp.length ? mkProp : defaultMarketingServices;
+  const projectServices = prProp && prProp.length ? prProp : defaultProjectServices;
+  const faqs = faqsProp && faqsProp.length
+    ? faqsProp.map((f, i) => ({ id: `cms-faq-${i}`, question: f.question, answer: f.answer }))
+    : defaultFaqs;
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);

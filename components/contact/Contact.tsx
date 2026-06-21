@@ -1,10 +1,13 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiClock, FiMail, FiMapPin, FiMessageCircle, FiPhone } from "react-icons/fi";
 import styles from "./Contact.module.css";
+
+const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 
 const contactOptions = [
   {
@@ -33,7 +36,7 @@ const contactOptions = [
   },
 ];
 
-const faqs = [
+const defaultFaqs = [
   {
     question: "Can you help me choose the right villa?",
     answer: "Yes. Share your dates, guest mix, and preferred area, and we will guide you toward homes that fit the way you want to stay.",
@@ -55,7 +58,63 @@ const fadeUp = {
   transition: { duration: 0.78, ease: [0.22, 1, 0.36, 1] as const },
 };
 
-export default function Contact() {
+type ContactProps = {
+  faqs?: Array<{ question: string; answer: string }> | null;
+};
+
+export default function Contact({ faqs: faqsProp }: ContactProps = {}) {
+  const faqs = faqsProp && faqsProp.length ? faqsProp : defaultFaqs;
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [travelDates, setTravelDates] = useState("");
+  const [guests, setGuests] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedOk, setSubmittedOk] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitError(null);
+    setSubmitting(true);
+
+    const composedSubject = travelDates ? `Inquiry for ${travelDates}` : "Villa inquiry";
+    const composedMessage = [
+      message,
+      guests ? `Guests: ${guests}` : "",
+      travelDates ? `Dates: ${travelDates}` : "",
+    ].filter(Boolean).join("\n\n");
+
+    try {
+      const res = await fetch(`${CMS_BASE_URL}/v1/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: `${firstName} ${lastName}`.trim(),
+          email,
+          phone: phone || null,
+          subject: composedSubject,
+          message: composedMessage || message,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const firstError = data?.errors ? Object.values(data.errors).flat()[0] : null;
+        throw new Error(firstError as string || data?.message || "Could not send inquiry.");
+      }
+      setSubmittedOk(true);
+      setFirstName(""); setLastName(""); setEmail(""); setPhone("");
+      setTravelDates(""); setGuests(""); setMessage("");
+    } catch (err) {
+      setSubmitError((err as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className={styles.contactPage}>
       <section className={styles.hero}>
@@ -124,43 +183,45 @@ export default function Contact() {
           </div>
         </motion.div>
 
-        <motion.form {...fadeUp} className={styles.form}>
+        <motion.form {...fadeUp} className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.motionContents}>
             <div className={styles.fieldGrid}>
               <label>
                 <span>First name *</span>
-                <input type="text" placeholder="Jane" />
+                <input type="text" placeholder="Jane" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
               </label>
               <label>
                 <span>Last name</span>
-                <input type="text" placeholder="Smith" />
+                <input type="text" placeholder="Smith" value={lastName} onChange={(e) => setLastName(e.target.value)} />
               </label>
             </div>
             <div className={styles.fieldGrid}>
               <label>
                 <span>Email *</span>
-                <input type="email" placeholder="jane@email.com" />
+                <input type="email" placeholder="jane@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </label>
               <label>
                 <span>WhatsApp</span>
-                <input type="tel" placeholder="+62 811 388 999" />
+                <input type="tel" placeholder="+62 811 388 999" value={phone} onChange={(e) => setPhone(e.target.value)} />
               </label>
             </div>
             <div className={styles.fieldGrid}>
               <label>
                 <span>Travel dates</span>
-                <input type="text" placeholder="June 12 - June 18" />
+                <input type="text" placeholder="June 12 - June 18" value={travelDates} onChange={(e) => setTravelDates(e.target.value)} />
               </label>
               <label>
                 <span>Guests</span>
-                <input type="text" placeholder="2 adults, 2 children" />
+                <input type="text" placeholder="2 adults, 2 children" value={guests} onChange={(e) => setGuests(e.target.value)} />
               </label>
             </div>
             <label>
               <span>What can we help with? *</span>
-              <textarea placeholder="Tell us about the area, villa style, occasion, or support you would like." />
+              <textarea placeholder="Tell us about the area, villa style, occasion, or support you would like." value={message} onChange={(e) => setMessage(e.target.value)} required />
             </label>
-            <button type="submit">Send inquiry</button>
+            {submitError && <p style={{ color: "#b14a3d", fontSize: "0.9rem", margin: 0 }}>{submitError}</p>}
+            {submittedOk && <p style={{ color: "#2e5c45", fontSize: "0.9rem", margin: 0 }}>Thanks. We will reach out within 2 hours.</p>}
+            <button type="submit" disabled={submitting}>{submitting ? "Sending..." : "Send inquiry"}</button>
           </div>
         </motion.form>
       </section>

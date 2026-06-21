@@ -41,8 +41,27 @@ export type AboutDestination = {
   longitude?: number;
 };
 
+type AboutTestimonial = {
+  author: string;
+  location?: string | null;
+  stars: number;
+  text: string;
+  avatar?: string | null;
+};
+
+type AboutFaq = {
+  question: string;
+  answer: string;
+};
+
+import JournalPreviewSection from "./JournalPreviewSection";
+import type { ArticleListItem } from "@/lib/journal";
+
 type AboutProps = {
   destinations?: AboutDestination[];
+  testimonials?: AboutTestimonial[] | null;
+  faqs?: AboutFaq[] | null;
+  journalArticles?: ArticleListItem[];
 };
 
 const defaultDestinations: AboutDestination[] = [
@@ -237,7 +256,7 @@ const amenities = [
   { id: "safety-care", label: "Safety & Care", icon: FiShield },
 ];
 
-const testimonials = [
+const defaultTestimonials = [
   {
     id: "review-1",
     author: "Naomi S.",
@@ -272,7 +291,7 @@ const testimonials = [
   }
 ];
 
-const faqs = [
+const defaultFaqs = [
   {
     id: "villa-selection",
     question: "How does Summerhouses choose each villa?",
@@ -469,7 +488,24 @@ function CountUp({ to, duration = 1.4, decimals = 0 }: { to: number; duration?: 
   return <span ref={ref}>{count.toFixed(decimals)}</span>;
 }
 
-export default function About({ destinations = [] }: AboutProps) {
+export default function About({ destinations = [], testimonials: testimonialsProp, faqs: faqsProp, journalArticles = [] }: AboutProps) {
+  const testimonials = testimonialsProp && testimonialsProp.length
+    ? testimonialsProp.map((t, i) => ({
+        id: `cms-review-${i}`,
+        author: t.author,
+        location: t.location ?? "",
+        stars: t.stars,
+        text: t.text,
+        avatar: t.avatar ?? "/homepage_villa/curated-1-main.webp",
+      }))
+    : defaultTestimonials;
+  const faqs = faqsProp && faqsProp.length
+    ? faqsProp.map((f, i) => ({
+        id: `cms-faq-${i}`,
+        question: f.question,
+        answer: f.answer,
+      }))
+    : defaultFaqs;
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
 
   useEffect(() => {
@@ -1012,6 +1048,8 @@ export default function About({ destinations = [] }: AboutProps) {
           ))}
         </div>
       </section>
+
+      <JournalPreviewSection articles={journalArticles} />
 
       <section className={styles.destinationSection}>
         <div className={styles.destinationInner}>

@@ -756,8 +756,8 @@ function Page({ number, front, back, page, opened, bookClosed, totalPages, setPa
 
   picture.colorSpace = SRGBColorSpace;
   picture2.colorSpace = SRGBColorSpace;
-  picture.anisotropy = 8;
-  picture2.anisotropy = 8;
+  picture.anisotropy = 4;
+  picture2.anisotropy = 4;
 
   const group = useRef<Group>(null);
   const turnedAt = useRef(0);
@@ -1048,15 +1048,62 @@ export default function BaliFlipBook({
     });
   }, [page]);
 
+  const shellRef = useRef<HTMLDivElement | null>(null);
+  const [canRender, setCanRender] = useState(false);
+  const [contextLost, setContextLost] = useState(false);
+
+  useEffect(() => {
+    const el = shellRef.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setCanRender(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setCanRender(true);
+            observer.disconnect();
+            break;
+          }
+        }
+      },
+      { rootMargin: "200px 0px", threshold: 0.01 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="bali-book-stage">
-      <div className="bali-book-canvas-shell">
-        {pages.length > 0 ? (
+      <div ref={shellRef} className="bali-book-canvas-shell">
+        {pages.length > 0 && canRender && !contextLost ? (
           <Canvas
-            shadows
-            dpr={[1, 2]}
+            shadows={false}
+            dpr={[1, 1.5]}
             camera={{ position: [-0.18, 0, 5.2], fov: 39 }}
-            gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+            performance={{ min: 0.5 }}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: "high-performance",
+              failIfMajorPerformanceCaveat: false,
+              preserveDrawingBuffer: false,
+              stencil: false,
+            }}
+            onCreated={({ gl }) => {
+              const canvas = gl.domElement;
+              const handleLost = (e: Event) => {
+                e.preventDefault();
+                setContextLost(true);
+                setTimeout(() => setContextLost(false), 600);
+              };
+              canvas.addEventListener("webglcontextlost", handleLost, false);
+            }}
           >
             <Suspense fallback={null}>
               <BookExperience page={page} pages={pages} setPage={setPage} />
@@ -1065,7 +1112,9 @@ export default function BaliFlipBook({
         ) : (
           <div className="bali-book-loading-container">
             <div className="bali-book-loading-spinner" />
-            <span className="bali-book-loading-text">Preparing Bali Journal...</span>
+            <span className="bali-book-loading-text">
+              {contextLost ? "Restoring Bali Journal..." : "Preparing Bali Journal..."}
+            </span>
             <span className="bali-book-loading-subtext">Please wait</span>
           </div>
         )}

@@ -1,9 +1,12 @@
 "use client";
 
+import "./navbar-user.css";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
-import { FiHeart, FiMenu, FiSearch, FiUser } from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser } from "react-icons/fi";
 import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 const navbarNavItems = [
   { label: "Villas", href: "/villas" },
@@ -21,6 +24,35 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [savedCount, setSavedCount] = useState(0);
   const [isSavedCountReady, setIsSavedCountReady] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+
+  const loginHref = (() => {
+    if (!pathname || pathname === "/login" || pathname === "/register" || pathname === "/") {
+      return "/login";
+    }
+    return `/login?redirect=${encodeURIComponent(pathname)}`;
+  })();
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const onClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [userMenuOpen]);
+
+  const adminUrl = process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin";
+
+  const handleLogout = async () => {
+    setUserMenuOpen(false);
+    await logout();
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,9 +113,54 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
             <span className="global-icon-button__badge" aria-hidden="true">{savedCount}</span>
           )}
         </Link>
-        <button type="button" className="global-icon-button" aria-label="User profile">
-          <FiUser aria-hidden="true" />
-        </button>
+        <div className="global-user-dropdown" ref={userMenuRef}>
+          {isAuthenticated && user ? (
+            <button
+              type="button"
+              className="global-icon-button is-authenticated"
+              aria-label={`Account: ${user.name}`}
+              onClick={() => setUserMenuOpen((v) => !v)}
+            >
+              <span className="global-user-initial" aria-hidden="true">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
+            </button>
+          ) : (
+            <Link
+              href={loginHref}
+              className="global-icon-button"
+              aria-label="Sign in or register"
+            >
+              <FiUser aria-hidden="true" />
+            </Link>
+          )}
+
+          {isAuthenticated && userMenuOpen && user && (
+            <div className="global-user-menu" role="menu">
+              <div className="global-user-menu__header">
+                <strong>{user.name}</strong>
+                <span>{user.email}</span>
+                {isAdmin && <span className="global-user-menu__badge">Admin</span>}
+              </div>
+              <div className="global-user-menu__items">
+                {isAdmin && (
+                  <a href={adminUrl} role="menuitem">
+                    <FiShield aria-hidden="true" />
+                    <span>Admin dashboard</span>
+                  </a>
+                )}
+                <Link href="/saved-villas" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                  <FiHeart aria-hidden="true" />
+                  <span>Saved villas</span>
+                </Link>
+                <button type="button" role="menuitem" onClick={handleLogout}>
+                  <FiLogOut aria-hidden="true" />
+                  <span>Sign out</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
         <details className="global-mobile-menu">
           <summary aria-label="Open navigation">
             <FiMenu aria-hidden="true" />
@@ -96,6 +173,7 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
           </div>
         </details>
       </div>
+
     </header>
   );
 }

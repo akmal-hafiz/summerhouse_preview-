@@ -3,31 +3,43 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { articles, type Article } from "@/data/articles";
+import type { ArticleListItem } from "@/lib/journal";
 import styles from "./JournalPreviewSection.module.css";
 
 function formatArticleDate(date: string) {
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(`${date}T00:00:00`));
+  if (!date) return "";
+  try {
+    return new Intl.DateTimeFormat("en", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(`${date}T00:00:00`));
+  } catch {
+    return date;
+  }
 }
 
-const sortedArticles = [...articles].sort(
-  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-);
-
-const featuredArticle = sortedArticles[0];
-const supportingArticles = sortedArticles.slice(1, 4);
-
-const ArticleMeta = ({ article, light = false }: { article: Article; light?: boolean }) => (
+const ArticleMeta = ({ article, light = false }: { article: ArticleListItem; light?: boolean }) => (
   <p className={light ? styles.metaLight : styles.meta}>
-    {article.category} / {formatArticleDate(article.date)}
+    {article.category}
+    {article.date && ` / ${formatArticleDate(article.date)}`}
   </p>
 );
 
-export default function JournalPreviewSection() {
+type JournalPreviewSectionProps = {
+  articles: ArticleListItem[];
+};
+
+export default function JournalPreviewSection({ articles }: JournalPreviewSectionProps) {
+  const sorted = [...articles].sort((a, b) => {
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    return dateB - dateA;
+  });
+
+  const featuredArticle = sorted[0];
+  const supportingArticles = sorted.slice(1, 4);
+
   if (!featuredArticle) {
     return null;
   }
@@ -56,8 +68,8 @@ export default function JournalPreviewSection() {
             <p>
               Design stories, rituals, and practical notes for people who want to live with Bali, not just visit it.
             </p>
-            <Link href={`/journal/${featuredArticle.slug}`} className={styles.headerLink}>
-              Read the latest
+            <Link href="/journal" className={styles.headerLink}>
+              Read the journal
             </Link>
           </motion.div>
         </div>
@@ -74,7 +86,7 @@ export default function JournalPreviewSection() {
               <div className={styles.featuredImage}>
                 <Image
                   src={featuredArticle.heroImage}
-                  alt={featuredArticle.heroAlt}
+                  alt={featuredArticle.heroAlt || featuredArticle.title}
                   width={1600}
                   height={1000}
                   className={styles.coverImage}
@@ -84,7 +96,7 @@ export default function JournalPreviewSection() {
               <div className={styles.featuredCopy}>
                 <ArticleMeta article={featuredArticle} light />
                 <h3>{featuredArticle.title}</h3>
-                <p>{featuredArticle.excerpt}</p>
+                {featuredArticle.excerpt && <p>{featuredArticle.excerpt}</p>}
               </div>
             </Link>
           </motion.article>
@@ -103,7 +115,7 @@ export default function JournalPreviewSection() {
                   <div className={styles.storyImage}>
                     <Image
                       src={article.heroImage}
-                      alt={article.heroAlt}
+                      alt={article.heroAlt || article.title}
                       width={480}
                       height={600}
                       className={styles.coverImage}
@@ -113,7 +125,7 @@ export default function JournalPreviewSection() {
                   <div className={styles.storyCopy}>
                     <ArticleMeta article={article} />
                     <h3>{article.title}</h3>
-                    <p>{article.excerpt}</p>
+                    {article.excerpt && <p>{article.excerpt}</p>}
                   </div>
                 </Link>
               </motion.article>

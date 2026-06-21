@@ -1,5 +1,9 @@
+import { getStoredAuthToken } from "@/lib/auth-client";
+
 export const SAVED_VILLAS_STORAGE_KEY = "summerhouses:saved-villas";
 export const SAVED_VILLAS_CHANGED_EVENT = "summerhouses:saved-villas-changed";
+
+const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 
 export type SavedVillasChange = {
   ids: string[];
@@ -35,6 +39,59 @@ export function getSavedVillasCount() {
   return readSavedVillaIds().length;
 }
 
+async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T | null> {
+  const token = getStoredAuthToken();
+  if (!token) return null;
+
+  try {
+    const response = await fetch(`${CMS_BASE_URL}${path}`, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        ...(init.headers || {}),
+      },
+    });
+    if (!response.ok) return null;
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchRemoteWishlist(): Promise<string[] | null> {
+  const data = await apiFetch<{ success: boolean; ids: string[] }>("/v1/wishlist");
+  return data?.success ? data.ids.map(String) : null;
+}
+
+export async function pushWishlistAdd(id: string): Promise<boolean> {
+  const data = await apiFetch<{ success: boolean }>("/v1/wishlist", {
+    method: "POST",
+    body: JSON.stringify({ lodgify_property_id: id }),
+  });
+  return Boolean(data?.success);
+}
+
+export async function pushWishlistRemove(id: string): Promise<boolean> {
+  const data = await apiFetch<{ success: boolean }>(`/v1/wishlist/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+  return Boolean(data?.success);
+}
+
+export async function syncWishlistMerge(localIds: string[]): Promise<string[] | null> {
+  const data = await apiFetch<{ success: boolean; ids: string[]; merged: number }>("/v1/wishlist/sync", {
+    method: "POST",
+    body: JSON.stringify({ ids: localIds }),
+  });
+  return data?.success ? data.ids.map(String) : null;
+}
+
+function isAuthenticated(): boolean {
+  return Boolean(getStoredAuthToken());
+}
+
 export function toggleSavedVillaId(villaId: string | number) {
   const id = String(villaId);
   const savedIds = readSavedVillaIds();
@@ -42,11 +99,33 @@ export function toggleSavedVillaId(villaId: string | number) {
   const nextIds = isSaved ? savedIds.filter((item) => item !== id) : [...savedIds, id];
 
   writeSavedVillaIds(nextIds);
+
+  if (isAuthenticated()) {
+    if (isSaved) {
+      pushWishlistRemove(id).catch(() => undefined);
+    } else {
+      pushWishlistAdd(id).catch(() => undefined);
+    }
+  }
+
   return {
     saved: !isSaved,
     ids: nextIds,
     count: nextIds.length,
   };
+}
+
+export async function hydrateWishlistFromRemote(): Promise<void> {
+  if (!isAuthenticated()) return;
+
+  const localIds = readSavedVillaIds();
+  const merged = localIds.length
+    ? await syncWishlistMerge(localIds)
+    : await fetchRemoteWishlist();
+
+  if (merged) {
+    writeSavedVillaIds(merged);
+  }
 }
 
 export function subscribeSavedVillas(callback: (change: SavedVillasChange) => void) {

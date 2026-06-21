@@ -26,8 +26,29 @@ const heroSlides: HeroSlide[] = [
   },
 ];
 
-export default function Hero() {
-  const activeSlide = heroSlides[0];
+type HeroProps = {
+  cms?: {
+    video_url?: string | null;
+    poster_image?: string | null;
+    badge_text?: string | null;
+    heading_text?: string | null;
+    description?: string | null;
+    show_badge?: boolean | null;
+    show_heading?: boolean | null;
+  } | null;
+};
+
+export default function Hero({ cms }: HeroProps = {}) {
+  const fallback = heroSlides[0];
+  const activeSlide: HeroSlide = {
+    mediaType: fallback.mediaType,
+    videoSrc: cms?.video_url || fallback.videoSrc,
+    imageSrc: cms?.poster_image || fallback.imageSrc,
+    badge_text: cms?.badge_text ?? fallback.badge_text,
+    heading_text: cms?.heading_text ?? fallback.heading_text,
+    show_badge: cms?.show_badge ?? fallback.show_badge,
+    show_heading: cms?.show_heading ?? fallback.show_heading,
+  };
 
   return (
     <section className="hero-section">

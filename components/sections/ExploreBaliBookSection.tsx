@@ -37,6 +37,33 @@ function useDesktopCanvas() {
   return isDesktop;
 }
 
+function useWebGLAvailable() {
+  const [available, setAvailable] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    try {
+      const canvas = document.createElement("canvas");
+      const gl =
+        (canvas.getContext("webgl2") as WebGL2RenderingContext | null) ||
+        (canvas.getContext("webgl") as WebGLRenderingContext | null) ||
+        (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
+
+      if (!gl) {
+        setAvailable(false);
+        return;
+      }
+
+      const loseExt = gl.getExtension("WEBGL_lose_context");
+      loseExt?.loseContext();
+      setAvailable(true);
+    } catch {
+      setAvailable(false);
+    }
+  }, []);
+
+  return available;
+}
+
 type ExploreBaliBookSectionProps = {
   staticFallback?: boolean;
   collections?: BaliCollectionItem[];
@@ -47,12 +74,14 @@ export default function ExploreBaliBookSection({
   collections = fallbackCollections,
 }: ExploreBaliBookSectionProps) {
   const isDesktop = useDesktopCanvas();
+  const webglOk = useWebGLAvailable();
+  const useFlipBook = isDesktop && !staticFallback && webglOk !== false;
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
   // Keyboard navigation for turning book pages
   useEffect(() => {
-    if (!isDesktop || staticFallback) return;
+    if (!useFlipBook) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -64,7 +93,7 @@ export default function ExploreBaliBookSection({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isDesktop, staticFallback, totalPages, collections.length]);
+  }, [useFlipBook, totalPages, collections.length]);
 
   return (
     <section className="bali-collection-section">
@@ -89,7 +118,7 @@ export default function ExploreBaliBookSection({
           </p>
         </motion.div>
 
-        {isDesktop && !staticFallback ? (
+        {useFlipBook ? (
           <motion.div 
             className="bali-book-desktop" 
             aria-label="Interactive Bali destination flip book"

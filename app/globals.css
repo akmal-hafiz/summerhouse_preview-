@@ -10945,10 +10945,10 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .bali-book-instruction {
   margin: 1.5rem 0 0;
-  color: rgba(255, 255, 255, 0.4) !important;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-align: center;
   text-transform: uppercase;
 }
@@ -10994,7 +10994,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .bali-book-loading-text {
   font-family: var(--font-dm-sans), sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #FAFAF9;
   letter-spacing: 0.02em;
@@ -11003,11 +11003,11 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .bali-book-loading-subtext {
   font-family: var(--font-dm-sans), sans-serif;
-  font-size: 0.78rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.5);
   animation: pulseFade 1.4s ease-in-out infinite alternate;
 }
 

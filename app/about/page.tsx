@@ -3,6 +3,8 @@ import Footer from "@/components/common/Footer";
 import About from "@/components/about/About";
 import editorialStyles from "@/components/about/AboutEditorialSections.module.css";
 import { getProperties } from "@/lib/lodgify";
+import { getCmsFaqs, getCmsTestimonials } from "@/lib/cms";
+import { listArticles } from "@/lib/journal";
 import { logServerError } from "@/lib/security/logger";
 
 export const metadata = {
@@ -74,13 +76,23 @@ async function getDestinationSummaries(): Promise<DestinationSummary[]> {
 }
 
 export default async function AboutPage() {
-  const destinations = await getDestinationSummaries();
+  const [destinations, testimonials, faqs, journalArticles] = await Promise.all([
+    getDestinationSummaries(),
+    getCmsTestimonials("about"),
+    getCmsFaqs("about"),
+    listArticles(),
+  ]);
 
   return (
     <div className={editorialStyles.aboutPageShell}>
       <Navbar alwaysSolid={true} />
       <main className={editorialStyles.aboutPageMain}>
-        <About destinations={destinations} />
+        <About
+          destinations={destinations}
+          testimonials={testimonials}
+          faqs={faqs}
+          journalArticles={journalArticles}
+        />
       </main>
       <Footer />
     </div>

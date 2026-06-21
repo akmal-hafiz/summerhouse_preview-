@@ -52,6 +52,7 @@ export const metadata: Metadata = {
 
 import SmoothScrolling from "@/components/common/SmoothScrolling";
 import CustomCursor from "@/components/common/CustomCursor";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export default function RootLayout({
   children,
@@ -68,10 +69,12 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${playfair.variable} antialiased`}
       >
-        <CustomCursor />
-        <SmoothScrolling>
-          {children}
-        </SmoothScrolling>
+        <AuthProvider>
+          <CustomCursor />
+          <SmoothScrolling>
+            {children}
+          </SmoothScrolling>
+        </AuthProvider>
       </body>
     </html>
   );
