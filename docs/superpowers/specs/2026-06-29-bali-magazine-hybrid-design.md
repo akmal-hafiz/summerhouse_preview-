@@ -22,6 +22,25 @@ Vogue-grade editorial Bali Destination Guide. 3D book physicality preserved (cov
 
 ---
 
+## Physical dimensions — novel → magazine
+
+Current proportions read as novel (W:H = 0.749). Target glossy-magazine.
+
+| Property | Current | New |
+|---|---|---|
+| `PAGE_WIDTH` | 1.28 | **1.40** |
+| `PAGE_HEIGHT` | 1.71 | 1.71 (unchanged) |
+| Single-page ratio | 0.749 (paperback) | **0.819 (Vogue ≈ 9"×11")** |
+| Open-spread ratio | 1.50 | **1.64** wider, more cinematic |
+| `PAGE_DEPTH` | 0.003 | **0.0028** thinner = glossy mag binding |
+| 3D group `scale` | 1.58 | **1.85** stronger viewport presence |
+| `PAGE_SEGMENTS` | 30 | 30 (curl still smooth at new width) |
+| Cover treatment | flat green centered title | matte body + spot-gloss masthead, magazine-logo scale |
+| Spine edge color | plain `pageSideColor` | matches cover (perfect-bound mag) |
+| Inner frame `strokeRect` borders | present (novel-classic look) | **removed** |
+
+Width bump invalidates the cached overlay rect — `useFlatFaceRect` recomputes from camera projection, no hard-coded screen coords. Existing fixed camera (`[-0.18, 0, 5.2] fov 39`) still fits the larger book; verify in implementation, nudge `z` if needed.
+
 ## Architecture
 
 Three cooperating layers:
