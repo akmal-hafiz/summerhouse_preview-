@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FiClock, FiMail, FiMapPin, FiMessageCircle, FiPhone } from "react-icons/fi";
+import { FiArrowUpRight, FiClock, FiMail, FiMapPin, FiMessageCircle, FiPhone } from "react-icons/fi";
 import styles from "./Contact.module.css";
 
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
@@ -52,10 +52,10 @@ const defaultFaqs = [
 ];
 
 const fadeUp = {
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 14 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.28 },
-  transition: { duration: 0.78, ease: [0.22, 1, 0.36, 1] as const },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 type ContactProps = {
@@ -221,7 +221,12 @@ export default function Contact({ faqs: faqsProp }: ContactProps = {}) {
             </label>
             {submitError && <p style={{ color: "#b14a3d", fontSize: "0.9rem", margin: 0 }}>{submitError}</p>}
             {submittedOk && <p style={{ color: "#2e5c45", fontSize: "0.9rem", margin: 0 }}>Thanks. We will reach out within 2 hours.</p>}
-            <button type="submit" disabled={submitting}>{submitting ? "Sending..." : "Send inquiry"}</button>
+            <button type="submit" disabled={submitting}>
+              <span>{submitting ? "Sending..." : "Send inquiry"}</span>
+              <span className={styles.ctaIconWrap} aria-hidden="true">
+                <FiArrowUpRight />
+              </span>
+            </button>
           </div>
         </motion.form>
       </section>
@@ -234,7 +239,6 @@ export default function Contact({ faqs: faqsProp }: ContactProps = {}) {
             width={1300}
             height={1000}
             sizes="(min-width: 1024px) 46vw, 100vw"
-            className={styles.coverImage}
           />
         </motion.figure>
         <motion.div {...fadeUp} className={styles.expectationCopy}>
@@ -245,7 +249,12 @@ export default function Contact({ faqs: faqsProp }: ContactProps = {}) {
               We respond with availability guidance, villa fit, and next steps. If your request needs a little
               extra care, we will say so clearly and help you find the best path.
             </p>
-            <Link href="/villas">Browse villas first</Link>
+            <Link href="/villas">
+              <span>Browse villas first</span>
+              <span className={styles.ctaIconWrap} aria-hidden="true">
+                <FiArrowUpRight />
+              </span>
+            </Link>
           </div>
         </motion.div>
       </section>
@@ -272,7 +281,10 @@ export default function Contact({ faqs: faqsProp }: ContactProps = {}) {
         <h2>Your island stay can start with a simple message.</h2>
         <a href="mailto:hello@summerhousebali.com">
           <FiPhone aria-hidden="true" />
-          Contact the team
+          <span>Contact the team</span>
+          <span className={styles.ctaIconWrap} aria-hidden="true">
+            <FiArrowUpRight />
+          </span>
         </a>
       </section>
     </div>

@@ -25,23 +25,57 @@ class BaliCollectionResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Identity')->columns(2)->schema([
-                Forms\Components\TextInput::make('collection_id')
-                    ->required()
-                    ->maxLength(80)
-                    ->helperText('URL-safe slug. Example: canggu-berawa')
-                    ->disabledOn('edit'),
-                Forms\Components\TextInput::make('location')->required(),
-                Forms\Components\TextInput::make('category')->required()->helperText('Display category, e.g. Cafe Coastline'),
-                Forms\Components\TextInput::make('tag')->required()->helperText('Card tag/eyebrow text'),
-            ]),
+            Forms\Components\Section::make('Identity')
+                ->description('Slug, link, and tag are generated automatically from the location.')
+                ->columns(2)
+                ->schema([
+                    Forms\Components\TextInput::make('location')
+                        ->required()
+                        ->live(onBlur: true)
+                        ->helperText('Example: Canggu - Berawa'),
+                    Forms\Components\Select::make('category')
+                        ->required()
+                        ->options([
+                            'Cafe Coastline' => 'Cafe Coastline',
+                            'Quiet Coast' => 'Quiet Coast',
+                            'Cultural Hills' => 'Cultural Hills',
+                            'Urban Edge' => 'Urban Edge',
+                            'Lush Lowland' => 'Lush Lowland',
+                            'Surf Stretch' => 'Surf Stretch',
+                        ])
+                        ->searchable()
+                        ->allowHtml()
+                        ->getSearchResultsUsing(fn (string $search) => [$search => $search])
+                        ->helperText('Pick a preset or type a new one. Used as the card tag.'),
+                    Forms\Components\Placeholder::make('collection_id_preview')
+                        ->label('Slug (auto)')
+                        ->content(fn (Forms\Get $get): string =>
+                            $get('location') ? \Illuminate\Support\Str::slug($get('location')) : '—'
+                        ),
+                    Forms\Components\Placeholder::make('href_preview')
+                        ->label('Public link (auto)')
+                        ->content(fn (Forms\Get $get): string =>
+                            $get('location') ? '/villas?location=' . rawurlencode($get('location')) : '—'
+                        ),
+                ]),
 
-            Forms\Components\Section::make('Copy')->schema([
-                Forms\Components\Textarea::make('description')->required()->rows(3),
-                Forms\Components\TextInput::make('villa_count')->required()->placeholder('15 villas'),
-                Forms\Components\TextInput::make('price')->required()->placeholder('From Rp 700.000 / night'),
-                Forms\Components\TextInput::make('cta')->required(),
-                Forms\Components\TextInput::make('href')->required()->prefix('/'),
+            Forms\Components\Section::make('Copy')->columns(2)->schema([
+                Forms\Components\Textarea::make('description')
+                    ->required()
+                    ->rows(3)
+                    ->columnSpanFull()
+                    ->helperText('One sentence shown on the destination card.'),
+                Forms\Components\TextInput::make('villa_count')
+                    ->required()
+                    ->placeholder('15 villas')
+                    ->helperText('Free text — written exactly as shown on the card.'),
+                Forms\Components\TextInput::make('price')
+                    ->required()
+                    ->placeholder('From Rp 700.000 / night')
+                    ->helperText('Includes "From" and the currency.'),
+                Forms\Components\TextInput::make('cta')
+                    ->placeholder('Auto: "Explore Villas in {location}"')
+                    ->helperText('Optional. Leave blank to auto-fill.'),
             ]),
 
             Forms\Components\Section::make('Tags & Moods')->columns(2)->schema([

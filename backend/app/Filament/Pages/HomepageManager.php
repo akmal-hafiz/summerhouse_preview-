@@ -86,7 +86,17 @@ class HomepageManager extends Page implements HasForms
                         ->visibility('public')
                         ->maxSize(5120)
                         ->helperText('Shown while video loads'),
-                    Forms\Components\TextInput::make('hero.badge_text')->label('Badge Text')->helperText('Separated by " / "'),
+                    Forms\Components\TagsInput::make('hero.badge_text')
+                        ->label('Badge Text')
+                        ->placeholder('Add a chip and press Enter')
+                        ->helperText('Each chip becomes a slash-separated word in the hero badge.')
+                        ->afterStateHydrated(function (Forms\Components\TagsInput $component, $state) {
+                            if (is_string($state)) {
+                                $parts = array_filter(array_map('trim', explode('/', $state)));
+                                $component->state(array_values($parts));
+                            }
+                        })
+                        ->dehydrateStateUsing(fn ($state) => is_array($state) ? implode(' / ', $state) : (string) $state),
                     Forms\Components\Textarea::make('hero.heading_text')->label('Heading')->rows(2),
                     Forms\Components\Textarea::make('hero.description')->label('Description')->rows(2),
                     Forms\Components\Toggle::make('hero.show_badge')->label('Show Badge'),
@@ -114,9 +124,18 @@ class HomepageManager extends Page implements HasForms
                     Forms\Components\TextInput::make('signature_villa.eyebrow')->label('Eyebrow'),
                     Forms\Components\TextInput::make('signature_villa.title')->label('Title'),
                     Forms\Components\Textarea::make('signature_villa.description')->label('Description')->rows(3),
-                    Forms\Components\Section::make('Villa Selection')->schema([
-                        $this->villaSlotRepeater('slots.signature', maxItems: 1),
-                    ]),
+                    Forms\Components\Section::make('Currently live on homepage')
+                        ->description('This villa is what visitors see right now. To swap it, drag a different villa to the top of the list below.')
+                        ->schema([
+                            Forms\Components\Placeholder::make('signature_live_preview')
+                                ->label('')
+                                ->content(fn () => new \Illuminate\Support\HtmlString($this->renderActiveSignaturePreview())),
+                        ]),
+                    Forms\Components\Section::make('Signature villa bench')
+                        ->description('The top row is what shows on the homepage. Drag any row to the top to activate it. Bench villas stay saved for one-click swaps later.')
+                        ->schema([
+                            $this->villaSlotRepeater('slots.signature'),
+                        ]),
                 ]),
 
                 Forms\Components\Tabs\Tab::make('Featured Collection')->icon('heroicon-o-sparkles')->schema([
@@ -141,6 +160,8 @@ class HomepageManager extends Page implements HasForms
 
     private function villaSlotRepeater(string $statePath, ?int $maxItems = null): Forms\Components\Repeater
     {
+        $isSignature = str_ends_with($statePath, '.signature');
+
         $repeater = Forms\Components\Repeater::make($statePath)
             ->label('Villas')
             ->schema([
@@ -159,11 +180,22 @@ class HomepageManager extends Page implements HasForms
             ->columns(2)
             ->reorderable()
             ->collapsed()
-            ->itemLabel(function (array $state): ?string {
+            ->itemLabel(function (array $state, ?string $uuid) use ($statePath, $isSignature): ?string {
                 $id = $state['lodgify_property_id'] ?? null;
                 if (!$id) return 'New villa';
                 $villa = VillaCache::where('lodgify_id', (string) $id)->first();
-                return $villa?->name ?? "Villa #{$id}";
+                $name = $villa?->name ?? "Villa #{$id}";
+
+                if ($isSignature) {
+                    $rows = data_get($this->data, $statePath, []);
+                    $keys = array_keys(is_array($rows) ? $rows : []);
+                    $firstKey = $keys[0] ?? null;
+                    $isFirst = $uuid !== null ? ($uuid === $firstKey) : false;
+                    return $isFirst
+                        ? "🟢 ACTIVE  ·  {$name}"
+                        : "○ On bench  ·  {$name}";
+                }
+                return $name;
             });
 
         if ($maxItems) {
@@ -171,6 +203,61 @@ class HomepageManager extends Page implements HasForms
         }
 
         return $repeater;
+    }
+
+    private function renderActiveSignaturePreview(): string
+    {
+        $row = HomepageVillaSelection::forSlot('signature')->first();
+        $isFallback = false;
+        $villa = null;
+        $lodgifyId = null;
+
+        if ($row) {
+            $lodgifyId = (string) $row->lodgify_property_id;
+            $villa = VillaCache::where('lodgify_id', $lodgifyId)->first();
+        } else {
+            /* Mirror frontend fallback: highest-priced villa from Lodgify cache. */
+            $villa = VillaCache::all()
+                ->sortByDesc(fn (VillaCache $v) => (float) ($v->raw['max_price'] ?? 0))
+                ->first();
+            if ($villa) {
+                $isFallback = true;
+                $lodgifyId = (string) $villa->lodgify_id;
+            }
+        }
+
+        if (!$villa) {
+            return '<div class="sh-signature-empty">No villa data yet. Pick one in the bench below to control which villa appears on the homepage.</div>';
+        }
+
+        $name = e($villa->name ?? "Villa #{$lodgifyId}");
+        $thumb = $villa->thumbnail_url ? e($villa->thumbnail_url) : ($villa->raw['image_url'] ?? null);
+        $thumb = $thumb ? e($thumb) : null;
+        $location = e($villa->location ?? $villa->raw['city'] ?? '');
+        $bedrooms = $villa->bedrooms ? e((string) $villa->bedrooms) . ' BR' : '';
+        $id = e((string) $lodgifyId);
+
+        $thumbHtml = $thumb
+            ? "<img src=\"{$thumb}\" alt=\"\" class=\"sh-signature-thumb\">"
+            : "<div class=\"sh-signature-thumb sh-signature-thumb--fallback\">★</div>";
+
+        $pillClass = $isFallback ? 'sh-signature-pill sh-signature-pill--fallback' : 'sh-signature-pill';
+        $pillText = $isFallback ? '● Live (auto-pick — highest priced)' : '● Live on homepage';
+        $hint = $isFallback
+            ? '<span class="sh-signature-hint">No manual pick yet. The site auto-shows the highest-priced villa. Drop one in the bench to lock it.</span>'
+            : '';
+
+        return <<<HTML
+        <div class="sh-signature-live">
+            {$thumbHtml}
+            <div class="sh-signature-meta">
+                <span class="{$pillClass}">{$pillText}</span>
+                <strong class="sh-signature-name">{$name}</strong>
+                <span class="sh-signature-sub">#{$id} · {$bedrooms} · {$location}</span>
+                {$hint}
+            </div>
+        </div>
+        HTML;
     }
 
 

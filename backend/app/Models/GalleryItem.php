@@ -11,6 +11,17 @@ class GalleryItem extends Model
     protected static function booted(): void
     {
         $flush = fn () => Cache::forget('cms.gallery');
+
+        static::creating(function (GalleryItem $row) {
+            if (empty($row->label)) {
+                $next = (int) static::max('sort_order') + 1;
+                $row->label = str_pad((string) $next, 2, '0', STR_PAD_LEFT);
+                if (empty($row->sort_order)) {
+                    $row->sort_order = $next;
+                }
+            }
+        });
+
         static::saved($flush);
         static::deleted($flush);
     }

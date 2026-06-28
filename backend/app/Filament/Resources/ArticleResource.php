@@ -44,9 +44,24 @@ class ArticleResource extends Resource
             ]),
 
             Forms\Components\Section::make('Meta')->columns(3)->schema([
-                Forms\Components\TextInput::make('category')->placeholder('Lifestyle')->required(),
+                Forms\Components\Select::make('category')
+                    ->required()
+                    ->options([
+                        'Lifestyle' => 'Lifestyle',
+                        'Architecture' => 'Architecture',
+                        'Travel' => 'Travel',
+                        'Design' => 'Design',
+                        'Slow Living' => 'Slow Living',
+                        'Concierge' => 'Concierge',
+                        'Culture' => 'Culture',
+                    ])
+                    ->searchable()
+                    ->getSearchResultsUsing(fn (string $search) => [$search => $search])
+                    ->helperText('Pick a preset or type a new one.'),
                 Forms\Components\DatePicker::make('date')->required()->native(false),
-                Forms\Components\TextInput::make('read_time')->placeholder('8 min read'),
+                Forms\Components\TextInput::make('read_time')
+                    ->placeholder('Auto: "8 min read"')
+                    ->helperText('Leave blank to auto-calculate from content.'),
                 Forms\Components\TagsInput::make('tags')->placeholder('Architecture, Slow Living')->columnSpanFull(),
             ]),
 
@@ -104,19 +119,25 @@ class ArticleResource extends Resource
                             })
                             ->visible(fn (Forms\Get $get) => in_array($get('type'), ['paragraph', 'heading', 'subheading', 'quote']))
                             ->columnSpan(3),
-                        Forms\Components\TextInput::make('src')
-                            ->label('Image URL')
-                            ->placeholder('/homepage_villa/curated-1-main.webp')
+                        Forms\Components\FileUpload::make('src')
+                            ->label('Image')
+                            ->image()
+                            ->imageEditor()
+                            ->disk('public')
+                            ->directory('uploads/articles/inline')
+                            ->visibility('public')
+                            ->maxSize(8192)
                             ->visible(fn (Forms\Get $get) => $get('type') === 'image')
-                            ->columnSpan(2),
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('alt')
-                            ->label('Alt')
+                            ->label('Alt text')
+                            ->placeholder('Describe the image for accessibility')
                             ->visible(fn (Forms\Get $get) => $get('type') === 'image')
                             ->columnSpan(2),
                         Forms\Components\TextInput::make('caption')
                             ->label('Caption (optional)')
                             ->visible(fn (Forms\Get $get) => $get('type') === 'image')
-                            ->columnSpanFull(),
+                            ->columnSpan(2),
                     ])
                     ->columns(4)
                     ->collapsed()

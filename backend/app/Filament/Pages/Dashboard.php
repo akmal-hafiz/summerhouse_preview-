@@ -17,6 +17,7 @@ class Dashboard extends BaseDashboard
         return [
             WelcomeWidget::class,
             ContentStatsWidget::class,
+            \App\Filament\Widgets\RecentContactsWidget::class,
         ];
     }
 

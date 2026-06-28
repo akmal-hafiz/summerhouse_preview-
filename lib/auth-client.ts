@@ -50,12 +50,87 @@ export async function loginRequest(email: string, password: string): Promise<Aut
   });
 }
 
-export async function registerRequest(name: string, email: string, password: string, passwordConfirmation: string): Promise<AuthResponse> {
-  return authFetch<AuthResponse>("/v1/auth/register", {
+export type SendOtpResponse = {
+  success: boolean;
+  message?: string;
+  expires_in?: number;
+};
+
+export async function sendRegistrationOtp(email: string, name: string): Promise<SendOtpResponse> {
+  return authFetch<SendOtpResponse>("/v1/auth/register/send-otp", {
+    method: "POST",
+    body: JSON.stringify({ email, name }),
+  });
+}
+
+export async function verifyRegistrationOtp(
+  name: string,
+  email: string,
+  code: string,
+  password: string,
+  passwordConfirmation: string
+): Promise<AuthResponse> {
+  return authFetch<AuthResponse>("/v1/auth/register/verify-otp", {
     method: "POST",
     body: JSON.stringify({
       name,
       email,
+      code,
+      password,
+      password_confirmation: passwordConfirmation,
+    }),
+  });
+}
+
+export type ForgotPasswordResponse = {
+  success: boolean;
+  message?: string;
+  expires_in?: number;
+};
+
+export async function sendPasswordResetOtp(email: string): Promise<ForgotPasswordResponse> {
+  return authFetch<ForgotPasswordResponse>("/v1/auth/password/forgot", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function resetPasswordRequest(
+  email: string,
+  code: string,
+  password: string,
+  passwordConfirmation: string
+): Promise<{ success: boolean; message?: string }> {
+  return authFetch<{ success: boolean; message?: string }>("/v1/auth/password/reset", {
+    method: "POST",
+    body: JSON.stringify({
+      email,
+      code,
+      password,
+      password_confirmation: passwordConfirmation,
+    }),
+  });
+}
+
+export async function updateProfileRequest(token: string, name: string): Promise<AuthResponse> {
+  return authFetch<AuthResponse>("/v1/auth/profile", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function changePasswordRequest(
+  token: string,
+  currentPassword: string,
+  password: string,
+  passwordConfirmation: string
+): Promise<{ success: boolean; message?: string }> {
+  return authFetch<{ success: boolean; message?: string }>("/v1/auth/password", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      current_password: currentPassword,
       password,
       password_confirmation: passwordConfirmation,
     }),

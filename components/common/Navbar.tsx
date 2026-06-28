@@ -4,7 +4,7 @@ import "./navbar-user.css";
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser } from "react-icons/fi";
+import { FiGrid, FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser } from "react-icons/fi";
 import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import { useAuth } from "@/components/providers/AuthProvider";
 
@@ -143,13 +143,17 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
                 {isAdmin && <span className="global-user-menu__badge">Admin</span>}
               </div>
               <div className="global-user-menu__items">
+                <Link href="/dashboard" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                  <FiGrid aria-hidden="true" />
+                  <span>My dashboard</span>
+                </Link>
                 {isAdmin && (
                   <a href={adminUrl} role="menuitem">
                     <FiShield aria-hidden="true" />
                     <span>Admin dashboard</span>
                   </a>
                 )}
-                <Link href="/saved-villas" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                <Link href="/dashboard/saved" role="menuitem" onClick={() => setUserMenuOpen(false)}>
                   <FiHeart aria-hidden="true" />
                   <span>Saved villas</span>
                 </Link>

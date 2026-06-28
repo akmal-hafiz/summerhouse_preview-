@@ -196,6 +196,28 @@ class CmsController extends Controller
         ]);
     }
 
+    public function settingsBulk(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $keys = explode(',', (string) $request->query('keys', ''));
+        $keys = array_filter(array_map('trim', $keys));
+
+        if (empty($keys)) {
+            return response()->json(['success' => true, 'settings' => []]);
+        }
+
+        $settings = [];
+        foreach ($keys as $key) {
+            $settings[$key] = Cache::remember("cms.setting.{$key}", self::CACHE_TTL, function () use ($key) {
+                return SiteSetting::getByKey($key);
+            });
+        }
+
+        return response()->json([
+            'success' => true,
+            'settings' => $settings,
+        ]);
+    }
+
     private function serializeArticle(Article $a, bool $withContent): array
     {
         $data = [

@@ -3,9 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends Model
 {
+    protected static function booted(): void
+    {
+        $flush = fn (SiteSetting $row) => Cache::forget("cms.setting.{$row->key}");
+        static::saved($flush);
+        static::deleted($flush);
+    }
+
     protected $fillable = ['key', 'value'];
 
     protected $casts = [

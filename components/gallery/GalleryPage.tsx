@@ -6,25 +6,25 @@ import { motion } from "framer-motion";
 import styles from "./GalleryPage.module.css";
 
 const fadeUp = {
-  initial: { opacity: 0, y: 34 },
+  initial: { opacity: 0, y: 18 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.24 },
-  transition: { duration: 0.92, ease: [0.22, 1, 0.36, 1] as const },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 const zoomInVariant = {
-  initial: { opacity: 0, scale: 0.92, y: 20 },
+  initial: { opacity: 0, scale: 0.96, y: 12 },
   whileInView: (index: number) => ({
     opacity: 1,
     scale: 1,
     y: 0,
     transition: {
-      duration: 0.9,
-      ease: [0.16, 1, 0.3, 1] as const,
-      delay: (index % 3) * 0.08,
+      duration: 0.58,
+      ease: [0.22, 1, 0.36, 1] as const,
+      delay: (index % 3) * 0.06,
     },
   }),
-  viewport: { once: true, amount: 0.12 },
+  viewport: { once: true, amount: 0.15 },
 };
 
 const defaultGalleryItems = [

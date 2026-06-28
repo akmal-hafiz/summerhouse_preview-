@@ -53,11 +53,11 @@ export default function Hero({ cms }: HeroProps = {}) {
   return (
     <section className="hero-section">
       {/* Cinematic Media/Background Wrapper */}
-      <motion.div 
+      <motion.div
         className="hero-media-wrapper"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="hero-bg" />
         {activeSlide.mediaType === "video" && activeSlide.videoSrc ? (

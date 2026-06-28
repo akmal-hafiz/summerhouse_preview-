@@ -14,14 +14,13 @@ export default function RegisterPage() {
     <div className="auth-shell">
       <aside className="auth-left">
         <div className="auth-topbar">
-          <Link href="/" className="auth-brand">
-            <span className="auth-brand-mark">S</span>
-            <span className="auth-brand-name">
-              <strong>Summerhouses</strong>
-              <span>Bali private stays</span>
-            </span>
+          <Link href="/" className="auth-brand auth-brand--logo" aria-label="Summerhouses Bali home">
+            <img
+              src="/SUMMERHOUSE_LOGO_PROJECT_1.svg"
+              alt="Summerhouses Bali"
+              className="auth-brand-logo-img"
+            />
           </Link>
-          <span className="auth-topbar-availability">Concierge online</span>
         </div>
 
         <div className="auth-form-wrap">

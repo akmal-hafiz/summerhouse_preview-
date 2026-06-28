@@ -28,9 +28,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->darkMode(false)
             ->colors([
-                'primary' => Color::hex('#446B4A'),
-                'gray' => Color::hex('#2E2E2C'),
+                'primary' => Color::hex('#3B82F6'),
+                'success' => Color::hex('#446B4A'),
+                'gray' => Color::hex('#64748B'),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->brandName('Summerhouses CMS')
@@ -52,6 +54,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 'panels::head.end',
                 fn (): string => view('filament.admin-theme')->render()
+            )
+            ->renderHook(
+                'panels::body.end',
+                fn (): string => view('filament.tutorial-steps')->render() . view('filament.tutorial')->render()
             )
             ->middleware([
                 EncryptCookies::class,

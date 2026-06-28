@@ -258,3 +258,60 @@
   font-size: 0.95rem;
   color: rgba(26, 40, 32, 0.7);
 }
+
+/* OTP enhancements inside modal */
+.auth-modal-panel .otp-digit-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.auth-modal-panel .otp-digit-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1.15;
+  min-height: 48px;
+  padding: 0;
+  border: 1px solid rgba(26, 40, 32, 0.14);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbf8f1 100%);
+  color: #173021;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  text-align: center;
+  caret-color: #315f45;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 120ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.auth-modal-panel .otp-digit-cell:focus {
+  border-color: rgba(49, 95, 69, 0.55);
+  box-shadow: 0 0 0 4px rgba(49, 95, 69, 0.12);
+  transform: translateY(-1px);
+}
+
+.auth-modal-panel .otp-digit-grid--error .otp-digit-cell {
+  border-color: rgba(186, 26, 26, 0.45);
+  animation: otp-shake 360ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.auth-modal-submit[data-loading="true"] {
+  position: relative;
+  color: transparent;
+}
+
+.auth-modal-submit[data-loading="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23fffaf2' stroke-width='2.5' stroke-linecap='round'><path d='M12 2a10 10 0 0 1 10 10' opacity='0.85'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: spinner-rotate 720ms linear infinite;
+}
+
+/* Password reveal in modal */
+.auth-modal-panel .password-input-wrap input {
+  padding-right: 2.75rem !important;
+}

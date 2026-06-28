@@ -81,10 +81,48 @@ async function resolveSlotIds(
   fallback: string[],
   cachedSlots?: CmsHomepageSlots | null,
 ): Promise<string[]> {
+  const { ids } = await resolveSlotConfig(slot, envKey, fallback, cachedSlots);
+  return ids;
+}
+
+type SlotSource = "cms" | "env" | "default";
+
+async function resolveSlotConfig(
+  slot: keyof CmsHomepageSlots,
+  envKey: string,
+  fallback: string[],
+  cachedSlots?: CmsHomepageSlots | null,
+): Promise<{ ids: string[]; source: SlotSource }> {
   const slots = cachedSlots !== undefined ? cachedSlots : await getHomepageVillaSelections();
   const cmsIds = getSlotIds(slots, slot);
-  if (cmsIds.length) return cmsIds;
-  return getConfiguredIds(envKey, fallback);
+  if (cmsIds.length) return { ids: cmsIds, source: "cms" };
+
+  const envRaw = (process.env[envKey] || "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+  if (envRaw.length) return { ids: envRaw, source: "env" };
+
+  return { ids: fallback, source: "default" };
+}
+
+async function resolveConfiguredProperties(
+  properties: LodgifyProperty[],
+  configuredIds: string[],
+): Promise<LodgifyProperty[]> {
+  const resolved = await Promise.all(
+    configuredIds.map(async (id) => {
+      const fromList = properties.find((p) => String(p.id) === String(id));
+      if (fromList) return fromList;
+      try {
+        const fetched = await fetchPropertyById(id);
+        return fetched ?? null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return resolved.filter((p): p is LodgifyProperty => Boolean(p?.id));
 }
 
 function normalizeGuestCount(params: VillaSearchParams) {
@@ -249,20 +287,28 @@ export async function getHomepageFeaturedVillas(limit = 4) {
     getHomepageVillaSelections(),
   ]);
   const cmsIds = getSlotIds(slots, "featured_collection");
-  const configuredIds = cmsIds.length ? cmsIds : getConfiguredFeaturedPropertyIds();
-  const configuredSet = new Set(configuredIds.map(String));
-  const configuredProperties = configuredIds
-    .map((id) => properties.find((property) => String(property.id) === id))
-    .filter((property): property is LodgifyProperty => Boolean(property));
-  const fallbackProperties = properties.filter((property) => property.is_featured || !configuredSet.has(String(property.id)));
-  const seenPropertyIds = new Set<string>();
-  const selectedProperties = [...configuredProperties, ...fallbackProperties].filter((property) => {
-    if (!property.id) return false;
-    const id = String(property.id);
-    if (seenPropertyIds.has(id)) return false;
-    seenPropertyIds.add(id);
-    return true;
-  }).slice(0, limit);
+  const cmsExclusive = cmsIds.length > 0;
+  const configuredIds = cmsExclusive ? cmsIds : getConfiguredFeaturedPropertyIds();
+
+  let selectedProperties: LodgifyProperty[];
+
+  if (cmsExclusive) {
+    // Strict CMS mode: use ONLY admin-picked IDs in saved order.
+    // Fetch individually for IDs missing from the bulk Lodgify response.
+    selectedProperties = (await resolveConfiguredProperties(properties, configuredIds)).slice(0, limit);
+  } else {
+    const configuredSet = new Set(configuredIds.map(String));
+    const configuredProperties = propertiesByConfiguredIds(properties, configuredIds);
+    const fallbackProperties = properties.filter((property) => property.is_featured || !configuredSet.has(String(property.id)));
+    const seenPropertyIds = new Set<string>();
+    selectedProperties = [...configuredProperties, ...fallbackProperties].filter((property) => {
+      if (!property.id) return false;
+      const id = String(property.id);
+      if (seenPropertyIds.has(id)) return false;
+      seenPropertyIds.add(id);
+      return true;
+    }).slice(0, limit);
+  }
 
   const villas = await Promise.all(
     selectedProperties.map(async (property) => {
@@ -308,17 +354,27 @@ async function buildStayGroup(
   description: string,
   configuredIds: string[],
   fallbackProperties: LodgifyProperty[],
+  cmsExclusive: boolean = false,
 ) {
-  const seen = new Set<string>();
-  const candidates = [...propertiesByConfiguredIds(properties, configuredIds), ...fallbackProperties]
-    .filter((property) => {
-      if (!property.id) return false;
-      const propertyId = String(property.id);
-      if (seen.has(propertyId)) return false;
-      seen.add(propertyId);
-      return true;
-    })
-    .slice(0, 8);
+  let candidates: LodgifyProperty[];
+
+  if (cmsExclusive) {
+    // Strict CMS mode: use ONLY the admin-picked IDs in their saved order.
+    // If a property is missing from the bulk list (e.g. marked inactive in Lodgify),
+    // fetch it individually so the admin's choice is honored.
+    candidates = await resolveConfiguredProperties(properties, configuredIds);
+  } else {
+    const seen = new Set<string>();
+    candidates = [...propertiesByConfiguredIds(properties, configuredIds), ...fallbackProperties]
+      .filter((property) => {
+        if (!property.id) return false;
+        const propertyId = String(property.id);
+        if (seen.has(propertyId)) return false;
+        seen.add(propertyId);
+        return true;
+      })
+      .slice(0, 8);
+  }
 
   const villas = compact(await Promise.all(candidates.map(getHomepageVillaFromProperty))).slice(0, 3);
 
@@ -341,9 +397,9 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
     .filter((property) => /pererenan|umalas|berawa|canggu/i.test([property.city, property.name].filter(Boolean).join(" ")))
     .sort((a, b) => getComparablePrice(b) - getComparablePrice(a));
 
-  const shortIds = await resolveSlotIds("short_stays", "SHORT_STAY_PROPERTY_IDS", DEFAULT_SHORT_STAY_IDS, slots);
-  const extendedIds = await resolveSlotIds("extended_stays", "EXTENDED_STAY_PROPERTY_IDS", DEFAULT_EXTENDED_STAY_IDS, slots);
-  const featuredHomeIds = await resolveSlotIds("featured_homes", "FEATURED_HOME_PROPERTY_IDS", DEFAULT_FEATURED_HOME_IDS, slots);
+  const short = await resolveSlotConfig("short_stays", "SHORT_STAY_PROPERTY_IDS", DEFAULT_SHORT_STAY_IDS, slots);
+  const extended = await resolveSlotConfig("extended_stays", "EXTENDED_STAY_PROPERTY_IDS", DEFAULT_EXTENDED_STAY_IDS, slots);
+  const featuredHomes = await resolveSlotConfig("featured_homes", "FEATURED_HOME_PROPERTY_IDS", DEFAULT_FEATURED_HOME_IDS, slots);
 
   return Promise.all([
     buildStayGroup(
@@ -351,24 +407,27 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "short-stays",
       "Short Stays",
       "Weekend escapes and easy Bali breaks for a lighter, flexible stay.",
-      shortIds,
+      short.ids,
       byPriceAsc,
+      short.source === "cms",
     ),
     buildStayGroup(
       properties,
       "extended-stays",
       "Extended Stays",
       "Private homes made for settling in, working slowly, and living with more room.",
-      extendedIds,
+      extended.ids,
       extendedFallback,
+      extended.source === "cms",
     ),
     buildStayGroup(
       properties,
       "featured-homes",
       "Featured Homes",
       "Handpicked SummerHouse stays with standout design, setting, and guest comfort.",
-      featuredHomeIds,
+      featuredHomes.ids,
       byPriceDesc,
+      featuredHomes.source === "cms",
     ),
   ]);
 }
@@ -385,10 +444,18 @@ export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null
   ]);
 
   const signatureIds = getSlotIds(slots, "signature");
-  const cmsPick = signatureIds.length
-    ? properties.find((p) => String(p.id) === signatureIds[0])
-    : null;
-  const property = cmsPick || [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a))[0];
+  let property: LodgifyProperty | undefined;
+
+  if (signatureIds.length) {
+    // Strict CMS mode: top of the list (sort_order = 0) is the live pick.
+    // Fall back to fetchPropertyById when the property is missing from the bulk list.
+    const resolved = await resolveConfiguredProperties(properties, [signatureIds[0]]);
+    property = resolved[0];
+  }
+
+  if (!property) {
+    property = [...properties].sort((a, b) => getComparablePrice(b) - getComparablePrice(a))[0];
+  }
   if (!property?.id) return null;
 
   const rooms = await fetchPropertyRooms(property.id);

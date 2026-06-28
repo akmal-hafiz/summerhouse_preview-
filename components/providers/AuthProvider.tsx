@@ -2,15 +2,19 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
+  changePasswordRequest,
   clearStoredAuth,
   fetchCurrentUser,
   getStoredAuthToken,
   getStoredAuthUser,
   loginRequest,
   logoutRequest,
-  registerRequest,
+  sendRegistrationOtp,
+  updateProfileRequest,
+  verifyRegistrationOtp,
   setStoredAuth,
   type AuthUser,
+  type SendOtpResponse,
 } from "@/lib/auth-client";
 import { hydrateWishlistFromRemote, writeSavedVillaIds } from "@/components/villas/savedVillas";
 
@@ -21,8 +25,11 @@ type AuthContextValue = {
   isAdmin: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
-  register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<AuthUser>;
+  sendOtp: (email: string, name: string) => Promise<SendOtpResponse>;
+  verifyOtp: (name: string, email: string, code: string, password: string, passwordConfirmation: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
+  updateProfile: (name: string) => Promise<AuthUser>;
+  changePassword: (currentPassword: string, password: string, passwordConfirmation: string) => Promise<{ success: boolean; message?: string }>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -71,17 +78,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return response.user;
   }, []);
 
-  const register = useCallback(async (name: string, email: string, password: string, passwordConfirmation: string) => {
-    const response = await registerRequest(name, email, password, passwordConfirmation);
-    if (!response.success || !response.user || !response.token) {
-      throw new Error(response.message || "Registration failed");
-    }
-    setStoredAuth(response.token, response.user);
-    setUser(response.user);
-    setToken(response.token);
-    hydrateWishlistFromRemote().catch(() => undefined);
-    return response.user;
+  const sendOtp = useCallback(async (email: string, name: string) => {
+    return sendRegistrationOtp(email, name);
   }, []);
+
+  const verifyOtp = useCallback(
+    async (name: string, email: string, code: string, password: string, passwordConfirmation: string) => {
+      const response = await verifyRegistrationOtp(name, email, code, password, passwordConfirmation);
+      if (!response.success || !response.user || !response.token) {
+        throw new Error(response.message || "OTP verification failed");
+      }
+      setStoredAuth(response.token, response.user);
+      setUser(response.user);
+      setToken(response.token);
+      hydrateWishlistFromRemote().catch(() => undefined);
+      return response.user;
+    },
+    []
+  );
+
+  const updateProfile = useCallback(async (nextName: string) => {
+    if (!token) throw new Error("Not authenticated");
+    const response = await updateProfileRequest(token, nextName);
+    if (!response.success || !response.user) {
+      throw new Error(response.message || "Failed to update profile");
+    }
+    setStoredAuth(token, response.user);
+    setUser(response.user);
+    return response.user;
+  }, [token]);
+
+  const changePassword = useCallback(async (currentPassword: string, password: string, passwordConfirmation: string) => {
+    if (!token) throw new Error("Not authenticated");
+    return changePasswordRequest(token, currentPassword, password, passwordConfirmation);
+  }, [token]);
 
   const logout = useCallback(async () => {
     if (token) {
@@ -101,10 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin: user?.isAdmin ?? false,
       isLoading,
       login,
-      register,
+      sendOtp,
+      verifyOtp,
       logout,
+      updateProfile,
+      changePassword,
     }),
-    [user, token, isLoading, login, register, logout]
+    [user, token, isLoading, login, sendOtp, verifyOtp, logout, updateProfile, changePassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

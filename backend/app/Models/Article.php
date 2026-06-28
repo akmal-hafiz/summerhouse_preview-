@@ -14,6 +14,20 @@ class Article extends Model
             Cache::forget('cms.articles');
             Cache::forget("cms.article.{$row->slug}");
         };
+
+        static::saving(function (Article $row) {
+            if (empty($row->read_time)) {
+                $words = 0;
+                foreach ((array) $row->content as $block) {
+                    if (in_array($block['type'] ?? null, ['paragraph', 'heading', 'subheading', 'quote'], true)) {
+                        $words += str_word_count((string) ($block['text'] ?? ''));
+                    }
+                }
+                $minutes = max(1, (int) ceil($words / 220));
+                $row->read_time = "{$minutes} min read";
+            }
+        });
+
         static::saved($flush);
         static::deleted($flush);
     }
