@@ -45,3 +45,6 @@ next-env.d.ts
 __pycache__/
 *.pyc
 *.pyo
+
+# Superpowers visual brainstorming sessions
+.superpowers/
