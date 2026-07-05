@@ -16,6 +16,29 @@
   --dur-base: 240ms;
   --dur-modal: 320ms;
   --dur-reveal: 520ms;
+
+  /* Brand tokens — single source of truth for storefront + CMS.
+     Values match the official Summerhouse Bali Brand Guidelines (11 Dec 2025). */
+  --brand-primary: #446B4A;      /* Deep Moss Green */
+  --brand-primary-deep: #355538;
+  --brand-primary-soft: rgba(68, 107, 74, 0.12);
+  --brand-secondary: #C7A58A;    /* Muted Terracotta */
+  --brand-secondary-soft: rgba(199, 165, 138, 0.14);
+  --brand-neutral-sage: #7F8C78; /* Warm Sage Green */
+  --brand-cream: #F2EDE3;        /* Alabaster Cream */
+  --brand-charcoal: #2E2E2C;     /* Deep Charcoal */
+  --brand-bg: #FAFAF9;           /* Porcelain White */
+  --brand-ink: #1a1a1a;
+
+  /* Brand guideline mandates a single typeface everywhere — no serif.
+     Aliased (not deleted) because ~30 component stylesheets still
+     reference var(--font-playfair) for headline treatments; aliasing here
+     repoints every one of them without touching each file individually. */
+  --font-playfair: "Avenir Next", "Avenir Next Thai", "Avenir Next LT Pro", var(--font-dm-sans), system-ui, sans-serif;
+}
+
+html, body {
+  background: var(--brand-bg);
 }
 
 /* Eyebrow tag — high-end-visual-design pattern */
@@ -28,8 +51,8 @@
   text-transform: uppercase;
   padding: 4px 12px;
   border-radius: 999px;
-  background: rgba(46, 92, 69, 0.08);
-  color: rgba(46, 92, 69, 0.85);
+  background: rgba(68, 107, 74, 0.08);
+  color: rgba(68, 107, 74, 0.88);
   line-height: 1.2;
 }
 
@@ -278,61 +301,11 @@
 }
 
 @theme {
+  /* Single brand typeface (Avenir Next Thai Modern per brand guidelines,
+     falling back to the self-hosted Outfit weight when unavailable on the
+     visitor's OS — Avenir is not distributable as a web font). */
   --font-sans: "Avenir Next", "Avenir Next Thai", "Avenir Next LT Pro", var(--font-dm-sans), system-ui, sans-serif;
-  --font-serif: var(--font-playfair), Georgia, serif;
-  /* Stitch fonts */
-  --font-headline: "Newsreader", serif;
-  --font-body: "Manrope", sans-serif;
-  --font-label: "Manrope", sans-serif;
-
-  /* Stitch colors */
-  --color-surface: #faf9f6;
-  --color-on-error: #ffffff;
-  --color-on-surface-variant: #424843;
-  --color-on-primary-fixed-variant: #334c3c;
-  --color-on-primary-fixed: #072013;
-  --color-surface-container: #efeeeb;
-  --color-inverse-primary: #b1cdb8;
-  --color-secondary: #695c4d;
-  --color-inverse-surface: #2f312f;
-  --color-secondary-fixed: #f1e0cc;
-  --color-secondary-fixed-dim: #d5c4b1;
-  --color-tertiary-fixed: #ffdea5;
-  --color-inverse-on-surface: #f2f1ee;
-  --color-surface-variant: #e3e2e0;
-  --color-on-tertiary-fixed: #261900;
-  --color-surface-container-high: #e9e8e5;
-  --color-on-tertiary-fixed-variant: #5d4201;
-  --color-on-tertiary: #ffffff;
-  --color-surface-bright: #faf9f6;
-  --color-outline: #737973;
-  --color-on-secondary-fixed-variant: #504536;
-  --color-primary-fixed: #ccead3;
-  --color-on-surface: #1a1c1a;
-  --color-surface-dim: #dbdad7;
-  --color-on-primary-container: #97b39f;
-  --color-primary-fixed-dim: #b1cdb8;
-  --color-on-background: #1a1c1a;
-  --color-primary: #173021;
-  --color-surface-container-highest: #e3e2e0;
-  --color-primary-container: #2d4636;
-  --color-surface-tint: #4a6453;
-  --color-error-container: #ffdad6;
-  --color-on-secondary-container: #6d6151;
-  --color-tertiary-fixed-dim: #e9c176;
-  --color-secondary-container: #efddc9;
-  --color-surface-container-low: #f4f3f1;
-  --color-tertiary-container: #553c00;
-  --color-on-primary: #ffffff;
-  --color-error: #ba1a1a;
-  --color-on-error-container: #93000a;
-  --color-background: #faf9f6;
-  --color-on-tertiary-container: #cca75f;
-  --color-on-secondary-fixed: #231a0e;
-  --color-on-secondary: #ffffff;
-  --color-surface-container-lowest: #ffffff;
-  --color-outline-variant: #c2c8c1;
-  --color-tertiary: #392700;
+  --font-serif: var(--font-sans);
 }
 
 /* Base styles */
@@ -458,7 +431,7 @@ img {
   min-height: 100dvh;
   flex-direction: column;
   overflow-x: clip;
-  background: #fafaf9;
+  background: #FAFAF9;
 }
 
 .contact-route-main {
@@ -471,7 +444,7 @@ img {
   min-height: 100dvh;
   flex-direction: column;
   overflow-x: clip;
-  background: #f5f1ea;
+  background: #FAFAF9;
 }
 
 .services-route-main {
@@ -484,7 +457,7 @@ img {
   min-height: 100dvh;
   flex-direction: column;
   overflow-x: clip;
-  background: #f6f4f0;
+  background: #FAFAF9;
 }
 
 .gallery-route-main {
@@ -972,11 +945,11 @@ img {
 /* Villa collection and Lodgify detail experience */
 .villa-collection-page,
 .villa-detail-page {
-  --villa-cream: #f4efe6;
-  --villa-paper: #fffaf2;
+  --villa-cream: #FAFAF9;
+  --villa-paper: #FFFFFF;
   --villa-ink: #201f1b;
   --villa-muted: #70695f;
-  --villa-green: #315f45;
+  --villa-green: #446B4A;
   --villa-line: rgba(32, 31, 27, 0.12);
   --villa-soft: rgba(49, 95, 69, 0.08);
   background: var(--villa-cream);
@@ -1735,7 +1708,7 @@ img {
   border: 0;
   border-radius: 0 0.5rem 0.5rem 0;
   background: #3f704d;
-  color: #fffaf2;
+  color: #FFFFFF;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1750,7 +1723,7 @@ img {
 }
 
 .villa-search-form__submit:hover {
-  background: #315f45;
+  background: #446B4A;
 }
 
 .villa-search-form__submit:active {
@@ -1789,7 +1762,7 @@ img {
 }
 
 .villa-search-form__panel--location button:hover {
-  background: #f4efe6;
+  background: #FAFAF9;
 }
 
 .villa-search-form__panel--dates {
@@ -1850,7 +1823,7 @@ img {
 .villa-search-calendar__day.is-selected-start,
 .villa-search-calendar__day.is-selected-end {
   background: #3f704d;
-  color: #fffaf2;
+  color: #FFFFFF;
 }
 
 .villa-search-calendar__nav {
@@ -1955,7 +1928,7 @@ img {
 .villa-calendar-section__header button {
   border: 0;
   background: transparent;
-  color: #315f45;
+  color: #446B4A;
   padding-top: 2rem;
   font: inherit;
   cursor: pointer;
@@ -2043,14 +2016,14 @@ img {
 
 .villa-calendar__day.is-in-range {
   background: rgba(63, 112, 77, 0.22);
-  color: #315f45;
+  color: #446B4A;
   text-decoration: none;
 }
 
 .villa-calendar__day.is-selected-start,
 .villa-calendar__day.is-selected-end {
   background: #3f704d;
-  color: #fffaf2;
+  color: #FFFFFF;
   text-decoration: none;
 }
 
@@ -2177,7 +2150,7 @@ img {
   min-height: 3.5rem;
   border-radius: 999px;
   background: #3f704d;
-  color: #fffaf2;
+  color: #FFFFFF;
   font-weight: 700;
   text-decoration: none;
 }
@@ -2653,7 +2626,7 @@ img {
   justify-content: center;
   border-radius: 999px;
   background: #3f704d;
-  color: #fffaf2;
+  color: #FFFFFF;
   padding: 0 1.6rem;
   font-weight: 700;
   text-decoration: none;
@@ -3134,7 +3107,7 @@ img {
 .villa-search-form__submit:hover {
   background:
     linear-gradient(135deg, rgba(80, 139, 97, 0.98), rgba(49, 95, 69, 0.98)),
-    #315f45;
+    #446B4A;
 }
 
 /* Glass search bar and overlay stacking fix */
@@ -4076,7 +4049,7 @@ img {
 }
 
 .villa-detail-page--preview .villa-detail-mini-header__brand span {
-  color: rgba(46, 92, 69, 0.78);
+  color: rgba(68, 107, 74, 0.78);
   font-size: 0.57rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -4109,8 +4082,8 @@ img {
 }
 
 .villa-detail-page--preview .villa-detail-mini-nav a:hover {
-  background: rgba(46, 92, 69, 0.1);
-  color: #2e5c45;
+  background: rgba(68, 107, 74, 0.1);
+  color: #446B4A;
 }
 
 .villa-detail-page--preview .villa-detail-mini-actions {
@@ -4125,9 +4098,9 @@ img {
   align-items: center;
   justify-content: center;
   min-height: 2.65rem;
-  border: 1px solid rgba(46, 92, 69, 0.16);
+  border: 1px solid rgba(68, 107, 74, 0.16);
   border-radius: 999px;
-  background: #2e5c45;
+  background: #446B4A;
   color: #fff;
   padding: 0 1.15rem;
   font-size: 0.73rem;
@@ -4135,7 +4108,7 @@ img {
   letter-spacing: 0.03em;
   text-decoration: none;
   text-transform: uppercase;
-  box-shadow: 0 0.7rem 1.4rem rgba(46, 92, 69, 0.18);
+  box-shadow: 0 0.7rem 1.4rem rgba(68, 107, 74, 0.18);
 }
 
 .villa-detail-page--preview .villa-detail-icon-button,
@@ -4155,8 +4128,8 @@ img {
 
 .villa-detail-page--preview .villa-detail-icon-button:hover,
 .villa-detail-page--preview .villa-detail-mobile-menu summary:hover {
-  border-color: rgba(46, 92, 69, 0.28);
-  color: #2e5c45;
+  border-color: rgba(68, 107, 74, 0.28);
+  color: #446B4A;
   transform: translateY(-1px);
 }
 
@@ -4210,8 +4183,8 @@ img {
 }
 
 .villa-detail-page--preview .villa-detail-mobile-menu__panel a:hover {
-  background: rgba(46, 92, 69, 0.1);
-  color: #2e5c45;
+  background: rgba(68, 107, 74, 0.1);
+  color: #446B4A;
 }
 
 .villa-detail-page--preview .villa-detail-hero-copy {
@@ -4581,6 +4554,14 @@ img {
   padding-top: clamp(1.8rem, 3.5vw, 2.6rem) !important;
 }
 
+/* Clear separation between the booking calendar and the next section
+   (MORE STAYS) — without this they nearly overlap. */
+.villa-detail-page--preview .villa-calendar-section + .villa-detail-section {
+  margin-top: clamp(2.5rem, 5vw, 4rem) !important;
+  border-top: 1px solid var(--villa-preview-line) !important;
+  padding-top: clamp(1.8rem, 3.5vw, 2.6rem) !important;
+}
+
 .villa-detail-page--preview .villa-calendar {
   border: 1px solid var(--villa-preview-line);
   border-radius: 1rem;
@@ -4728,13 +4709,126 @@ img {
     padding-top: clamp(1.75rem, 5vw, 2.5rem);
   }
 
-  .villa-detail-page--preview .villa-detail-amenities,
-  .villa-detail-page--preview .villa-detail-related {
+  .villa-detail-page--preview .villa-detail-amenities {
     grid-template-columns: 1fr !important;
+  }
+
+  /* Related villas: compact 2-up grid mirrors the desktop 3-up layout
+     instead of one huge card per row. */
+  .villa-detail-page--preview .villa-detail-related {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.85rem !important;
+  }
+
+  .villa-detail-page--preview .villa-detail-related figure {
+    margin-bottom: 0.55rem;
+    border-radius: 0.55rem;
+  }
+
+  .villa-detail-page--preview .villa-detail-related a span {
+    font-size: 0.66rem;
+  }
+
+  .villa-detail-page--preview .villa-detail-related strong {
+    margin-top: 0.2rem;
+    font-size: 1.05rem;
+    line-height: 1.15;
   }
 
   .villa-detail-page--preview .villa-calendar-section {
     margin-inline: 1rem !important;
+  }
+}
+
+/* Villa detail loading skeleton — shows instantly during server render */
+.villa-detail-loading {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1.5rem, 3.4vw, 2.6rem);
+}
+
+.villa-detail-loading__bar,
+.villa-detail-loading__title,
+.villa-detail-loading__meta,
+.villa-detail-loading__hero,
+.villa-detail-loading__side div,
+.villa-detail-loading__lines div {
+  background: linear-gradient(100deg, #e9e3d8 40%, #f3eee5 50%, #e9e3d8 60%);
+  background-size: 200% 100%;
+  animation: villa-skeleton-shimmer 1.4s ease infinite;
+  border-radius: 0.5rem;
+}
+
+.villa-detail-loading__bar {
+  width: 8rem;
+  height: 0.9rem;
+}
+
+.villa-detail-loading__title {
+  width: min(32rem, 70%);
+  height: 2.6rem;
+}
+
+.villa-detail-loading__meta {
+  width: min(22rem, 50%);
+  height: 1.1rem;
+}
+
+.villa-detail-loading__gallery {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.villa-detail-loading__hero {
+  aspect-ratio: 16 / 10;
+  border-radius: 0.9rem;
+}
+
+.villa-detail-loading__side {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+}
+
+.villa-detail-loading__side div {
+  border-radius: 0.9rem;
+}
+
+.villa-detail-loading__lines {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.75rem;
+}
+
+.villa-detail-loading__lines div {
+  height: 0.95rem;
+}
+
+.villa-detail-loading__lines div:nth-child(1) { width: 92%; }
+.villa-detail-loading__lines div:nth-child(2) { width: 84%; }
+.villa-detail-loading__lines div:nth-child(3) { width: 61%; }
+
+@keyframes villa-skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+@media (max-width: 760px) {
+  .villa-detail-loading__gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .villa-detail-loading__bar,
+  .villa-detail-loading__title,
+  .villa-detail-loading__meta,
+  .villa-detail-loading__hero,
+  .villa-detail-loading__side div,
+  .villa-detail-loading__lines div {
+    animation: none;
   }
 }
 
@@ -4770,7 +4864,7 @@ img {
 }
 
 .mobile-brand-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 36px;
   font-weight: 700;
   text-transform: uppercase;
@@ -4845,7 +4939,7 @@ img {
 }
 
 .mobile-category-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: #0b1c30;
@@ -4915,7 +5009,7 @@ img {
 }
 
 .mobile-bawa-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 40px;
   font-weight: 700;
   text-transform: uppercase;
@@ -4949,7 +5043,7 @@ img {
 }
 
 .mobile-bawa-subtitle {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 20px;
   font-weight: 700;
   text-transform: uppercase;
@@ -4971,7 +5065,7 @@ img {
 }
 
 .mobile-bawa-villa-name {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0b1c30;
@@ -5045,7 +5139,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .mobile-bawa-price-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0b1c30;
@@ -5094,7 +5188,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .mobile-featured-stacked-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 36px;
   font-weight: 800;
   text-transform: uppercase;
@@ -5237,7 +5331,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .mobile-premium-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0b1c30;
@@ -5345,7 +5439,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .mobile-small-card-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: #0b1c30;
@@ -5502,7 +5596,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .mobile-showcase-left-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 24px;
   font-weight: 700;
   color: #ffffff;
@@ -5543,7 +5637,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .mobile-showcase-item-title {
-  font-family: "Metropolis", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: #ffffff;
@@ -5635,7 +5729,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-brand-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 64px;
   font-weight: 700;
   text-transform: uppercase;
@@ -5655,7 +5749,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-stay-heading {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: clamp(48px, 4.8vw, 70px);
   font-weight: 700;
   line-height: 1.04;
@@ -5815,7 +5909,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-villa-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #0b1c30;
@@ -5866,7 +5960,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-bawa-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 72px;
   font-weight: 700;
   text-transform: uppercase;
@@ -5901,7 +5995,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-bawa-subtitle {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 32px;
   font-weight: 700;
   text-transform: uppercase;
@@ -5930,7 +6024,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-bawa-villa-name {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0b1c30;
@@ -5994,7 +6088,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-bawa-price-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #0b1c30;
@@ -6043,7 +6137,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-featured-stacked-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 56px;
   font-weight: 800;
   text-transform: uppercase;
@@ -6199,7 +6293,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-small-card-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: #0b1c30;
@@ -6258,7 +6352,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-blue-square-icon-btn:hover {
-  background-color: #2e5c45;
+  background-color: #446B4A;
 }
 
 /* Right premium card */
@@ -6321,7 +6415,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-premium-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #0b1c30;
@@ -6469,7 +6563,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-showcase-left-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 48px;
   font-weight: 700;
   color: #ffffff;
@@ -6515,7 +6609,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .desktop-showcase-item-title {
-  font-family: "Metropolis", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
@@ -6602,7 +6696,7 @@ a.desktop-bawa-large-img-wrapper {
 
 /* Bawa Villa Title Styling */
 .desktop-bawa-villa-name {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0b1c30;
@@ -6717,24 +6811,43 @@ a.desktop-bawa-large-img-wrapper {
   letter-spacing: 0.08em;
   text-decoration: none;
   transition: color 0.4s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .global-mini-header.is-scrolled .global-mini-logo {
   color: #1c1b18;
 }
 
-.global-mini-header__brand span {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.57rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  transition: color 0.4s ease;
+/* Official wordmark. Rendered as background-image on a span (not <img>) so
+   the many global img rules elsewhere in this file cannot fight the sizing.
+   The source SVG is a 311x311 canvas whose visible wordmark occupies
+   x[37..276] y[134..170] = 239x36 px. We display only that inner
+   rectangle by sizing the background to a multiple of 311 that lines the
+   wordmark's baseline up with the span's box, then clip via overflow.
+   Scale factor: span height / 36 (wordmark height in source).
+   Background dimensions: 311 * scale x 311 * scale.
+   Position: shift up so the wordmark's y=134 sits at span's y=0. */
+.global-mini-logo-mark {
+  --logo-h: clamp(20px, 2.2vw, 26px);
+  --logo-scale: calc(var(--logo-h) / 36);
+  display: block;
+  height: var(--logo-h);
+  width: calc(239 * var(--logo-scale));
+  background-image: url("/SUMMERHOUSE_LOGO_PROJECT_1.svg");
+  background-repeat: no-repeat;
+  background-size: calc(311 * var(--logo-scale)) calc(311 * var(--logo-scale));
+  background-position: calc(-37 * var(--logo-scale)) calc(-134 * var(--logo-scale));
+  filter: brightness(0) invert(1);
+  transition: filter 0.4s ease;
 }
 
-.global-mini-header.is-scrolled .global-mini-header__brand span {
-  color: rgba(46, 92, 69, 0.78);
+.global-mini-header.is-scrolled .global-mini-logo-mark {
+  filter: none;
 }
+
+/* Tagline span deliberately removed at all breakpoints — the wordmark
+   already says "SUMMERHOUSE / BALI", the sub-line was redundant. */
 
 .global-mini-nav {
   display: inline-flex;
@@ -6790,8 +6903,8 @@ a.desktop-bawa-large-img-wrapper {
 
 @media (hover: hover) and (pointer: fine) {
   .global-mini-header.is-scrolled .global-mini-nav a:hover {
-    background: rgba(46, 92, 69, 0.1);
-    color: #2e5c45;
+    background: rgba(68, 107, 74, 0.1);
+    color: #446B4A;
   }
 }
 
@@ -6832,9 +6945,9 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .global-mini-header.is-scrolled .global-mini-link {
-  border: 1px solid rgba(46, 92, 69, 0.16);
-  background: #2e5c45;
-  box-shadow: 0 0.7rem 1.4rem rgba(46, 92, 69, 0.18);
+  border: 1px solid rgba(68, 107, 74, 0.16);
+  background: #446B4A;
+  box-shadow: 0 0.7rem 1.4rem rgba(68, 107, 74, 0.18);
 }
 
 .global-mini-header.is-scrolled .global-mini-link:hover {
@@ -6882,8 +6995,8 @@ a.desktop-bawa-large-img-wrapper {
 
   .global-mini-header.is-scrolled .global-icon-button:hover,
   .global-mini-header.is-scrolled .global-mobile-menu summary:hover {
-    border-color: rgba(46, 92, 69, 0.28);
-    color: #2e5c45;
+    border-color: rgba(68, 107, 74, 0.28);
+    color: #446B4A;
     transform: translateY(-1px);
   }
 }
@@ -6940,8 +7053,8 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .global-mobile-menu__panel a:hover {
-  background: rgba(46, 92, 69, 0.08);
-  color: #2e5c45;
+  background: rgba(68, 107, 74, 0.08);
+  color: #446B4A;
 }
 
 @media (max-width: 1023px) {
@@ -7067,7 +7180,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .hero-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: clamp(34px, 4.5vw, 56px);
   font-weight: 800;
   color: #ffffff;
@@ -7251,8 +7364,8 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .hero-search-wrapper .villa-search-form__panel--location button:hover {
-  background-color: rgba(46, 92, 69, 0.08);
-  color: #2e5c45;
+  background-color: rgba(68, 107, 74, 0.08);
+  color: #446B4A;
 }
 
 .hero-search-wrapper .villa-search-form__panel--dates {
@@ -7303,129 +7416,27 @@ a.desktop-bawa-large-img-wrapper {
     font-size: 15px;
   }
   
-  /* STITCH 1:1 COMPACT HORIZONTAL MOBILE SEARCH BAR */
-  .hero-search-wrapper .villa-search-form {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border-radius: 100px;
-    padding: 6px 8px;
-    gap: 4px;
-    width: 100%;
-    background: rgba(27, 27, 27, 0.65);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  /* Mobile + tablet: hide desktop VillaSearchForm; MobileHeroSearch (a
+     compact pill launching a sheet) takes over. All the old vertical-stack
+     mobile-override CSS was deleted with the new component. */
+  .hero-search-desktop {
+    display: none;
   }
-  
-  .hero-search-wrapper .villa-search-form__group {
-    flex: 1;
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: none;
-    padding-inline: 8px;
-    padding-bottom: 0;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .hero-search-wrapper .villa-search-form__group:nth-child(3) {
-    border-right: none;
-  }
-  
-  .hero-search-wrapper .villa-search-form__group button {
-    padding: 6px 2px;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .hero-search-wrapper .villa-search-form__group span {
-    display: none; /* Hide labels on mobile to keep it ultra compact */
-  }
-  
-  .hero-search-wrapper .villa-search-form__group strong {
-    font-size: 11px;
-    font-weight: 600;
-    margin-top: 0;
-    text-align: center;
-  }
-  
-  .hero-search-wrapper .villa-search-form__group--dates {
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-    align-items: center;
-    justify-content: center;
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    border-bottom: none;
-    padding-inline: 8px;
-    padding-bottom: 0;
-  }
-  
-  .hero-search-wrapper .villa-search-form__group--dates button:first-child {
-    border-right: 1px solid rgba(255, 255, 255, 0.15);
-    padding-right: 6px;
-  }
-  
-  .hero-search-wrapper .villa-search-form__group--dates button:last-child {
-    padding-left: 6px;
-  }
-  
-  /* Search icon-only circular submit button on mobile */
-  .hero-search-wrapper .villa-search-form__submit {
-    min-width: 36px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    padding: 0;
-    display: inline-grid;
-    place-items: center;
-    background-color: #446B4A;
-    box-shadow: 0 4px 10px rgba(68, 107, 74, 0.3);
-  }
-  
-  .hero-search-wrapper .villa-search-form__submit span {
-    display: none; /* Hide Search text on mobile, showing only magnifying glass */
-  }
-  
-  .hero-search-wrapper .villa-search-form__submit svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 3.5px;
-  }
-  
-  .hero-search-wrapper .villa-search-form__chevron {
-    display: none !important;
-  }
-  
-  /* Mobile responsive dropdown positioning to prevent clipping */
-  .hero-search-wrapper .villa-search-form__panel {
-    top: calc(100% + 12px);
-    left: 0 !important;
-    right: 0 !important;
-    width: calc(100vw - 2rem) !important;
-    margin-inline: auto;
-    transform: none !important;
-    border-radius: 20px;
-    padding: 16px;
-    z-index: 99999 !important;
-  }
-  
-  .hero-search-wrapper .villa-search-form__panel--location button {
-    padding: 10px 12px;
-    font-size: 13px;
-  }
-  
-  /* Stack months vertically in mobile date picker to prevent side overflow */
-  .hero-search-wrapper .villa-search-calendar {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .hero-search-wrapper .villa-search-form__panel--dates {
-    padding: 16px;
+  .hero-search-mobile {
+    display: block;
   }
 }
+
+/* Desktop: show the grid form, hide the mobile pill launcher. */
+@media (min-width: 1024px) {
+  .hero-search-desktop {
+    display: block;
+  }
+  .hero-search-mobile {
+    display: none;
+  }
 }
+} /* close @layer components opened at line 6764 */
 
 /* ==========================================================================
    Final homepage spacing + magazine glass navbar polish
@@ -7477,7 +7488,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .global-mini-header__brand span {
-  color: rgba(46, 92, 69, 0.78) !important;
+  color: rgba(68, 107, 74, 0.78) !important;
   font-size: 0.56rem !important;
   letter-spacing: 0.2em !important;
 }
@@ -7498,7 +7509,7 @@ a.desktop-bawa-large-img-wrapper {
 
 .global-mini-nav a:hover {
   background: rgba(255, 255, 255, 0.48) !important;
-  color: #2e5c45 !important;
+  color: #446B4A !important;
 }
 
 .global-mini-actions {
@@ -7515,7 +7526,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .global-mini-header.is-scrolled .global-mini-link {
-  background: #2e5c45 !important;
+  background: #446B4A !important;
   color: #fff !important;
 }
 
@@ -7707,28 +7718,9 @@ a.desktop-bawa-large-img-wrapper {
     max-width: 34ch !important;
   }
 
-  .hero-search-wrapper .villa-search-form {
-    border-radius: 1.15rem !important;
-    padding: 0.35rem !important;
-  }
-
-  .hero-search-wrapper .villa-search-form__group > button,
-  .hero-search-wrapper .villa-search-form__group--dates,
-  .hero-search-wrapper .villa-search-form__group--dates > button,
-  .hero-search-wrapper .villa-search-form__submit {
-    min-height: 3.55rem !important;
-    border-radius: 0.82rem !important;
-    padding: 0.55rem 0.65rem !important;
-  }
-
-  .hero-search-wrapper .villa-search-form__group span {
-    display: block !important;
-    font-size: 0.54rem !important;
-  }
-
-  .hero-search-wrapper .villa-search-form__group strong {
-    font-size: 0.72rem !important;
-  }
+  /* Search-form legacy overrides removed — the mobile stacked layout is
+     defined once in the earlier @media block above and no longer clobbered
+     here by conflicting !important rules. */
 }
 
 @media (max-width: 640px) {
@@ -7738,19 +7730,6 @@ a.desktop-bawa-large-img-wrapper {
 
   .hero-tags {
     max-width: 100%;
-  }
-
-  .hero-search-wrapper .villa-search-form {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) 3.3rem !important;
-  }
-
-  .hero-search-wrapper .villa-search-form__group--guests {
-    display: none !important;
-  }
-
-  .hero-search-wrapper .villa-search-form__submit span {
-    display: none !important;
   }
 }
 
@@ -7827,7 +7806,7 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .global-mini-header.is-scrolled .global-mini-header__brand span {
-  color: rgba(46, 92, 69, 0.74) !important;
+  color: rgba(68, 107, 74, 0.74) !important;
   text-shadow: none !important;
 }
 
@@ -7880,8 +7859,8 @@ a.desktop-bawa-large-img-wrapper {
 }
 
 .global-mini-header.is-scrolled .global-mini-link {
-  background: #2e5c45 !important;
-  border-color: rgba(46, 92, 69, 0.28) !important;
+  background: #446B4A !important;
+  border-color: rgba(68, 107, 74, 0.28) !important;
   color: #fff !important;
 }
 
@@ -8091,7 +8070,7 @@ a.desktop-bawa-large-img-wrapper {
   min-height: clamp(4.35rem, 5vw, 5.05rem) !important;
   border-radius: 1.05rem !important;
   background:
-    linear-gradient(135deg, rgba(65, 119, 82, 0.98), rgba(46, 92, 69, 0.98)) !important;
+    linear-gradient(135deg, rgba(65, 119, 82, 0.98), rgba(68, 107, 74, 0.98)) !important;
   color: #fff !important;
   font-weight: 820 !important;
   font-size: clamp(0.94rem, 1vw, 1.08rem) !important;
@@ -8599,7 +8578,7 @@ details.global-mobile-menu.global-mobile-menu--standalone {
 }
 
 .global-mini-header.is-scrolled .global-mini-header__brand span {
-  color: rgba(46, 92, 69, 0.72) !important;
+  color: rgba(68, 107, 74, 0.72) !important;
   text-shadow: none !important;
 }
 
@@ -8642,8 +8621,8 @@ details.global-mobile-menu.global-mobile-menu--standalone {
 }
 
 .global-mini-header.is-scrolled .global-mini-nav a:hover {
-  background: rgba(46, 92, 69, 0.09) !important;
-  color: #2e5c45 !important;
+  background: rgba(68, 107, 74, 0.09) !important;
+  color: #446B4A !important;
 }
 
 .global-mini-actions {
@@ -8669,8 +8648,8 @@ details.global-mobile-menu.global-mobile-menu--standalone {
 }
 
 .global-mini-header.is-scrolled .global-mini-link {
-  border-color: rgba(46, 92, 69, 0.18) !important;
-  background: #2e5c45 !important;
+  border-color: rgba(68, 107, 74, 0.18) !important;
+  background: #446B4A !important;
   color: #fff !important;
 }
 
@@ -8729,8 +8708,8 @@ details.global-mobile-menu.global-mobile-menu--standalone {
 }
 
 .global-mobile-menu__panel a:hover {
-  background: rgba(46, 92, 69, 0.09) !important;
-  color: #2e5c45 !important;
+  background: rgba(68, 107, 74, 0.09) !important;
+  color: #446B4A !important;
 }
 
 .global-mobile-menu--standalone {
@@ -8809,13 +8788,13 @@ details.global-mobile-menu.global-mobile-menu--standalone {
 }
 
 .hero-title {
-  max-width: 13.8ch !important;
+  max-width: min(92vw, 64rem) !important;
   margin: 0 !important;
-  font-family: var(--font-dm-sans), Inter, Arial, sans-serif !important;
-  font-size: clamp(3.9rem, 6.1vw, 7rem) !important;
-  font-weight: 650 !important;
-  line-height: 0.95 !important;
-  letter-spacing: -0.068em !important;
+  font-family: var(--font-dm-sans), Arial, sans-serif !important;
+  font-size: clamp(2.8rem, 5.4vw, 5.8rem) !important;
+  font-weight: 620 !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.045em !important;
   color: #fff !important;
   text-shadow: 0 1.25rem 3.6rem rgba(0, 0, 0, 0.42) !important;
 }
@@ -8913,7 +8892,7 @@ details.global-mobile-menu.global-mobile-menu--standalone {
 .hero-search-wrapper .villa-search-form__submit {
   min-height: clamp(3.8rem, 4.6vw, 4.55rem) !important;
   border-radius: 0.82rem !important;
-  background: #2e5c45 !important;
+  background: #446B4A !important;
   color: #fff !important;
   font-size: clamp(0.9rem, 0.95vw, 1rem) !important;
   font-weight: 820 !important;
@@ -9095,10 +9074,10 @@ details.global-mobile-menu.global-mobile-menu--standalone {
   }
 
   .hero-title {
-    max-width: 9.3ch !important;
-    font-size: clamp(2.65rem, 12vw, 3.7rem) !important;
-    line-height: 0.92 !important;
-    letter-spacing: -0.058em !important;
+    max-width: min(100%, 27rem) !important;
+    font-size: clamp(2.35rem, 10vw, 3.8rem) !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.04em !important;
   }
 
   .hero-description {
@@ -9229,6 +9208,354 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   right: 0 !important;
 }
 
+/* Mobile nav utility icons: saved villas + account stay visible beside hamburger. */
+@media (max-width: 760px) {
+  .global-mini-actions {
+    right: calc(clamp(1rem, 5vw, 1.25rem) + 3rem) !important;
+    gap: 0.45rem !important;
+    min-width: auto !important;
+  }
+
+  .global-mini-actions .global-icon-button--search,
+  .global-mini-actions .global-language-toggle,
+  .global-mini-actions .global-mini-link {
+    display: none !important;
+  }
+
+  .global-mini-actions .global-icon-button--saved,
+  .global-mini-actions .global-user-dropdown,
+  .global-mini-actions .global-user-dropdown > .global-icon-button {
+    display: inline-grid !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .global-mini-actions .global-icon-button--saved,
+  .global-mini-actions .global-user-dropdown > .global-icon-button {
+    width: 2.42rem !important;
+    height: 2.42rem !important;
+    color: rgba(255, 255, 255, 0.96) !important;
+  }
+
+  .global-mini-header.is-scrolled .global-mini-actions .global-icon-button--saved,
+  .global-mini-header.is-scrolled .global-mini-actions .global-user-dropdown > .global-icon-button {
+    color: #1f1f1d !important;
+  }
+
+  .global-user-menu {
+    position: fixed !important;
+    top: 4.2rem !important;
+    right: clamp(1rem, 5vw, 1.25rem) !important;
+    width: min(18rem, calc(100vw - 2rem)) !important;
+  }
+}
+
+/* ==========================================================================
+   Interactive hover buttons + Liquid Glass dropdown surfaces
+   ========================================================================== */
+
+.ihb {
+  --ihb-fill: rgba(255, 254, 250, 0.92);
+  --ihb-fill-fg: currentColor;
+  --ihb-fill-size: max(2.75rem, 115%);
+  --ihb-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  contain: paint;
+  will-change: transform;
+}
+
+.ihb i {
+  font-style: normal;
+}
+
+.ihb-fill {
+  position: absolute;
+  top: 50%;
+  left: 0.55rem;
+  z-index: 0;
+  width: var(--ihb-fill-size);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: var(--ihb-fill);
+  opacity: 0;
+  transform: translate3d(-52%, -50%, 0) scale(0.18);
+  transform-origin: left center;
+  transition:
+    transform 420ms var(--ihb-ease),
+    opacity 280ms ease;
+}
+
+.ihb-base,
+.ihb-hover {
+  transition:
+    opacity 280ms ease,
+    color 300ms ease,
+    transform 420ms var(--ihb-ease);
+}
+
+.ihb-base {
+  color: inherit;
+}
+
+.ihb-hover {
+  color: var(--ihb-fill-fg);
+  opacity: 0;
+  transform: translate3d(-0.45rem, 0, 0);
+}
+
+.ihb .ihb-arrow,
+.ihb svg {
+  transition: transform 420ms var(--ihb-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ihb:hover .ihb-fill,
+  .ihb:focus-visible .ihb-fill {
+    opacity: 1;
+    transform: translate3d(-8%, -50%, 0) scale(1.18);
+  }
+
+  .ihb:hover .ihb-base,
+  .ihb:focus-visible .ihb-base {
+    opacity: 0;
+    transform: translate3d(0.45rem, 0, 0);
+  }
+
+  .ihb:hover .ihb-hover,
+  .ihb:focus-visible .ihb-hover {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .ihb:hover .ihb-hover svg,
+  .ihb:focus-visible .ihb-hover svg {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+.ihb:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ihb-fill) 60%, #446B4A);
+  outline-offset: 3px;
+}
+
+.ihb:disabled,
+.ihb[aria-disabled="true"] {
+  pointer-events: none;
+}
+
+.ihb-fill-light,
+.global-mini-link,
+.villa-detail-mini-link,
+.villa-detail-reserve-cta,
+.bali-book-deck-cta {
+  --ihb-fill: #fffefa;
+  --ihb-fill-fg: #172018;
+}
+
+.ihb-fill-dark {
+  --ihb-fill: #1f1f1d;
+  --ihb-fill-fg: #fffefa;
+}
+
+.global-mobile-menu__cta {
+  --ihb-fill: rgba(68, 107, 74, 0.12);
+  --ihb-fill-fg: #446B4A;
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 0.72rem;
+  color: #446B4A;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.86rem 0.95rem;
+}
+
+.liquid-glass,
+.liquid-dropdown-content {
+  --liquid-glass-radius: 16px;
+  --liquid-glass-blur: 22px;
+  --liquid-glass-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+  --liquid-glass-glow: 0 0 0 rgba(68, 107, 74, 0);
+  position: relative;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--liquid-glass-radius);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08)),
+    rgba(255, 255, 255, 0.34);
+  box-shadow:
+    var(--liquid-glass-shadow),
+    var(--liquid-glass-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -1px 0 rgba(68, 107, 74, 0.08);
+  backdrop-filter: blur(var(--liquid-glass-blur)) saturate(165%) contrast(1.04);
+  -webkit-backdrop-filter: blur(var(--liquid-glass-blur)) saturate(165%) contrast(1.04);
+  color: #17201a;
+}
+
+.liquid-glass::before,
+.liquid-dropdown-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.48), transparent 34%),
+    radial-gradient(circle at 92% 12%, rgba(68, 107, 74, 0.16), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 52%);
+}
+
+.liquid-glass[data-blur="sm"],
+.liquid-dropdown-content[data-blur="sm"] {
+  --liquid-glass-blur: 14px;
+}
+
+.liquid-glass[data-blur="md"],
+.liquid-dropdown-content[data-blur="md"] {
+  --liquid-glass-blur: 18px;
+}
+
+.liquid-glass[data-blur="lg"],
+.liquid-dropdown-content[data-blur="lg"] {
+  --liquid-glass-blur: 24px;
+}
+
+.liquid-glass[data-blur="xl"],
+.liquid-dropdown-content[data-blur="xl"] {
+  --liquid-glass-blur: 34px;
+}
+
+.liquid-glass[data-glow="sm"],
+.liquid-dropdown-content[data-glow="sm"] {
+  --liquid-glass-glow: 0 0 26px rgba(255, 255, 255, 0.18);
+}
+
+.liquid-glass[data-glow="md"],
+.liquid-dropdown-content[data-glow="md"] {
+  --liquid-glass-glow: 0 0 46px rgba(255, 255, 255, 0.26), 0 0 64px rgba(68, 107, 74, 0.12);
+}
+
+.liquid-glass[data-shadow="sm"],
+.liquid-dropdown-content[data-shadow="sm"] {
+  --liquid-glass-shadow: 0 10px 28px rgba(23, 31, 25, 0.12);
+}
+
+.liquid-glass[data-shadow="md"],
+.liquid-dropdown-content[data-shadow="md"] {
+  --liquid-glass-shadow: 0 18px 45px rgba(23, 31, 25, 0.16);
+}
+
+.liquid-glass[data-shadow="lg"],
+.liquid-dropdown-content[data-shadow="lg"] {
+  --liquid-glass-shadow: 0 24px 70px rgba(12, 16, 13, 0.26);
+}
+
+.liquid-dropdown-content {
+  animation: liquid-dropdown-in 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: top right;
+}
+
+.liquid-dropdown-content > * {
+  position: relative;
+  z-index: 1;
+}
+
+.global-user-menu.liquid-dropdown-content,
+.global-mobile-menu__panel,
+.villa-detail-mobile-menu__panel,
+.villa-search-form__panel.liquid-dropdown-content,
+.mobile-filter-select,
+.desktop-filter-select,
+.bali-book-toc-select {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18)),
+    rgba(250, 249, 246, 0.3) !important;
+  border-color: rgba(68, 107, 74, 0.14) !important;
+  box-shadow:
+    var(--liquid-glass-shadow),
+    var(--liquid-glass-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(68, 107, 74, 0.08) !important;
+  backdrop-filter: blur(var(--liquid-glass-blur)) saturate(165%) contrast(1.04) !important;
+  -webkit-backdrop-filter: blur(var(--liquid-glass-blur)) saturate(165%) contrast(1.04) !important;
+}
+
+.global-user-menu__items a,
+.global-user-menu__items button,
+.global-mobile-menu__panel a,
+.villa-detail-mobile-menu__panel a,
+.location-picker__list button {
+  transition:
+    background-color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 200ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.global-user-menu__items a:hover,
+.global-user-menu__items button:hover,
+.global-user-menu__items a:focus-visible,
+.global-user-menu__items button:focus-visible,
+.global-mobile-menu__panel a:hover,
+.global-mobile-menu__panel a:focus-visible,
+.villa-detail-mobile-menu__panel a:hover,
+.villa-detail-mobile-menu__panel a:focus-visible,
+.location-picker__list button:hover,
+.location-picker__list button:focus-visible {
+  background: rgba(68, 107, 74, 0.1) !important;
+  color: #446B4A !important;
+  transform: translate3d(2px, 0, 0);
+  outline: none;
+}
+
+@keyframes liquid-dropdown-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translate3d(0, -6px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-glass,
+  .liquid-dropdown-content,
+  .global-mobile-menu__panel,
+  .villa-detail-mobile-menu__panel,
+  .villa-search-form__panel,
+  .mobile-filter-select,
+  .desktop-filter-select,
+  .bali-book-toc-select {
+    background: #fffefa !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ihb-fill {
+    opacity: 0 !important;
+    transform: translate3d(-52%, -50%, 0) scale(0.18) !important;
+  }
+
+  .ihb-base,
+  .ihb-hover,
+  .ihb svg,
+  .liquid-dropdown-content {
+    animation: none !important;
+    transform: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ihb-hover {
+    display: none !important;
+  }
+
+  .ihb-base {
+    opacity: 1 !important;
+  }
+}
+
 /* Mobile & Tablet breakpoints (<= 1180px) where the menu should be visible */
 @media (max-width: 1180px) {
   details.global-mobile-menu.global-mobile-menu--standalone {
@@ -9306,7 +9633,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .villa-collection-eyebrow {
   margin: 0 0 0.9rem !important;
-  color: #2e5c45 !important;
+  color: #446B4A !important;
   font-size: 0.72rem !important;
   font-weight: 820 !important;
   letter-spacing: 0.18em !important;
@@ -9374,10 +9701,10 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   align-items: center !important;
   justify-content: center !important;
   min-height: 2.65rem !important;
-  border: 1px solid rgba(46, 92, 69, 0.18) !important;
+  border: 1px solid rgba(68, 107, 74, 0.18) !important;
   border-radius: 999px !important;
   background: rgba(255, 255, 255, 0.56) !important;
-  color: #2e5c45 !important;
+  color: #446B4A !important;
   padding: 0 1rem !important;
   font-size: 0.76rem !important;
   font-weight: 800 !important;
@@ -9433,7 +9760,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .villa-catalog-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(46, 92, 69, 0.18);
+  border-color: rgba(68, 107, 74, 0.18);
   box-shadow: 0 1.4rem 3.6rem rgba(31, 31, 29, 0.11);
 }
 
@@ -9484,7 +9811,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .villa-catalog-card__save.is-saved {
-  background: #2e5c45;
+  background: #446B4A;
   color: #fff;
 }
 
@@ -9526,7 +9853,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .villa-catalog-card__location svg {
   flex: 0 0 auto;
-  color: rgba(46, 92, 69, 0.72);
+  color: rgba(68, 107, 74, 0.72);
 }
 
 .villa-catalog-card__location span {
@@ -9552,7 +9879,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .villa-catalog-card__facts svg {
-  color: rgba(46, 92, 69, 0.68);
+  color: rgba(68, 107, 74, 0.68);
 }
 
 .villa-catalog-card__footer {
@@ -9586,7 +9913,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   justify-content: center;
   min-height: 2.3rem;
   border-radius: 999px;
-  background: #2e5c45;
+  background: #446B4A;
   color: #fff;
   padding: 0 0.88rem;
   font-size: 0.74rem;
@@ -9628,7 +9955,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   min-height: 2.85rem;
   margin-top: 1.3rem;
   border-radius: 999px;
-  background: #2e5c45;
+  background: #446B4A;
   color: #fff;
   padding: 0 1.25rem;
   font-size: 0.82rem;
@@ -9647,7 +9974,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 .villa-catalog-card--loading .villa-catalog-card__media,
 .villa-catalog-card--loading .villa-catalog-card__body span {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.48), rgba(46, 92, 69, 0.08), rgba(255, 255, 255, 0.48));
+    linear-gradient(90deg, rgba(255, 255, 255, 0.48), rgba(68, 107, 74, 0.08), rgba(255, 255, 255, 0.48));
   background-size: 220% 100%;
   animation: villaCatalogShimmer 1.4s ease-in-out infinite;
 }
@@ -10386,7 +10713,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .global-mini-header.is-scrolled .global-icon-button--saved.has-saved-count {
-  color: #2e5c45;
+  color: #446B4A;
 }
 
 .global-icon-button__badge {
@@ -10399,13 +10726,13 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.78);
   border-radius: 999px;
-  background: #2e5c45;
+  background: #446B4A;
   color: #fff;
   padding: 0 0.28rem;
   font-size: 0.62rem;
   font-weight: 850;
   line-height: 1;
-  box-shadow: 0 0.5rem 1rem rgba(46, 92, 69, 0.28);
+  box-shadow: 0 0.5rem 1rem rgba(68, 107, 74, 0.28);
   animation: savedBadgePulse 260ms ease-out;
 }
 
@@ -10438,7 +10765,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   border: 1px solid rgba(138, 60, 45, 0.18);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.7);
-  color: #2e5c45;
+  color: #446B4A;
   padding: 0 1rem;
   font: inherit;
   font-size: 0.78rem;
@@ -10452,7 +10779,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .villa-collection-empty--error {
-  border-color: rgba(46, 92, 69, 0.14);
+  border-color: rgba(68, 107, 74, 0.14);
   background:
     linear-gradient(145deg, rgba(255, 255, 252, 0.86), rgba(247, 243, 236, 0.76)),
     rgba(255, 255, 255, 0.72);
@@ -10482,7 +10809,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .app-error-card p {
   margin: 0 0 1rem;
-  color: #2e5c45;
+  color: #446B4A;
   font-size: 0.74rem;
   font-weight: 850;
   letter-spacing: 0.18em;
@@ -10519,11 +10846,11 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   min-height: 3rem;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(46, 92, 69, 0.14);
+  border: 1px solid rgba(68, 107, 74, 0.14);
   border-radius: 999px;
   padding: 0 1.25rem;
-  background: #2e5c45;
-  color: #fffaf1;
+  background: #446B4A;
+  color: #FFFFFF;
   font: inherit;
   font-size: 0.82rem;
   font-weight: 850;
@@ -10533,7 +10860,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .app-error-card a {
   background: rgba(255, 255, 252, 0.7);
-  color: #2e5c45;
+  color: #446B4A;
 }
 
 /* Hierarchical destination picker: Airbnb-style, compact, and scalable. */
@@ -10595,7 +10922,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 .location-picker__notice {
   margin: 0 0.7rem 0.45rem;
   padding: 0.7rem 0.8rem;
-  border: 1px solid rgba(46, 92, 69, 0.12);
+  border: 1px solid rgba(68, 107, 74, 0.12);
   border-radius: 0.8rem;
   background: rgba(247, 243, 236, 0.72);
   color: #6f6a61;
@@ -10659,14 +10986,14 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .location-picker__list button:hover,
 .location-picker__list button.is-selected {
-  border-color: rgba(46, 92, 69, 0.14);
+  border-color: rgba(68, 107, 74, 0.14);
   background: rgba(255, 255, 255, 0.76);
   box-shadow: 0 0.7rem 1.5rem rgba(31, 31, 29, 0.08);
   transform: translateY(-1px);
 }
 
 .location-picker__list button.is-selected .location-picker__icon {
-  background: #2e5c45;
+  background: #446B4A;
   color: #fffefa;
 }
 
@@ -10678,7 +11005,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   border: 1px solid rgba(31, 31, 29, 0.08);
   border-radius: 999px;
   background: rgba(247, 243, 236, 0.74);
-  color: #2e5c45;
+  color: #446B4A;
 }
 
 .location-picker__icon svg {
@@ -10832,7 +11159,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .bali-collection-stacked-title {
-  font-family: "Metropolis", "Hanken Grotesk", sans-serif;
+  font-family: var(--font-sans), Inter, Arial, sans-serif;
   font-size: 56px;
   font-weight: 800;
   text-transform: uppercase;
@@ -11588,8 +11915,8 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 .villa-modal__header button {
   padding: 0.5rem 1.5rem;
   border-radius: 99px;
-  background: #2e5c45;
-  border: 1px solid #2e5c45;
+  background: #446B4A;
+  border: 1px solid #446B4A;
   color: #fffefa;
   font-family: var(--font-dm-sans), sans-serif;
   font-weight: 700;
@@ -11603,7 +11930,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   background: #224433;
   border-color: #224433;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(46, 92, 69, 0.2);
+  box-shadow: 0 4px 12px rgba(68, 107, 74, 0.2);
 }
 
 .villa-photo-modal__grid {
@@ -11761,10 +12088,10 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   justify-content: center;
   min-height: 3.1rem;
   padding: 0 2rem;
-  border: 1.5px solid #2e5c45;
+  border: 1.5px solid #446B4A;
   border-radius: 99px;
   background: transparent;
-  color: #2e5c45;
+  color: #446B4A;
   font-family: var(--font-dm-sans), sans-serif;
   font-weight: 700;
   font-size: 0.88rem;
@@ -11776,10 +12103,10 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .villa-amenities__show:hover {
-  background: #2e5c45;
+  background: #446B4A;
   color: #fffefa;
   transform: translateY(-1px);
-  box-shadow: 0 6px 15px rgba(46, 92, 69, 0.18);
+  box-shadow: 0 6px 15px rgba(68, 107, 74, 0.18);
 }
 
 .villa-amenities__show:active {
@@ -11820,7 +12147,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .villa-amenities-modal__groups section h3 span {
-  color: #2e5c45;
+  color: #446B4A;
   font-size: 1.25rem;
   display: inline-flex;
 }
@@ -11847,7 +12174,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #2e5c45;
+  background: #446B4A;
   opacity: 0.65;
   flex-shrink: 0;
 }
@@ -11901,3 +12228,949 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   }
 }
 
+
+/* Liquid glass menu variant refinements. */
+.liquid-dropdown-content--drawer {
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  padding-bottom: max(clamp(1.25rem, 4vw, 1.75rem), env(safe-area-inset-bottom, 0));
+  max-height: calc(100dvh - 1rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-padding-bottom: 1rem;
+  border-radius: 32px;
+}
+
+.liquid-dropdown-content--drawer > * {
+  position: relative;
+  z-index: 30;
+}
+
+.liquid-dropdown-content--popover,
+.liquid-dropdown-content--command {
+  padding: 0.75rem;
+}
+
+.liquid-dropdown-content--dropdown,
+.liquid-dropdown-content--navigation,
+.liquid-dropdown-content--select,
+.liquid-dropdown-content--context,
+.liquid-dropdown-content--compact {
+  padding: 0.5rem;
+}
+
+.liquid-dropdown-content--notifications {
+  padding: 0.55rem;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.liquid-dropdown-content--drawer {
+  width: min(22.5rem, calc(100vw - 1rem)) !important;
+  max-height: calc(100dvh - 1rem) !important;
+  padding: clamp(1.25rem, 4vw, 1.75rem) !important;
+  border-radius: 32px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.28)),
+    rgba(250, 249, 246, 0.52) !important;
+  box-shadow:
+    var(--liquid-glass-shadow),
+    var(--liquid-glass-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 rgba(68, 107, 74, 0.08) !important;
+  overflow-y: auto !important;
+}
+
+/* ==========================================================================
+   FINAL OVERRIDE — mobile hero search stacked layout.
+   Placed at end of file with !important to unconditionally beat the many
+   legacy !important rules elsewhere that force horizontal grid layouts.
+   ========================================================================== */
+@media (max-width: 767px) {
+  .hero-search-wrapper .villa-search-form {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    grid-template-columns: none !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 12px !important;
+    border-radius: 20px !important;
+    background: rgba(27, 27, 27, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(20px) !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group,
+  .hero-search-wrapper .villa-search-form__group--dates {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 56px !important;
+    padding: 10px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    grid-column: auto !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group--dates {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group--dates > button {
+    padding: 10px 16px !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    min-height: 56px !important;
+    border-radius: 0 !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group--dates > button:first-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group--guests {
+    display: flex !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group > button {
+    padding: 0 !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    text-align: left !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group span {
+    display: block !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+    color: rgba(255, 255, 255, 0.62) !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__group strong {
+    display: block !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin-top: 2px !important;
+    text-align: left !important;
+    color: #fff !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__submit {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 52px !important;
+    padding: 0 20px !important;
+    border-radius: 12px !important;
+    background-color: #446B4A !important;
+    box-shadow: 0 4px 14px rgba(68, 107, 74, 0.32) !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    order: 99 !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__submit span {
+    display: inline !important;
+    color: #fff !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__submit svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke-width: 2.4px !important;
+  }
+
+  .hero-search-wrapper .villa-search-form__chevron {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   Mobile / tablet hero search — Airbnb-style accordion sheet
+   Scope: every rule below is namespaced under .mobile-booking-search__*.
+   Business logic lives in components/booking/mobile-hero-search/*.tsx.
+   ========================================================================== */
+
+.mobile-booking-search__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 60px;
+  padding: 14px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1), 0 2px 6px rgba(15, 23, 42, 0.06);
+  color: var(--brand-ink);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+
+.mobile-booking-search__trigger:hover {
+  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.mobile-booking-search__trigger:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+.mobile-booking-search__trigger-icon {
+  color: var(--brand-ink);
+  flex-shrink: 0;
+}
+
+.mobile-booking-search__trigger-label {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.mobile-booking-search__overlay-layer {
+  position: fixed;
+  inset: 0;
+  /* Must clear the site header's z-index: 1000 (.global-mini-header) so the
+     modal is never partially hidden behind it. */
+  z-index: 1100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.mobile-booking-search__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.mobile-booking-search__sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: #f0f0f2;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+}
+
+.mobile-booking-search__sheet:focus {
+  outline: none;
+}
+
+.mobile-booking-search__close {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--brand-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.mobile-booking-search__close:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.mobile-booking-search__close:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+.mobile-booking-search__stack {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: calc(56px + env(safe-area-inset-top)) 12px 12px;
+  overflow: hidden;
+}
+
+.mobile-booking-search__card {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px;
+  border-radius: 26px;
+  background: #ffffff;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.mobile-booking-search__card-title {
+  flex: 0 0 auto;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--brand-ink);
+}
+
+.mobile-booking-search__collapsed-row {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-booking-search__collapsed-label {
+  font-size: 14px;
+  color: rgba(26, 26, 26, 0.55);
+}
+
+.mobile-booking-search__collapsed-value {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-ink);
+}
+
+.mobile-booking-search__collapsed-chevron {
+  color: rgba(26, 26, 26, 0.35);
+  flex-shrink: 0;
+}
+
+.mobile-booking-search__collapsed-row:focus-visible,
+.mobile-booking-search__destination-row:focus-visible,
+.mobile-booking-search__stepper:focus-visible,
+.mobile-booking-search__calendar-day:focus-visible,
+.mobile-booking-search__calendar-nav-button:focus-visible,
+.mobile-booking-search__clear:focus-visible,
+.mobile-booking-search__submit:focus-visible,
+.mobile-booking-search__search-field:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+/* Where */
+
+.mobile-booking-search__where {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobile-booking-search__search-input {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.mobile-booking-search__search-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  color: rgba(26, 26, 26, 0.55);
+  pointer-events: none;
+}
+
+.mobile-booking-search__search-field {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px 0 44px;
+  border: 1px solid rgba(0, 0, 0, 0.28);
+  border-radius: 14px;
+  background: #ffffff;
+  font-size: 15px;
+  color: var(--brand-ink);
+}
+
+.mobile-booking-search__search-field::placeholder {
+  color: rgba(26, 26, 26, 0.4);
+}
+
+.mobile-booking-search__destination-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-booking-search__section-label {
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.55);
+}
+
+.mobile-booking-search__destination-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-booking-search__destination-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.mobile-booking-search__destination-row:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.mobile-booking-search__destination-row--skeleton {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.04) 25%, rgba(0, 0, 0, 0.08) 37%, rgba(0, 0, 0, 0.04) 63%);
+  background-size: 400% 100%;
+  animation: mobile-booking-search-shimmer 1.4s ease infinite;
+}
+
+@keyframes mobile-booking-search-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.mobile-booking-search__destination-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  color: var(--brand-primary-deep);
+}
+
+.mobile-booking-search__destination-tile--tint-0 { background: #e3edf9; }
+.mobile-booking-search__destination-tile--tint-1 { background: #eaf3ea; }
+.mobile-booking-search__destination-tile--tint-2 { background: #f3ede0; }
+.mobile-booking-search__destination-tile--tint-3 { background: #efe6f3; }
+
+.mobile-booking-search__destination-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mobile-booking-search__destination-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--brand-ink);
+}
+
+.mobile-booking-search__destination-subtitle {
+  font-size: 13px;
+  color: rgba(26, 26, 26, 0.55);
+}
+
+.mobile-booking-search__helper-text {
+  font-size: 13px;
+  color: rgba(26, 26, 26, 0.55);
+  padding: 8px 4px;
+}
+
+/* When */
+
+.mobile-booking-search__when {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.mobile-booking-search__calendar-nav {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-booking-search__calendar-nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--brand-ink);
+  cursor: pointer;
+}
+
+.mobile-booking-search__calendar-nav-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.mobile-booking-search__calendar-range-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.mobile-booking-search__calendar-months {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mobile-booking-search__calendar-month-title {
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-ink);
+}
+
+.mobile-booking-search__calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(26, 26, 26, 0.45);
+}
+
+.mobile-booking-search__calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.mobile-booking-search__calendar-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 13px;
+  color: var(--brand-ink);
+  cursor: pointer;
+}
+
+.mobile-booking-search__calendar-day:hover:not(.is-disabled):not(.is-selected) {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.mobile-booking-search__calendar-day.is-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mobile-booking-search__calendar-day.is-in-range {
+  background: var(--brand-primary-soft);
+  border-radius: 0;
+}
+
+.mobile-booking-search__calendar-day.is-selected {
+  background: var(--brand-primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Who */
+
+.mobile-booking-search__who {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-booking-search__guest-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 4px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mobile-booking-search__guest-row:last-child {
+  border-bottom: none;
+}
+
+.mobile-booking-search__guest-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand-ink);
+}
+
+.mobile-booking-search__guest-helper {
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.55);
+}
+
+.mobile-booking-search__stepper-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.mobile-booking-search__stepper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--brand-ink);
+  cursor: pointer;
+}
+
+.mobile-booking-search__stepper:hover:not(:disabled) {
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+.mobile-booking-search__stepper:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mobile-booking-search__stepper-value {
+  min-width: 20px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Action bar */
+
+.mobile-booking-search__action-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  /* Kept translucent (not near-opaque) so the page content scrolling beneath
+     is part of what the liquid-glass Search button refracts. */
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mobile-booking-search__clear {
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand-ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+/* Liquid-glass Search CTA.
+   Construction: translucent moss-tinted body sampling the backdrop via
+   backdrop-filter; ::before = curved specular highlight hugging the top of
+   the pill; ::after = denser liquid pooled at the bottom; layered inset
+   shadows form the bright upper rim / darker lower rim of a liquid lens.
+   Fallback (no backdrop-filter): denser opaque-ish moss gradient so the
+   button never renders as unreadable clear glass. */
+.mobile-booking-search__submit {
+  --mbs-glass-tint: rgba(68, 107, 74, 0.5);
+  --mbs-glass-tint-deep: rgba(47, 76, 51, 0.62);
+  --mbs-glass-highlight: rgba(255, 255, 255, 0.85);
+  --mbs-glass-shadow: rgba(24, 44, 28, 0.35);
+  --mbs-glass-blur: 14px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  height: 48px;
+  padding: 0 30px;
+  border: none;
+  border-radius: 999px;
+  /* Fallback surface: dense moss gradient, readable everywhere. */
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 42%),
+    linear-gradient(180deg, rgba(72, 112, 78, 0.94), rgba(50, 80, 54, 0.97));
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow:
+    0 14px 30px -10px var(--mbs-glass-shadow),
+    0 2px 6px rgba(24, 44, 28, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 3px rgba(18, 36, 22, 0.4);
+  cursor: pointer;
+  transition:
+    transform 0.16s cubic-bezier(0.34, 1.4, 0.64, 1),
+    box-shadow 0.16s ease,
+    filter 0.16s ease;
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .mobile-booking-search__submit {
+    background:
+      linear-gradient(165deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 42%),
+      linear-gradient(180deg, var(--mbs-glass-tint), var(--mbs-glass-tint-deep));
+    -webkit-backdrop-filter: blur(var(--mbs-glass-blur)) saturate(165%) contrast(1.08);
+    backdrop-filter: blur(var(--mbs-glass-blur)) saturate(165%) contrast(1.08);
+  }
+}
+
+/* Curved specular highlight following the pill's upper curvature. */
+.mobile-booking-search__submit::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 5%;
+  left: 8%;
+  right: 8%;
+  height: 48%;
+  border-radius: 999px;
+  background: radial-gradient(
+    120% 170% at 50% -8%,
+    var(--mbs-glass-highlight) 0%,
+    rgba(255, 255, 255, 0.12) 55%,
+    rgba(255, 255, 255, 0) 78%
+  );
+  opacity: 0.55;
+  filter: blur(1px);
+  pointer-events: none;
+  transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+/* Denser liquid pooled toward the lower edge — reads as thickness/refraction. */
+.mobile-booking-search__submit::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 52% 5% 3% 5%;
+  border-radius: 999px;
+  background: radial-gradient(
+    100% 140% at 50% 130%,
+    var(--mbs-glass-tint-deep) 0%,
+    rgba(47, 76, 51, 0) 72%
+  );
+  opacity: 0.85;
+  filter: blur(3px);
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+}
+
+.mobile-booking-search__submit-content {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 1px 2px rgba(20, 40, 24, 0.4);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mobile-booking-search__submit:hover {
+    transform: translateY(-1px);
+    filter: saturate(1.06);
+    box-shadow:
+      0 18px 36px -10px var(--mbs-glass-shadow),
+      0 3px 8px rgba(24, 44, 28, 0.2),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.65),
+      inset 0 -2px 3px rgba(18, 36, 22, 0.38);
+  }
+
+  .mobile-booking-search__submit:hover::before {
+    opacity: 0.7;
+    transform: translateY(-3%);
+  }
+}
+
+/* Pressed: glass compresses — smaller scale, highlight sinks, denser floor. */
+.mobile-booking-search__submit:active {
+  transform: scale(0.975);
+  box-shadow:
+    0 8px 18px -8px var(--mbs-glass-shadow),
+    0 1px 4px rgba(24, 44, 28, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 2px 5px rgba(18, 36, 22, 0.35),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.25);
+}
+
+.mobile-booking-search__submit:active::before {
+  opacity: 0.35;
+  transform: translateY(8%);
+}
+
+.mobile-booking-search__submit:active::after {
+  opacity: 1;
+}
+
+/* Tablet: centered modal instead of full-screen sheet.
+   Height-gated too — a landscape phone (e.g. 844x390) matches the width
+   range but is too short for a capped centered modal; it stays in the
+   full-sheet 100dvh layout instead, which gives the accordion the whole
+   viewport rather than losing 64px+ to modal margins. */
+@media (min-width: 768px) and (max-width: 1023px) and (min-height: 600px) {
+  .mobile-booking-search__overlay-layer {
+    align-items: center;
+  }
+
+  .mobile-booking-search__sheet {
+    width: min(560px, 92vw);
+    height: min(760px, calc(100dvh - 64px));
+    max-height: calc(100dvh - 64px);
+    border-radius: 28px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  }
+}
+
+/* Large tablets / iPad Pro (834x1194, 1024x1366, 1194x834, 1366x1024).
+   Widths 1024–1366px overlap laptops, so the touch-capability gate decides:
+   any-pointer: coarse means at least one coarse (touch) input exists — an
+   iPad Pro with a Magic Keyboard/trackpad attached still matches, while a
+   mouse-only 1024px laptop does not and keeps the desktop form. These rules
+   are un-layered, so they win over the @layer components visibility rules. */
+@media (min-width: 1024px) and (max-width: 1439px) and (any-pointer: coarse) {
+  .hero-search-desktop {
+    display: none;
+  }
+
+  .hero-search-mobile {
+    display: block;
+  }
+}
+
+/* Large-tablet modal sizing. Width-only on purpose: the sheet can only be
+   opened when the trigger is visible, and 1024px+ visibility already requires
+   the coarse-pointer rule above — so no coarse gate is needed here, and
+   DevTools/emulators without pointer emulation still show correct sizing. */
+/* Upper bound 1439px (not 1366px): iPad Pro 13" landscape reports fractional
+   layout widths like 1366.4px at some zoom/DPR combos, which a 1366px cap
+   silently misses — the sheet then falls back to the full-screen phone rules.
+   1367–1439px has no fine-pointer regression: visibility above still requires
+   any-pointer: coarse. */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .mobile-booking-search__overlay-layer {
+    align-items: center;
+  }
+
+  .mobile-booking-search__sheet {
+    width: min(720px, calc(100vw - 64px));
+    height: min(820px, calc(100dvh - 80px));
+    max-height: calc(100dvh - 80px);
+    border-radius: 32px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  }
+
+  .mobile-booking-search__stack {
+    gap: 12px;
+    padding: calc(60px + env(safe-area-inset-top)) 24px 20px;
+  }
+
+  .mobile-booking-search__card {
+    gap: 18px;
+    padding: 28px;
+  }
+
+  .mobile-booking-search__card-title {
+    font-size: 24px;
+  }
+
+  .mobile-booking-search__close {
+    top: 14px;
+    left: 16px;
+  }
+
+  .mobile-booking-search__action-bar {
+    padding: 14px 28px calc(14px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Landscape iPad Pro (1194x834, 1366x1024): cap modal height so it doesn't
+   press against the viewport edges; internal lists/calendar scroll instead. */
+@media (min-width: 1024px) and (max-width: 1439px) and (max-height: 900px) {
+  .mobile-booking-search__sheet {
+    height: min(740px, calc(100dvh - 64px));
+    max-height: calc(100dvh - 64px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-booking-search__trigger,
+  .mobile-booking-search__destination-row,
+  .mobile-booking-search__collapsed-row,
+  .mobile-booking-search__submit,
+  .mobile-booking-search__submit::before,
+  .mobile-booking-search__submit::after,
+  .mobile-booking-search__close,
+  .mobile-booking-search__stepper {
+    transition: none;
+  }
+
+  .mobile-booking-search__submit:hover,
+  .mobile-booking-search__submit:active {
+    transform: none;
+  }
+
+  .mobile-booking-search__submit:hover::before,
+  .mobile-booking-search__submit:active::before {
+    transform: none;
+  }
+
+  .mobile-booking-search__destination-row--skeleton {
+    animation: none;
+  }
+}

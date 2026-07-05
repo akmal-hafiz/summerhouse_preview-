@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import VillaSearchForm from "@/components/booking/VillaSearchForm";
+import MobileHeroSearch from "@/components/booking/MobileHeroSearch";
 
 type HeroSlide = {
   mediaType: "video" | "image";
@@ -110,25 +111,31 @@ export default function Hero({ cms }: HeroProps = {}) {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           >
             <p className="hero-description">
-            Curated homes in Bali
-            For a slower rhythm.
+              Curated homes in Bali for a slower rhythm.
             </p>
           </motion.div>
         </div>
 
-        {/* Integrated Search/Filter Bar Container */}
-        <motion.div 
+        {/* Integrated Search Container — desktop uses full grid form,
+             mobile + tablet use Airbnb-style pill → sheet flow. */}
+        <motion.div
+          id="home-hero-search"
           className="hero-search hero-search-wrapper"
           initial={{ opacity: 0, y: 45 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ 
-            type: "spring", 
-            stiffness: 90, 
+          transition={{
+            type: "spring",
+            stiffness: 90,
             damping: 14,
-            delay: 0.45 
+            delay: 0.45
           }}
         >
-          <VillaSearchForm variant="hero" />
+          <div className="hero-search-desktop">
+            <VillaSearchForm variant="hero" />
+          </div>
+          <div className="hero-search-mobile">
+            <MobileHeroSearch />
+          </div>
         </motion.div>
 
       </div>
