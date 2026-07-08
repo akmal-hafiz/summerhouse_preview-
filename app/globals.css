@@ -13668,10 +13668,10 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   z-index: 0;
   border: 0;
   background:
-    radial-gradient(80% 90% at 80% 0%, rgba(68, 107, 74, 0.16), transparent 55%),
-    rgba(7, 12, 8, 0.24);
-  -webkit-backdrop-filter: blur(3px) saturate(118%) brightness(0.94);
-  backdrop-filter: blur(3px) saturate(118%) brightness(0.94);
+    radial-gradient(90% 80% at 82% 0%, rgba(68, 107, 74, 0.12), transparent 58%),
+    linear-gradient(180deg, rgba(10, 14, 12, 0.24), rgba(10, 14, 12, 0.16));
+  -webkit-backdrop-filter: blur(4px) saturate(118%) brightness(0.96);
+  backdrop-filter: blur(4px) saturate(118%) brightness(0.96);
   cursor: default;
   animation: summerhouse-menu-backdrop-in 180ms var(--ease-out-strong);
 }
@@ -13693,31 +13693,37 @@ details.global-mobile-menu.global-mobile-menu--standalone summary:focus-visible 
 }
 
 details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.summerhouse-liquid-glass--drawer {
+  --nav-glass-bg: rgba(250, 248, 240, 0.76);
+  --nav-glass-border: rgba(255, 255, 255, 0.44);
+  --nav-glass-highlight: rgba(255, 255, 255, 0.64);
+  --nav-glass-depth: rgba(68, 107, 74, 0.14);
+  --nav-glass-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
   --sh-glass-radius: 30px;
-  --sh-glass-opacity: 0.108;
-  --sh-glass-blur: 16px;
-  --sh-glass-saturation: 142%;
-  --sh-glass-contrast: 108%;
-  --sh-glass-brightness: 101%;
-  --sh-glass-border: rgba(255, 255, 255, 0.38);
-  --sh-glass-highlight: rgba(255, 255, 255, 0.54);
-  --sh-glass-depth: rgba(20, 36, 23, 0.15);
-  --sh-glass-shadow: 0 24px 68px rgba(5, 12, 8, 0.28);
+  --sh-glass-opacity: 0.22;
+  --sh-glass-blur: 22px;
+  --sh-glass-saturation: 135%;
+  --sh-glass-contrast: 106%;
+  --sh-glass-brightness: 103%;
+  --sh-glass-border: var(--nav-glass-border);
+  --sh-glass-highlight: var(--nav-glass-highlight);
+  --sh-glass-depth: var(--nav-glass-depth);
+  --sh-glass-shadow: var(--nav-glass-shadow);
   z-index: 3 !important;
   width: min(22.5rem, calc(100vw - 2rem)) !important;
   padding: clamp(1rem, 3.4vw, 1.35rem) !important;
-  border-color: rgba(255, 255, 255, 0.24) !important;
+  border-color: rgba(255, 255, 255, 0.36) !important;
   border-radius: var(--sh-glass-radius) !important;
   background:
-    radial-gradient(130% 145% at 8% -16%, rgba(255, 255, 255, 0.16), transparent 42%),
-    radial-gradient(130% 140% at 100% 6%, rgba(255, 255, 255, 0.09), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.022) 52%, rgba(37, 63, 42, 0.06)),
-    rgb(var(--sh-glass-tint) / var(--sh-glass-opacity)) !important;
+    radial-gradient(130% 145% at 8% -16%, rgba(255, 255, 255, 0.28), transparent 44%),
+    radial-gradient(130% 140% at 100% 4%, rgba(255, 255, 255, 0.18), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.055) 52%, rgba(68, 107, 74, 0.08)),
+    var(--nav-glass-bg) !important;
   box-shadow:
-    var(--sh-glass-shadow),
-    inset 0 0 0 1px var(--sh-glass-border),
-    inset 0 1.5px 1px rgba(255, 255, 255, 0.58),
-    inset 0 -2px 7px var(--sh-glass-depth) !important;
+    var(--nav-glass-shadow),
+    inset 0 0 0 1px var(--nav-glass-border),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset 0 -1px 0 var(--nav-glass-depth),
+    inset 0 -12px 28px rgba(68, 107, 74, 0.055) !important;
   -webkit-backdrop-filter:
     blur(var(--sh-glass-blur))
     saturate(var(--sh-glass-saturation))
@@ -13733,12 +13739,17 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.summerhouse-liquid-glass--drawer::before {
   inset: 5px 7% auto;
-  height: 38%;
-  opacity: 0.52;
+  height: 36%;
+  opacity: 0.62;
 }
 
 details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.summerhouse-liquid-glass--drawer::after {
-  opacity: 0.64;
+  opacity: 0.74;
+  background:
+    radial-gradient(38% 90% at 0% 50%, rgba(255, 255, 255, 0.22), transparent 68%),
+    radial-gradient(34% 88% at 100% 50%, rgba(255, 255, 255, 0.2), transparent 70%),
+    radial-gradient(94% 58% at 50% 112%, rgba(47, 74, 51, 0.2), rgba(250, 248, 240, 0.08) 48%, transparent 78%),
+    linear-gradient(180deg, transparent 56%, rgba(68, 107, 74, 0.075) 100%);
 }
 
 .global-mobile-menu__panel.summerhouse-liquid-glass--drawer a,
@@ -13747,8 +13758,8 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   display: flex !important;
   align-items: center;
   border-radius: 16px !important;
-  color: rgba(14, 24, 16, 0.9) !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.22);
+  color: rgba(14, 24, 16, 0.94) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.34);
 }
 
 .global-mobile-menu__panel.summerhouse-liquid-glass--drawer a:hover,
@@ -13756,37 +13767,38 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 .global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:hover,
 .global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:focus-visible {
   background: rgba(255, 255, 255, 0.16) !important;
-  color: #24482c !important;
+  color: #1f3f27 !important;
   outline: none;
   transform: translate3d(1px, 0, 0);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
 .summerhouse-liquid-glass--language.global-language-toggle--mobile {
-  --sh-glass-opacity: 0.074;
-  --sh-glass-blur: 11px;
-  --sh-glass-border: rgba(255, 255, 255, 0.34);
-  --sh-glass-depth: rgba(20, 36, 23, 0.1);
+  --sh-glass-opacity: 0.18;
+  --sh-glass-blur: 16px;
+  --sh-glass-border: rgba(255, 255, 255, 0.46);
+  --sh-glass-depth: rgba(68, 107, 74, 0.12);
   --sh-glass-shadow:
-    0 10px 24px rgba(8, 16, 10, 0.12),
+    0 10px 24px rgba(8, 16, 10, 0.14),
     inset 0 0 0 1px var(--sh-glass-border);
   width: 100%;
   min-height: 46px;
   margin-top: 0.45rem;
-  border-color: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.38) !important;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025)),
-    rgb(var(--sh-glass-tint) / var(--sh-glass-opacity)) !important;
-  color: rgba(14, 24, 16, 0.88) !important;
+    radial-gradient(120% 130% at 10% -20%, rgba(255, 255, 255, 0.34), transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.055)),
+    rgba(252, 251, 246, 0.66) !important;
+  color: rgba(14, 24, 16, 0.94) !important;
 }
 
 .summerhouse-liquid-glass--language.global-language-toggle--mobile::before {
   height: 34%;
-  opacity: 0.42;
+  opacity: 0.5;
 }
 
 .summerhouse-liquid-glass--language.global-language-toggle--mobile::after {
-  opacity: 0.52;
+  opacity: 0.62;
 }
 
 .summerhouse-liquid-glass--language.global-language-toggle--mobile:focus-visible {

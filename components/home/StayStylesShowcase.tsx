@@ -49,7 +49,6 @@ function StayCard({ villa, variant }: { villa: HomepageStayVilla; variant: "desk
     <Link className={`${cardClass} homepage-stay-card-link`} href={villa.href}>
       <div className={headerClass}>
         <span>{villa.location}</span>
-        <span className="badge-num">Live</span>
       </div>
       <div className={imageClass}>
         <Image
