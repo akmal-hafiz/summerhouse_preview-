@@ -1,27 +1,30 @@
-/* ==========================================================================
-   Contact — Editorial Luxury, asymmetric bento, double-bezel architecture
-   Palette + copy preserved. Restructure only: spacing, rhythm, hierarchy.
-   ========================================================================== */
-
 .contactPage {
+  --contact-bg: #FAFAF9;
+  --contact-ink: #171715;
+  --contact-muted: rgba(23, 23, 21, 0.58);
+  --contact-soft: rgba(23, 23, 21, 0.1);
+  --contact-line: rgba(23, 23, 21, 0.14);
+  --contact-green: #446B4A;
+  --contact-green-deep: #355538;
+
   position: relative;
+  min-height: 100dvh;
   overflow-x: clip;
-  background: #f5f1ea;
-  color: #1f1f1d;
-  isolation: isolate;
+  background: var(--contact-bg);
+  color: var(--contact-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  letter-spacing: 0;
 }
 
-/* Subtle film-grain overlay — physical paper texture */
 .contactPage::before {
   content: "";
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.045;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
   mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/></svg>");
-  background-size: 200px 200px;
 }
 
 .contactPage > * {
@@ -29,632 +32,496 @@
   z-index: 1;
 }
 
-.motionContents { display: contents; }
-
-/* ============================== HERO ============================== */
-
 .hero {
-  position: relative;
   display: grid;
-  min-height: 88svh;
-  place-items: end start;
-  overflow: hidden;
-  padding: clamp(9rem, 15vw, 14rem) clamp(1.5rem, 5vw, 5.5rem) clamp(5rem, 9vw, 8rem);
-  isolation: isolate;
-}
-
-.heroImage,
-.coverImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.heroOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    radial-gradient(120% 80% at 8% 100%, rgba(14, 20, 16, 0.85) 0%, rgba(14, 20, 16, 0.18) 55%, transparent 78%),
-    linear-gradient(180deg, rgba(14, 20, 16, 0.32) 0%, rgba(14, 20, 16, 0) 38%, rgba(14, 20, 16, 0.65) 100%);
-}
-
-.heroContent {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 1.6rem;
-  width: min(100%, 66rem);
-  color: #fffaf1;
-}
-
-/* Eyebrow — now an actual pill badge with hairline */
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  width: max-content;
-  margin: 0;
-  padding: 0.42rem 0.95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(139, 180, 147, 0.32);
-  background: rgba(139, 180, 147, 0.08);
-  color: #8bb493;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-/* Eyebrow variant for cream sections (sage on cream) */
-.optionsSection .eyebrow,
-.formSection .eyebrow,
-.expectations .eyebrow,
-.faqSection .eyebrow,
-.finalCta .eyebrow {
-  border-color: rgba(46, 92, 69, 0.2);
-  background: rgba(46, 92, 69, 0.06);
-  color: #2e5c45;
-}
-
-.heroContent h1,
-.optionsHeader h2,
-.formIntro h2,
-.expectationCopy h2,
-.faqHeader h2,
-.finalCta h2 {
-  margin: 0;
-  font-family: var(--font-playfair), Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -0.012em;
-}
-
-.heroContent h1 {
-  max-width: 64rem;
-  color: #fffaf1;
-  font-size: clamp(4rem, 8.4vw, 9.2rem);
-  line-height: 0.86;
-}
-
-.heroContent p:last-child {
-  max-width: 44rem;
-  margin: 0;
-  color: rgba(255, 250, 241, 0.84);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: clamp(1rem, 1.25vw, 1.18rem);
-  line-height: 1.75;
-}
-
-/* ============================== SHARED SECTION CONTAINER ============================== */
-
-.optionsSection,
-.formSection,
-.expectations,
-.faqSection,
-.finalCta {
-  width: min(100%, 92rem);
+  width: min(88rem, calc(100% - clamp(2rem, 7vw, 8rem)));
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+  justify-items: center;
+  gap: 1rem;
+  padding-top: clamp(7.2rem, 9vw, 8.8rem);
+  padding-bottom: clamp(2.6rem, 5vw, 4.2rem);
+  text-align: center;
 }
 
-/* ============================== OPTIONS — asymmetric bento ============================== */
-
-.optionsSection {
-  padding-top: clamp(7rem, 12vw, 11rem);
-  padding-bottom: clamp(4.5rem, 8vw, 7rem);
-}
-
-.optionsHeader,
-.faqHeader {
-  display: grid;
-  grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
-  gap: clamp(2rem, 4vw, 3.5rem);
-  align-items: end;
-  margin-bottom: clamp(3rem, 6vw, 5rem);
-}
-
-.optionsHeader h2,
-.formIntro h2,
-.expectationCopy h2,
-.faqHeader h2,
-.finalCta h2 {
-  color: #171715;
-  font-size: clamp(3rem, 6.4vw, 6.8rem);
-  line-height: 0.88;
-}
-
-/* 6-col bento — asymmetric spans for each card */
-.optionGrid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  grid-auto-rows: minmax(11rem, auto);
-  column-gap: 1.25rem;
-  row-gap: 1.25rem;
-}
-
-.optionCard:nth-child(1) {
-  grid-column: span 3;
-  grid-row: span 2;
-}
-.optionCard:nth-child(2) { grid-column: span 3; }
-.optionCard:nth-child(3) { grid-column: span 2; }
-.optionCard:nth-child(4) { grid-column: span 4; }
-
-/* ============================== DOUBLE-BEZEL CARD ============================== */
-/* Outer shell via ::before extending past inner core */
-.optionCard,
-.faqItem {
-  position: relative;
-  isolation: isolate;
-  display: grid;
-  align-content: space-between;
-  gap: 1.5rem;
-  padding: clamp(1.6rem, 2.1vw, 2.1rem);
-  border-radius: 1.375rem;
-  background: linear-gradient(180deg, rgba(255, 250, 241, 0.78) 0%, rgba(255, 250, 241, 0.52) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 0 0 1px rgba(31, 31, 29, 0.045);
-  transition:
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.optionCard::before,
-.faqItem::before {
-  content: "";
-  position: absolute;
-  inset: -0.45rem;
-  z-index: -1;
-  border-radius: 1.825rem;
-  background: rgba(31, 31, 29, 0.035);
-  box-shadow: inset 0 0 0 1px rgba(31, 31, 29, 0.07);
-  transition: inset 320ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .optionCard:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.85),
-      inset 0 0 0 1px rgba(31, 31, 29, 0.06),
-      0 1.4rem 3.2rem rgba(50, 43, 34, 0.08);
-  }
-  .optionCard:hover::before {
-    inset: -0.65rem;
-  }
-}
-
-/* Featured card (first) — larger headline scale, photo accent */
-.optionCard:nth-child(1) {
-  background: linear-gradient(165deg, rgba(255, 250, 241, 0.92) 0%, rgba(247, 240, 228, 0.72) 100%);
-}
-
-.optionCard:nth-child(1) strong {
-  font-size: clamp(2.1rem, 3.4vw, 3.1rem);
-}
-
-/* Icon — circular hairline mark */
-.optionIcon {
-  display: grid;
-  width: 2.65rem;
-  height: 2.65rem;
-  place-items: center;
-  border: 1px solid rgba(46, 92, 69, 0.28);
-  border-radius: 999px;
-  background: rgba(255, 250, 241, 0.5);
-  color: #2e5c45;
-  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.optionCard:hover .optionIcon {
-  transform: rotate(-6deg) scale(1.05);
-}
-
-.optionIcon svg {
-  width: 1.05rem;
-  height: 1.05rem;
-  stroke-width: 1.5;
-}
-
-.optionCard span,
-.form label span {
-  color: #8d7554;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+.eyebrow {
+  margin: 0;
+  color: rgba(23, 23, 21, 0.45);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
-.optionCard strong {
-  color: #171715;
-  font-family: var(--font-playfair), Georgia, serif;
-  font-size: clamp(1.55rem, 2.1vw, 2rem);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-  overflow-wrap: anywhere;
-}
-
-.optionCard p,
-.formIntro p,
-.expectationCopy p,
-.faqItem p {
+.hero h1 {
+  max-width: 65rem;
   margin: 0;
-  color: #5e574e;
+  color: var(--contact-ink);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
+  font-size: clamp(3.65rem, 7.2vw, 6.9rem);
+  font-weight: 850;
+  line-height: 0.92;
+  text-transform: none;
 }
 
-/* ============================== FORM SECTION ============================== */
+.hero > p:last-child {
+  max-width: 32rem;
+  margin: 0;
+  color: var(--contact-muted);
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  font-weight: 720;
+  line-height: 1.5;
+}
 
-.formSection {
+.divider {
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(28rem, 1fr);
-  gap: clamp(3rem, 7vw, 7rem);
+  width: min(88rem, calc(100% - clamp(2rem, 7vw, 8rem)));
+  grid-template-columns: minmax(1rem, 1fr) auto minmax(1rem, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 2vw, 1.55rem);
+  margin-inline: auto;
+}
+
+.dividerLine {
+  display: block;
+  height: 1px;
+  background: var(--contact-soft);
+}
+
+.dividerDot {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(68, 107, 74, 0.22);
+  border-radius: 50%;
+  background: rgba(68, 107, 74, 0.16);
+}
+
+.contactGrid,
+.faqSection {
+  display: grid;
+  width: min(88rem, calc(100% - clamp(2rem, 7vw, 8rem)));
+  grid-template-columns: minmax(18rem, 0.42fr) minmax(0, 1fr);
+  gap: clamp(3rem, 6vw, 6.2rem);
+  margin-inline: auto;
+  padding-block: clamp(4.6rem, 8vw, 6.6rem);
+}
+
+.faqSection {
+  grid-template-columns: minmax(21rem, 28rem) minmax(34rem, 1fr);
+  gap: clamp(4rem, 7vw, 7.25rem);
   align-items: start;
-  padding-top: clamp(4rem, 7vw, 6rem);
-  padding-bottom: clamp(7rem, 12vw, 11rem);
 }
 
-.formIntro {
-  position: sticky;
-  top: 7rem;
+.contactInfo {
   display: grid;
-  gap: 1.5rem;
+  max-width: 22rem;
+  align-content: start;
+  gap: clamp(2rem, 4vw, 2.8rem);
 }
 
-.formIntro h2 {
-  font-size: clamp(2.8rem, 5.4vw, 5.6rem);
+.contactInfo p,
+.faqIntro > p:last-child {
+  margin: 0;
+  color: var(--contact-muted);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
-/* Form gets full double-bezel — premium "machined" feel */
+.contactInfo ul {
+  display: grid;
+  gap: 1.28rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contactInfo li {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  gap: 0.95rem;
+  align-items: start;
+  color: rgba(23, 23, 21, 0.82);
+  font-size: 1rem;
+  font-weight: 820;
+  line-height: 1.35;
+}
+
+.contactInfo li svg {
+  margin-top: 0.12rem;
+  color: var(--contact-green);
+  stroke-width: 2.15;
+}
+
+.contactInfo a {
+  color: inherit;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.whatsappLink {
+  width: max-content;
+  max-width: 100%;
+  border-bottom: 1px solid rgba(68, 107, 74, 0.32);
+  color: var(--contact-green);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
 .form {
-  position: relative;
-  isolation: isolate;
   display: grid;
-  gap: 1.15rem;
-  padding: clamp(1.6rem, 3vw, 2.6rem);
-  border-radius: 1.6rem;
-  background: linear-gradient(180deg, rgba(255, 250, 241, 0.85) 0%, rgba(255, 250, 241, 0.62) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.85),
-    inset 0 0 0 1px rgba(31, 31, 29, 0.05),
-    0 2.5rem 5.5rem -1.5rem rgba(50, 43, 34, 0.12);
+  gap: 1.18rem;
 }
 
-.form::before {
-  content: "";
-  position: absolute;
-  inset: -0.55rem;
-  z-index: -1;
-  border-radius: 2.1rem;
-  background: rgba(31, 31, 29, 0.035);
-  box-shadow: inset 0 0 0 1px rgba(31, 31, 29, 0.07);
-}
-
-.fieldGrid {
+.fieldPair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.15rem;
+  gap: clamp(0.9rem, 2vw, 1.15rem);
 }
 
 .form label {
+  position: relative;
   display: grid;
-  gap: 0.55rem;
+  gap: 0.72rem;
+}
+
+.form label span {
+  color: rgba(23, 23, 21, 0.74);
+  font-size: 0.76rem;
+  font-weight: 850;
 }
 
 .form input,
+.form select,
 .form textarea {
   width: 100%;
-  border: 1px solid rgba(31, 31, 29, 0.1);
-  border-radius: 0.85rem;
-  outline: none;
-  background: rgba(245, 241, 234, 0.7);
-  color: #1f1f1d;
-  font: 500 0.98rem/1.5 var(--font-dm-sans), system-ui, sans-serif;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  transition:
-    border-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.form input {
-  height: 3.4rem;
-  padding: 0 1.05rem;
-}
-
-.form textarea {
-  min-height: 10.5rem;
-  resize: vertical;
-  padding: 1.05rem;
-}
-
-.form input:focus-visible,
-.form textarea:focus-visible {
-  border-color: rgba(46, 92, 69, 0.55);
-  background: #fffaf1;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 0 0 4px rgba(46, 92, 69, 0.1);
-}
-
-/* ============================== BUTTONS — magnetic, button-in-button ============================== */
-
-.form button,
-.expectationCopy a,
-.finalCta a {
-  position: relative;
-  display: inline-flex;
-  min-height: 3.4rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
   border: 0;
-  border-radius: 999px;
-  padding: 0 0.4rem 0 1.6rem;
-  background: #2e5c45;
-  color: #fffaf1;
-  cursor: pointer;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-decoration: none;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 1.1rem 2rem -0.6rem rgba(46, 92, 69, 0.4);
+  border-bottom: 1px solid var(--contact-line);
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  color: var(--contact-ink);
+  font: 720 0.98rem/1.45 var(--font-dm-sans), system-ui, sans-serif;
   transition:
-    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    border-color 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 260ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.form button:disabled { opacity: 0.6; cursor: progress; }
-
-/* Trailing icon nested in its own circle (button-in-button) */
-.ctaIconWrap {
-  display: inline-grid;
-  place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  margin-left: 0.6rem;
-  border-radius: 999px;
-  background: rgba(255, 250, 241, 0.16);
-  transition:
-    transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
-    background-color 240ms cubic-bezier(0.22, 1, 0.36, 1);
+.form input,
+.form select {
+  height: 2.75rem;
+  padding: 0 0 0.58rem;
 }
 
-.ctaIconWrap svg {
-  width: 0.95rem;
-  height: 0.95rem;
-  stroke-width: 1.7;
+.form textarea {
+  min-height: 9.25rem;
+  resize: vertical;
+  padding: 0.35rem 0 0.7rem;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .form button:hover,
-  .expectationCopy a:hover,
-  .finalCta a:hover {
-    background: #244b38;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 1.6rem 2.6rem -0.7rem rgba(46, 92, 69, 0.5);
-  }
-  .form button:hover .ctaIconWrap,
-  .expectationCopy a:hover .ctaIconWrap,
-  .finalCta a:hover .ctaIconWrap {
-    transform: translate(2px, -1px);
-    background: rgba(255, 250, 241, 0.26);
-  }
+.form input::placeholder,
+.form textarea::placeholder {
+  color: rgba(23, 23, 21, 0.34);
 }
 
-.form button:active,
-.expectationCopy a:active,
-.finalCta a:active {
-  transform: scale(0.97);
+.form select {
+  appearance: none;
+  color: rgba(23, 23, 21, 0.64);
 }
 
-/* ============================== EXPECTATIONS — asymmetric image frame ============================== */
-
-.expectations {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.78fr);
-  gap: clamp(3rem, 6vw, 6.5rem);
-  align-items: center;
-  padding-top: clamp(5rem, 9vw, 8rem);
-  padding-bottom: clamp(7rem, 12vw, 11rem);
+.selectField svg {
+  position: absolute;
+  right: 0;
+  bottom: 1.1rem;
+  color: rgba(23, 23, 21, 0.42);
+  pointer-events: none;
 }
 
-.expectationImage {
+/* Custom Subject dropdown — replaces native <select> for LiquidGlass menu */
+.subjectField {
   position: relative;
-  margin: 0;
-  isolation: isolate;
-  padding: 0.55rem;
-  border-radius: 1.65rem;
-  background: rgba(31, 31, 29, 0.05);
-  box-shadow: inset 0 0 0 1px rgba(31, 31, 29, 0.08);
 }
 
-.expectationImage > * {
-  display: block;
+.subjectTrigger {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: auto;
-  aspect-ratio: 5 / 6;
+  height: 2.75rem;
+  padding: 0 0 0.58rem;
+  border-bottom: 1px solid rgba(23, 23, 21, 0.16);
+  color: var(--contact-ink);
+  font: 720 0.98rem/1.45 var(--font-dm-sans), system-ui, sans-serif;
+  cursor: pointer;
+  transition:
+    border-color 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.subjectTriggerText {
+  display: inline-block;
   overflow: hidden;
-  border-radius: 1.15rem;
-  background: #d9d0c4;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 2rem 4rem -0.8rem rgba(50, 43, 34, 0.18);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.expectationImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.subjectTrigger[data-placeholder="true"] {
+  color: rgba(23, 23, 21, 0.34);
+  font-weight: 500;
 }
 
-.expectationCopy {
+.subjectTrigger:focus-visible {
+  border-bottom-color: rgba(68, 107, 74, 0.72);
+  outline: none;
+}
+
+.subjectField[data-open="true"] .subjectTrigger {
+  border-bottom-color: rgba(68, 107, 74, 0.72);
+}
+
+.subjectMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 0.35rem;
+}
+
+.subjectMenu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-height: min(24rem, calc(100vh - 6rem));
+  overflow-y: auto;
+}
+
+.subjectMenu li {
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  font: 500 0.9rem/1.25 var(--font-dm-sans), system-ui, sans-serif;
+  color: var(--contact-ink);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.subjectMenu li[data-highlighted],
+.subjectMenu li:focus-visible {
+  background: rgba(23, 23, 21, 0.06);
+}
+
+.subjectMenu li[aria-selected="true"] {
+  color: var(--brand-primary, #446B4A);
+  font-weight: 600;
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+  border-bottom-color: rgba(68, 107, 74, 0.72);
+}
+
+.form > button {
+  min-height: 3.8rem;
+  margin-top: 0.2rem;
+  border: 0;
+  background: var(--contact-green);
+  color: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  transition:
+    background-color 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.form > button:disabled {
+  cursor: progress;
+  opacity: 0.62;
+}
+
+.formError,
+.formSuccess {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.formError {
+  color: #a9493c;
+}
+
+.formSuccess {
+  color: var(--contact-green);
+}
+
+.faqIntro {
   display: grid;
-  gap: 1.4rem;
+  align-content: start;
+  gap: 1.25rem;
 }
 
-.expectationCopy h2 {
-  font-size: clamp(2.8rem, 5.2vw, 5.4rem);
-}
-
-.expectationCopy a {
-  width: max-content;
-  min-width: 13rem;
-}
-
-/* ============================== FAQ — stacked bezel cards ============================== */
-
-.faqSection {
-  padding-top: clamp(5rem, 9vw, 8rem);
-  padding-bottom: clamp(5.5rem, 10vw, 9rem);
+.faqIntro h2 {
+  max-width: 28rem;
+  margin: 0;
+  color: var(--contact-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(3rem, 4.55vw, 4.65rem);
+  font-weight: 850;
+  line-height: 0.94;
+  text-transform: uppercase;
+  overflow-wrap: normal;
 }
 
 .faqList {
   display: grid;
-  gap: 1.1rem;
+  align-content: start;
 }
 
 .faqItem {
-  grid-template-columns: minmax(15rem, 0.5fr) minmax(0, 1fr);
-  gap: clamp(1.5rem, 3vw, 2.6rem);
-  padding: clamp(1.8rem, 2.6vw, 2.3rem);
-  align-content: stretch;
+  border-top: 1px solid var(--contact-soft);
 }
 
-.faqItem h3 {
-  margin: 0;
-  color: #171715;
-  font-family: var(--font-playfair), Georgia, serif;
-  font-size: clamp(1.45rem, 2.4vw, 2rem);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.005em;
+.faqItem:last-child {
+  border-bottom: 1px solid var(--contact-soft);
 }
 
-/* ============================== FINAL CTA ============================== */
-
-.finalCta {
+.faqItem button {
   display: grid;
-  justify-items: center;
-  gap: 1.6rem;
-  padding-top: clamp(6rem, 11vw, 10rem);
-  padding-bottom: clamp(7rem, 13vw, 12rem);
-  text-align: center;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: rgba(23, 23, 21, 0.78);
+  min-height: 5.1rem;
+  padding: 1.25rem 0;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 850;
 }
 
-.finalCta h2 {
-  max-width: 60rem;
+.faqItem button span:first-child {
+  max-width: 52rem;
+  line-height: 1.35;
 }
 
-.finalCta a {
-  min-width: 14rem;
+.faqItem button span:last-child {
+  color: var(--contact-green);
+  font-size: 1.45rem;
+  line-height: 1;
 }
 
-/* ============================== RESPONSIVE ============================== */
+.faqAnswer {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
 
-@media (max-width: 1024px) {
-  .optionGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.faqAnswer[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.faqAnswer p {
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 3rem 1.15rem 0;
+  color: var(--contact-muted);
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.62;
+}
+
+.heroReveal,
+.scrollReveal {
+  visibility: visible;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .form > button:hover {
+    background: var(--contact-green-deep);
+    transform: translateY(-1px);
   }
-  .optionCard:nth-child(1),
-  .optionCard:nth-child(2),
-  .optionCard:nth-child(3),
-  .optionCard:nth-child(4) {
-    grid-column: span 1;
-    grid-row: span 1;
+
+  .contactInfo a:hover,
+  .whatsappLink:hover {
+    color: var(--contact-green-deep);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .divider,
+  .contactGrid,
+  .faqSection {
+    width: min(100% - 2rem, 44rem);
   }
 
-  .formSection,
-  .expectations {
+  .contactGrid,
+  .faqSection {
     grid-template-columns: 1fr;
+    gap: 3rem;
   }
 
-  .formIntro {
-    position: static;
-  }
-
-  .expectationImage > * {
-    aspect-ratio: 5 / 4;
+  .contactInfo {
+    max-width: 100%;
   }
 }
 
 @media (max-width: 640px) {
   .hero {
-    min-height: 86svh;
-    padding: 7.5rem 1.25rem 4rem;
+    gap: 0.8rem;
+    padding-top: 7.15rem;
+    padding-bottom: 2.8rem;
   }
 
-  .heroContent h1,
-  .optionsHeader h2,
-  .formIntro h2,
-  .expectationCopy h2,
-  .faqHeader h2,
-  .finalCta h2 {
-    font-size: clamp(2.6rem, 12vw, 4rem);
+  .hero h1 {
+    font-size: clamp(3rem, 15vw, 4.7rem);
     line-height: 0.94;
   }
 
-  .optionsSection,
-  .formSection,
-  .expectations,
-  .faqSection,
-  .finalCta {
-    padding-inline: 1.25rem;
-  }
-
-  .optionsHeader,
-  .faqHeader {
+  .fieldPair {
     grid-template-columns: 1fr;
+    gap: 1.18rem;
   }
 
-  .optionGrid {
-    grid-template-columns: 1fr;
+  .contactGrid,
+  .faqSection {
+    padding-block: 3.8rem;
   }
 
-  .fieldGrid,
-  .faqItem {
-    grid-template-columns: 1fr;
+  .faqIntro h2 {
+    max-width: 100%;
+    font-size: clamp(2.45rem, 11.4vw, 3.75rem);
+    line-height: 0.96;
   }
 
-  .optionCard::before,
-  .faqItem::before,
-  .form::before {
-    inset: -0.3rem;
-  }
-
-  .form {
-    border-radius: 1.25rem;
-  }
-
-  .expectationImage > * {
-    aspect-ratio: 4 / 4.4;
+  .faqAnswer p {
+    padding-right: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .optionCard,
-  .optionCard::before,
-  .optionIcon,
+  .heroReveal,
+  .scrollReveal {
+    visibility: visible;
+  }
+
   .form input,
+  .form select,
   .form textarea,
-  .form button,
-  .expectationCopy a,
-  .finalCta a,
-  .ctaIconWrap {
-    transition-duration: 0.15s !important;
-    transition-property: background-color, color, border-color, box-shadow, opacity !important;
+  .form > button,
+  .faqAnswer {
+    transition-duration: 0.01ms !important;
   }
 }

@@ -21,61 +21,37 @@ import {
   FiX
 } from "react-icons/fi";
 import styles from "./ServicesPageContent.module.css";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import OwnerTestimonialForm from "./OwnerTestimonialForm";
 
 
 
-// ── VILLA OWNER TESTIMONIALS DATA (OWNER & INVESTOR FOCUS) ──
-const ownerTestimonials = [
-  {
-    owner: "Sarah & Mark M.",
-    role: "Villa Owners",
-    villa: "Cactus Estate, Canggu",
-    location: "Canggu, Bali",
-    image: "/homepage_villa/CactusEstate.webp",
-    portrait: "/homepage_villa/owner_sarah_mark.png",
-    quote: "SummerHouse transformed our villa into a professionally managed, high-performing property. We no longer worry about empty calendars.",
-    metrics: [
-      { label: "Occupancy Growth", value: "+38%" },
-      { label: "Guest Response Time", value: "< 5 mins" },
-      { label: "Operational Workflow", value: "Fully Automated" },
-      { label: "Monthly Reporting", value: "100% Transparent" }
-    ]
-  },
-  {
-    owner: "David K.",
-    role: "Property Investor",
-    villa: "Villa Zen, Pererenan",
-    location: "Pererenan, Bali",
-    image: "/homepage_villa/curated-1-main.webp",
-    portrait: "/homepage_villa/owner_david.png",
-    quote: "Partnering with SummerHouse gave us absolute peace of mind. Their dynamic pricing optimized our yield beyond expectations.",
-    metrics: [
-      { label: "Net Yield Increase", value: "+45%" },
-      { label: "Local Guest Care", value: "24/7 On-Site" },
-      { label: "Staff Supervision", value: "Expert Led" },
-      { label: "Financial Audits", value: "Real-time" }
-    ]
-  },
-  {
-    owner: "Ketut A.",
-    role: "Hospitality Landlord",
-    villa: "The Glass House, Ubud",
-    location: "Ubud, Bali",
-    image: "/homepage_villa/glass_house.png",
-    portrait: "/homepage_villa/owner_ketut.png",
-    quote: "Their project and operations team handled our renovations flawlessly. The guest satisfaction score speaks for itself.",
-    metrics: [
-      { label: "Property Valuation", value: "+65% Growth" },
-      { label: "Renovation Cost", value: "Under Budget" },
-      { label: "Guest Satisfaction", value: "98% Rating" },
-      { label: "License Compliance", value: "100% Secure" }
-    ]
-  }
-];
+// Owner testimonials come from the CMS (real submissions moderated by the team).
+// Shape used internally by the scroll-linked testimonial section.
+type OwnerTestimonialView = {
+  owner: string;
+  role: string;
+  villa: string;
+  image: string;
+  portrait: string | null;
+  quote: string;
+  metrics: Array<{ label: string; value: string }>;
+};
+
+const OWNER_BG_FALLBACK = "/homepage_villa/curated-1-main.webp";
+
+function getInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 // ── SUB-SERVICES DATA FOR SECTION 1 (Operational) ──
 const defaultOperationalServices = [
-  { title: "Scheduling & Managing Cleaning", text: "Upholding the highest standards with our housekeepers, gardeners, and maintenance team." },
+  { title: "Scheduling & Managing Cleaning", text: "Upholding the highest standards with Summerhouse housekeepers, gardeners, and maintenance support." },
   { title: "HR Management", text: "Streamlining hiring, training, workplace morale, payroll, and performance supervision." },
   { title: "Staff Training & Supervising", text: "Supervisor-led training programs aimed at boosting productivity and guest satisfaction." },
   { title: "Guest Relations", text: "Exceptional customer service dedicated to providing an enjoyable and memorable stay." },
@@ -93,11 +69,11 @@ const defaultMarketingServices = [
   { title: "Revenue Strategy", text: "Deploying data-driven strategies to set realistic goals and maximize villa performance." },
   { title: "Property Profile Copywriting", text: "Producing engaging villa descriptions to build trust with potential guests." },
   { title: "Extensive Distribution", text: "Reaching wide demographics across 10+ channels, including direct bookings, OTAs, and agents." },
-  { title: "Exclusive Direct Booking Website", text: "Providing a dedicated online platform for your villa to minimize OTA fees and boost revenue." },
+  { title: "Dedicated Direct Booking Website", text: "Providing a dedicated online platform for your villa to minimize OTA fees and boost revenue." },
   { title: "Data-Driven Online Advertising", text: "Targeted campaigns to expand villa outreach and maximize occupancy rates." },
   { title: "Dynamic Pricing Strategy", text: "Utilizing in-depth market research to optimize nightly rates and meet revenue goals." },
   { title: "SEO Optimization", text: "Maximizing visibility on search algorithms, ensuring your villa attracts maximum traffic." },
-  { title: "Prompt Reservation Team", text: "A dedicated team ready to guide guests throughout the booking process 24/7." },
+  { title: "Prompt Reservation Team", text: "The Summerhouse reservations team guides guests throughout the booking process 24/7." },
   { title: "Comprehensive Reports", text: "Delivering monthly financial reports highlighting revenue, expenditures, and bookings." }
 ];
 
@@ -126,7 +102,7 @@ const defaultFaqs = [
   },
   {
     question: "Do you build custom websites for each villa?",
-    answer: "Yes! In addition to listing on major channels (Airbnb, Booking.com), we construct and host an exclusive direct booking website for your property to drive direct sales and minimize third-party commission fees."
+    answer: "Yes. In addition to listing on major channels (Airbnb, Booking.com), we build and host a dedicated direct booking website for your property to drive direct sales and minimize third-party commission fees."
   },
   {
     question: "How are financial reports shared with villa owners?",
@@ -156,12 +132,22 @@ const staggerContainer: any = {
 
 type ServiceCardProp = { title: string; text: string };
 type FaqProp = { question: string; answer: string };
+type OwnerTestimonialProp = {
+  owner: string;
+  role?: string | null;
+  villaName?: string | null;
+  quote: string;
+  metrics: Array<{ label: string; value: string }>;
+  avatar?: string | null;
+  villaImage?: string | null;
+};
 
 type ServicesPageContentProps = {
   operationalServices?: ServiceCardProp[] | null;
   marketingServices?: ServiceCardProp[] | null;
   projectServices?: ServiceCardProp[] | null;
   faqs?: FaqProp[] | null;
+  ownerTestimonials?: OwnerTestimonialProp[] | null;
 };
 
 export default function ServicesPageContent({
@@ -169,6 +155,7 @@ export default function ServicesPageContent({
   marketingServices: mkProp,
   projectServices: prProp,
   faqs: faqsProp,
+  ownerTestimonials: ownerProp,
 }: ServicesPageContentProps = {}) {
   const operationalServices = opProp && opProp.length ? opProp : defaultOperationalServices;
   const marketingServices = mkProp && mkProp.length ? mkProp : defaultMarketingServices;
@@ -176,6 +163,16 @@ export default function ServicesPageContent({
   const faqs = faqsProp && faqsProp.length
     ? faqsProp.map((f, i) => ({ id: `cms-faq-${i}`, question: f.question, answer: f.answer }))
     : defaultFaqs;
+  const ownerTestimonials: OwnerTestimonialView[] = (ownerProp ?? []).map((t) => ({
+    owner: t.owner,
+    role: t.role ?? "Villa Owner",
+    villa: t.villaName ?? "",
+    image: t.villaImage || OWNER_BG_FALLBACK,
+    portrait: t.avatar ?? null,
+    quote: t.quote,
+    metrics: t.metrics ?? [],
+  }));
+  const hasOwnerTestimonials = ownerTestimonials.length > 0;
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -183,7 +180,7 @@ export default function ServicesPageContent({
   // Scroll target for the text separation and card fade-in effect
   const zoomSectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: rawScrollYProgress } = useScroll({
-    target: zoomSectionRef,
+    target: hasOwnerTestimonials ? zoomSectionRef : undefined,
     offset: ["start start", "end end"]
   });
 
@@ -214,12 +211,18 @@ export default function ServicesPageContent({
   const cardPointerEvents = useTransform(scrollYProgress, (value) => value >= 0.25 ? "auto" : "none");
 
   const handleNextTestimonial = () => {
+    if (!hasOwnerTestimonials) return;
     setActiveTestimonial((prev) => (prev + 1) % ownerTestimonials.length);
   };
 
   const handlePrevTestimonial = () => {
+    if (!hasOwnerTestimonials) return;
     setActiveTestimonial((prev) => (prev - 1 + ownerTestimonials.length) % ownerTestimonials.length);
   };
+
+  const activeOwner = hasOwnerTestimonials
+    ? ownerTestimonials[Math.min(activeTestimonial, ownerTestimonials.length - 1)]
+    : null;
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -267,7 +270,7 @@ export default function ServicesPageContent({
 
           {/* Bottom Right Description */}
           <p className={styles.heroDesc}>
-            Discover a new standard of villa management — from bespoke Canggu estates to premium cliffside residences across Bali.
+            Discover a new standard of villa management, from bespoke Canggu estates to premium cliffside residences across Bali.
           </p>
         </div>
       </section>
@@ -290,7 +293,7 @@ export default function ServicesPageContent({
               <FiShield className={styles.perkIcon} />
             </div>
             <h3>Hands-On Expert</h3>
-            <p>Our team consists of experienced professionals with expertise in the full spectrum of the rental property cycle.</p>
+            <p>The Summerhouse team brings experience across the full rental property cycle.</p>
           </motion.div>
           <motion.div className={styles.perkCard} variants={fadeUpVariants}>
             <div className={styles.perkIconWrapper}>
@@ -357,137 +360,150 @@ export default function ServicesPageContent({
         </motion.div>
       </motion.section>
 
-      {/* ── 4. INTERACTIVE SCROLL-LINKED TESTIMONIAL SECTION (Apple Glass + Parallax Villa Background) ── */}
-      <section ref={zoomSectionRef} className={styles.interactiveZoomSection}>
-        <div className={styles.stickyZoomContainer}>
-          
-          {/* Villa Background Image (fades on active testimonial change, scales on scroll) */}
-          <div className={styles.stickyBgContainer}>
-            {ownerTestimonials.map((item, idx) => (
-              <motion.div
-                key={item.owner}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: idx === activeTestimonial ? 1 : 0 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                style={{ position: "absolute", inset: 0 }}
-              >
+      {/* ── 4. INTERACTIVE SCROLL-LINKED TESTIMONIAL SECTION (real owner testimonials from the CMS; hidden until one is approved) ── */}
+      {hasOwnerTestimonials && activeOwner ? (
+        <section ref={zoomSectionRef} className={styles.interactiveZoomSection}>
+          <div className={styles.stickyZoomContainer}>
+
+            {/* Villa Background Image (fades on active testimonial change, scales on scroll) */}
+            <div className={styles.stickyBgContainer}>
+              {ownerTestimonials.map((item, idx) => (
                 <motion.div
-                  style={{ scale: bgScale, opacity: bgOpacity }}
-                  className={styles.bgImageWrapper}
+                  key={`${item.owner}-${idx}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: idx === activeTestimonial ? 1 : 0 }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  style={{ position: "absolute", inset: 0 }}
                 >
-                  <Image 
-                    src={item.image} 
-                    alt={item.villa} 
-                    fill
-                    priority={idx === 0}
-                    sizes="100vw"
-                    className={styles.stickyBgImage}
-                  />
-                  <div className={styles.stickyBgOverlay} />
-                </motion.div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Scroll Zoom Text Headline */}
-          <div className={styles.zoomHeadline}>
-            <motion.span style={{ x: textLeftX, scale: textScale, opacity: textOpacity }} className={styles.wordLeft}>
-              Better
-            </motion.span>
-            
-            {/* Transparent spacer that matches the gap between text */}
-            <div className={styles.imageSpacer} />
-            
-            <motion.span style={{ x: textRightX, scale: textScale, opacity: textOpacity }} className={styles.wordRight}>
-              Managed
-            </motion.span>
-          </div>
-
-          {/* Testimonial Card Centering Wrapper (Resolves absolute positioning stretch bug on iOS devices) */}
-          <div className={styles.testimonialCardCenteringWrapper}>
-            <motion.div 
-              style={{ opacity: cardOpacity, y: cardY, scale: cardScale, pointerEvents: cardPointerEvents }}
-              className={styles.testimonialCardWrapper}
-            >
-              <div className={styles.testimonialContentArea}>
-                <AnimatePresence mode="wait">
                   <motion.div
-                    key={activeTestimonial}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ scale: bgScale, opacity: bgOpacity }}
+                    className={styles.bgImageWrapper}
                   >
-                    {/* Villa Tag */}
-                    <div className={styles.testimonialVillaTag}>
-                      <span>{ownerTestimonials[activeTestimonial].villa}</span>
-                    </div>
-
-                    {/* Quote Text */}
-                    <blockquote className={styles.testimonialQuoteText}>
-                      “{ownerTestimonials[activeTestimonial].quote}”
-                    </blockquote>
-
-                    {/* Owner Metrics Grid */}
-                    <div className={styles.ownerMetricsGrid}>
-                      {ownerTestimonials[activeTestimonial].metrics.map((metric, midx) => (
-                        <div key={midx} className={styles.ownerMetricItem}>
-                          <strong>{metric.value}</strong>
-                          <span>{metric.label}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Author Info Group */}
-                    <div className={styles.testimonialAuthorRow}>
-                      <div className={styles.authorAvatarWrapper}>
-                        <Image
-                          src={ownerTestimonials[activeTestimonial].portrait}
-                          alt={ownerTestimonials[activeTestimonial].owner}
-                          fill
-                          sizes="48px"
-                          className="object-cover rounded-full"
-                        />
-                      </div>
-                      <div className={styles.authorMeta}>
-                        <strong className={styles.authorName}>{ownerTestimonials[activeTestimonial].owner}</strong>
-                        <span className={styles.authorLocation}>
-                          {ownerTestimonials[activeTestimonial].role} — {ownerTestimonials[activeTestimonial].location}
-                        </span>
-                        <span className={styles.authorVilla}>
-                          Owner of {ownerTestimonials[activeTestimonial].villa}
-                        </span>
-                      </div>
-                    </div>
+                    <Image
+                      src={item.image}
+                      alt={item.villa || "Summerhouse managed villa"}
+                      fill
+                      priority={idx === 0}
+                      sizes="100vw"
+                      className={styles.stickyBgImage}
+                    />
+                    <div className={styles.stickyBgOverlay} />
                   </motion.div>
-                </AnimatePresence>
-              </div>
+                </motion.div>
+              ))}
+            </div>
 
-              {/* Navigation Arrows on the right side of the card */}
-              <div className={styles.testimonialNavCtrls}>
-                <button 
-                  type="button" 
-                  onClick={handlePrevTestimonial} 
-                  className={styles.testimonialNavArrow} 
-                  aria-label="Previous testimonial"
-                >
-                  <FiChevronUp className={styles.navIconDesktop} />
-                  <FiChevronLeft className={styles.navIconMobile} />
-                </button>
-                <button 
-                  type="button" 
-                  onClick={handleNextTestimonial} 
-                  className={styles.testimonialNavArrow} 
-                  aria-label="Next testimonial"
-                >
-                  <FiChevronDown className={styles.navIconDesktop} />
-                  <FiChevronRight className={styles.navIconMobile} />
-                </button>
-              </div>
-            </motion.div>
+            {/* Scroll Zoom Text Headline */}
+            <div className={styles.zoomHeadline}>
+              <motion.span style={{ x: textLeftX, scale: textScale, opacity: textOpacity }} className={styles.wordLeft}>
+                Better
+              </motion.span>
+
+              {/* Transparent spacer that matches the gap between text */}
+              <div className={styles.imageSpacer} />
+
+              <motion.span style={{ x: textRightX, scale: textScale, opacity: textOpacity }} className={styles.wordRight}>
+                Managed
+              </motion.span>
+            </div>
+
+            {/* Testimonial Card Centering Wrapper (Resolves absolute positioning stretch bug on iOS devices) */}
+            <div className={styles.testimonialCardCenteringWrapper}>
+              <motion.div
+                style={{ opacity: cardOpacity, y: cardY, scale: cardScale, pointerEvents: cardPointerEvents }}
+                className={styles.testimonialCardWrapper}
+              >
+                <div className={styles.testimonialContentArea}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeTestimonial}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      {activeOwner.villa ? (
+                        <div className={styles.testimonialVillaTag}>
+                          <span>{activeOwner.villa}</span>
+                        </div>
+                      ) : null}
+
+                      <blockquote className={styles.testimonialQuoteText}>
+                        &ldquo;{activeOwner.quote}&rdquo;
+                      </blockquote>
+
+                      {activeOwner.metrics.length > 0 ? (
+                        <div className={styles.ownerMetricsGrid}>
+                          {activeOwner.metrics.map((metric, midx) => (
+                            <div key={midx} className={styles.ownerMetricItem}>
+                              <strong>{metric.value}</strong>
+                              <span>{metric.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+
+                      <div className={styles.testimonialAuthorRow}>
+                        <div className={styles.authorAvatarWrapper}>
+                          {activeOwner.portrait ? (
+                            <Image
+                              src={activeOwner.portrait}
+                              alt={activeOwner.owner}
+                              fill
+                              sizes="48px"
+                              className="object-cover rounded-full"
+                            />
+                          ) : (
+                            <div className={styles.authorAvatarFallback} aria-hidden="true">
+                              {getInitials(activeOwner.owner) || activeOwner.owner.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.authorMeta}>
+                          <strong className={styles.authorName}>{activeOwner.owner}</strong>
+                          <span className={styles.authorLocation}>{activeOwner.role}</span>
+                          {activeOwner.villa ? (
+                            <span className={styles.authorVilla}>Owner of {activeOwner.villa}</span>
+                          ) : null}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Navigation Arrows on the right side of the card */}
+                {ownerTestimonials.length > 1 ? (
+                  <div className={styles.testimonialNavCtrls}>
+                    <button
+                      type="button"
+                      onClick={handlePrevTestimonial}
+                      className={styles.testimonialNavArrow}
+                      aria-label="Previous testimonial"
+                    >
+                      <FiChevronUp className={styles.navIconDesktop} />
+                      <FiChevronLeft className={styles.navIconMobile} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextTestimonial}
+                      className={styles.testimonialNavArrow}
+                      aria-label="Next testimonial"
+                    >
+                      <FiChevronDown className={styles.navIconDesktop} />
+                      <FiChevronRight className={styles.navIconMobile} />
+                    </button>
+                  </div>
+                ) : null}
+              </motion.div>
+            </div>
+
           </div>
+        </section>
+      ) : null}
 
-        </div>
+      {/* Owner testimonial submission — always available so the first real story can arrive */}
+      <section className={styles.ownerFormSection}>
+        <OwnerTestimonialForm />
       </section>
 
       {/* ── 5. DETAILED SERVICES Deep-Dive ── */}
@@ -503,7 +519,7 @@ export default function ServicesPageContent({
       >
         <div className={styles.deepDiveHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.pillLabel}>Our Services - Section 1</span>
+            <span className={styles.pillLabel}>Operations</span>
             <h2>Operational Management</h2>
             <p className={styles.specialtyDescription}>
               “Our operational management services are designed to alleviate the stress and hassle of day-to-day operations of rental property, allowing you to focus on other aspects of your daily life. Our attention to detail and commitment to excellent service will give you peace of mind, knowing that your investment is being well taken care of with efficiency and professionalism.”
@@ -541,7 +557,7 @@ export default function ServicesPageContent({
       >
         <div className={styles.deepDiveHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.pillLabel}>Our Services - Section 2</span>
+            <span className={styles.pillLabel}>Revenue & guest demand</span>
             <h2>Sales, Marketing & Financial Management</h2>
             <p className={styles.specialtyDescription}>
               “Leaving your rental property with vacant dates can be stressful, and marketing it to the right guests at the right time with the right price may take a lot of effort and time. We can help maximize occupancy and ensure a steady income for your rental property through effective sales and marketing strategies. We also offer financial management services for complete transparency on your property’s financial status.”
@@ -579,7 +595,7 @@ export default function ServicesPageContent({
       >
         <div className={styles.deepDiveHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.pillLabel}>Our Services - Section 3</span>
+            <span className={styles.pillLabel}>Project delivery</span>
             <h2>Villa Project Management</h2>
             <p className={styles.specialtyDescription}>
               “Building or renovating a property can be a challenging and time-consuming process. Our project management services will ensure that your project runs smoothly from start to finish. We will oversee all aspects of the project, from sourcing materials and vendors to coordinating construction timelines and managing the budget.”
@@ -616,7 +632,7 @@ export default function ServicesPageContent({
           <div className={styles.faqLeft}>
             <span className={styles.eyebrow}>Support</span>
             <h2>Frequently Asked Questions</h2>
-            <p>Can't find what you are looking for? Reach out to our customer support team directly.</p>
+            <p>Can't find what you are looking for? Reach out to the Summerhouse support team directly.</p>
           </div>
           <div className={styles.faqRight}>
             <div className={styles.faqList}>
@@ -663,17 +679,17 @@ export default function ServicesPageContent({
         />
         <div className={styles.ctaOverlay} />
         <div className={styles.ctaContent}>
-          <span className={styles.ctaEyebrow}>YOUR BALI ESCAPE AWAITS</span>
-          <h2 className={styles.ctaTitle}>Book Your Experience Right Now</h2>
+          <span className={styles.ctaEyebrow}>Villa owner support</span>
+          <h2 className={styles.ctaTitle}>Start a considered conversation</h2>
           <p className={styles.ctaDescription}>
             We are happy to speak with you about how we can assist you in creating a successful and fulfilling rental villa business through our services.
           </p>
-          <Link href="/contact" className={styles.btnGlassLarge}>
-            <span className={styles.btnGlassText}>BOOK NOW</span>
+          <InteractiveHoverButton href="/contact" className={`${styles.btnGlassLarge} ihb-fill-dark`} arrow={null}>
+            <span className={styles.btnGlassText}>Contact the team</span>
             <span className={styles.btnGlassArrow}>
               <FiArrowRight />
             </span>
-          </Link>
+          </InteractiveHoverButton>
         </div>
       </motion.section>
 

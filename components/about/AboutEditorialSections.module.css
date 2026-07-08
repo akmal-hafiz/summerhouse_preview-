@@ -391,9 +391,10 @@
   justify-self: end;
   width: 100%;
   max-width: 520px;
-  min-width: 440px;
+  min-width: min(440px, 100%);
   z-index: 3;
   overflow: hidden;
+  contain: paint;
   border-radius: 40px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -539,10 +540,12 @@
 .pillMarquee {
   display: flex;
   width: 100vw;
+  max-width: 100vw;
   margin-left: 50%;
   overflow: hidden;
   transform: translateX(-50%);
   position: relative;
+  contain: paint;
   mask-image: linear-gradient(
     to right,
     transparent,
@@ -2724,4 +2727,3 @@
   font-size: 1.05rem;
   line-height: 1.6;
 }
-

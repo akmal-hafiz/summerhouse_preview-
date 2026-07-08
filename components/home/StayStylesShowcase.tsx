@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { HomepageStayGroup, HomepageStayVilla } from "@/lib/lodgify/types";
 
 type StayStylesShowcaseProps = {
@@ -78,6 +78,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
   const [activeGroupId, setActiveGroupId] = useState<string>(availableGroups[0]?.id || "short-stays");
   const [userInteracted, setUserInteracted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const activeGroup = useMemo(
     () => availableGroups.find((group) => group.id === activeGroupId) || availableGroups[0],
@@ -85,7 +86,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
   );
 
   useEffect(() => {
-    if (userInteracted || isHovered || availableGroups.length <= 1) return;
+    if (reduceMotion || userInteracted || isHovered || availableGroups.length <= 1) return;
 
     const interval = setInterval(() => {
       setActiveGroupId((currentId) => {
@@ -96,7 +97,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [userInteracted, isHovered, availableGroups]);
+  }, [reduceMotion, userInteracted, isHovered, availableGroups]);
 
   const handleTabClick = (groupId: string) => {
     setActiveGroupId(groupId);

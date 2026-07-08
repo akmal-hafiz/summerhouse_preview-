@@ -30,6 +30,18 @@
   --brand-bg: #FAFAF9;           /* Porcelain White */
   --brand-ink: #1a1a1a;
 
+  /* SummerHouse polish tokens: scoped surface/media rhythm without changing brand identity. */
+  --sh-radius-card: clamp(1rem, 1.55vw, 1.45rem);
+  --sh-radius-media: clamp(0.85rem, 1.35vw, 1.25rem);
+  --sh-radius-control: 999px;
+  --sh-border-soft: rgba(31, 31, 29, 0.1);
+  --sh-surface-warm: rgba(255, 255, 255, 0.84);
+  --sh-shadow-soft: 0 1rem 2.6rem rgba(31, 31, 29, 0.07);
+  --sh-shadow-lift: 0 1.45rem 3.5rem rgba(31, 31, 29, 0.1);
+  --sh-focus-ring: 0 0 0 3px rgba(68, 107, 74, 0.22);
+  --sh-text-muted: rgba(31, 31, 29, 0.62);
+  --sh-text-faint: rgba(31, 31, 29, 0.5);
+
   /* Brand guideline mandates a single typeface everywhere — no serif.
      Aliased (not deleted) because ~30 component stylesheets still
      reference var(--font-playfair) for headline treatments; aliasing here
@@ -611,11 +623,12 @@ img {
 }
 
 .sh-footer-logo-img {
-  width: 380px; /* Silakan perbesar lebar logo di sini tanpa takut menggeser komponen lain */
+  width: min(380px, 100%); /* Silakan perbesar lebar logo di sini tanpa takut menggeser komponen lain */
+  max-width: calc(100vw - 3rem);
   height: auto;
   object-fit: contain;
   filter: brightness(0);
-  margin-left: -40px;
+  margin-left: clamp(-32px, -2.5vw, -18px);
 }
 
 .sh-footer-brand-text {
@@ -887,6 +900,10 @@ img {
     justify-content: flex-start;
     flex-wrap: wrap;
   }
+
+  .sh-footer-logo-img {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 640px) {
@@ -906,7 +923,7 @@ img {
 
   .sh-footer-logo-img {
     width: 280px;
-    margin-left: -30px;
+    margin-left: 0;
   }
 
   .sh-footer-brand-logo {
@@ -934,7 +951,7 @@ img {
 
   .sh-footer-logo-img {
     width: 240px;
-    margin-left: -25px;
+    margin-left: 0;
   }
 
   .sh-footer-brand-logo {
@@ -2704,6 +2721,12 @@ img {
 .villa-search-form--hero,
 .villa-search-form--listing {
   min-height: 4.55rem;
+}
+
+.villa-search-form--listing {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .villa-search-form__group {
@@ -9751,23 +9774,26 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   min-width: 0;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(31, 31, 29, 0.08);
-  border-radius: clamp(1rem, 1.4vw, 1.35rem);
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 1rem 2.6rem rgba(31, 31, 29, 0.07);
-  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  border: 1px solid var(--sh-border-soft);
+  border-radius: var(--sh-radius-card);
+  background: var(--sh-surface-warm);
+  box-shadow: var(--sh-shadow-soft);
+  transition: transform 220ms var(--ease-editorial), border-color 220ms var(--ease-editorial), box-shadow 220ms var(--ease-editorial);
 }
 
-.villa-catalog-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(68, 107, 74, 0.18);
-  box-shadow: 0 1.4rem 3.6rem rgba(31, 31, 29, 0.11);
+@media (hover: hover) and (pointer: fine) {
+  .villa-catalog-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(68, 107, 74, 0.18);
+    box-shadow: var(--sh-shadow-lift);
+  }
 }
 
 .villa-catalog-card__media {
   position: relative;
-  aspect-ratio: 16 / 10.8;
+  aspect-ratio: 16 / 10.6;
   overflow: hidden;
+  border-radius: calc(var(--sh-radius-card) - 1px) calc(var(--sh-radius-card) - 1px) var(--sh-radius-media) var(--sh-radius-media);
   background: #ddd6ca;
 }
 
@@ -9779,11 +9805,14 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 .villa-catalog-card__image {
   object-fit: cover;
+  object-position: center;
   transition: transform 700ms cubic-bezier(0.2, 0, 0.2, 1);
 }
 
-.villa-catalog-card:hover .villa-catalog-card__image {
-  transform: scale(1.035);
+@media (hover: hover) and (pointer: fine) {
+  .villa-catalog-card:hover .villa-catalog-card__image {
+    transform: scale(1.035);
+  }
 }
 
 .villa-catalog-card__save {
@@ -9803,11 +9832,24 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   box-shadow: 0 0.7rem 1.6rem rgba(0, 0, 0, 0.14);
   backdrop-filter: blur(16px) saturate(150%);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
-  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  transition: transform 180ms var(--ease-editorial), background 180ms var(--ease-editorial), color 180ms var(--ease-editorial), box-shadow 180ms var(--ease-editorial);
 }
 
-.villa-catalog-card__save:hover {
-  transform: translateY(-1px) scale(1.03);
+@media (hover: hover) and (pointer: fine) {
+  .villa-catalog-card__save:hover {
+    transform: translateY(-1px) scale(1.03);
+  }
+}
+
+.villa-catalog-card__save:active {
+  transform: scale(0.96);
+}
+
+.villa-catalog-card__save:focus-visible,
+.villa-catalog-card__book:focus-visible,
+.villa-catalog-card__title-link:focus-visible {
+  outline: none;
+  box-shadow: var(--sh-focus-ring);
 }
 
 .villa-catalog-card__save.is-saved {
@@ -9845,7 +9887,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   align-items: center;
   gap: 0.34rem;
   margin: 0;
-  color: rgba(31, 31, 29, 0.58);
+  color: var(--sh-text-faint);
   font-size: 0.78rem;
   font-weight: 560;
   line-height: 1.35;
@@ -9866,7 +9908,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   display: flex;
   flex-wrap: wrap;
   gap: 0.42rem 0.62rem;
-  color: rgba(31, 31, 29, 0.62);
+  color: var(--sh-text-muted);
   font-size: 0.73rem;
   font-weight: 650;
 }
@@ -9912,19 +9954,26 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   align-items: center;
   justify-content: center;
   min-height: 2.3rem;
-  border-radius: 999px;
+  border-radius: var(--sh-radius-control);
   background: #446B4A;
   color: #fff;
   padding: 0 0.88rem;
   font-size: 0.74rem;
   font-weight: 820;
   text-decoration: none;
-  transition: background 180ms ease, transform 180ms ease;
+  transition: background 180ms var(--ease-editorial), transform 180ms var(--ease-editorial), box-shadow 180ms var(--ease-editorial);
 }
 
-.villa-catalog-card__book:hover {
-  transform: translateY(-1px);
-  background: #356d50;
+@media (hover: hover) and (pointer: fine) {
+  .villa-catalog-card__book:hover {
+    transform: translateY(-1px);
+    background: #356d50;
+    box-shadow: 0 0.5rem 1rem rgba(68, 107, 74, 0.18);
+  }
+}
+
+.villa-catalog-card__book:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .villa-collection-empty,
@@ -13431,5 +13480,345 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
   .mobile-booking-search__destination-row--skeleton {
     animation: none;
+  }
+}
+
+/* ==========================================================================
+   SummerHouse liquid glass system
+   Shared, project-scoped optical material for the hero search trigger and
+   mobile navigation drawer. Keep late in the file to beat older glass layers.
+   ========================================================================== */
+.summerhouse-liquid-glass {
+  --sh-glass-tint: 68 107 74;
+  --sh-glass-opacity: 0.055;
+  --sh-glass-blur: 14px;
+  --sh-glass-saturation: 138%;
+  --sh-glass-contrast: 108%;
+  --sh-glass-brightness: 102%;
+  --sh-glass-border: rgba(255, 255, 255, 0.5);
+  --sh-glass-highlight: rgba(255, 255, 255, 0.74);
+  --sh-glass-depth: rgba(24, 40, 27, 0.15);
+  --sh-glass-shadow: 0 18px 42px rgba(8, 16, 10, 0.24);
+  --sh-glass-radius: 999px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--sh-glass-radius);
+  background:
+    radial-gradient(140% 180% at 6% -18%, rgba(255, 255, 255, 0.16), transparent 38%),
+    radial-gradient(120% 150% at 94% 8%, rgba(255, 255, 255, 0.09), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.022) 48%, rgba(30, 50, 34, 0.055)),
+    rgb(var(--sh-glass-tint) / var(--sh-glass-opacity));
+  box-shadow:
+    var(--sh-glass-shadow),
+    inset 0 0 0 1px var(--sh-glass-border),
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.64),
+    inset 0 -2px 5px var(--sh-glass-depth),
+    inset 18px 0 28px rgba(255, 255, 255, 0.05),
+    inset -18px 0 28px rgba(255, 255, 255, 0.045);
+  -webkit-backdrop-filter:
+    blur(var(--sh-glass-blur))
+    saturate(var(--sh-glass-saturation))
+    contrast(var(--sh-glass-contrast))
+    brightness(var(--sh-glass-brightness));
+  backdrop-filter:
+    blur(var(--sh-glass-blur))
+    saturate(var(--sh-glass-saturation))
+    contrast(var(--sh-glass-contrast))
+    brightness(var(--sh-glass-brightness));
+}
+
+.summerhouse-liquid-glass::before,
+.summerhouse-liquid-glass::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.summerhouse-liquid-glass::before {
+  z-index: 1;
+  inset: 3px 5% auto;
+  height: 48%;
+  background:
+    radial-gradient(90% 135% at 16% 0%, var(--sh-glass-highlight), rgba(255, 255, 255, 0.2) 36%, transparent 70%),
+    radial-gradient(70% 110% at 72% 4%, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.12) 38%, transparent 74%);
+  filter: blur(0.7px);
+  opacity: 0.78;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 180ms var(--ease-out-strong),
+    transform 180ms var(--ease-out-strong);
+}
+
+.summerhouse-liquid-glass::after {
+  z-index: 1;
+  inset: 1px;
+  background:
+    radial-gradient(32% 92% at 0% 50%, rgba(255, 255, 255, 0.22), transparent 66%),
+    radial-gradient(28% 88% at 100% 50%, rgba(255, 255, 255, 0.2), transparent 68%),
+    radial-gradient(90% 55% at 50% 116%, rgba(18, 32, 21, 0.22), rgba(45, 76, 51, 0.06) 44%, transparent 76%),
+    linear-gradient(180deg, transparent 60%, rgba(255, 255, 255, 0.08) 100%);
+  opacity: 0.72;
+}
+
+.summerhouse-liquid-glass > * {
+  position: relative;
+  z-index: 2;
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .summerhouse-liquid-glass {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(247, 250, 245, 0.7)),
+      rgb(var(--sh-glass-tint) / 0.12) !important;
+  }
+}
+
+.summerhouse-liquid-glass--trigger.mobile-booking-search__trigger {
+  --sh-glass-opacity: 0.026;
+  --sh-glass-blur: 11px;
+  --sh-glass-saturation: 145%;
+  --sh-glass-contrast: 109%;
+  --sh-glass-brightness: 103%;
+  --sh-glass-border: rgba(255, 255, 255, 0.5);
+  --sh-glass-highlight: rgba(255, 255, 255, 0.76);
+  --sh-glass-depth: rgba(13, 27, 16, 0.13);
+  --sh-glass-shadow:
+    0 18px 36px rgba(5, 12, 8, 0.22),
+    0 2px 8px rgba(255, 255, 255, 0.08);
+  min-height: 60px;
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  transition:
+    transform 180ms var(--ease-out-strong),
+    filter 180ms var(--ease-out-strong),
+    box-shadow 180ms var(--ease-out-strong);
+}
+
+.summerhouse-liquid-glass--trigger.mobile-booking-search__trigger::before {
+  inset: 3px 8% auto;
+  height: 42%;
+  opacity: 0.58;
+  background:
+    radial-gradient(38% 150% at 14% -8%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.18) 42%, transparent 78%),
+    radial-gradient(54% 145% at 50% -30%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12) 46%, transparent 82%),
+    radial-gradient(34% 130% at 86% -6%, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.1) 42%, transparent 78%);
+}
+
+.summerhouse-liquid-glass--trigger.mobile-booking-search__trigger::after {
+  opacity: 0.66;
+  background:
+    radial-gradient(13% 82% at 3% 50%, rgba(255, 255, 255, 0.18), transparent 78%),
+    radial-gradient(13% 82% at 97% 50%, rgba(255, 255, 255, 0.16), transparent 78%),
+    radial-gradient(90% 56% at 50% 118%, rgba(8, 18, 11, 0.18), rgba(44, 74, 49, 0.05) 42%, transparent 76%);
+}
+
+.summerhouse-liquid-glass--trigger .mobile-booking-search__trigger-icon,
+.summerhouse-liquid-glass--trigger .mobile-booking-search__trigger-label {
+  color: #ffffff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.summerhouse-liquid-glass--trigger .mobile-booking-search__trigger-label {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .summerhouse-liquid-glass--trigger.mobile-booking-search__trigger:hover {
+    filter: saturate(1.04) brightness(1.03);
+    transform: translate3d(0, -1px, 0);
+    box-shadow:
+      0 22px 42px rgba(5, 12, 8, 0.25),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.62),
+      inset 0 1.5px 1px rgba(255, 255, 255, 0.72),
+      inset 0 -2px 5px rgba(13, 27, 16, 0.16);
+  }
+
+  .summerhouse-liquid-glass--trigger.mobile-booking-search__trigger:hover::before {
+    opacity: 0.9;
+    transform: translate3d(2%, -3%, 0);
+  }
+}
+
+.summerhouse-liquid-glass--trigger.mobile-booking-search__trigger:active::before {
+  opacity: 0.58;
+  transform: translate3d(0, 8%, 0);
+}
+
+.summerhouse-liquid-glass--trigger.mobile-booking-search__trigger:active::after {
+  opacity: 0.92;
+}
+
+.summerhouse-liquid-glass--trigger.mobile-booking-search__trigger:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.18),
+    0 0 0 5px rgba(68, 107, 74, 0.56),
+    var(--sh-glass-shadow),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.72),
+    inset 0 -2px 5px var(--sh-glass-depth);
+}
+
+.global-mobile-menu__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  border: 0;
+  background:
+    radial-gradient(80% 90% at 80% 0%, rgba(68, 107, 74, 0.16), transparent 55%),
+    rgba(7, 12, 8, 0.24);
+  -webkit-backdrop-filter: blur(3px) saturate(118%) brightness(0.94);
+  backdrop-filter: blur(3px) saturate(118%) brightness(0.94);
+  cursor: default;
+  animation: summerhouse-menu-backdrop-in 180ms var(--ease-out-strong);
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone summary {
+  z-index: 4 !important;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone:focus,
+details.global-mobile-menu.global-mobile-menu--standalone summary:focus {
+  outline: none !important;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone summary:focus-visible {
+  border-radius: 999px !important;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.18),
+    0 0 0 5px rgba(68, 107, 74, 0.48) !important;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.summerhouse-liquid-glass--drawer {
+  --sh-glass-radius: 30px;
+  --sh-glass-opacity: 0.108;
+  --sh-glass-blur: 16px;
+  --sh-glass-saturation: 142%;
+  --sh-glass-contrast: 108%;
+  --sh-glass-brightness: 101%;
+  --sh-glass-border: rgba(255, 255, 255, 0.38);
+  --sh-glass-highlight: rgba(255, 255, 255, 0.54);
+  --sh-glass-depth: rgba(20, 36, 23, 0.15);
+  --sh-glass-shadow: 0 24px 68px rgba(5, 12, 8, 0.28);
+  z-index: 3 !important;
+  width: min(22.5rem, calc(100vw - 2rem)) !important;
+  padding: clamp(1rem, 3.4vw, 1.35rem) !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  border-radius: var(--sh-glass-radius) !important;
+  background:
+    radial-gradient(130% 145% at 8% -16%, rgba(255, 255, 255, 0.16), transparent 42%),
+    radial-gradient(130% 140% at 100% 6%, rgba(255, 255, 255, 0.09), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.022) 52%, rgba(37, 63, 42, 0.06)),
+    rgb(var(--sh-glass-tint) / var(--sh-glass-opacity)) !important;
+  box-shadow:
+    var(--sh-glass-shadow),
+    inset 0 0 0 1px var(--sh-glass-border),
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.58),
+    inset 0 -2px 7px var(--sh-glass-depth) !important;
+  -webkit-backdrop-filter:
+    blur(var(--sh-glass-blur))
+    saturate(var(--sh-glass-saturation))
+    contrast(var(--sh-glass-contrast))
+    brightness(var(--sh-glass-brightness)) !important;
+  backdrop-filter:
+    blur(var(--sh-glass-blur))
+    saturate(var(--sh-glass-saturation))
+    contrast(var(--sh-glass-contrast))
+    brightness(var(--sh-glass-brightness)) !important;
+  animation: summerhouse-menu-drawer-in 260ms var(--ease-out-strong) both !important;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.summerhouse-liquid-glass--drawer::before {
+  inset: 5px 7% auto;
+  height: 38%;
+  opacity: 0.52;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__panel.summerhouse-liquid-glass--drawer::after {
+  opacity: 0.64;
+}
+
+.global-mobile-menu__panel.summerhouse-liquid-glass--drawer a,
+.global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta {
+  min-height: 44px;
+  display: flex !important;
+  align-items: center;
+  border-radius: 16px !important;
+  color: rgba(14, 24, 16, 0.9) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.global-mobile-menu__panel.summerhouse-liquid-glass--drawer a:hover,
+.global-mobile-menu__panel.summerhouse-liquid-glass--drawer a:focus-visible,
+.global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:hover,
+.global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:focus-visible {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #24482c !important;
+  outline: none;
+  transform: translate3d(1px, 0, 0);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.summerhouse-liquid-glass--language.global-language-toggle--mobile {
+  --sh-glass-opacity: 0.074;
+  --sh-glass-blur: 11px;
+  --sh-glass-border: rgba(255, 255, 255, 0.34);
+  --sh-glass-depth: rgba(20, 36, 23, 0.1);
+  --sh-glass-shadow:
+    0 10px 24px rgba(8, 16, 10, 0.12),
+    inset 0 0 0 1px var(--sh-glass-border);
+  width: 100%;
+  min-height: 46px;
+  margin-top: 0.45rem;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025)),
+    rgb(var(--sh-glass-tint) / var(--sh-glass-opacity)) !important;
+  color: rgba(14, 24, 16, 0.88) !important;
+}
+
+.summerhouse-liquid-glass--language.global-language-toggle--mobile::before {
+  height: 34%;
+  opacity: 0.42;
+}
+
+.summerhouse-liquid-glass--language.global-language-toggle--mobile::after {
+  opacity: 0.52;
+}
+
+.summerhouse-liquid-glass--language.global-language-toggle--mobile:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(68, 107, 74, 0.32),
+    var(--sh-glass-shadow);
+}
+
+@keyframes summerhouse-menu-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes summerhouse-menu-drawer-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summerhouse-liquid-glass,
+  .summerhouse-liquid-glass::before,
+  .summerhouse-liquid-glass::after,
+  .global-mobile-menu__backdrop {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 }

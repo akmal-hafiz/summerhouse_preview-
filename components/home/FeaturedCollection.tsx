@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FiDroplet, FiHome, FiUsers } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import type { FeaturedCollectionVilla } from "@/lib/lodgify/types";
 
 type FeaturedCollectionProps = {
@@ -72,9 +72,10 @@ function useCardSlideshow(
   isHovered: boolean
 ) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!images || images.length <= 1) return;
+    if (reduceMotion || !images || images.length <= 1) return;
 
     if (variant === "desktop") {
       if (!isHovered) {
@@ -88,17 +89,19 @@ function useCardSlideshow(
 
       return () => clearInterval(interval);
     } else {
+      let interval: ReturnType<typeof setInterval> | undefined;
       const offsetTimeout = setTimeout(() => {
-        const interval = setInterval(() => {
+        interval = setInterval(() => {
           setActiveIndex((prev) => (prev + 1) % images.length);
         }, 5500);
-
-        return () => clearInterval(interval);
       }, index * 1800);
 
-      return () => clearTimeout(offsetTimeout);
+      return () => {
+        clearTimeout(offsetTimeout);
+        if (interval) clearInterval(interval);
+      };
     }
-  }, [images, variant, index, isHovered]);
+  }, [reduceMotion, images, variant, index, isHovered]);
 
   return activeIndex;
 }

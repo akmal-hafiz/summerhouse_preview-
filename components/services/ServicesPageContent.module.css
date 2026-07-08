@@ -2,7 +2,7 @@
 
 .container {
   --color-cream-bg: #fcfbfa;
-  --color-green-accent: #315f45;
+  --color-green-accent: #446B4A;
   --color-green-light: #446b4a;
   --color-ink-dark: #1c1b18;
   --color-muted-grey: #77726a;
@@ -644,14 +644,14 @@
 
 .pillLabel {
   display: inline-block;
-  background-color: var(--color-green-accent);
-  color: #ffffff;
+  background-color: rgba(68, 107, 74, 0.1);
+  color: var(--color-green-dark);
   padding: 0.35rem 0.85rem;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-transform: none;
+  letter-spacing: 0.01em;
   margin-bottom: 1.5rem;
 }
 
@@ -912,10 +912,10 @@
 
 .ctaEyebrow {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
+  font-size: 0.92rem;
+  font-weight: 720;
+  text-transform: none;
+  letter-spacing: 0.01em;
   color: var(--color-green-light);
   margin-bottom: 1rem;
 }
@@ -927,7 +927,7 @@
   letter-spacing: -0.03em;
   color: #ffffff;
   margin: 0 0 1.5rem 0;
-  text-transform: capitalize;
+  text-transform: none;
 }
 
 .ctaDescription {
@@ -969,6 +969,7 @@
 .btnGlassText {
   font-size: 0.95rem;
   font-weight: 700;
+  letter-spacing: 0;
 }
 
 .btnGlassArrow {
@@ -1377,4 +1378,25 @@
     max-width: 100%;
     font-size: 0.85rem;
   }
+}
+
+/* --- Owner testimonial CMS additions --- */
+
+.authorAvatarFallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #1c1b18;
+  color: #f6f4ef;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+}
+
+.ownerFormSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 2rem);
 }

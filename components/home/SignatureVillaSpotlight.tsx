@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { FiArrowRight } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import type { SignatureVilla } from "@/lib/lodgify/types";
 
 type SignatureVillaSpotlightProps = {
@@ -77,9 +77,10 @@ function FadingImage({ src, alt, sizes, priority = false }: { src: string; alt: 
 export default function SignatureVillaSpotlight({ villa, variant }: SignatureVillaSpotlightProps) {
   const [indices, setIndices] = useState({ mid: 1, small: 2 });
   const stepRef = useRef(0);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!villa || !villa.images || villa.images.length <= 3) return;
+    if (reduceMotion || !villa || !villa.images || villa.images.length <= 3) return;
 
     const imagesLength = villa.images.length;
 
@@ -98,7 +99,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
     }, 4500); // Cycle one image every 4.5 seconds
 
     return () => clearInterval(interval);
-  }, [villa]);
+  }, [reduceMotion, villa]);
 
   if (!villa) return null;
 
@@ -119,7 +120,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
           <div className="mobile-bawa-subtitle-col">
             <div className="mobile-bawa-sub-bar-stack">
               <span className="mobile-bawa-sub-bar">// {villa.eyebrow.toUpperCase()}</span>
-              <span className="mobile-bawa-sub-bar">EXCLUSIVE PRIVATE ESTATE</span>
+              <span className="mobile-bawa-sub-bar">A HOME OF ITS OWN</span>
             </div>
             <h3 className="mobile-bawa-subtitle">{villa.title.toUpperCase()}</h3>
           </div>
@@ -167,7 +168,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <strong className="signature-villa-label">Why this home</strong>
-            {villa.subtitle} Chosen for tropical architecture, privacy, and full-villa comfort.
+            {villa.whyThisHome}
           </motion.div>
 
           <motion.div 
@@ -217,7 +218,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
           <div className="desktop-bawa-subtitle-col">
             <div className="desktop-bawa-sub-bar-stack">
               <span className="desktop-bawa-sub-bar">// {villa.eyebrow.toUpperCase()}</span>
-              <span className="desktop-bawa-sub-bar">EXCLUSIVE PRIVATE ESTATE</span>
+              <span className="desktop-bawa-sub-bar">A HOME OF ITS OWN</span>
             </div>
             <h3 className="desktop-bawa-subtitle">{villa.title.toUpperCase()}</h3>
           </div>
@@ -253,7 +254,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
 
             <div className="desktop-bawa-desc-box">
               <strong className="signature-villa-label">Why this home</strong>
-              {villa.subtitle} Chosen for tropical architecture, privacy, and full-villa comfort.
+              {villa.whyThisHome}
             </div>
 
             <div className="desktop-bawa-details-block">
