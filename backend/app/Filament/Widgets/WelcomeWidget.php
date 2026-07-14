@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\ContactSubmission;
 use Filament\Facades\Filament;
 use Filament\Widgets\Widget;
 
@@ -26,10 +27,15 @@ class WelcomeWidget extends Widget
             default => 'Good night',
         };
 
+        $latestInquiry = ContactSubmission::query()->latest('created_at')->first();
+        $unreadCount = ContactSubmission::query()->unread()->count();
+
         return [
             'greeting' => $greeting,
             'name' => $user?->name ?? 'Admin',
             'date' => now()->setTimezone('Asia/Makassar')->format('l, F j, Y'),
+            'latestInquiry' => $latestInquiry,
+            'unreadCount' => $unreadCount,
         ];
     }
 }

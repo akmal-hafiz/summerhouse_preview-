@@ -77,7 +77,7 @@ class LodgifyService
             $response = Http::withHeaders([
                 'X-ApiKey' => $this->apiKey,
                 'Accept' => 'application/json',
-            ])->timeout(12)->get("{$this->baseUrl}/properties/{$propertyId}/rooms");
+            ])->timeout(12)->get("{$this->baseUrl}/properties/" . rawurlencode($propertyId) . "/rooms");
 
             if (!$response->successful()) {
                 return [];
@@ -101,8 +101,7 @@ class LodgifyService
             $bedrooms += (int) ($room['bedrooms'] ?? 0);
             $guests += (int) ($room['max_people'] ?? 0);
             if (!$thumb && !empty($room['image_url'])) {
-                $url = (string) $room['image_url'];
-                $thumb = str_starts_with($url, 'http') ? $url : 'https:' . ltrim($url, ':');
+                $thumb = $this->normalizeMediaUrl((string) $room['image_url']);
             }
         }
 
@@ -146,11 +145,28 @@ class LodgifyService
 
         foreach ($candidates as $url) {
             if (is_string($url) && $url !== '') {
-                return str_starts_with($url, 'http') ? $url : 'https:' . ltrim($url, ':');
+                $normalized = $this->normalizeMediaUrl($url);
+                if ($normalized) {
+                    return $normalized;
+                }
             }
         }
 
         return null;
+    }
+
+    protected function normalizeMediaUrl(string $url): ?string
+    {
+        $value = trim($url);
+        if ($value === '' || preg_match('/[\x00-\x1F\x7F]/', $value)) {
+            return null;
+        }
+
+        if (str_starts_with($value, '//')) {
+            $value = 'https:' . $value;
+        }
+
+        return preg_match('/^https?:\/\//i', $value) ? $value : null;
     }
 
     protected function extractInt(array $prop, array $keys): ?int

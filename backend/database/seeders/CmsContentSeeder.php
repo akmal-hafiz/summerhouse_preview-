@@ -8,7 +8,7 @@ use App\Models\GalleryItem;
 use App\Models\HomepageVillaSelection;
 use App\Models\PageSection;
 use App\Models\ServiceCard;
-use App\Models\Testimonial;
+use App\Models\SiteSetting;
 use Illuminate\Database\Seeder;
 
 class CmsContentSeeder extends Seeder
@@ -18,10 +18,12 @@ class CmsContentSeeder extends Seeder
         $this->seedPageSections();
         $this->seedHomepageVillaSelections();
         $this->seedBaliCollections();
-        $this->seedTestimonials();
+        // Testimonials are curated in the CMS ("Reviews & Testimonials"). No seed
+        // data is created here to avoid publishing placeholder guest quotes.
         $this->seedFaqs();
         $this->seedServiceCards();
         $this->seedGalleryItems();
+        $this->seedSiteSettings();
     }
 
     private function seedPageSections(): void
@@ -49,6 +51,7 @@ class CmsContentSeeder extends Seeder
                 'eyebrow' => 'Signature Villa',
                 'title' => 'Most Exclusive Stay',
                 'description' => 'A five-bedroom tropical estate with private pool, full-villa comfort, and a calmer Pererenan rhythm.',
+                'why_this_home' => '',
             ]],
             ['page' => 'home', 'section' => 'featured_collection', 'content' => [
                 'title' => 'FEATURED COLLECTION',
@@ -271,23 +274,6 @@ class CmsContentSeeder extends Seeder
         }
     }
 
-    private function seedTestimonials(): void
-    {
-        $testimonials = [
-            ['page' => 'about', 'author' => 'Sarah M.', 'location' => 'Australia', 'stars' => 5, 'text' => 'The villa exceeded our expectations. Every detail was thoughtfully curated, and the team made us feel at home from the moment we arrived.'],
-            ['page' => 'about', 'author' => 'James T.', 'location' => 'United Kingdom', 'stars' => 5, 'text' => 'We have stayed at many villas in Bali, but nothing compares to the personal touch and quality of a Summerhouses stay.'],
-            ['page' => 'about', 'author' => 'Lisa K.', 'location' => 'Singapore', 'stars' => 5, 'text' => 'From the stunning interiors to the attentive staff, everything was perfect. We are already planning our return trip.'],
-            ['page' => 'about', 'author' => 'David R.', 'location' => 'United States', 'stars' => 5, 'text' => 'An unforgettable experience. The villa was beautiful, the location was perfect, and the concierge service was exceptional.'],
-        ];
-
-        foreach ($testimonials as $i => $data) {
-            Testimonial::updateOrCreate(
-                ['page' => $data['page'], 'author' => $data['author']],
-                array_merge($data, ['sort_order' => $i, 'is_active' => true])
-            );
-        }
-    }
-
     private function seedFaqs(): void
     {
         $faqs = [
@@ -356,26 +342,22 @@ class CmsContentSeeder extends Seeder
 
     private function seedGalleryItems(): void
     {
+        // Cinematic / lifestyle showcase set — editorial photography from /public,
+        // never Lodgify property listing photos. The gallery page is the admin's
+        // space to post brand-mood content, not villa inventory.
         $items = [
-            ['type' => 'image', 'src' => '/homepage_villa/curated-6-exterior.webp', 'alt' => 'Villa exterior with tropical garden', 'label' => '01'],
+            ['type' => 'image', 'src' => '/bellevoire/editorial_large.png', 'alt' => 'Editorial photograph of slow island living at Summerhouse', 'label' => '01', 'category' => 'Editorial', 'title' => 'The Long Afternoon'],
             ['type' => 'text', 'title' => 'Curated Comfort', 'text' => 'Every SummerHouse is chosen for design, privacy, and the kind of comfort that makes Bali feel like home.', 'label' => '02'],
-            ['type' => 'image', 'src' => '/homepage_villa/villaarta.webp', 'alt' => 'Villa Arta interior', 'label' => '03'],
-            ['type' => 'image', 'src' => '/homepage_villa/CactusEstate.webp', 'alt' => 'Cactus Estate pool area', 'label' => '04'],
+            ['type' => 'image', 'src' => '/bellevoire/editorial_small.png', 'alt' => 'Quiet editorial still from a Summerhouse morning', 'label' => '03', 'category' => 'Editorial', 'title' => 'Still Morning'],
+            ['type' => 'image', 'src' => '/bellevoire/beach_stay.png', 'alt' => 'Beachside stay moment near a Summerhouse villa', 'label' => '04', 'category' => 'Escapes', 'title' => 'Beach Stay'],
             ['type' => 'text', 'title' => 'Island Rhythm', 'text' => 'Slower mornings, longer sunsets, and the sound of Bali settling around you.', 'label' => '05'],
-            ['type' => 'image', 'src' => '/homepage_villa/curated-1-main.webp', 'alt' => 'Curated villa main view', 'label' => '06'],
-            ['type' => 'image', 'src' => '/homepage_villa/88east.webp', 'alt' => '88 East villa', 'label' => '07'],
+            ['type' => 'image', 'src' => '/bellevoire/landscape.png', 'alt' => 'Bali landscape stretching beyond the villa grounds', 'label' => '06', 'category' => 'Escapes', 'title' => 'Across the Ridge'],
+            ['type' => 'image', 'src' => '/herosection1.jpg', 'alt' => 'Golden hour light across a Summerhouse stay', 'label' => '07', 'category' => 'Lifestyle', 'title' => 'Golden Hour'],
             ['type' => 'text', 'title' => 'Private by Design', 'text' => 'Gated compounds, private pools, and villa grounds that feel entirely yours.', 'label' => '08'],
-            ['type' => 'image', 'src' => '/homepage_villa/glass_house.png', 'alt' => 'Glass House villa', 'label' => '09'],
-            ['type' => 'image', 'src' => '/homepage_villa/rumahmimosa.webp', 'alt' => 'Rumah Mimosa villa', 'label' => '10'],
-            ['type' => 'image', 'src' => '/homepage_villa/curated-2-detail.webp', 'alt' => 'Villa interior detail', 'label' => '11'],
+            ['type' => 'image', 'src' => '/images_canggu.jpg', 'alt' => 'Slow afternoon scene in Canggu', 'label' => '09', 'category' => 'Lifestyle', 'title' => 'Canggu, Slow'],
+            ['type' => 'image', 'src' => '/Found_myself..jpg', 'alt' => 'A quiet found moment during a Summerhouse stay', 'label' => '10', 'category' => 'Lifestyle', 'title' => 'Found Myself Here'],
+            ['type' => 'video', 'src' => null, 'video_url' => '/video/herosection_summerhouse.mp4', 'video_poster' => '/Hero_Section.png', 'alt' => 'Cinematic film of Summerhouse Bali island living', 'label' => '11', 'category' => 'Films', 'title' => 'Summerhouse, In Motion'],
             ['type' => 'text', 'title' => 'Living Spaces', 'text' => 'Open-plan interiors that blur the line between indoor living and the tropical outdoors.', 'label' => '12'],
-            ['type' => 'image', 'src' => '/homepage_villa/curated-3-corner.webp', 'alt' => 'Villa corner view', 'label' => '13'],
-            ['type' => 'image', 'src' => '/homepage_villa/curated-4-pool.webp', 'alt' => 'Villa pool', 'label' => '14'],
-            ['type' => 'text', 'title' => 'Tropical Architecture', 'text' => 'Joglo ceilings, natural stone, and the kind of design that breathes with the island.', 'label' => '15'],
-            ['type' => 'image', 'src' => '/homepage_villa/curated-5-lounge.webp', 'alt' => 'Villa lounge area', 'label' => '16'],
-            ['type' => 'image', 'src' => '/homepage_villa/VillaZen.webp', 'alt' => 'Villa Zen', 'label' => '17'],
-            ['type' => 'text', 'title' => 'Guest Experience', 'text' => 'From the first message to checkout, every touchpoint is designed to feel personal and effortless.', 'label' => '18'],
-            ['type' => 'image', 'src' => '/homepage_villa/curated-8.webp', 'alt' => 'Curated villa 8', 'label' => '19'],
             ['type' => 'text', 'title' => 'Your Stay Awaits', 'text' => 'Browse the collection, pick your dates, and step into a quieter side of Bali.', 'label' => '20'],
         ];
 
@@ -384,6 +366,28 @@ class CmsContentSeeder extends Seeder
                 ['label' => $data['label']],
                 array_merge($data, ['sort_order' => $i, 'is_active' => true])
             );
+        }
+
+        // Retire earlier seeded rows that pointed at villa listing photos.
+        // Model events fire per row so the cms.gallery cache is flushed.
+        GalleryItem::query()
+            ->where('src', 'like', '/homepage_villa/%')
+            ->get()
+            ->each(fn (GalleryItem $row) => $row->update(['is_active' => false]));
+    }
+
+    private function seedSiteSettings(): void
+    {
+        $settings = [
+            'contact.email' => 'info@summerhousebali.com',
+            'contact.phone' => '+6281932387121',
+            'contact.whatsapp' => '+6281932387121',
+            'contact.address' => 'Bali, Indonesia',
+            'contact.response_time' => 'Within 2 hours',
+        ];
+
+        foreach ($settings as $key => $value) {
+            SiteSetting::firstOrCreate(['key' => $key], ['value' => $value]);
         }
     }
 }

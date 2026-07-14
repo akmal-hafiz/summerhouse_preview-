@@ -23,6 +23,13 @@ class ContactSubmissionResource extends Resource
 
     protected static ?int $navigationSort = 65;
 
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'subject'];
+    }
+
     public static function getNavigationBadge(): ?string
     {
         $count = ContactSubmission::where('is_read', false)->count();

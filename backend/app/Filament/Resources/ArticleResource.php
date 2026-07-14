@@ -21,6 +21,13 @@ class ArticleResource extends Resource
 
     protected static ?int $navigationSort = 70;
 
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'subtitle', 'category'];
+    }
+
     protected static ?string $navigationLabel = 'Journal Articles';
 
     public static function form(Form $form): Form

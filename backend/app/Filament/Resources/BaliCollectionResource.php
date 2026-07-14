@@ -22,6 +22,13 @@ class BaliCollectionResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
+    protected static ?string $recordTitleAttribute = 'location';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['location', 'category', 'tag'];
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -44,7 +51,6 @@ class BaliCollectionResource extends Resource
                             'Surf Stretch' => 'Surf Stretch',
                         ])
                         ->searchable()
-                        ->allowHtml()
                         ->getSearchResultsUsing(fn (string $search) => [$search => $search])
                         ->helperText('Pick a preset or type a new one. Used as the card tag.'),
                     Forms\Components\Placeholder::make('collection_id_preview')

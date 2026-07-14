@@ -24,8 +24,22 @@ class AssetUrl
     {
         if ($value === null || $value === '') return $value;
 
-        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://') || str_starts_with($value, '//')) {
+        $value = trim($value);
+
+        if ($value === '' || preg_match('/[\x00-\x1F\x7F]/', $value)) {
+            return null;
+        }
+
+        if (str_starts_with($value, '//')) {
+            return 'https:' . $value;
+        }
+
+        if (preg_match('/^https?:\/\//i', $value)) {
             return $value;
+        }
+
+        if (preg_match('/^[a-z][a-z0-9+.-]*:/i', $value)) {
+            return null;
         }
 
         if (str_starts_with($value, '/storage/') || str_starts_with($value, 'storage/')) {

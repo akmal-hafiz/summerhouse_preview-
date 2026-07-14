@@ -11,6 +11,9 @@ use App\Models\PageSection;
 use App\Models\ServiceCard;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
+use App\Models\VillaCache;
+use App\Services\Reviews\ReviewMapper;
+use App\Services\Reviews\ReviewRepository;
 use App\Support\AssetUrl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
@@ -23,7 +26,7 @@ class CmsController extends Controller
     {
         $sections = Cache::remember("cms.page.{$page}", self::CACHE_TTL, function () use ($page) {
             return PageSection::active()
-                ->forPage($page)
+                ->onPage($page)
                 ->ordered()
                 ->get()
                 ->mapWithKeys(fn ($row) => [$row->section => $row->content]);
@@ -126,11 +129,16 @@ class CmsController extends Controller
         ]);
     }
 
-    public function testimonials(string $page): JsonResponse
+    public function testimonials(string $page, ReviewRepository $repo): JsonResponse
     {
-        $testimonials = Cache::remember("cms.testimonials.{$page}", self::CACHE_TTL, function () use ($page) {
-            return Testimonial::active()->forPage($page)->ordered()->get(['author', 'location', 'stars', 'text', 'avatar'])
-                ->map(fn ($t) => array_merge($t->toArray(), ['avatar' => AssetUrl::resolve($t->avatar)]));
+        $testimonials = Cache::remember("cms.testimonials.{$page}", self::CACHE_TTL, function () use ($page, $repo) {
+            if ($page === 'services') {
+                return $repo->servicesTestimonials(limit: 6)
+                    ->map(fn (Testimonial $t) => $this->publicOwnerTestimonialCard($t));
+            }
+
+            $featured = $repo->featuredTestimonials(limit: 12, page: $page);
+            return $featured->map(fn (Testimonial $t) => $this->publicTestimonialCard($t));
         });
 
         return response()->json([
@@ -140,10 +148,69 @@ class CmsController extends Controller
         ]);
     }
 
+    public function villaReviews(string $lodgifyId, ReviewRepository $repo): JsonResponse
+    {
+        $villa = VillaCache::where('lodgify_id', $lodgifyId)->first();
+
+        if (!$villa) {
+            return response()->json(['success' => false, 'error' => 'Villa not found'], 404);
+        }
+
+        $summary = $repo->villaSummary($lodgifyId);
+        $reviews = $repo->publishedByVilla($lodgifyId, 20)->load('villa:id,lodgify_id,name,location');
+
+        return response()->json([
+            'success' => true,
+            'lodgifyId' => $lodgifyId,
+            'summary' => $summary,
+            'reviews' => $reviews->map(fn (Testimonial $r) => ReviewMapper::toPublic($r))->values(),
+        ]);
+    }
+
+    /**
+     * Owner testimonial card for the Services page. Excludes private fields.
+     */
+    private function publicOwnerTestimonialCard(Testimonial $t): array
+    {
+        return [
+            'owner' => $t->author,
+            'role' => $t->owner_role,
+            'villaName' => $t->villa?->name ?? $t->location,
+            'quote' => $t->text,
+            'metrics' => collect($t->metrics ?? [])
+                ->filter(fn ($m) => is_array($m) && !empty($m['label']) && !empty($m['value']))
+                ->values(),
+            'avatar' => AssetUrl::resolve($t->avatar),
+            'villaImage' => $t->villa?->thumbnail_url,
+            'isVerified' => (bool) $t->is_verified,
+        ];
+    }
+
+    /**
+     * Compact card shape used by the About page slider. Excludes private
+     * moderation and reviewer fields.
+     */
+    private function publicTestimonialCard(Testimonial $t): array
+    {
+        return [
+            'author' => $t->author,
+            'location' => $t->location,
+            'stars' => (int) $t->stars,
+            'text' => $t->text,
+            'avatar' => AssetUrl::resolve($t->avatar),
+            'source' => $t->source,
+            'sourceLabel' => $t->source_label,
+            'isVerified' => (bool) $t->is_verified,
+            'reviewDate' => $t->review_date?->toDateString(),
+            'villaName' => $t->villa?->name,
+            'villaLocation' => $t->villa?->location,
+        ];
+    }
+
     public function faqs(string $page): JsonResponse
     {
         $faqs = Cache::remember("cms.faqs.{$page}", self::CACHE_TTL, function () use ($page) {
-            return Faq::active()->forPage($page)->ordered()->get(['question', 'answer']);
+            return Faq::active()->onPage($page)->ordered()->get(['question', 'answer']);
         });
 
         return response()->json([
@@ -169,12 +236,27 @@ class CmsController extends Controller
     public function gallery(): JsonResponse
     {
         $items = Cache::remember('cms.gallery', self::CACHE_TTL, function () {
-            return GalleryItem::active()->ordered()->get(['type', 'src', 'alt', 'label', 'title', 'text', 'video_url', 'video_poster'])
-                ->map(fn ($g) => array_merge($g->toArray(), [
+            $rows = GalleryItem::active()->ordered()->get([
+                'type', 'src', 'alt', 'label', 'category', 'title', 'text',
+                'video_url', 'video_poster', 'lodgify_property_id', 'created_at',
+            ]);
+
+            $villas = VillaCache::query()
+                ->whereIn('lodgify_id', $rows->pluck('lodgify_property_id')->filter()->unique())
+                ->get(['lodgify_id', 'name', 'location'])
+                ->keyBy('lodgify_id');
+
+            return $rows->map(function ($g) use ($villas) {
+                $villa = $g->lodgify_property_id ? $villas->get($g->lodgify_property_id) : null;
+
+                return array_merge($g->toArray(), [
                     'src' => AssetUrl::resolve($g->src),
                     'video_url' => AssetUrl::resolve($g->video_url),
                     'video_poster' => AssetUrl::resolve($g->video_poster),
-                ]));
+                    'property_name' => $villa?->name,
+                    'property_location' => $villa?->location,
+                ]);
+            });
         });
 
         return response()->json([

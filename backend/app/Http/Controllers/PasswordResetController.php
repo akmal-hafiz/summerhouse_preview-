@@ -52,7 +52,7 @@ class PasswordResetController extends Controller
         ]);
 
         try {
-            Mail::to($data['email'])->send(new OtpMail($code, $user->name, 'password_reset'));
+            Mail::mailer('resend')->to($data['email'])->send(new OtpMail($code, $user->name, 'password_reset'));
         } catch (\Throwable $e) {
             Log::error('Failed to send password reset OTP', [
                 'email' => $data['email'],
@@ -80,7 +80,7 @@ class PasswordResetController extends Controller
 
         if (!$user) {
             throw ValidationException::withMessages([
-                'email' => 'Kode reset tidak valid atau sudah kadaluarsa.',
+                'code' => 'Kode reset tidak valid atau sudah kadaluarsa.',
             ]);
         }
 

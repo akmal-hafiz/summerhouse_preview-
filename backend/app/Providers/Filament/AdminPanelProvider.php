@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->darkMode(false)
             ->colors([
-                'primary' => Color::hex('#3B82F6'),
+                'primary' => Color::hex('#446B4A'),
                 'success' => Color::hex('#446B4A'),
                 'gray' => Color::hex('#64748B'),
             ])
@@ -55,10 +55,12 @@ class AdminPanelProvider extends PanelProvider
                 'panels::head.end',
                 fn (): string => view('filament.admin-theme')->render()
             )
-            ->renderHook(
-                'panels::body.end',
-                fn (): string => view('filament.tutorial-steps')->render() . view('filament.tutorial')->render()
-            )
+            // Tutorial disabled — FAB spotlight overlay dimmed the entire admin panel.
+            // Re-enable by uncommenting when the tour UX is reworked.
+            // ->renderHook(
+            //     'panels::body.end',
+            //     fn (): string => view('filament.tutorial-steps')->render() . view('filament.tutorial')->render()
+            // )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

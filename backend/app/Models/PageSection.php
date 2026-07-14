@@ -36,7 +36,9 @@ class PageSection extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeForPage(Builder $query, string $page): Builder
+    // Named onPage (not forPage) — scopeForPage would shadow the query
+    // builder's internal forPage() and silently break paginate().
+    public function scopeOnPage(Builder $query, string $page): Builder
     {
         return $query->where('page', $page);
     }
@@ -48,7 +50,7 @@ class PageSection extends Model
 
     public static function getSection(string $page, string $section): ?array
     {
-        $row = static::active()->forPage($page)->where('section', $section)->first();
+        $row = static::active()->onPage($page)->where('section', $section)->first();
 
         return $row?->content;
     }

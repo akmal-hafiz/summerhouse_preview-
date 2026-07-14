@@ -42,6 +42,13 @@ class SiteSettingsManager extends Page implements HasForms
         'concierge.phone_label' => 'concierge.phone_label',
         'concierge.email' => 'concierge.email',
         'concierge.email_label' => 'concierge.email_label',
+
+        // Contact page tab
+        'contact.email' => 'contact.email',
+        'contact.phone' => 'contact.phone',
+        'contact.whatsapp' => 'contact.whatsapp',
+        'contact.address' => 'contact.address',
+        'contact.response_time' => 'contact.response_time',
     ];
 
     public function mount(): void
@@ -131,6 +138,52 @@ class SiteSettingsManager extends Page implements HasForms
                                     ->maxLength(40)
                                     ->placeholder('Email')
                                     ->default('Email'),
+                            ])->columns(2),
+                    ]),
+
+                Forms\Components\Tabs\Tab::make('Contact')
+                    ->icon('heroicon-o-envelope')
+                    ->schema([
+                        Forms\Components\Section::make('Contact page details')
+                            ->description('Detail utama yang tampil di halaman Contact.')
+                            ->schema([
+                                Forms\Components\TextInput::make('contact.email')
+                                    ->label('Email contact')
+                                    ->required()
+                                    ->email()
+                                    ->placeholder('info@summerhousebali.com')
+                                    ->helperText('Email utama yang tampil di halaman Contact dan dipakai untuk mailto link.'),
+
+                                Forms\Components\TextInput::make('contact.phone')
+                                    ->label('Nomor telepon')
+                                    ->placeholder('+6281932387121')
+                                    ->regex('/^\+\d{9,15}$/')
+                                    ->validationMessages([
+                                        'regex' => 'Format harus internasional, contoh: +6281932387121.',
+                                    ])
+                                    ->helperText('Format internasional dengan +, tanpa spasi atau tanda hubung.'),
+
+                                Forms\Components\TextInput::make('contact.whatsapp')
+                                    ->label('Nomor WhatsApp')
+                                    ->placeholder('+6281932387121')
+                                    ->regex('/^\+\d{9,15}$/')
+                                    ->validationMessages([
+                                        'regex' => 'Format harus internasional, contoh: +6281932387121.',
+                                    ])
+                                    ->helperText('Kosongkan kalau ingin memakai nomor telepon.'),
+
+                                Forms\Components\Textarea::make('contact.address')
+                                    ->label('Alamat')
+                                    ->rows(3)
+                                    ->maxLength(240)
+                                    ->placeholder('Bali, Indonesia')
+                                    ->helperText('Alamat atau area layanan yang tampil di blok info kiri.'),
+
+                                Forms\Components\TextInput::make('contact.response_time')
+                                    ->label('Response time')
+                                    ->maxLength(80)
+                                    ->placeholder('Within 2 hours')
+                                    ->helperText('Tampil sebagai detail kecil di halaman Contact.'),
                             ])->columns(2),
                     ]),
 

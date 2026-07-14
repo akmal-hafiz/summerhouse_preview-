@@ -7,6 +7,7 @@ use App\Models\HomepageVillaSelection;
 use App\Models\PageSection;
 use App\Models\VillaCache;
 use App\Services\LodgifyService;
+use App\Support\AssetUrl;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -75,7 +76,6 @@ class HomepageManager extends Page implements HasForms
                         ->disk('public')
                         ->directory('uploads/hero/videos')
                         ->visibility('public')
-                        ->preserveFilenames()
                         ->helperText('MP4/WebM/MOV up to 200MB'),
                     Forms\Components\FileUpload::make('hero.poster_image')
                         ->label('Poster Image')
@@ -123,7 +123,14 @@ class HomepageManager extends Page implements HasForms
                 Forms\Components\Tabs\Tab::make('Signature Villa')->icon('heroicon-o-star')->schema([
                     Forms\Components\TextInput::make('signature_villa.eyebrow')->label('Eyebrow'),
                     Forms\Components\TextInput::make('signature_villa.title')->label('Title'),
-                    Forms\Components\Textarea::make('signature_villa.description')->label('Description')->rows(3),
+                    Forms\Components\Textarea::make('signature_villa.description')
+                        ->label('Description')
+                        ->rows(3)
+                        ->helperText('Shown beside the price, e.g. "A five-bedroom tropical estate with private pool…".'),
+                    Forms\Components\Textarea::make('signature_villa.why_this_home')
+                        ->label('"Why this home" text')
+                        ->rows(3)
+                        ->helperText('Shown in the "Why this home" card. Leave blank to auto-generate from the villa location.'),
                     Forms\Components\Section::make('Currently live on homepage')
                         ->description('This villa is what visitors see right now. To swap it, drag a different villa to the top of the list below.')
                         ->schema([
@@ -231,7 +238,7 @@ class HomepageManager extends Page implements HasForms
         }
 
         $name = e($villa->name ?? "Villa #{$lodgifyId}");
-        $thumb = $villa->thumbnail_url ? e($villa->thumbnail_url) : ($villa->raw['image_url'] ?? null);
+        $thumb = AssetUrl::resolve($villa->thumbnail_url ?: ($villa->raw['image_url'] ?? null));
         $thumb = $thumb ? e($thumb) : null;
         $location = e($villa->location ?? $villa->raw['city'] ?? '');
         $bedrooms = $villa->bedrooms ? e((string) $villa->bedrooms) . ' BR' : '';

@@ -10,6 +10,47 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /**
+     * Identifier lookup — Airbnb-style "Welcome back" step.
+     *
+     * Returns { exists, name?, masked_email? } for the given email. Always 200
+     * to avoid exposing enumeration via status codes; rate-limited by route.
+     */
+    public function lookup(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if (!$user) {
+            return response()->json(['exists' => false]);
+        }
+
+        $firstName = trim(explode(' ', (string) $user->name)[0] ?? $user->name);
+
+        return response()->json([
+            'exists' => true,
+            'name' => $firstName !== '' ? $firstName : $user->name,
+            'masked_email' => self::maskEmail($user->email),
+        ]);
+    }
+
+    protected static function maskEmail(string $email): string
+    {
+        $atPos = strpos($email, '@');
+        if ($atPos === false || $atPos < 1) {
+            return $email;
+        }
+        $local = substr($email, 0, $atPos);
+        $domain = substr($email, $atPos);
+        if (strlen($local) <= 2) {
+            return $local[0] . '***' . $domain;
+        }
+        return $local[0] . '***' . $local[strlen($local) - 1] . $domain;
+    }
+
     public function login(Request $request): JsonResponse
     {
         $data = $request->validate([

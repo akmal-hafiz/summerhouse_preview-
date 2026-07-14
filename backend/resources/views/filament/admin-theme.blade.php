@@ -5,37 +5,38 @@
      Primary: sky blue   ·   Secondary: sage (project signature)
   ════════════════════════════════════════════════════════ */
 
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
   :root {
-    /* ── Page surface ── */
-    --sh-bg-1:        #E8F1FB;
-    --sh-bg-2:        #DCE9F7;
-    --sh-bg-3:        #F1F6FC;
+    /* ── Page surface ── unified warm off-white #FAFAF9 */
+    --sh-bg-1:        #FAFAF9;
+    --sh-bg-2:        #F5F5F3;
+    --sh-bg-3:        #FAFAF9;
 
     /* ── Cards & surfaces ── */
     --sh-card:        #FFFFFF;
-    --sh-card-2:      #F8FAFC;
-    --sh-card-edge:   #EEF1F6;
-    --sh-card-edge-2: #F1F5F9;
+    --sh-card-2:      #FAFAF9;
+    --sh-card-edge:   #EFEFEC;
+    --sh-card-edge-2: #F1F1EE;
 
-    /* ── Ink (slate) ── */
-    --sh-ink:        #1E293B;
-    --sh-ink-soft:   #64748B;
-    --sh-ink-faint:  #94A3B8;
-    --sh-hairline:   rgba(30, 41, 59, 0.08);
-    --sh-hairline-2: rgba(30, 41, 59, 0.05);
+    /* ── Ink ── */
+    --sh-ink:        #1a1a1a;
+    --sh-ink-soft:   #555555;
+    --sh-ink-faint:  #8a8a8a;
+    --sh-hairline:   rgba(26, 26, 26, 0.08);
+    --sh-hairline-2: rgba(26, 26, 26, 0.05);
+    --sh-line:       rgba(26, 26, 26, 0.12);
 
-    /* ── Primary: sky ── */
-    --sh-sky:        #3B82F6;
-    --sh-sky-dark:   #2563EB;
-    --sh-sky-soft:   #DBEAFE;
-    --sh-sky-tint:   #EFF6FF;
-    --sh-sky-glow:   rgba(59, 130, 246, 0.16);
+    /* ── Primary: sage #446B4A (unified across storefront + CMS) ── */
+    --sh-sky:        #446B4A;
+    --sh-sky-dark:   #355538;
+    --sh-sky-soft:   #DCE5DD;
+    --sh-sky-tint:   rgba(68, 107, 74, 0.07);
+    --sh-sky-glow:   rgba(68, 107, 74, 0.16);
 
-    /* ── Secondary: sage (project signature) ── */
+    /* ── Secondary: same sage (kept as alias for legacy refs) ── */
     --sh-sage:       #446B4A;
-    --sh-sage-dark:  #3A5C40;
+    --sh-sage-dark:  #355538;
     --sh-sage-soft:  #DCE5DD;
     --sh-sage-tint:  rgba(68, 107, 74, 0.07);
     --sh-sage-glow:  rgba(68, 107, 74, 0.16);
@@ -51,7 +52,7 @@
     --sh-coral-soft: #FEE2E2;
 
     /* ── Type ── */
-    --sh-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --sh-sans: 'Outfit', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
     /* ── Geometry ── */
     --sh-radius:    14px;
@@ -409,8 +410,8 @@
   .fi-badge.fi-color-success, .fi-badge[data-color="success"] { background-color: #DCFCE7 !important; color: #166534 !important; }
   .fi-badge.fi-color-warning, .fi-badge[data-color="warning"] { background-color: #FEF3C7 !important; color: #92400E !important; }
   .fi-badge.fi-color-danger,  .fi-badge[data-color="danger"]  { background-color: #FEE2E2 !important; color: #991B1B !important; }
-  .fi-badge.fi-color-info,    .fi-badge[data-color="info"]    { background-color: #DBEAFE !important; color: #1D4ED8 !important; }
-  .fi-badge.fi-color-primary, .fi-badge[data-color="primary"] { background-color: #DBEAFE !important; color: #1D4ED8 !important; }
+  .fi-badge.fi-color-info,    .fi-badge[data-color="info"]    { background-color: #DCE5DD !important; color: #355538 !important; }
+  .fi-badge.fi-color-primary, .fi-badge[data-color="primary"] { background-color: #DCE5DD !important; color: #355538 !important; }
   .fi-badge.fi-color-gray,    .fi-badge[data-color="gray"]    { background-color: #F1F5F9 !important; color: #475569 !important; }
 
   /* ───────── Tabs — pill segmented ───────── */
@@ -852,6 +853,26 @@
   .sh-suggest-arrow { color: var(--sh-ink-faint); display: flex; transition: color 140ms var(--sh-ease); }
   .sh-suggest:hover .sh-suggest-arrow { color: var(--sh-sky); }
   .sh-suggest-arrow svg { width: 1.2rem; height: 1.2rem; }
+  .sh-suggest:hover .sh-suggest-arrow { transform: translateX(3px); }
+  .sh-suggest-arrow { transition: color 140ms var(--sh-ease), transform 200ms var(--sh-ease); }
+  .sh-suggest:active { transform: translateY(0); box-shadow: var(--sh-lift); }
+
+  /* keyboard focus + pressed states for dashboard shortcuts */
+  .sh-note-link:focus-visible,
+  .sh-suggest:focus-visible,
+  .sh-link:focus-visible {
+    outline: 2px solid var(--sh-sky);
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+  .sh-suggest:focus-visible { border-radius: var(--sh-radius-lg); }
+  .sh-note-link:active { background: rgba(252, 211, 77, 0.5); transform: scale(0.995); }
+  .sh-link:hover svg { transform: translateX(2px); }
+  .sh-link svg { transition: transform 200ms var(--sh-ease); }
+  @media (prefers-reduced-motion: reduce) {
+    .sh-suggest, .sh-suggest-arrow, .sh-note-link, .sh-link svg, .sh-note { transition: none; }
+    .sh-dot { animation: none; }
+  }
 
   /* prompt bar */
   .sh-prompt {

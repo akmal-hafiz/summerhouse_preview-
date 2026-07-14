@@ -19,21 +19,21 @@
                     </span>
                 </div>
                 <div class="sh-note-list">
-                    <a href="/admin/homepage-managers" class="sh-note-link">
+                    <a href="{{ \App\Filament\Pages\HomepageManager::getUrl() }}" class="sh-note-link">
                         <span class="sh-glyph sh-glyph--amber">H</span>
                         <span class="sh-note-link-body">
                             <span class="sh-note-link-title">Homepage Manager</span>
                             <span class="sh-note-link-sub">Villa selections, collections &amp; copy</span>
                         </span>
                     </a>
-                    <a href="/admin/articles" class="sh-note-link">
+                    <a href="{{ \App\Filament\Resources\ArticleResource::getUrl('index') }}" class="sh-note-link">
                         <span class="sh-glyph sh-glyph--pink">J</span>
                         <span class="sh-note-link-body">
                             <span class="sh-note-link-title">Summerhouses Journal</span>
                             <span class="sh-note-link-sub">Write articles &amp; island notes</span>
                         </span>
                     </a>
-                    <a href="/admin/gallery-items" class="sh-note-link">
+                    <a href="{{ \App\Filament\Resources\GalleryItemResource::getUrl('index') }}" class="sh-note-link">
                         <span class="sh-glyph sh-glyph--green">G</span>
                         <span class="sh-note-link-body">
                             <span class="sh-note-link-title">Gallery Manager</span>
@@ -52,20 +52,35 @@
                         </svg>
                         Latest guest inquiry
                     </span>
-                    <div class="sh-inquiry">
-                        <span class="sh-avatar">G</span>
-                        <div>
-                            <p class="sh-inquiry-title">Private airport transfer &amp; in-villa chef request</p>
-                            <p class="sh-inquiry-sub">Awaiting reply from the concierge team</p>
+                    @if ($latestInquiry)
+                        <div class="sh-inquiry">
+                            <span class="sh-avatar">{{ strtoupper(substr($latestInquiry->name ?: 'G', 0, 1)) }}</span>
+                            <div>
+                                <p class="sh-inquiry-title">{{ \Illuminate\Support\Str::limit($latestInquiry->subject ?: $latestInquiry->message, 72) }}</p>
+                                <p class="sh-inquiry-sub">From {{ $latestInquiry->name }} · {{ $latestInquiry->created_at->diffForHumans() }}</p>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="sh-inquiry">
+                            <span class="sh-avatar">–</span>
+                            <div>
+                                <p class="sh-inquiry-title">No guest inquiries yet</p>
+                                <p class="sh-inquiry-sub">New submissions from the contact form will appear here</p>
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="sh-card-foot">
                     <span class="sh-status">
-                        <span class="sh-dot"></span>
-                        Status: <strong>Unread submission</strong>
+                        <span class="sh-dot" @if($unreadCount === 0) style="opacity:0.3" @endif></span>
+                        Status:
+                        <strong>
+                            {{ $unreadCount > 0
+                                ? $unreadCount . ' unread ' . \Illuminate\Support\Str::plural('submission', $unreadCount)
+                                : 'Inbox clear' }}
+                        </strong>
                     </span>
-                    <a href="/admin/contact-submissions" class="sh-link">
+                    <a href="{{ \App\Filament\Resources\ContactSubmissionResource::getUrl('index') }}" class="sh-link">
                         Open inbox
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </a>
@@ -75,7 +90,7 @@
 
         {{-- Suggested actions --}}
         <div class="sh-grid-2">
-            <a href="/admin/homepage-managers" class="sh-suggest">
+            <a href="{{ \App\Filament\Pages\HomepageManager::getUrl() }}" class="sh-suggest">
                 <span class="sh-suggest-main">
                     <span class="sh-suggest-icon sh-suggest-icon--sky">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,7 +107,7 @@
                 </span>
             </a>
 
-            <a href="/admin/articles/create" class="sh-suggest">
+            <a href="{{ \App\Filament\Resources\ArticleResource::getUrl('create') }}" class="sh-suggest">
                 <span class="sh-suggest-main">
                     <span class="sh-suggest-icon sh-suggest-icon--sage">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,19 +125,23 @@
             </a>
         </div>
 
-        {{-- Prompt bar --}}
-        <div class="sh-prompt">
+        {{-- Prompt bar: proxies into Filament's global search (articles, gallery, collections, inquiries) --}}
+        <form
+            class="sh-prompt"
+            role="search"
+            onsubmit="var q = this.querySelector('input').value.trim(); if (q) { var g = document.querySelector('.fi-global-search-field input'); if (g) { g.focus(); g.value = q; g.dispatchEvent(new Event('input', { bubbles: true })); } else { window.location = '{{ \App\Filament\Resources\ContactSubmissionResource::getUrl('index') }}?tableSearch=' + encodeURIComponent(q); } } return false;"
+        >
             <span class="sh-prompt-spark">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                 </svg>
             </span>
-            <input type="text" placeholder="Search villas, articles, collections or guest inquiries…" />
-            <button type="button" class="sh-prompt-send" aria-label="Search">
+            <input type="text" name="q" aria-label="Search the CMS" placeholder="Search articles, gallery, collections or guest inquiries…" />
+            <button type="submit" class="sh-prompt-send" aria-label="Search">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                 </svg>
             </button>
-        </div>
+        </form>
     </div>
 </x-filament-widgets::widget>

@@ -23,12 +23,12 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         $subjects = [
-            'registration' => 'Kode verifikasi Summerhouses Bali — ' . $this->code,
-            'password_reset' => 'Reset password Summerhouses Bali — ' . $this->code,
+            'registration' => 'Kode verifikasi Summerhouses Bali - ' . $this->code,
+            'password_reset' => 'Reset password Summerhouses Bali - ' . $this->code,
         ];
 
-        $fromAddress = config('mail.from.address', 'noreply@summerhousebali.com');
-        $fromName = 'Summerhouses Bali';
+        $fromAddress = config('services.resend.from_email', config('mail.from.address', 'noreply@summerhousebali.com'));
+        $fromName = config('services.resend.from_name', config('mail.from.name', 'Summerhouses Bali'));
 
         return new Envelope(
             from: new Address($fromAddress, $fromName),

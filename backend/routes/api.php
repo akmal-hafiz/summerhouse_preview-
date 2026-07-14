@@ -5,6 +5,8 @@ use App\Http\Controllers\CmsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\OwnerTestimonialController;
+use App\Http\Controllers\ReviewSubmissionController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,7 @@ Route::prefix('v1')->group(function () {
         Route::get('articles', [CmsController::class, 'articles']);
         Route::get('articles/{slug}', [CmsController::class, 'article']);
         Route::get('testimonials/{page}', [CmsController::class, 'testimonials']);
+        Route::get('villas/{lodgifyId}/reviews', [CmsController::class, 'villaReviews']);
         Route::get('faqs/{page}', [CmsController::class, 'faqs']);
         Route::get('service-cards/{category}', [CmsController::class, 'serviceCards']);
         Route::get('gallery', [CmsController::class, 'gallery']);
@@ -30,6 +33,7 @@ Route::prefix('v1')->group(function () {
         Route::post('register/verify-otp', [OtpController::class, 'verifyRegistrationOtp'])->middleware('throttle:otp-verify');
 
         Route::post('login', [AuthController::class, 'login'])->middleware('throttle:20,1');
+        Route::post('lookup', [AuthController::class, 'lookup'])->middleware('throttle:30,1');
 
         // Forgot password flow
         Route::post('password/forgot', [PasswordResetController::class, 'sendResetOtp'])->middleware('throttle:password-reset-send');
@@ -42,6 +46,12 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::post('contact', [ContactController::class, 'store'])->middleware('throttle:5,1');
+
+    Route::post('reviews', [ReviewSubmissionController::class, 'store'])
+        ->middleware('throttle:3,10');
+
+    Route::post('owner-testimonials', [OwnerTestimonialController::class, 'store'])
+        ->middleware('throttle:3,10');
 
     Route::middleware('auth:sanctum')->prefix('wishlist')->group(function () {
         Route::get('/', [WishlistController::class, 'index']);

@@ -31,10 +31,12 @@ class GalleryItem extends Model
         'src',
         'alt',
         'label',
+        'category',
         'title',
         'text',
         'video_url',
         'video_poster',
+        'lodgify_property_id',
         'sort_order',
         'is_active',
     ];
@@ -51,5 +53,23 @@ class GalleryItem extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order');
+    }
+
+    /**
+     * Distinct, non-empty category labels already in use — powers the datalist
+     * suggestions in the CMS so admins reuse the same spelling instead of
+     * spawning duplicate filter tabs on the storefront.
+     *
+     * @return array<int, string>
+     */
+    public static function distinctCategories(): array
+    {
+        return static::query()
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category')
+            ->all();
     }
 }

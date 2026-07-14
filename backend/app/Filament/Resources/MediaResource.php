@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Js;
 
 class MediaResource extends Resource
 {
@@ -73,7 +74,7 @@ class MediaResource extends Resource
                     ->icon('heroicon-o-clipboard')
                     ->action(fn (Media $record) => null)
                     ->extraAttributes(fn (Media $record) => [
-                        'x-on:click' => 'navigator.clipboard.writeText("/storage/' . $record->path . '")',
+                        'x-on:click' => 'navigator.clipboard.writeText(' . Js::from('/storage/' . $record->path) . ')',
                     ]),
                 Tables\Actions\DeleteAction::make(),
             ])

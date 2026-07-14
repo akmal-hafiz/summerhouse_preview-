@@ -41,7 +41,7 @@ class OtpController extends Controller
         ]);
 
         try {
-            Mail::to($data['email'])->send(new OtpMail($code, $data['name']));
+            Mail::mailer('resend')->to($data['email'])->send(new OtpMail($code, $data['name']));
         } catch (\Throwable $e) {
             Log::error('Failed to send OTP email', [
                 'email' => $data['email'],
