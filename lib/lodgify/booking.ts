@@ -11,6 +11,16 @@ function getCheckoutBaseUrl() {
   );
 }
 
+function toSafeHttpUrl(value: string) {
+  const url = new URL(value);
+
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
+    throw new Error("Invalid Lodgify checkout URL protocol.");
+  }
+
+  return url;
+}
+
 export function buildLodgifyCheckoutUrl({
   propertyId,
   checkIn,
@@ -30,7 +40,7 @@ export function buildLodgifyCheckoutUrl({
   const baseUrl = getCheckoutBaseUrl()
     .replaceAll("{propertyId}", safePropertyId)
     .replaceAll(":propertyId", safePropertyId);
-  const url = new URL(baseUrl);
+  const url = toSafeHttpUrl(baseUrl);
 
   if (!baseUrl.includes(safePropertyId) && /checkout\.lodgify\.com/i.test(url.hostname)) {
     const cleanPath = url.pathname.replace(/\/$/, "");

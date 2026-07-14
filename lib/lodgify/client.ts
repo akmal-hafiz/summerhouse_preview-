@@ -1,7 +1,7 @@
 import { asRecordArray, isRecord } from "./runtime";
 import type { LodgifyProperty, LodgifyRoom } from "./types";
-import { normalizeProperty, normalizeRoom } from "./normalizers";
-import { logServerError, logServerWarning } from "@/lib/security/logger";
+import { ensureProtocol, normalizeProperty, normalizeRoom } from "./normalizers";
+import { logServerError, logServerNotice, logServerWarning } from "@/lib/security/logger";
 
 const LODGIFY_API_KEY = process.env.LODGIFY_API_KEY;
 const BASE_URL = process.env.LODGIFY_API_BASE_URL || "https://api.lodgify.com/v2";
@@ -41,11 +41,30 @@ async function lodgifyFetch(path: string, options: FetchOptions = {}) {
   }
 }
 
+const PROPERTIES_PAGE_SIZE = 50;
+const PROPERTIES_MAX_PAGES = 20;
+const PROPERTIES_REVALIDATE_SECONDS = 300;
+
 export async function fetchProperties(): Promise<LodgifyProperty[]> {
   try {
-    const data = await lodgifyFetch("/properties", { revalidate: 3600 });
-    const items = isRecord(data) && Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
-    return asRecordArray(items).map(normalizeProperty).filter((item) => item.id && item.name);
+    const seen = new Map<string, LodgifyProperty>();
+
+    for (let page = 1; page <= PROPERTIES_MAX_PAGES; page += 1) {
+      const data = await lodgifyFetch(`/properties?page=${page}&size=${PROPERTIES_PAGE_SIZE}`, {
+        revalidate: PROPERTIES_REVALIDATE_SECONDS,
+      });
+      const items = isRecord(data) && Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+      if (items.length === 0) break;
+
+      asRecordArray(items)
+        .map(normalizeProperty)
+        .filter((item) => item.id && item.name)
+        .forEach((item) => seen.set(String(item.id), item));
+
+      if (items.length < PROPERTIES_PAGE_SIZE) break;
+    }
+
+    return Array.from(seen.values());
   } catch (error) {
     logServerError("[lodgify:properties]", error);
     return [];
@@ -54,21 +73,26 @@ export async function fetchProperties(): Promise<LodgifyProperty[]> {
 
 export async function fetchPropertyById(id: string | number): Promise<LodgifyProperty | null> {
   if (!id) return null;
+  const propertyId = encodeURIComponent(String(id));
 
   try {
-    const data = await lodgifyFetch(`/properties/${id}`);
+    const data = await lodgifyFetch(`/properties/${propertyId}`);
     return isRecord(data) ? normalizeProperty(data) : null;
   } catch (error) {
-    logServerError("[lodgify:property]", error, { propertyId: String(id) });
+    // A configured id that is inactive/removed in Lodgify 404s here. Callers
+    // already treat null as "skip this property", so this is expected — log as
+    // a notice, not an error, to avoid Next.js' dev "Console Error" overlay.
+    logServerNotice("[lodgify:property]", error, { propertyId: String(id) });
     return null;
   }
 }
 
 export async function fetchPropertyRooms(id: string | number): Promise<LodgifyRoom[]> {
   if (!id) return [];
+  const propertyId = encodeURIComponent(String(id));
 
   try {
-    const data = await lodgifyFetch(`/properties/${id}/rooms`, { revalidate: 3600 });
+    const data = await lodgifyFetch(`/properties/${propertyId}/rooms`, { revalidate: 3600 });
     return asRecordArray(data).map(normalizeRoom);
   } catch (error) {
     logServerError("[lodgify:rooms]", error, { propertyId: String(id) });
@@ -78,12 +102,13 @@ export async function fetchPropertyRooms(id: string | number): Promise<LodgifyRo
 
 export async function fetchPropertyImages(id: string | number) {
   if (!id) return [];
+  const propertyId = encodeURIComponent(String(id));
 
   try {
-    const data = await lodgifyFetch(`/properties/${id}/images`, { revalidate: 3600 });
+    const data = await lodgifyFetch(`/properties/${propertyId}/images`, { revalidate: 3600 });
     return asRecordArray(data).map((image) => ({
       ...image,
-      url: typeof image.url === "string" && image.url.startsWith("//") ? `https:${image.url}` : image.url,
+      url: typeof image.url === "string" ? ensureProtocol(image.url) : image.url,
     }));
   } catch (error) {
     logServerError("[lodgify:images]", error, { propertyId: String(id) });
@@ -93,7 +118,8 @@ export async function fetchPropertyImages(id: string | number) {
 
 export async function fetchAvailabilityItems(startDate: string, endDate: string) {
   try {
-    const data = await lodgifyFetch(`/availability?start=${startDate}&end=${endDate}`, { revalidate: 60 });
+    const params = new URLSearchParams({ start: startDate, end: endDate });
+    const data = await lodgifyFetch(`/availability?${params.toString()}`, { revalidate: 60 });
     return asRecordArray(data);
   } catch (error) {
     logServerError("[lodgify:availability-fetch]", error, { startDate, endDate });

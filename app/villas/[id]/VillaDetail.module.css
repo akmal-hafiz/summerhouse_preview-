@@ -1,7 +1,7 @@
 .main {
-  background-color: #FAFAF9;
+  background-color: var(--color-page);
   min-height: 100vh;
-  color: #2E2E2C;
+  color: var(--color-text);
 }
 
 .container {
@@ -28,7 +28,7 @@
   font-family: var(--font-playfair), serif;
   font-size: 32px;
   font-weight: 600;
-  color: #446B4A;
+  color: var(--color-brand);
   margin: 0;
 }
 
@@ -47,7 +47,7 @@
   font-weight: 500;
   text-decoration: underline;
   cursor: pointer;
-  color: #2E2E2C;
+  color: var(--color-text);
 }
 
 .metaHeader {
@@ -55,7 +55,7 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #2E2E2C;
+  color: var(--color-text);
 }
 
 .rating {
@@ -126,7 +126,7 @@
 
 .sectionDivider {
   height: 1px;
-  background-color: #DDDDDD;
+  background-color: var(--color-border);
   margin: 48px 0;
 }
 
@@ -144,7 +144,7 @@
 
 .propertyStats {
   font-size: 16px;
-  color: #717171;
+  color: var(--color-text-muted);
 }
 
 .hostAvatar {
@@ -153,7 +153,7 @@
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  background: #E5E5E5;
+  background: var(--color-card-bg-warm);
 }
 
 .highlights {
@@ -168,7 +168,7 @@
 }
 
 .highlightIcon {
-  color: #446B4A;
+  color: var(--color-brand);
 }
 
 .highlightText h4 {
@@ -179,21 +179,21 @@
 
 .highlightText p {
   font-size: 14px;
-  color: #717171;
+  color: var(--color-text-muted);
   margin: 0;
 }
 
 .descriptionText {
   line-height: 1.6;
   font-size: 16px;
-  color: #2E2E2C;
+  color: var(--color-text);
 }
 
 .subTitle {
   font-family: var(--font-playfair), serif;
   font-size: 22px;
   margin-bottom: 24px;
-  color: #446B4A;
+  color: var(--color-brand);
 }
 
 /* AMENITIES */
@@ -212,13 +212,13 @@
 
 .amenityIcon {
   font-size: 24px;
-  color: #C7A58A;
+  color: var(--color-accent-sage);
 }
 
 .showAllBtn {
   margin-top: 32px;
   padding: 12px 24px;
-  border: 1px solid #2E2E2C;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
   background: transparent;
   font-weight: 600;
@@ -227,7 +227,7 @@
 }
 
 .showAllBtn:hover {
-  background: #f0f0f0;
+  background: var(--color-surface-muted);
 }
 
 /* RIGHT COLUMN - STICKY CARD */
@@ -242,8 +242,8 @@
 }
 
 .bookingCard {
-  background: #FFFFFF;
-  border: 1px solid #DDDDDD;
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
@@ -264,11 +264,11 @@
 .priceDisplay span {
   font-size: 16px;
   font-weight: 400;
-  color: #717171;
+  color: var(--color-text-muted);
 }
 
 .inputGroup {
-  border: 1px solid #B0B0B0;
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
   margin-bottom: 16px;
 }
@@ -276,7 +276,7 @@
 .dateRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid #B0B0B0;
+  border-bottom: 1px solid var(--color-border-strong);
 }
 
 .inputBox {
@@ -284,7 +284,7 @@
 }
 
 .inputBox:first-child {
-  border-right: 1px solid #B0B0B0;
+  border-right: 1px solid var(--color-border-strong);
 }
 
 .inputLabel {
@@ -296,7 +296,7 @@
 
 .inputValue {
   font-size: 14px;
-  color: #717171;
+  color: var(--color-text-muted);
 }
 
 .guestBox {
@@ -309,8 +309,8 @@
 .reserveBtn {
   width: 100%;
   padding: 14px;
-  background: #446B4A;
-  color: white;
+  background: var(--color-button-primary-bg);
+  color: var(--color-button-primary-text);
   border: none;
   border-radius: 8px;
   font-size: 16px;
@@ -327,7 +327,7 @@
 .bookingNote {
   text-align: center;
   font-size: 14px;
-  color: #717171;
+  color: var(--color-text-muted);
   margin-bottom: 24px;
 }
 
@@ -347,7 +347,7 @@
 .totalRow {
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px solid #DDDDDD;
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   font-weight: 600;
@@ -367,8 +367,8 @@
 
 .backButton {
   padding: 12px 24px;
-  background: #446B4A;
-  color: white;
+  background: var(--color-button-primary-bg);
+  color: var(--color-button-primary-text);
   border-radius: 8px;
   text-decoration: none;
 }

@@ -1,6 +1,8 @@
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 export const AUTH_TOKEN_KEY = "summerhouses:auth-token";
 export const AUTH_USER_KEY = "summerhouses:auth-user";
+export const AUTH_HINT_KEY = "summerhouses:last-user-hint";
+const HINT_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export type AuthUser = {
   id: number;
@@ -47,6 +49,19 @@ export async function loginRequest(email: string, password: string): Promise<Aut
   return authFetch<AuthResponse>("/v1/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
+  });
+}
+
+export type LookupResponse = {
+  exists: boolean;
+  name?: string;
+  masked_email?: string;
+};
+
+export async function lookupIdentifier(email: string): Promise<LookupResponse> {
+  return authFetch<LookupResponse>("/v1/auth/lookup", {
+    method: "POST",
+    body: JSON.stringify({ email }),
   });
 }
 
@@ -181,4 +196,60 @@ export function clearStoredAuth(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(AUTH_TOKEN_KEY);
   window.localStorage.removeItem(AUTH_USER_KEY);
+}
+
+// ─── Returning-user hint (Airbnb-style "Welcome back") ──────────────
+// Survives logout. Cleared by explicit "Not you?" or TTL expiry.
+
+export type AuthHint = {
+  name: string;        // first name only
+  email: string;       // full email — needed so login/OTP buttons work without retype
+  maskedEmail: string; // display-only mask, e.g. "a***z@gmail.com"
+  savedAt: number;     // epoch ms
+};
+
+function maskEmail(email: string): string {
+  const at = email.indexOf("@");
+  if (at < 1) return email;
+  const local = email.slice(0, at);
+  const domain = email.slice(at);
+  if (local.length <= 2) return `${local[0]}***${domain}`;
+  return `${local[0]}***${local[local.length - 1]}${domain}`;
+}
+
+function firstName(name: string): string {
+  return name.trim().split(/\s+/)[0] || name;
+}
+
+export function getAuthHint(): AuthHint | null {
+  if (typeof window === "undefined") return null;
+  const raw = window.localStorage.getItem(AUTH_HINT_KEY);
+  if (!raw) return null;
+  try {
+    const hint = JSON.parse(raw) as AuthHint;
+    if (!hint?.email || !hint?.savedAt) return null;
+    if (Date.now() - hint.savedAt > HINT_TTL_MS) {
+      window.localStorage.removeItem(AUTH_HINT_KEY);
+      return null;
+    }
+    return hint;
+  } catch {
+    return null;
+  }
+}
+
+export function setAuthHint(user: AuthUser): void {
+  if (typeof window === "undefined") return;
+  const hint: AuthHint = {
+    name: firstName(user.name),
+    email: user.email,
+    maskedEmail: maskEmail(user.email),
+    savedAt: Date.now(),
+  };
+  window.localStorage.setItem(AUTH_HINT_KEY, JSON.stringify(hint));
+}
+
+export function clearAuthHint(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(AUTH_HINT_KEY);
 }

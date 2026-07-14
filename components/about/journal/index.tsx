@@ -8,7 +8,7 @@ const JournalViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-[600px] rounded-[32px] bg-[#0a0a0a] flex items-center justify-center">
+      <div className="w-full h-[600px] rounded-[32px] bg-[var(--color-surface-dark)] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
           <p

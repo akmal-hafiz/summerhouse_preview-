@@ -20,3 +20,14 @@ export function logServerError(scope: string, error: unknown, meta: LogMeta = {}
 export function logServerWarning(scope: string, meta: LogMeta = {}) {
   console.warn(scope, cleanMeta(meta));
 }
+
+// Expected, already-handled misses (e.g. a configured property that is inactive
+// in Lodgify). Uses console.warn so Next.js dev does NOT promote it to a red
+// "Console Error" overlay, while still leaving a breadcrumb with the cause.
+export function logServerNotice(scope: string, error: unknown, meta: LogMeta = {}) {
+  const message = error instanceof Error ? error.message : "Unknown server error";
+  console.warn(scope, {
+    ...cleanMeta(meta),
+    message,
+  });
+}

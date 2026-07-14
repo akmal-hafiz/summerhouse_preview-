@@ -66,7 +66,7 @@ const emissiveColor = new Color("orange");
 
 const pageMaterials = [
   new MeshStandardMaterial({ color: whiteColor }),
-  new MeshStandardMaterial({ color: "#111" }),
+  new MeshStandardMaterial({ color: "#2E2E2C" }),
   new MeshStandardMaterial({ color: whiteColor }),
   new MeshStandardMaterial({ color: whiteColor }),
 ];

@@ -7,6 +7,7 @@ import type { VillaSearchResult } from "@/lib/lodgify";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { readSavedVillaIds, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import ConciergeCard from "./ConciergeCard";
+import DashboardVillaThumb from "./DashboardVillaThumb";
 
 type DashboardRightRailProps = {
   villas: VillaSearchResult[];
@@ -21,6 +22,12 @@ function initialsFrom(name: string): string {
     .join("")
     .toUpperCase() || "S";
 }
+
+const PROFILE_ACTIONS = [
+  { href: "/dashboard/settings", label: "Edit profile", icon: <FiEdit2 aria-hidden="true" /> },
+  { href: "/dashboard/saved", label: "Saved villas", icon: <FiHeart aria-hidden="true" /> },
+  { href: "/villas", label: "Browse villas", icon: <FiArrowUpRight aria-hidden="true" /> },
+] as const;
 
 export default function DashboardRightRail({ villas }: DashboardRightRailProps) {
   const { user } = useAuth();
@@ -47,15 +54,18 @@ export default function DashboardRightRail({ villas }: DashboardRightRailProps) 
         <p className="dash-profile-name">{user?.name ?? "Guest"}</p>
         <p className="dash-profile-email">{user?.email ?? ""}</p>
         <div className="dash-profile-actions" role="group" aria-label="Account quick actions">
-          <Link href="/dashboard/settings" className="dash-profile-action" aria-label="Edit profile">
-            <FiEdit2 aria-hidden="true" />
-          </Link>
-          <Link href="/dashboard/saved" className="dash-profile-action" aria-label="Saved villas">
-            <FiHeart aria-hidden="true" />
-          </Link>
-          <Link href="/villas" className="dash-profile-action" aria-label="Browse villas">
-            <FiArrowUpRight aria-hidden="true" />
-          </Link>
+          {PROFILE_ACTIONS.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="dash-profile-action"
+              aria-label={action.label}
+              title={action.label}
+              data-tooltip={action.label}
+            >
+              {action.icon}
+            </Link>
+          ))}
         </div>
       </div>
 
@@ -79,7 +89,7 @@ export default function DashboardRightRail({ villas }: DashboardRightRailProps) 
             {recentSaved.map((villa) => (
               <Link key={villa.id} href={`/villas/${villa.id}`} className="dash-recent-item">
                 <div className="dash-recent-thumb">
-                  {villa.imageUrl && <img src={villa.imageUrl} alt={villa.name ?? ""} loading="lazy" />}
+                  <DashboardVillaThumb src={villa.imageUrl} alt={villa.name ?? ""} />
                 </div>
                 <div className="dash-recent-body">
                   <p className="dash-recent-name">{villa.name ?? "Untitled"}</p>

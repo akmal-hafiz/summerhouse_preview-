@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FiX, FiArrowRight, FiCalendar } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import { readSavedVillaIds, subscribeSavedVillas, toggleSavedVillaId } from "@/components/villas/savedVillas";
+import DashboardVillaThumb from "./DashboardVillaThumb";
 
 type DashboardSavedProps = {
   villas: VillaSearchResult[];
@@ -70,7 +71,7 @@ export default function DashboardSaved({ villas }: DashboardSavedProps) {
             {savedVillas.map((villa) => (
               <Link key={villa.id} href={`/villas/${villa.id}`} className="dash-saved-row">
                 <div className="dash-saved-thumb">
-                  {villa.imageUrl && <img src={villa.imageUrl} alt={villa.name ?? ""} loading="lazy" />}
+                  <DashboardVillaThumb src={villa.imageUrl} alt={villa.name ?? ""} />
                 </div>
                 <div>
                   <p className="dash-saved-name">{villa.name ?? "Untitled"}</p>

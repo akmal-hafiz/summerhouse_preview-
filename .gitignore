@@ -48,3 +48,29 @@ __pycache__/
 
 # Superpowers visual brainstorming sessions
 .superpowers/
+
+# Local debug scripts (must never contain real API keys)
+/scratch/
+
+# Build / preview output snapshots
+/output/
+
+# Test result artifacts
+/test-results/
+
+# One-off Python helper scripts
+fix_*.py
+rebuild_*.py
+inject_*.py
+insert_*.py
+
+# Prompt / notes (local only)
+PROMPT_REVISI_LAPORAN.md
+
+# Agent / IDE metadata
+.agents/
+.kiro/
+skills-lock.json
+
+# Docs (local design specs, not for production)
+/docs/superpowers/

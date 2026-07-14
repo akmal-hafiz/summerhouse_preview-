@@ -1,0 +1,69 @@
+/* Full-bleed auto-scrolling film strip on a dark base. */
+
+.wrapper {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: hidden;
+  background: #111111;
+  padding: 0;
+}
+
+.track {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  animation: marquee-scroll 40s linear infinite;
+}
+
+.wrapper:hover .track {
+  animation-play-state: paused;
+}
+
+.item {
+  flex: 0 0 auto;
+  height: 320px;
+  margin-right: 16px;
+}
+
+.image {
+  height: 320px;
+  width: auto;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+  transition: filter 0.3s ease;
+}
+
+.image:hover {
+  filter: brightness(0.85);
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .item {
+    height: 200px;
+    margin-right: 10px;
+  }
+
+  .image {
+    height: 200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+    /* Fall back to a normal horizontal scroll so all images remain reachable. */
+    overflow-x: auto;
+    max-width: 100vw;
+  }
+}

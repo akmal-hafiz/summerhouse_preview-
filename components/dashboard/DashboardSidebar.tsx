@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FiHome, FiHeart, FiSettings, FiLogOut } from "react-icons/fi";
+import { FiHome, FiHeart, FiSettings, FiLogOut, FiShield, FiArrowLeft } from "react-icons/fi";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { safeHttpHref } from "@/lib/safe-url";
 
 type NavItem = {
   href: string;
@@ -20,7 +21,8 @@ const NAV_ITEMS: NavItem[] = [
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { isAdmin, logout } = useAuth();
+  const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin", "/dashboard");
 
   const handleLogout = async () => {
     await logout();
@@ -46,6 +48,8 @@ export default function DashboardSidebar() {
               key={item.href}
               href={item.href}
               className={`dash-nav-item${isActive ? " is-active" : ""}`}
+              aria-current={isActive ? "page" : undefined}
+              title={item.label}
             >
               <span className="dash-nav-icon">{item.icon}</span>
               <span className="dash-nav-label">{item.label}</span>
@@ -53,10 +57,20 @@ export default function DashboardSidebar() {
             </Link>
           );
         })}
+        {isAdmin && (
+          <a href={adminUrl} className="dash-nav-item dash-nav-item--admin" title="Open CMS dashboard">
+            <span className="dash-nav-icon"><FiShield aria-hidden="true" /></span>
+            <span className="dash-nav-label">CMS dashboard</span>
+          </a>
+        )}
       </nav>
 
       <div className="dash-sidebar-footer">
-        <button type="button" onClick={handleLogout} className="dash-logout">
+        <Link href="/" className="dash-sidebar-home" title="Back to public site">
+          <FiArrowLeft aria-hidden="true" />
+          <span>Public site</span>
+        </Link>
+        <button type="button" onClick={handleLogout} className="dash-logout" title="Sign out">
           <FiLogOut aria-hidden="true" />
           <span>Sign out</span>
         </button>

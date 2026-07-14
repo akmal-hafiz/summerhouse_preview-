@@ -1,0 +1,127 @@
+/* Dark editorial "About us" stage — one viewport tall, pure black, with a
+   left-aligned manifesto in the negative space and two clipped image rails
+   that parallax on scroll. No autoplay: the rails move only with scroll. */
+
+.section {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  height: 100vh;
+  min-height: 640px;
+  background: #000000;
+  color: #ffffff;
+  display: grid;
+  grid-template-columns: clamp(190px, 15vw, 240px) 1fr clamp(190px, 15vw, 240px);
+  overflow: hidden;
+}
+
+/* ---------- Clipped image rails ---------- */
+.col {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Taller-than-viewport track, translated via scroll-linked transform. */
+.track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  will-change: transform;
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.img {
+  object-fit: cover;
+  filter: brightness(0.86) saturate(0.95);
+}
+
+/* ---------- Center manifesto — left-aligned in the black stage ---------- */
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  padding: 96px clamp(32px, 7vw, 130px);
+  max-width: 760px;
+  z-index: 2;
+}
+
+.eyebrow {
+  margin: 0 0 30px;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.primary {
+  margin: 0 0 30px;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.secondary {
+  margin: 0;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(15px, 1.35vw, 18px);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- CTA to the gallery page ---------- */
+.galleryCta {
+  margin-top: 40px;
+  gap: 12px;
+  padding: 15px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  transition: border-color 0.3s ease;
+}
+
+.galleryCta:hover {
+  border-color: #ffffff;
+}
+
+/* ---------- Mobile: hide rails, natural-height left-aligned text ---------- */
+@media (max-width: 768px) {
+  .section {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: auto;
+  }
+
+  .col {
+    display: none;
+  }
+
+  .center {
+    padding: 88px 24px;
+    max-width: none;
+  }
+}

@@ -58,7 +58,7 @@ export const StatItem = ({ value, suffix = "", label, delay = 0, decimals = 0, v
         >
             <div className="relative flex flex-col items-center">
                 <span 
-                    className={`relative z-10 text-[56px] lg:text-[64px] tracking-tight transition-all duration-500 ${variant === 'strong' ? 'font-bold text-[#1a1a19] group-hover:text-[#446B4A]' : 'font-semibold text-[#1a1a19] group-hover:text-[#446B4A]'}`} 
+                    className={`relative z-10 text-[56px] lg:text-[64px] tracking-tight transition-all duration-500 ${variant === 'strong' ? 'font-bold text-[var(--color-text)] group-hover:text-[var(--color-brand)]' : 'font-semibold text-[var(--color-text)] group-hover:text-[var(--color-brand)]'}`} 
                     style={{ 
                         fontFamily: 'var(--font-sans), sans-serif',
                         textShadow: '0 4px 16px rgba(0,0,0,0)'
@@ -67,14 +67,14 @@ export const StatItem = ({ value, suffix = "", label, delay = 0, decimals = 0, v
                     {formattedCount}{suffix}
                 </span>
                 {/* Subtle Glow Effect on Hover */}
-                <div className={`absolute inset-0 z-0 scale-110 rounded-full transition-all duration-700 group-hover:scale-150 group-hover:opacity-10 ${variant === 'strong' ? 'bg-[#446B4A] opacity-0 blur-[32px]' : 'bg-[#446B4A] opacity-0 blur-[24px]'}`} />
+                <div className={`absolute inset-0 z-0 scale-110 rounded-full transition-all duration-700 group-hover:scale-150 group-hover:opacity-10 ${variant === 'strong' ? 'bg-[var(--color-brand)] opacity-0 blur-[32px]' : 'bg-[var(--color-brand)] opacity-0 blur-[24px]'}`} />
             </div>
             
             {/* Hairline Divider */}
-            <div className={`mt-3 mb-4 h-px transition-all duration-500 ${variant === 'strong' ? 'w-12 bg-black/20 group-hover:w-16 group-hover:bg-[#446B4A]/40' : 'w-6 bg-black/10 group-hover:w-10 group-hover:bg-black/20'}`} />
+            <div className={`mt-3 mb-4 h-px transition-all duration-500 ${variant === 'strong' ? 'w-12 bg-[var(--color-border-strong)] group-hover:w-16 group-hover:bg-[var(--color-border-moss)]' : 'w-6 bg-[var(--color-border)] group-hover:w-10 group-hover:bg-[var(--color-border-strong)]'}`} />
             
             <span 
-                className={`uppercase tracking-[0.2em] font-medium transition-colors duration-500 ${variant === 'strong' ? 'text-[11px] lg:text-xs text-[#68635c] group-hover:text-[#1a1a19]' : 'text-[10px] text-[#8F8A84] group-hover:text-[#68635c]'}`} 
+                className={`uppercase tracking-[0.2em] font-medium transition-colors duration-500 ${variant === 'strong' ? 'text-[11px] lg:text-xs text-[var(--color-text-muted)] group-hover:text-[var(--color-text)]' : 'text-[10px] text-[var(--color-text-soft)] group-hover:text-[var(--color-text-muted)]'}`} 
                 style={{ fontFamily: 'var(--font-sans), sans-serif' }}
             >
                 {label}

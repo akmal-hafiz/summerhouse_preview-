@@ -10,6 +10,7 @@ import {
   loginRequest,
   logoutRequest,
   sendRegistrationOtp,
+  setAuthHint,
   updateProfileRequest,
   verifyRegistrationOtp,
   setStoredAuth,
@@ -72,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(response.message || "Login failed");
     }
     setStoredAuth(response.token, response.user);
+    setAuthHint(response.user);
     setUser(response.user);
     setToken(response.token);
     hydrateWishlistFromRemote().catch(() => undefined);
@@ -89,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(response.message || "OTP verification failed");
       }
       setStoredAuth(response.token, response.user);
+      setAuthHint(response.user);
       setUser(response.user);
       setToken(response.token);
       hydrateWishlistFromRemote().catch(() => undefined);

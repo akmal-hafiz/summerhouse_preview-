@@ -1,17 +1,17 @@
 /* ============================================================
    Summerhouses Member Area — clean 3-col, brand palette
    Inspo: Logip/Margaret SaaS dashboard structure
-   Brand palette: #173021 ink / #315f45 sage / #e9c176 gold /
-   #f4efe6 cream / #fffaf2 paper / #695c4d taupe
+   Brand palette: #173021 ink / #446B4A sage / #e9c176 gold /
+   #FAFAF9 cream / #FFFFFF paper / #695c4d taupe
    ============================================================ */
 
 .dash-shell {
   --dash-ink: #173021;
   --dash-ink-soft: #1f4030;
-  --dash-sage: #315f45;
+  --dash-sage: #446B4A;
   --dash-sage-deep: #2d4636;
-  --dash-cream: #f4efe6;
-  --dash-paper: #fffaf2;
+  --dash-cream: #FAFAF9;
+  --dash-paper: #FFFFFF;
   --dash-gold: #e9c176;
   --dash-taupe: #695c4d;
 
@@ -120,10 +120,21 @@
   color: var(--dash-ink);
 }
 
+.dash-nav-item:active {
+  transform: scale(0.98);
+}
+
 .dash-nav-item.is-active {
   background: var(--dash-surface);
   color: var(--dash-ink);
   box-shadow: 0 1px 2px rgba(23, 48, 33, 0.06);
+}
+
+.dash-nav-item--admin {
+  margin-top: 0.5rem;
+  border: 1px solid rgba(68, 107, 74, 0.16);
+  background: rgba(68, 107, 74, 0.08);
+  color: var(--dash-ink);
 }
 
 .dash-nav-icon {
@@ -160,6 +171,7 @@
   display: none;
 }
 
+.dash-sidebar-home,
 .dash-logout {
   display: inline-flex;
   align-items: center;
@@ -174,12 +186,19 @@
   font-weight: 500;
   font-family: inherit;
   text-align: left;
+  text-decoration: none;
   transition: background 180ms ease, color 180ms ease;
 }
 
+.dash-sidebar-home:hover,
 .dash-logout:hover {
   background: rgba(23, 48, 33, 0.05);
   color: var(--dash-ink);
+}
+
+.dash-sidebar-home:active,
+.dash-logout:active {
+  transform: scale(0.98);
 }
 
 /* ----- Main content area ----------------------------------- */
@@ -321,6 +340,22 @@
   margin: 0;
 }
 
+.dash-stat-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  color: var(--dash-ink);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.dash-stat-link:hover {
+  color: var(--dash-sage);
+}
+
 /* Section block (saved villas list) */
 
 .dash-block {
@@ -413,11 +448,28 @@
   flex-shrink: 0;
 }
 
-.dash-saved-thumb img {
+.dash-saved-thumb img,
+.dash-recent-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.dash-villa-thumb-fallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background:
+    linear-gradient(135deg, rgba(68, 107, 74, 0.14), rgba(199, 169, 107, 0.16)),
+    var(--dash-cream);
+  color: rgba(23, 48, 33, 0.55);
+}
+
+.dash-villa-thumb-fallback svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .dash-saved-name {
@@ -606,6 +658,7 @@
 }
 
 .dash-profile-action {
+  position: relative;
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -624,6 +677,44 @@
 .dash-profile-action:hover {
   background: var(--dash-cream);
   transform: translateY(-1px);
+}
+
+.dash-profile-action:active {
+  transform: scale(0.97);
+}
+
+.dash-profile-action::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.55rem);
+  z-index: 4;
+  max-width: 9rem;
+  padding: 0.38rem 0.55rem;
+  border: 1px solid rgba(23, 48, 33, 0.08);
+  border-radius: 0.55rem;
+  background: rgba(255, 254, 250, 0.96);
+  color: var(--dash-ink);
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  box-shadow: 0 0.8rem 1.8rem rgba(23, 48, 33, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-50%, 4px, 0) scale(0.96);
+  transform-origin: bottom center;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dash-profile-action:hover::after,
+  .dash-profile-action:focus-visible::after {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
 }
 
 /* Rail card (generic) */
@@ -754,13 +845,6 @@
   overflow: hidden;
   background: var(--dash-cream);
   flex-shrink: 0;
-}
-
-.dash-recent-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .dash-recent-body {
@@ -993,6 +1077,57 @@
   font-size: 0.9rem;
 }
 
+.dash-loading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.dash-loading-actions button,
+.dash-loading-actions a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.75rem 1.15rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 160ms ease;
+}
+
+.dash-loading-actions button {
+  border: 0;
+  background: var(--dash-ink);
+  color: #fffefa;
+  cursor: pointer;
+}
+
+.dash-loading-actions a {
+  border: 1px solid var(--dash-line);
+  color: var(--dash-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dash-loading-actions button:hover,
+  .dash-loading-actions a:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.dash-loading-actions button:active,
+.dash-loading-actions a:active {
+  transform: scale(0.97);
+}
+
 .dash-loading-pulse {
   display: flex;
   gap: 0.5rem;
@@ -1002,7 +1137,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--dash-sage, #315f45);
+  background: var(--dash-sage, #446B4A);
   animation: dash-pulse 1.2s ease-in-out infinite;
 }
 
@@ -1058,7 +1193,8 @@
     white-space: nowrap;
   }
   .dash-nav-label {
-    display: none;
+    display: inline;
+    font-size: 0.78rem;
   }
   .dash-sidebar-footer {
     margin: 0 0 0 auto;
@@ -1066,11 +1202,14 @@
     border: none;
     flex-direction: row;
   }
+  .dash-sidebar-home,
   .dash-logout {
     padding: 0.55rem;
   }
+  .dash-sidebar-home span,
   .dash-logout span {
-    display: none;
+    display: inline;
+    font-size: 0.78rem;
   }
   .dash-stats {
     grid-template-columns: 1fr;

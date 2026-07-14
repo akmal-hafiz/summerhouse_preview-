@@ -83,12 +83,67 @@ export type CmsArticle = CmsArticleSummary & {
   content: Array<Record<string, unknown>>;
 };
 
+export type ReviewSource =
+  | "manual"
+  | "guest_submission"
+  | "lodgify"
+  | "airbnb"
+  | "booking_com"
+  | "vrbo"
+  | "google"
+  | "other";
+
 export type CmsTestimonial = {
   author: string;
   location?: string | null;
   stars: number;
   text: string;
   avatar?: string | null;
+  source?: ReviewSource | null;
+  sourceLabel?: string | null;
+  isVerified?: boolean;
+  reviewDate?: string | null;
+  villaName?: string | null;
+  villaLocation?: string | null;
+};
+
+export type CmsVillaReview = {
+  id: string;
+  villaLodgifyId?: string | null;
+  villaName?: string | null;
+  villaLocation?: string | null;
+  reviewerName: string;
+  reviewerLocation?: string | null;
+  reviewerAvatarUrl?: string | null;
+  title?: string | null;
+  comment: string;
+  rating?: number | null;
+  source: ReviewSource;
+  sourceLabel?: string | null;
+  isVerified: boolean;
+  isFeatured: boolean;
+  reviewDate?: string | null;
+  stayDate?: string | null;
+  publishedAt?: string | null;
+};
+
+export type CmsOwnerTestimonial = {
+  owner: string;
+  role?: string | null;
+  villaName?: string | null;
+  quote: string;
+  metrics: Array<{ label: string; value: string }>;
+  avatar?: string | null;
+  villaImage?: string | null;
+  isVerified: boolean;
+};
+
+export type CmsVillaReviewSummary = {
+  average_rating: number | null;
+  rated_count: number;
+  total_count: number;
+  verified_count: number;
+  distribution: Record<"1" | "2" | "3" | "4" | "5", number>;
 };
 
 export type CmsFaq = {
@@ -106,10 +161,17 @@ export type CmsGalleryItem = {
   src?: string | null;
   alt?: string | null;
   label?: string | null;
+  /** Editorial filter tab this item belongs to (admin-defined, optional). */
+  category?: string | null;
   title?: string | null;
   text?: string | null;
   video_url?: string | null;
   video_poster?: string | null;
+  /** Lodgify property this post is tagged to (optional). */
+  lodgify_property_id?: string | null;
+  property_name?: string | null;
+  property_location?: string | null;
+  created_at?: string | null;
 };
 
 export async function getCmsPageSections(page: string): Promise<CmsPageContent | null> {
@@ -146,6 +208,115 @@ export async function getCmsArticleBySlug(slug: string): Promise<CmsArticle | nu
 export async function getCmsTestimonials(page: string): Promise<CmsTestimonial[] | null> {
   const data = await cmsFetch<{ success: boolean; testimonials: CmsTestimonial[] }>(`/v1/cms/testimonials/${page}`);
   return data?.success ? data.testimonials : null;
+}
+
+export async function getCmsOwnerTestimonials(): Promise<CmsOwnerTestimonial[] | null> {
+  const data = await cmsFetch<{ success: boolean; testimonials: CmsOwnerTestimonial[] }>(
+    "/v1/cms/testimonials/services",
+  );
+  return data?.success ? data.testimonials : null;
+}
+
+export type OwnerTestimonialSubmission = {
+  author: string;
+  reviewer_email?: string;
+  owner_role?: string;
+  villa_name?: string;
+  lodgify_property_id?: string;
+  text: string;
+};
+
+export async function submitOwnerTestimonial(payload: OwnerTestimonialSubmission): Promise<ReviewSubmissionResult> {
+  const url = `${CMS_BASE_URL}/v1/owner-testimonials`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (response.ok && data?.success) {
+      return { success: true, message: data.message ?? "Testimonial received." };
+    }
+
+    if (response.status === 422 && data?.errors) {
+      return { success: false, error: "Some fields need adjusting.", fieldErrors: data.errors };
+    }
+
+    return {
+      success: false,
+      error: (data?.error as string) ?? "Something went wrong. Please try again shortly.",
+    };
+  } catch {
+    return { success: false, error: "Network error. Please try again shortly." };
+  }
+}
+
+export type CmsVillaReviewPayload = {
+  summary: CmsVillaReviewSummary;
+  reviews: CmsVillaReview[];
+};
+
+export async function getCmsVillaReviews(lodgifyId: string): Promise<CmsVillaReviewPayload | null> {
+  const safe = encodeURIComponent(lodgifyId);
+  const data = await cmsFetch<{ success: boolean; summary: CmsVillaReviewSummary; reviews: CmsVillaReview[] }>(
+    `/v1/cms/villas/${safe}/reviews`,
+    { revalidate: 120 },
+  );
+  return data?.success ? { summary: data.summary, reviews: data.reviews } : null;
+}
+
+export type PublicReviewSubmission = {
+  lodgify_property_id: string;
+  author: string;
+  reviewer_email?: string;
+  location?: string;
+  title?: string;
+  text: string;
+  stars: number;
+  stay_date?: string;
+};
+
+export type ReviewSubmissionResult =
+  | { success: true; message: string }
+  | { success: false; error: string; fieldErrors?: Record<string, string[]> };
+
+export async function submitVillaReview(payload: PublicReviewSubmission): Promise<ReviewSubmissionResult> {
+  const url = `${CMS_BASE_URL}/v1/reviews`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (response.ok && data?.success) {
+      return { success: true, message: data.message ?? "Review received." };
+    }
+
+    if (response.status === 422 && data?.errors) {
+      return { success: false, error: "Some fields need adjusting.", fieldErrors: data.errors };
+    }
+
+    return {
+      success: false,
+      error: (data?.error as string) ?? "Something went wrong. Please try again shortly.",
+    };
+  } catch {
+    return { success: false, error: "Network error. Please try again shortly." };
+  }
 }
 
 export async function getCmsFaqs(page: string): Promise<CmsFaq[] | null> {

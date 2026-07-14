@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { FiMapPin, FiSearch } from "react-icons/fi";
+import { useEffect, useMemo, useState } from "react";
+import { FiMapPin, FiSearch, FiX } from "react-icons/fi";
 import { FEATURED } from "./constants";
 
 type Status = "loading" | "ready" | "error";
@@ -21,6 +21,10 @@ export default function WhereCard({
 }) {
   const [query, setQuery] = useState(value);
 
+  useEffect(() => {
+    setQuery(value);
+  }, [value]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return locations.slice(0, 8);
@@ -30,6 +34,11 @@ export default function WhereCard({
   const handleInput = (v: string) => {
     setQuery(v);
     onInput(v);
+  };
+
+  const clearLocation = () => {
+    setQuery("");
+    onInput("");
   };
 
   const pick = (loc: string) => {
@@ -48,9 +57,22 @@ export default function WhereCard({
           inputMode="search"
           value={query}
           onChange={(e) => handleInput(e.target.value)}
+          onFocus={(e) => {
+            if (value) e.currentTarget.select();
+          }}
           placeholder="Search villas, areas, neighbourhoods"
           className="mobile-booking-search__search-field"
         />
+        {trimmed ? (
+          <button
+            type="button"
+            className="mobile-booking-search__location-clear"
+            onClick={clearLocation}
+            aria-label="Clear selected location"
+          >
+            <FiX size={16} aria-hidden />
+          </button>
+        ) : null}
       </div>
 
       <div className="mobile-booking-search__destination-list">

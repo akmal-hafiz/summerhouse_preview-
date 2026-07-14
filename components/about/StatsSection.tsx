@@ -9,7 +9,7 @@ const stats = [
 
 export const StatsSection = () => {
     return (
-        <section className="w-full bg-[#FAFAF9] pb-32 pt-12 lg:pb-48 lg:pt-20 touch-pan-y">
+        <section className="w-full bg-[var(--color-page)] pb-32 pt-12 lg:pb-48 lg:pt-20 touch-pan-y">
             <div className="mx-auto w-full max-w-[1400px] px-6 md:px-12 lg:px-24">
                 {/* Optional hairline divider above the stats for editorial feel */}
                 <div className="mb-24 h-px w-full bg-black/[0.05]" />

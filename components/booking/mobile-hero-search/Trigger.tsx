@@ -12,7 +12,7 @@ export default function Trigger({ onOpen }: { onOpen: () => void }) {
       onClick={onOpen}
       whileTap={reduce ? undefined : { scale: 0.985 }}
       transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      className="mobile-booking-search__trigger"
+      className="summerhouse-liquid-glass summerhouse-liquid-glass--trigger mobile-booking-search__trigger"
       aria-label="Open search"
     >
       <FiSearch size={17} strokeWidth={2.4} className="mobile-booking-search__trigger-icon" aria-hidden />

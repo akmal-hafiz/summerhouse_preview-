@@ -5,7 +5,10 @@ import Footer from "@/components/common/Footer";
 import AvailabilityCalendar from "@/components/booking/AvailabilityCalendar";
 import VillaAmenities from "@/components/booking/VillaAmenities";
 import VillaPhotoGallery from "@/components/booking/VillaPhotoGallery";
+import VillaReviews from "@/components/villas/VillaReviews";
 import { getVillaDetail, getVillaSummaries } from "@/lib/lodgify";
+import { getCmsVillaReviews } from "@/lib/cms";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface VillaDetailPageProps {
   params: Promise<{
@@ -32,9 +35,10 @@ export async function generateMetadata({ params }: VillaDetailPageProps) {
 
 export default async function VillaDetailPage({ params }: VillaDetailPageProps) {
   const { id } = await params;
-  const [villa, summaries] = await Promise.all([
+  const [villa, summaries, reviewData] = await Promise.all([
     getVillaDetail(id),
     getVillaSummaries(),
+    getCmsVillaReviews(id),
   ]);
 
   if (!villa) {
@@ -217,6 +221,13 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
                 </div>
               </section>
             )}
+
+            <VillaReviews
+              lodgifyId={String(villa.id)}
+              villaName={villa.name}
+              summary={reviewData?.summary ?? null}
+              reviews={reviewData?.reviews ?? []}
+            />
         </div>
       </section>
 
@@ -228,7 +239,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
 function formatDescriptionHtml(html: string): string {
   if (!html) return "";
 
-  let cleaned = html
+  let cleaned = sanitizeHtml(html)
     .replace(/<p>/gi, "")
     .replace(/<\/p>/gi, "\n\n")
     .replace(/<br\s*\/?>/gi, "\n");
@@ -272,7 +283,7 @@ function formatDescriptionHtml(html: string): string {
         result += "</ul>\n";
         inList = false;
       }
-      result += `<h3 class="description-heading">${cleanTextForCheck}</h3>\n`;
+      result += `<h3 class="description-heading">${escapeHtml(cleanTextForCheck)}</h3>\n`;
     } else if (isListItem) {
       if (!inList) {
         result += `<ul class="description-list">\n`;
@@ -280,16 +291,16 @@ function formatDescriptionHtml(html: string): string {
       }
       const content = trimmed.replace(/^[-*•·—\s]+/, "").trim();
       if (content.endsWith(":")) {
-        result += `  <li class="description-list-heading"><strong>${content}</strong></li>\n`;
+        result += `  <li class="description-list-heading"><strong>${escapeHtml(content.replace(/<[^>]*>/g, "").trim())}</strong></li>\n`;
       } else {
-        result += `  <li>${content}</li>\n`;
+        result += `  <li>${escapeHtml(content.replace(/<[^>]*>/g, "").trim())}</li>\n`;
       }
     } else {
       if (inList) {
         result += "</ul>\n";
         inList = false;
       }
-      result += `<p>${trimmed}</p>\n`;
+      result += `<p>${escapeHtml(plainText)}</p>\n`;
     }
   }
 
@@ -298,4 +309,13 @@ function formatDescriptionHtml(html: string): string {
   }
 
   return result;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

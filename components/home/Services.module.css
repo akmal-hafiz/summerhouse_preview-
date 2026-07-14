@@ -1,7 +1,7 @@
 .servicesPage {
   overflow-x: clip;
-  background: #f5f1ea;
-  color: #1f1f1d;
+  background: var(--color-page);
+  color: var(--color-text);
 }
 
 .motionContents {
@@ -39,12 +39,12 @@
   position: relative;
   z-index: 2;
   width: min(100%, 64rem);
-  color: #fffaf1;
+  color: var(--color-text-on-dark);
 }
 
 .eyebrow {
   margin: 0;
-  color: #8bb493;
+  color: var(--color-text-on-dark-muted);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.72rem;
   font-weight: 800;
@@ -67,7 +67,7 @@
 .heroContent h1 {
   max-width: 64rem;
   margin-top: 1.2rem;
-  color: #fffaf1;
+  color: var(--color-text-on-dark);
   font-size: clamp(4rem, 8.2vw, 8.8rem);
   line-height: 0.88;
 }
@@ -75,7 +75,7 @@
 .heroContent p:last-child {
   max-width: 42rem;
   margin: 1.6rem 0 0;
-  color: rgba(255, 250, 241, 0.82);
+  color: var(--color-text-on-dark-muted);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: clamp(1rem, 1.25vw, 1.16rem);
   line-height: 1.75;
@@ -106,7 +106,7 @@
 .detailCopy h2,
 .journeyHeader h2,
 .ctaContent h2 {
-  color: #171715;
+  color: var(--color-text);
   font-size: clamp(3rem, 6.2vw, 6.6rem);
   line-height: 0.9;
 }
@@ -120,15 +120,15 @@
 .pillarCard {
   min-height: 25rem;
   padding: 1.45rem;
-  border: 1px solid rgba(31, 31, 29, 0.12);
+  border: 1px solid var(--color-card-border);
   border-radius: 1rem;
-  background: rgba(255, 250, 241, 0.44);
+  background: var(--color-card-bg-warm);
 }
 
 .pillarCard span,
 .journeyRow span {
   display: block;
-  color: #8d7554;
+  color: var(--color-brand);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.76rem;
   font-weight: 800;
@@ -138,7 +138,7 @@
 .pillarCard h3,
 .journeyRow h3 {
   margin: 5rem 0 1rem;
-  color: #171715;
+  color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(1.85rem, 2.9vw, 2.65rem);
   font-weight: 500;
@@ -149,7 +149,7 @@
 .detailCopy p,
 .journeyRow p {
   margin: 0;
-  color: #625c54;
+  color: var(--color-text-muted);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.78;
@@ -169,7 +169,7 @@
   margin: 0;
   aspect-ratio: 16 / 12;
   border-radius: 1.2rem;
-  background: #d9d0c4;
+  background: var(--color-surface-warm);
   box-shadow: 0 2.5rem 6rem rgba(50, 43, 34, 0.15);
 }
 
@@ -186,13 +186,13 @@
 .reasonList {
   display: grid;
   margin-top: 1.25rem;
-  border-top: 1px solid rgba(31, 31, 29, 0.13);
+  border-top: 1px solid var(--color-border);
 }
 
 .reasonList span {
   padding: 1rem 0;
-  border-bottom: 1px solid rgba(31, 31, 29, 0.13);
-  color: #1f1f1d;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 1rem;
   font-weight: 700;
@@ -201,7 +201,7 @@
 .journey {
   padding-top: clamp(5rem, 9vw, 8rem);
   padding-bottom: clamp(5.5rem, 10vw, 9rem);
-  border-top: 1px solid rgba(31, 31, 29, 0.13);
+  border-top: 1px solid var(--color-border);
 }
 
 .journeyHeader {
@@ -211,7 +211,7 @@
 
 .journeyRows {
   display: grid;
-  border-top: 1px solid rgba(31, 31, 29, 0.13);
+  border-top: 1px solid var(--color-border);
 }
 
 .journeyRow {
@@ -220,7 +220,7 @@
   gap: 2.5rem;
   align-items: start;
   padding: 2.1rem 0;
-  border-bottom: 1px solid rgba(31, 31, 29, 0.13);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .journeyRow h3 {
@@ -254,7 +254,7 @@
 }
 
 .ctaContent h2 {
-  color: #fffaf1;
+  color: var(--color-text-on-dark);
 }
 
 .ctaContent a {
@@ -264,8 +264,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: #fffaf1;
-  color: #1f1f1d;
+  background: var(--color-button-secondary-bg);
+  color: var(--color-button-secondary-text);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.78rem;
   font-weight: 800;
@@ -276,7 +276,7 @@
 
 .ctaContent a:hover {
   transform: translateY(-2px);
-  background: #f0e3cf;
+  background: var(--color-surface-warm);
 }
 
 @media (max-width: 1024px) {

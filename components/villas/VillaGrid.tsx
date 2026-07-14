@@ -66,18 +66,18 @@ const VillaGrid = ({ villas }: VillaGridProps) => {
             {hasMore && (
                 <div className="py-24 md:py-32 flex flex-col items-center group cursor-pointer" onClick={loadMore}>
                     <motion.div 
-                        className="w-[100px] h-[100px] rounded-full border border-[#4d6a52]/40 flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:border-[#4d6a52]"
+                        className="w-[100px] h-[100px] rounded-full border border-[var(--color-border-moss)] flex items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:border-[var(--color-brand)]"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         <div className="flex flex-col items-center">
-                            <span className="text-[10px] tracking-[0.3em] font-bold text-[#4d6a52] uppercase mb-1">More</span>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4d6a52" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <span className="text-[10px] tracking-[0.3em] font-bold text-[var(--color-brand)] uppercase mb-1">More</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M12 5v14M5 12h14" />
                             </svg>
                         </div>
                     </motion.div>
-                    <span className="text-[11px] tracking-[0.4em] font-bold text-[#4d6a52]/50 uppercase mt-6 transition-all duration-500 group-hover:text-[#4d6a52]">
+                    <span className="text-[11px] tracking-[0.4em] font-bold text-[var(--color-text-soft)] uppercase mt-6 transition-all duration-500 group-hover:text-[var(--color-brand)]">
                         Explore More Escapes
                     </span>
                 </div>

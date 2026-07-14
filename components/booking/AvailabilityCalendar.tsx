@@ -100,10 +100,15 @@ export default function AvailabilityCalendar({
     async function loadAvailability() {
       setIsLoading(true);
       setAvailabilityError("");
+      const params = new URLSearchParams({
+        propertyId: String(propertyId),
+        start: rangeStart,
+        end: rangeEnd,
+      });
 
       try {
         const response = await fetch(
-          `/api/lodgify/availability?propertyId=${propertyId}&start=${rangeStart}&end=${rangeEnd}`,
+          `/api/lodgify/availability?${params.toString()}`,
           { signal: controller.signal }
         );
         const data = await response.json();
@@ -337,7 +342,7 @@ export default function AvailabilityCalendar({
         </button>
         <div className="villa-calendar__months">
           {isLoading ? (
-            <div className="villa-calendar__loading">Checking availability...</div>
+            <div className="villa-calendar__loading" role="status" aria-live="polite">Checking availability...</div>
           ) : (
             <>
               {renderMonth(visibleMonth)}
@@ -355,9 +360,9 @@ export default function AvailabilityCalendar({
         </button>
       </div>
 
-      {error && !bookingError && <p className="villa-calendar__error">{error}</p>}
+      {error && !bookingError && <p className="villa-calendar__error" role="alert">{error}</p>}
       {bookingError && (
-        <p className="villa-calendar__error">
+        <p className="villa-calendar__error" role="alert">
           {bookingError}{" "}
           <a href={whatsAppFallbackUrl} target="_blank" rel="noopener noreferrer">
             Contact us via WhatsApp.
@@ -365,7 +370,7 @@ export default function AvailabilityCalendar({
         </p>
       )}
       {availabilityError && (
-        <div className="villa-calendar__error villa-calendar__error--retry">
+        <div className="villa-calendar__error villa-calendar__error--retry" role="alert">
           <span>{availabilityError}</span>
           <button
             type="button"
@@ -380,7 +385,7 @@ export default function AvailabilityCalendar({
         </div>
       )}
       {quoteError && isRangeValid && (
-        <p className="villa-calendar__error">
+        <p className="villa-calendar__error" role="status" aria-live="polite">
           Rates are unavailable right now. The final price will still be confirmed in secure checkout.
         </p>
       )}

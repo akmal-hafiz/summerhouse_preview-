@@ -131,7 +131,7 @@ export default function Services() {
             <h2>Less arranging. More being there.</h2>
             <p>
               A good stay should not feel like project management. We help guests move from questions to clarity,
-              then from arrival to ease, with a team that understands both villa life and Bali's daily rhythm.
+              then from arrival to ease, with the Summerhouse team that understands both villa life and Bali's daily rhythm.
             </p>
             <div className={styles.reasonList}>
               {guestReasons.map((reason) => (

@@ -32,12 +32,20 @@ const DEFAULT_SUBTITLE = "Tim Bali kami siap bantu pilih villa, cek ketersediaan
 
 function buildWhatsappUrl(rawNumber: string): string {
   const digits = rawNumber.replace(/[^\d]/g, "");
+  if (digits.length < 8) return "";
   return `https://wa.me/${digits}`;
 }
 
 function buildTelUrl(rawNumber: string): string {
   const cleaned = rawNumber.replace(/[^\d+]/g, "");
+  if (cleaned.replace(/\D/g, "").length < 8) return "";
   return `tel:${cleaned}`;
+}
+
+function buildMailUrl(rawEmail: string): string {
+  const email = rawEmail.trim();
+  if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email)) return "";
+  return `mailto:${email}`;
 }
 
 export default function ConciergeCard() {
@@ -63,8 +71,11 @@ export default function ConciergeCard() {
   const phoneLabel = settings?.["concierge.phone_label"] ?? "Telepon";
   const email = settings?.["concierge.email"];
   const emailLabel = settings?.["concierge.email_label"] ?? "Email";
+  const waHref = wa ? buildWhatsappUrl(wa) : "";
+  const phoneHref = phone ? buildTelUrl(phone) : "";
+  const emailHref = email ? buildMailUrl(email) : "";
 
-  if (!wa && !email && !phone && settings !== null) {
+  if (!waHref && !emailHref && !phoneHref && settings !== null) {
     return null;
   }
 
@@ -84,9 +95,9 @@ export default function ConciergeCard() {
         )}
 
         <div className="dash-concierge-links">
-          {wa && (
+          {waHref && (
             <a
-              href={buildWhatsappUrl(wa)}
+              href={waHref}
               target="_blank"
               rel="noopener noreferrer"
               className="dash-concierge-link"
@@ -96,9 +107,9 @@ export default function ConciergeCard() {
               <span className="dash-concierge-arrow"><FiArrowUpRight aria-hidden="true" /></span>
             </a>
           )}
-          {phone && (
+          {phoneHref && (
             <a
-              href={buildTelUrl(phone)}
+              href={phoneHref}
               className="dash-concierge-link"
             >
               <span className="dash-concierge-icon"><FiPhone aria-hidden="true" /></span>
@@ -106,9 +117,9 @@ export default function ConciergeCard() {
               <span className="dash-concierge-arrow"><FiArrowUpRight aria-hidden="true" /></span>
             </a>
           )}
-          {email && (
+          {emailHref && (
             <a
-              href={`mailto:${email}`}
+              href={emailHref}
               className="dash-concierge-link"
             >
               <span className="dash-concierge-icon"><FiMail aria-hidden="true" /></span>

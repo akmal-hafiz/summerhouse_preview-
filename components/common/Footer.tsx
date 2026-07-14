@@ -44,7 +44,7 @@ export default function Footer() {
             <div className="sh-footer-newsletter">
               <h2 className="sh-footer-newsletter-title">Join Our Newsletter</h2>
               <p className="sh-footer-desc">
-                Connect, share, and get exclusive tips—be part of our Bali journey!
+                Connect, share, and get thoughtful Bali notes from Summerhouse.
               </p>
               <form className="sh-footer-form" onSubmit={(e) => e.preventDefault()}>
                 <input 

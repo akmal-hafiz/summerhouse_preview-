@@ -1,5 +1,5 @@
 import { isValidDateRange } from "@/lib/date";
-import { getCmsBaliCollections, getHomepageVillaSelections, type CmsHomepageSlots } from "@/lib/cms";
+import { getCmsBaliCollections, getCmsSection, getHomepageVillaSelections, type CmsHomepageSlots } from "@/lib/cms";
 import { fetchAvailabilityItems, fetchProperties, fetchPropertyById, fetchPropertyImages, fetchPropertyRooms } from "./client";
 import { buildAvailabilityMapFromItems, isRangeAvailable } from "./availability";
 import { getDirectBookingUrl } from "./booking";
@@ -25,6 +25,7 @@ import type {
   HomepageStayVilla,
   LodgifyProperty,
   LodgifyRoom,
+  PortfolioStats,
   SignatureVilla,
   VillaDetail,
   VillaSearchParams,
@@ -172,6 +173,17 @@ function propertyToSummary(property: LodgifyProperty): VillaSummary | null {
 export async function getVillaSummaries() {
   const properties = await fetchProperties();
   return compact(properties.map(propertyToSummary));
+}
+
+/** Publicly eligible properties: unique by ID, active, with a name (same rule used by search/homepage). */
+async function getEligibleProperties(): Promise<LodgifyProperty[]> {
+  const properties = await fetchProperties();
+  return properties.filter((property) => property.is_active !== false);
+}
+
+export async function getPortfolioStats(): Promise<PortfolioStats> {
+  const properties = await getEligibleProperties();
+  return { homesCount: properties.length > 0 ? properties.length : null };
 }
 
 export async function getVillaDetail(id: string | number): Promise<VillaDetail | null> {
@@ -437,10 +449,18 @@ function getSignatureSubtitle(villa: HomepageStayVilla) {
   return `Our most exclusive estate in the current SummerHouse collection${location}.`;
 }
 
+type SignatureVillaCms = {
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  why_this_home?: string | null;
+};
+
 export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null> {
-  const [properties, slots] = await Promise.all([
+  const [properties, slots, cms] = await Promise.all([
     fetchProperties().then((all) => all.filter((property) => property.is_active !== false)),
     getHomepageVillaSelections(),
+    getCmsSection<SignatureVillaCms>("home", "signature_villa"),
   ]);
 
   const signatureIds = getSlotIds(slots, "signature");
@@ -463,12 +483,15 @@ export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null
   if (!villa) return null;
 
   const images = getImageSet(property, rooms);
+  const subtitle = getSignatureSubtitle(villa);
+
   return {
     ...villa,
-    eyebrow: "Signature Villa",
-    title: "Most Exclusive Stay",
-    subtitle: getSignatureSubtitle(villa),
-    description: "A five-bedroom tropical estate with private pool, full-villa comfort, and a calmer Pererenan rhythm.",
+    eyebrow: cms?.eyebrow?.trim() || "Signature Villa",
+    title: cms?.title?.trim() || "Most Exclusive Stay",
+    subtitle,
+    whyThisHome: cms?.why_this_home?.trim() || `${subtitle} Chosen for tropical architecture, privacy, and full-villa comfort.`,
+    description: cms?.description?.trim() || `A private ${villa.bedrooms ? `${villa.bedrooms}-bedroom ` : ""}estate with pool, full-villa comfort, and a calm island rhythm.`,
     address: property.city ? `${property.city}, Bali` : "Bali",
     images,
   };

@@ -1,7 +1,7 @@
 .page {
   min-height: 100vh;
-  background: #f6f0e7;
-  color: #1f211d;
+  background: var(--color-surface-warm);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -10,7 +10,7 @@
   overflow-x: hidden;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0) 34rem),
-    #f6f0e7;
+    var(--color-surface-warm);
 }
 
 .hero {
@@ -48,7 +48,7 @@
 .meta,
 .cardMeta,
 .authorRole {
-  color: #756f65;
+  color: var(--color-text-soft);
 }
 
 .heroKicker,
@@ -74,7 +74,7 @@
 .title {
   max-width: 55rem;
   margin: 1.05rem auto 0;
-  color: #1f211d;
+  color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(3.75rem, 8vw, 8.7rem);
   font-weight: 600;
@@ -85,7 +85,7 @@
 .subtitle {
   max-width: 42rem;
   margin: 1.55rem auto 0;
-  color: #686258;
+  color: var(--color-text-muted);
   font-size: clamp(1rem, 1.35vw, 1.25rem);
   font-weight: 300;
   line-height: 1.85;
@@ -106,7 +106,7 @@
   margin: 4.5rem auto 0;
   overflow: hidden;
   border-radius: 2rem;
-  background: #ddd3c4;
+  background: var(--color-card-bg-warm);
   box-shadow: 0 2.5rem 6rem rgba(43, 39, 33, 0.11);
 }
 
@@ -125,7 +125,7 @@
 
 .paragraph {
   margin: 0 0 1.55rem;
-  color: #2b2a26;
+  color: var(--color-text);
   font-size: clamp(1.08rem, 1.2vw, 1.19rem);
   font-weight: 300;
   line-height: 1.9;
@@ -134,7 +134,7 @@
 .dropCap::first-letter {
   float: left;
   margin: 0.12em 0.18em 0 0;
-  color: #2e5c45;
+  color: var(--color-brand);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: 5.5rem;
   font-weight: 600;
@@ -143,7 +143,7 @@
 
 .heading {
   margin: 5.25rem 0 1.45rem;
-  color: #20221f;
+  color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(2.45rem, 4vw, 4.25rem);
   font-weight: 600;
@@ -153,7 +153,7 @@
 
 .subheading {
   margin: 4.5rem 0 1.05rem;
-  color: #756f65;
+  color: var(--color-text-soft);
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.23em;
@@ -171,13 +171,13 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 1.75rem;
-  background: #ddd3c4;
+  background: var(--color-card-bg-warm);
 }
 
 .caption {
   max-width: 38rem;
   margin: 0.85rem auto 0;
-  color: #756f65;
+  color: var(--color-text-soft);
   font-size: 0.88rem;
   font-weight: 300;
   line-height: 1.7;
@@ -188,15 +188,15 @@
   width: min(100% - 2.5rem, 58rem);
   margin: clamp(5.5rem, 9vw, 8rem) auto;
   padding: clamp(2rem, 5vw, 4rem) 0;
-  border-top: 1px solid rgba(117, 111, 101, 0.28);
-  border-bottom: 1px solid rgba(117, 111, 101, 0.28);
+  border-top: 1px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
   text-align: center;
 }
 
 .quote {
   max-width: 48rem;
   margin: 0 auto;
-  color: #2e5c45;
+  color: var(--color-brand);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(2.1rem, 5vw, 5.25rem);
   font-style: italic;
@@ -216,7 +216,7 @@
   gap: 1.35rem;
   align-items: start;
   padding-top: 2rem;
-  border-top: 1px solid rgba(117, 111, 101, 0.32);
+  border-top: 1px solid var(--color-border-strong);
 }
 
 .authorAvatar {
@@ -225,16 +225,16 @@
   height: 5.25rem;
   overflow: hidden;
   border-radius: 999px;
-  background: #ddd3c4;
+  background: var(--color-card-bg-warm);
 }
 
 .authorLabel {
-  color: #2e5c45;
+  color: var(--color-brand);
 }
 
 .authorName {
   margin: 0.35rem 0 0;
-  color: #20221f;
+  color: var(--color-text);
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.2;
@@ -247,7 +247,7 @@
 .authorBio {
   max-width: 39rem;
   margin: 0.85rem 0 0;
-  color: #686258;
+  color: var(--color-text-muted);
   font-size: 0.95rem;
   font-weight: 300;
   line-height: 1.75;
@@ -255,7 +255,7 @@
 
 .relatedSection {
   padding: clamp(5rem, 8vw, 7.5rem) 1.25rem;
-  background: #fffdfa;
+  background: var(--color-page);
 }
 
 .relatedInner {
@@ -273,7 +273,7 @@
 
 .relatedTitle {
   margin: 0.65rem 0 0;
-  color: #20221f;
+  color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(2.6rem, 5vw, 5.5rem);
   font-weight: 600;
@@ -282,7 +282,7 @@
 }
 
 .textLink {
-  color: #2e5c45;
+  color: var(--color-brand);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -306,7 +306,7 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 1.35rem;
-  background: #ddd3c4;
+  background: var(--color-card-bg-warm);
 }
 
 .relatedCard img {
@@ -323,7 +323,7 @@
 
 .cardTitle {
   margin: 0.45rem 0 0;
-  color: #20221f;
+  color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(1.55rem, 2.2vw, 2.1rem);
   font-weight: 600;
@@ -333,7 +333,7 @@
 
 .cardExcerpt {
   margin: 0.8rem 0 0;
-  color: #686258;
+  color: var(--color-text-muted);
   font-size: 0.95rem;
   font-weight: 300;
   line-height: 1.65;
@@ -341,13 +341,13 @@
 
 .ctaSection {
   padding: clamp(5rem, 8vw, 7.5rem) 1.25rem;
-  background: #2e5c45;
-  color: #f6f0e7;
+  background: var(--color-brand);
+  color: var(--color-surface-warm);
   text-align: center;
 }
 
 .ctaEyebrow {
-  color: rgba(246, 240, 231, 0.72);
+  color: var(--color-text-on-dark-muted);
 }
 
 .ctaTitle {
@@ -363,7 +363,7 @@
 .ctaText {
   max-width: 39rem;
   margin: 1.4rem auto 0;
-  color: rgba(246, 240, 231, 0.78);
+  color: var(--color-text-on-dark-muted);
   font-size: 1.04rem;
   font-weight: 300;
   line-height: 1.8;
@@ -396,13 +396,13 @@
 }
 
 .primaryButton {
-  background: #f6f0e7;
-  color: #2e5c45;
+  background: var(--color-surface-warm);
+  color: var(--color-brand);
 }
 
 .secondaryButton {
-  border: 1px solid rgba(246, 240, 231, 0.45);
-  color: #f6f0e7;
+  border: 1px solid rgba(250, 250, 249, 0.45);
+  color: var(--color-surface-warm);
 }
 
 .primaryButton:hover,
@@ -411,7 +411,7 @@
 }
 
 .secondaryButton:hover {
-  background: rgba(246, 240, 231, 0.1);
+  background: rgba(250, 250, 249, 0.10);
 }
 
 @media (max-width: 980px) {

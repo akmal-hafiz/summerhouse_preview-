@@ -65,7 +65,7 @@ export default function CountdownRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke={isExpired ? "#b94a3c" : isWarning ? "#cca75f" : "#315f45"}
+          stroke={isExpired ? "#b94a3c" : isWarning ? "#cca75f" : "#446B4A"}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -75,7 +75,7 @@ export default function CountdownRing({
         />
       </svg>
       <div className="countdown-ring-text">
-        <span className="countdown-ring-value">{isExpired ? "—" : display}</span>
+        <span className="countdown-ring-value">{isExpired ? "0:00" : display}</span>
         {label && !isExpired && <span className="countdown-ring-label">{label}</span>}
         {isExpired && <span className="countdown-ring-label">{expiredLabel}</span>}
       </div>

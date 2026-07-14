@@ -2,8 +2,8 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import About from "@/components/about/About";
 import editorialStyles from "@/components/about/AboutEditorialSections.module.css";
-import { getProperties } from "@/lib/lodgify";
-import { getCmsFaqs, getCmsTestimonials } from "@/lib/cms";
+import { getProperties, getPortfolioStats } from "@/lib/lodgify";
+import { getCmsFaqs, getCmsGalleryItems, getCmsTestimonials } from "@/lib/cms";
 import { listArticles } from "@/lib/journal";
 import { logServerError } from "@/lib/security/logger";
 
@@ -75,12 +75,32 @@ async function getDestinationSummaries(): Promise<DestinationSummary[]> {
     .slice(0, 8);
 }
 
+async function getGallerySectionData() {
+  const [portfolioStatsResult, cmsGalleryResult] = await Promise.allSettled([
+    getPortfolioStats(),
+    getCmsGalleryItems(),
+  ]);
+
+  const portfolioStats =
+    portfolioStatsResult.status === "fulfilled"
+      ? portfolioStatsResult.value
+      : (logServerError("[about:portfolio-stats]", portfolioStatsResult.reason), { homesCount: null as number | null });
+
+  const cmsGalleryItems =
+    cmsGalleryResult.status === "fulfilled"
+      ? cmsGalleryResult.value ?? []
+      : (logServerError("[about:cms-gallery]", cmsGalleryResult.reason), []);
+
+  return { portfolioStats, cmsGalleryItems };
+}
+
 export default async function AboutPage() {
-  const [destinations, testimonials, faqs, journalArticles] = await Promise.all([
+  const [destinations, testimonials, faqs, journalArticles, gallerySection] = await Promise.all([
     getDestinationSummaries(),
     getCmsTestimonials("about"),
     getCmsFaqs("about"),
     listArticles(),
+    getGallerySectionData(),
   ]);
 
   return (
@@ -92,6 +112,8 @@ export default async function AboutPage() {
           testimonials={testimonials}
           faqs={faqs}
           journalArticles={journalArticles}
+          portfolioStats={gallerySection.portfolioStats}
+          cmsGalleryItems={gallerySection.cmsGalleryItems}
         />
       </main>
       <Footer />

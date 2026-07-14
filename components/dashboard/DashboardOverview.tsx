@@ -5,7 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { FiHeart, FiUser, FiShield, FiCalendar, FiArrowRight } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { readSavedVillaIds, subscribeSavedVillas, toggleSavedVillaId } from "@/components/villas/savedVillas";
+import { readSavedVillaIds, subscribeSavedVillas } from "@/components/villas/savedVillas";
+import DashboardVillaThumb from "./DashboardVillaThumb";
+import { safeHttpHref } from "@/lib/safe-url";
 
 type DashboardOverviewProps = {
   villas: VillaSearchResult[];
@@ -34,6 +36,7 @@ export default function DashboardOverview({ villas }: DashboardOverviewProps) {
   const firstName = (user?.name ?? "Guest").split(" ")[0];
   const today = formatDateID(new Date());
   const previewVillas = savedVillas.slice(0, 5);
+  const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin", "/dashboard");
 
   return (
     <>
@@ -76,6 +79,11 @@ export default function DashboardOverview({ villas }: DashboardOverviewProps) {
             <p className="dash-stat-label">Status</p>
             <p className="dash-stat-value">{user?.isAdmin ? "Admin" : "Member"}</p>
             <p className="dash-stat-meta">{user?.isAdmin ? "akses CMS aktif" : "akses standar"}</p>
+            {user?.isAdmin && (
+              <a className="dash-stat-link" href={adminUrl}>
+                Buka CMS <FiArrowRight aria-hidden="true" />
+              </a>
+            )}
           </div>
         </article>
       </section>
@@ -105,7 +113,7 @@ export default function DashboardOverview({ villas }: DashboardOverviewProps) {
             {previewVillas.map((villa) => (
               <Link key={villa.id} href={`/villas/${villa.id}`} className="dash-saved-row">
                 <div className="dash-saved-thumb">
-                  {villa.imageUrl && <img src={villa.imageUrl} alt={villa.name ?? ""} loading="lazy" />}
+                  <DashboardVillaThumb src={villa.imageUrl} alt={villa.name ?? ""} />
                 </div>
                 <div>
                   <p className="dash-saved-name">{villa.name ?? "Untitled"}</p>

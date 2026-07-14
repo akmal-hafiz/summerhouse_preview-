@@ -3,8 +3,18 @@ import { asArray, asBoolean, asNumber, asOptionalString, asRecordArray, asString
 import type { LodgifyId, LodgifyProperty, LodgifyRoom } from "./types";
 
 export function ensureProtocol(url?: string | null) {
-  if (!url) return "";
-  return url.startsWith("//") ? `https:${url}` : url;
+  const value = url?.trim();
+  if (!value) return "";
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+
+  const normalized = value.startsWith("//") ? `https:${value}` : value;
+
+  try {
+    const parsed = new URL(normalized);
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.toString() : "";
+  } catch {
+    return "";
+  }
 }
 
 export function formatPrice(price: unknown, currencyCode = "IDR") {

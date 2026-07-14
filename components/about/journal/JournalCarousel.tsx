@@ -65,12 +65,12 @@ const JournalCarousel = () => {
     };
 
     return (
-        <section className="w-full min-h-[280px] md:min-h-[500px] lg:min-h-[700px] bg-[#FAFAF9] py-[100px] relative overflow-visible">
+        <section className="w-full min-h-[280px] md:min-h-[500px] lg:min-h-[700px] bg-[var(--color-page)] py-[100px] relative overflow-visible">
             <div className="w-full md:w-[95%] mx-auto px-4 sm:px-6 translate-x-0px md:translate-x-0 lg:translate-x-0 lg:px-8 max-w-8xl transform translate-y-[40px] md:translate-y-[60px] lg:translate-y-[80px]">
                 {/* Header */}
                 <div className="text-center mb-16 lg:mb-24">
                     <h2
-                        className="text-[14px] lg:text-[16px] font-bold tracking-[0.4em] uppercase text-[#446B4A]"
+                        className="text-[14px] lg:text-[16px] font-bold tracking-[0.4em] uppercase text-[var(--color-brand)]"
                         style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
                     >
                         
@@ -95,7 +95,7 @@ const JournalCarousel = () => {
                             >
                                 <Link href={item.link} className="group/item block">
                                     {/* Image Container */}
-                                    <div className="relative h-[400px] md:h-[500px] lg:h-[550px] w-full overflow-hidden mb-6 rounded-xl bg-[#E5E2DD]">
+                                    <div className="relative h-[400px] md:h-[500px] lg:h-[550px] w-full overflow-hidden mb-6 rounded-xl bg-[var(--color-card-bg-warm)]">
                                         <Image
                                             src={item.image}
                                             alt={item.title}
@@ -107,7 +107,7 @@ const JournalCarousel = () => {
                                     {/* Content */}
                                     <div className="text-left">
                                         <h3
-                                            className="text-xl md:text-2xl text-[#2E2E2C] mb-3 font-normal tracking-wide uppercase leading-tight"
+                                            className="text-xl md:text-2xl text-[var(--color-text)] mb-3 font-normal tracking-wide uppercase leading-tight"
                                             style={{ fontFamily: 'var(--font-playfair), serif' }}
                                         >
                                             {item.title.split(' in ').map((part, i) => (
@@ -120,7 +120,7 @@ const JournalCarousel = () => {
 
                                         <div className="inline-flex items-center gap-2 group/cta transition-all duration-300">
                                             <span
-                                                className="text-[10px] lg:text-[11px] font-bold tracking-[0.25em] uppercase text-[#C7A58A] border-b border-[#C7A58A] pb-0.5"
+                                                className="text-[10px] lg:text-[11px] font-bold tracking-[0.25em] uppercase text-[var(--color-brand)] border-b border-[var(--color-border-warm)] pb-0.5"
                                                 style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
                                             >
                                                 {item.cta}
@@ -130,7 +130,7 @@ const JournalCarousel = () => {
                                                 height="16"
                                                 viewBox="0 0 24 24"
                                                 fill="none"
-                                                stroke="#C7A58A"
+                                                stroke="var(--color-brand)"
                                                 strokeWidth="1.5"
                                                 className="transition-transform duration-300 group-hover/item:translate-x-1.5"
                                             >
@@ -146,7 +146,7 @@ const JournalCarousel = () => {
                     {/* Navigation Arrows (Desktop) */}
                     <button
                         onClick={() => scroll('right')}
-                        className={`absolute -right-4 top-[35%] z-20 w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-500 hover:bg-[#446B4A] hover:text-white group/btn hidden lg:flex ${!canScrollRight ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -right-4 top-[35%] z-20 w-12 h-12 rounded-full bg-[var(--color-card-bg)] shadow-md flex items-center justify-center transition-all duration-500 hover:bg-[var(--color-brand)] hover:text-[var(--color-text-on-brand)] group/btn hidden lg:flex ${!canScrollRight ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="transition-transform duration-300 group-hover/btn:translate-x-1">
                             <path d="M5 12h14m-7-7l7 7-7 7" />
@@ -155,7 +155,7 @@ const JournalCarousel = () => {
 
                     <button
                         onClick={() => scroll('left')}
-                        className={`absolute -left-4 top-[35%] z-20 w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-500 hover:bg-[#446B4A] hover:text-white group/btn hidden lg:flex ${!canScrollLeft ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                        className={`absolute -left-4 top-[35%] z-20 w-12 h-12 rounded-full bg-[var(--color-card-bg)] shadow-md flex items-center justify-center transition-all duration-500 hover:bg-[var(--color-brand)] hover:text-[var(--color-text-on-brand)] group/btn hidden lg:flex ${!canScrollLeft ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="transition-transform duration-300 group-hover/btn:-translate-x-1">
                             <path d="M19 12H5m7-7l-7 7 7 7" />

@@ -12,6 +12,8 @@ type StayStylesShowcaseProps = {
   variant: "desktop" | "mobile";
 };
 
+const STAY_SECTION_HEADING = "A home, not a hotel";
+
 function formatPrice(villa: HomepageStayVilla) {
   if (!villa.priceLabel) return "Price confirmed at booking";
   return `from ${villa.priceLabel} per night`;
@@ -119,7 +121,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 className="mobile-brand-title">SUMMERHOUSES</h1>
+          <h1 className="mobile-brand-title">{STAY_SECTION_HEADING}</h1>
           <p className="mobile-brand-copy">
             Choose the kind of stay that fits your rhythm, from quick Bali escapes to longer private stays and handpicked SummerHouse homes.
           </p>
@@ -216,7 +218,7 @@ export default function StayStylesShowcase({ groups, variant }: StayStylesShowca
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <div>
-            <h1 className="desktop-stay-heading">A home, not a hotel</h1>
+            <h1 className="desktop-stay-heading">{STAY_SECTION_HEADING}</h1>
           </div>
 
           <p className="desktop-brand-copy">

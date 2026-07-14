@@ -245,7 +245,7 @@ export default function ServicesPageContent({
           {/* Top Floating Card (Watch Video) */}
           <div className={styles.heroFloatingCard} onClick={() => setIsVideoModalOpen(true)}>
             <div className={styles.heroPlayBtn}>
-              <FiPlay fill="#1c1b18" />
+              <FiPlay fill="var(--color-text)" />
             </div>
             <div className={styles.heroCardText}>
               <h3>Watch Video</h3>

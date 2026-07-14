@@ -2,7 +2,7 @@ import { searchAvailableVillas } from "@/lib/lodgify";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 
 export const metadata = {
-  title: "Overview — Summerhouses Dashboard",
+  title: "Overview | Summerhouses Dashboard",
 };
 
 export default async function DashboardPage() {

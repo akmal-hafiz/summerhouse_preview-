@@ -3,12 +3,17 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   FiArrowUpRight,
   FiChevronDown,
-  FiCoffee,
+  FiChevronLeft,
+  FiChevronRight,
   FiCompass,
   FiHeart,
   FiHome,
@@ -16,14 +21,16 @@ import {
   FiShield,
   FiSmile,
   FiStar,
-  FiSun,
   FiUsers,
   FiTool,
-  FiWifi,
   FiAward,
   FiMap,
 } from "react-icons/fi";
 import styles from "./AboutEditorialSections.module.css";
+import DomeGallery from "./DomeGallery";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const LibreDestinationMap = dynamic(() => import("./LibreDestinationMap"), {
   ssr: false,
@@ -47,6 +54,12 @@ type AboutTestimonial = {
   stars: number;
   text: string;
   avatar?: string | null;
+  source?: string | null;
+  sourceLabel?: string | null;
+  isVerified?: boolean;
+  reviewDate?: string | null;
+  villaName?: string | null;
+  villaLocation?: string | null;
 };
 
 type AboutFaq = {
@@ -55,13 +68,21 @@ type AboutFaq = {
 };
 
 import JournalPreviewSection from "./JournalPreviewSection";
+import OurStoryHero from "./sections/OurStoryHero";
+import TrustRecognition from "./sections/TrustRecognition";
+import StudioStatement from "./sections/StudioStatement";
+import ServicesList from "./sections/ServicesList";
 import type { ArticleListItem } from "@/lib/journal";
+import type { PortfolioStats } from "@/lib/lodgify";
+import type { CmsGalleryItem } from "@/lib/cms";
 
 type AboutProps = {
   destinations?: AboutDestination[];
   testimonials?: AboutTestimonial[] | null;
   faqs?: AboutFaq[] | null;
   journalArticles?: ArticleListItem[];
+  portfolioStats?: PortfolioStats;
+  cmsGalleryItems?: CmsGalleryItem[] | null;
 };
 
 const defaultDestinations: AboutDestination[] = [
@@ -146,7 +167,7 @@ const galleryItems = [
   {
     type: "text",
     id: "editorial-text-1",
-    label: "02 / Space",
+    label: "Quiet space",
     title: "Slow Spaces",
     text: "Villas designed around the natural rhythm of the day, where light and shade form their own architecture.",
     className: styles.galleryText1,
@@ -181,7 +202,7 @@ const galleryItems = [
   {
     type: "text",
     id: "editorial-text-2",
-    label: "06 / Rest",
+    label: "Soft rest",
     title: "Silent Corners",
     text: "Quiet nooks created for reading, writing, or simply watching the tropical afternoon breeze.",
     className: styles.galleryText2,
@@ -216,7 +237,7 @@ const galleryItems = [
   {
     type: "text",
     id: "editorial-text-3",
-    label: "10 / Bath",
+    label: "Bath detail",
     title: "Open-Air Rituals",
     text: "Private bathrooms that let you bathe under the stars, enclosed by lush greenery and stone.",
     className: styles.galleryText3,
@@ -241,55 +262,66 @@ const galleryItems = [
   },
 ];
 
+const fallbackDomeGalleryImages = galleryItems
+  .filter((item) => item.type === "image")
+  .map((item) => ({
+    src: item.src ?? "",
+    alt: item.alt ?? item.label,
+  }));
+
 const homeHighlights = [
   { id: "curated-stays", value: "43", label: "Curated stays", text: "A growing collection across Bali's most loved neighborhoods." },
-  { id: "support", value: "24/7", label: "Support", text: "A calm team nearby when plans shift, arrivals change, or questions appear." },
+  { id: "support", value: "24/7", label: "Support", text: "The Summerhouse team nearby when plans shift, arrivals change, or questions appear." },
   { id: "guest-sentiment", value: "4.9", label: "Guest sentiment", text: "The quiet confidence of homes that feel considered before check-in." },
 ];
 
-const amenities = [
-  { id: "fast-wifi", label: "Fast Wi-Fi", icon: FiWifi },
-  { id: "equipped-kitchen", label: "Equipped Kitchen", icon: FiCoffee },
-  { id: "private-pools", label: "Private Pools", icon: FiSun },
-  { id: "calm-bedrooms", label: "Calm Bedrooms", icon: FiHome },
-  { id: "island-guidance", label: "Island Guidance", icon: FiCompass },
-  { id: "safety-care", label: "Safety & Care", icon: FiShield },
+const servicePromises = [
+  {
+    id: "villa-matching",
+    label: "Villa Matching",
+    text: "We help guests choose homes by mood, area, group size, and the kind of Bali rhythm they want.",
+    icon: FiHome,
+  },
+  {
+    id: "arrival-care",
+    label: "Arrival Care",
+    text: "From check-in details to first-day guidance, the stay starts with fewer questions and more ease.",
+    icon: FiMap,
+  },
+  {
+    id: "local-concierge",
+    label: "Local Concierge",
+    text: "Drivers, dining ideas, beach days, and trusted island recommendations stay close when needed.",
+    icon: FiCompass,
+  },
+  {
+    id: "long-stay-setup",
+    label: "Long-Stay Setup",
+    text: "For slower stays, we think through work comfort, daily routines, and practical home details.",
+    icon: FiUsers,
+  },
+  {
+    id: "home-readiness",
+    label: "Home Readiness",
+    text: "Homes are checked for comfort, cleanliness, safety, and small details before guests arrive.",
+    icon: FiShield,
+  },
+  {
+    id: "guest-support",
+    label: "Guest Support",
+    text: "If plans shift, our team stays nearby with calm help, clear answers, and practical next steps.",
+    icon: FiTool,
+  },
 ];
 
-const defaultTestimonials = [
-  {
-    id: "review-1",
-    author: "Naomi S.",
-    location: "Stockholm, Sweden",
-    stars: 5,
-    text: "It felt like a private retreat. Everything was effortless — from check-in to the little design touches.",
-    avatar: "/Found_myself..jpg",
-  },
-  {
-    id: "review-2",
-    author: "Carlos N.",
-    location: "Lisbon, Portugal",
-    stars: 4,
-    text: "A perfect spot to disconnect and breathe. Quiet, clean, and designed with so much care. I loved every day there",
-    avatar: "/homepage_villa/curated-7.webp",
-  },
-  {
-    id: "review-3",
-    author: "Emma L.",
-    location: "London, UK",
-    stars: 5,
-    text: "The architectural design is stunning. Mornings spent by the pool with the sound of the jungle were absolute bliss.",
-    avatar: "/homepage_villa/curated-2-detail.webp",
-  },
-  {
-    id: "review-4",
-    author: "Marc K.",
-    location: "Munich, Germany",
-    stars: 5,
-    text: "Exceeded all expectations. The team was incredibly helpful, booking local drivers and suggesting hidden beach clubs.",
-    avatar: "/homepage_villa/curated-6-exterior.webp",
-  }
-];
+function getInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 const defaultFaqs = [
   {
@@ -300,7 +332,7 @@ const defaultFaqs = [
   },
   {
     id: "arrival-support",
-    question: "Can the team help with arrivals and island plans?",
+    question: "Can the Summerhouse team help with arrivals and island plans?",
     answer:
       "Yes. Arrivals, recommendations, dining, drivers, and daily requests can be handled with care so guests can settle into the pace of the island.",
   },
@@ -488,17 +520,52 @@ function CountUp({ to, duration = 1.4, decimals = 0 }: { to: number; duration?: 
   return <span ref={ref}>{count.toFixed(decimals)}</span>;
 }
 
-export default function About({ destinations = [], testimonials: testimonialsProp, faqs: faqsProp, journalArticles = [] }: AboutProps) {
-  const testimonials = testimonialsProp && testimonialsProp.length
-    ? testimonialsProp.map((t, i) => ({
-        id: `cms-review-${i}`,
-        author: t.author,
-        location: t.location ?? "",
-        stars: t.stars,
-        text: t.text,
-        avatar: t.avatar ?? "/homepage_villa/curated-1-main.webp",
-      }))
-    : defaultTestimonials;
+export default function About({
+  destinations = [],
+  testimonials: testimonialsProp,
+  faqs: faqsProp,
+  journalArticles = [],
+  portfolioStats,
+  cmsGalleryItems,
+}: AboutProps) {
+  const aboutRootRef = useRef<HTMLDivElement>(null);
+  const domeGalleryImages = useMemo(() => {
+    const source = cmsGalleryItems ?? [];
+    const mapped = source
+      .map((item, index) => {
+        if (item.type === "image" && item.src) {
+          return {
+            src: item.src,
+            alt: item.alt?.trim() || item.label?.trim() || `Summerhouse gallery ${index + 1}`,
+            propertyName: item.label?.trim() || undefined,
+          };
+        }
+        if (item.type === "video" && item.video_poster) {
+          return {
+            src: item.video_poster,
+            alt: item.alt?.trim() || item.label?.trim() || `Summerhouse gallery video ${index + 1}`,
+            propertyName: item.label?.trim() || undefined,
+          };
+        }
+        return null;
+      })
+      .filter((item): item is { src: string; alt: string; propertyName: string | undefined } => Boolean(item));
+    return mapped.length ? mapped : fallbackDomeGalleryImages;
+  }, [cmsGalleryItems]);
+  const homesCount = portfolioStats?.homesCount ?? null;
+  const testimonials = (testimonialsProp ?? []).map((t, i) => ({
+    id: `cms-review-${i}`,
+    author: t.author,
+    location: t.location ?? "",
+    stars: t.stars,
+    text: t.text,
+    avatar: t.avatar ?? null,
+    initials: getInitials(t.author),
+    sourceLabel: t.sourceLabel ?? null,
+    isVerified: Boolean(t.isVerified),
+    villaName: t.villaName ?? null,
+  }));
+  const hasTestimonials = testimonials.length > 0;
   const faqs = faqsProp && faqsProp.length
     ? faqsProp.map((f, i) => ({
         id: `cms-faq-${i}`,
@@ -509,26 +576,73 @@ export default function About({ destinations = [], testimonials: testimonialsPro
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
 
   useEffect(() => {
+    if (!hasTestimonials) return;
     const timer = setInterval(() => {
       setActiveReviewIndex((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [hasTestimonials, testimonials.length]);
+
+  useEffect(() => {
+    if (activeReviewIndex >= testimonials.length) {
+      setActiveReviewIndex(0);
+    }
+  }, [testimonials.length, activeReviewIndex]);
 
   const handlePrev = () => {
+    if (!hasTestimonials) return;
     setActiveReviewIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   const handleNext = () => {
+    if (!hasTestimonials) return;
     setActiveReviewIndex((prev) => (prev + 1) % testimonials.length);
   };
 
-  const storySectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: storySectionRef,
-    offset: ["start end", "end start"],
-  });
-  const storyParallaxY = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
+  const activeTestimonial = hasTestimonials ? testimonials[activeReviewIndex] : null;
+
+  useGSAP(
+    () => {
+      const root = aboutRootRef.current;
+      if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      gsap.utils.toArray<HTMLElement>(`.${styles.velocitySurface}`).forEach((element, index) => {
+        gsap.fromTo(
+          element,
+          { y: 58 + index * 10, opacity: 0.86 },
+          {
+            y: -18,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 92%",
+              end: "bottom 18%",
+              scrub: 0.72,
+            },
+          },
+        );
+      });
+
+      gsap.utils.toArray<HTMLElement>(`.${styles.darkScrollChapter}`).forEach((section) => {
+        gsap.fromTo(
+          section,
+          { scale: 0.985 },
+          {
+            scale: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "top 25%",
+              scrub: 0.9,
+            },
+          },
+        );
+      });
+    },
+    { scope: aboutRootRef },
+  );
 
   const destinationItems = destinations.length ? destinations : defaultDestinations;
   const totalVillas = destinationItems.reduce((total, destination) => total + destination.villas, 0) || 43;
@@ -547,475 +661,155 @@ export default function About({ destinations = [], testimonials: testimonialsPro
   ];
 
   return (
-    <div className={styles.aboutShell}>
-      <section className={styles.heroSection}>
-        <div className={styles.heroInner}>
-          <div className={styles.heroLeftColumn}>
-            <motion.div
-              variants={heroStaggerContainer}
-              initial="initial"
-              animate="animate"
-              className={styles.heroCopy}
-            >
-              <motion.p variants={heroChildVariant} className={styles.locationPill}>
-                <FiMapPin aria-hidden="true" />
-                Bali private stays
-              </motion.p>
-              <motion.h1 variants={heroChildVariant}>Private homes for a slower kind of island living.</motion.h1>
-              <motion.p variants={heroChildVariant}>
-                We curate Bali villas for travelers who want more than a beautiful room. They want a home that
-                feels considered, cared for, and quietly connected to the island around it.
-              </motion.p>
+    <div className={styles.aboutShell} ref={aboutRootRef}>
+      <OurStoryHero />
 
-              <motion.div variants={heroChildVariant} className={styles.guestStack}>
-                <div className={styles.avatarGroup}>
-                  <div className={styles.guestAvatar}>
-                    <Image
-                      src="/Found_myself..jpg"
-                      alt="Guest profile photo"
-                      fill
-                      sizes="32px"
-                      className={styles.avatarImg}
-                    />
-                  </div>
-                  <div className={styles.guestAvatar}>
-                    <Image
-                      src="/homepage_villa/curated-2-detail.webp"
-                      alt="Guest profile photo"
-                      fill
-                      sizes="32px"
-                      className={styles.avatarImg}
-                    />
-                  </div>
-                  <div className={styles.guestAvatar}>
-                    <Image
-                      src="/homepage_villa/curated-6-exterior.webp"
-                      alt="Guest profile photo"
-                      fill
-                      sizes="32px"
-                      className={styles.avatarImg}
-                    />
-                  </div>
-                </div>
-                <span>Loved by 200+ happy guests accommodated</span>
-              </motion.div>
+      <TrustRecognition villas={totalVillas} />
 
-              <motion.div variants={heroChildVariant}>
-                <Link href="/villas" className={styles.primaryCta}>
-                  <span>
-                    <FiArrowUpRight aria-hidden="true" />
-                  </span>
-                  Explore Villas
-                </Link>
-              </motion.div>
-            </motion.div>
+      <StudioStatement />
 
-            <motion.div {...fadeUp} className={styles.heroStats}>
-              <div className={styles.favoriteBadge}>
-                <FiAward aria-hidden="true" />
-                <span>Guest favorite</span>
-              </div>
-              {trustStats.map((stat) => (
-                <div key={stat.id} className={styles.heroStat}>
-                  <strong>{stat.value}</strong>
-                  <span>{stat.label}</span>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-
-          <motion.figure
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.96, ease: [0.22, 1, 0.36, 1] }}
-            className={styles.heroVisual}
-          >
-            <Image
-              src="/homepage_villa/curated-6-exterior.webp"
-              alt="Summerhouses Bali private villa with tropical architecture"
-              fill
-              priority
-              sizes="(min-width: 1100px) 48vw, 100vw"
-              className={styles.coverImage}
-            />
-            <div className={styles.floatingMapButton} aria-label="Show villa map location">
-              <FiMap aria-hidden="true" />
-            </div>
-          </motion.figure>
-        </div>
-      </section>
-
-      <section className={styles.storySection} ref={storySectionRef}>
-        <motion.div style={{ y: storyParallaxY }} className={styles.storyImageWrapper}>
-          <Image
-            src="/homepage_villa/curated-1-main.webp"
-            alt="Summerhouses villa living space framed by warm interiors"
-            fill
-            sizes="100vw"
-            className={styles.coverImage}
-            priority
-          />
-          <div className={styles.storyOverlay} />
-        </motion.div>
-        <div className={styles.storyInner}>
-          <motion.div
-            variants={storyHeadlineVariant}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={storyHeadlineVariant.viewport}
-            className={styles.storyHeadline}
-          >
-            <span className={styles.lightEyebrow}>• Introduction</span>
-            <h2>Built around the feeling of arriving somewhere that already understands you.</h2>
-          </motion.div>
-
-          <motion.div
-            variants={storyCardVariant}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={storyCardVariant.viewport}
-            className={styles.storyCard}
-          >
-            {storyRows.map((item) => {
-              const Icon = item.icon;
-              return (
-                <article key={item.id} className={styles.storyRow}>
-                  <strong>
-                    {item.id === "happy-guests" ? (
-                      <>
-                        <CountUp to={200} />+
-                      </>
-                    ) : item.id === "loyal-visitors" ? (
-                      <>
-                        <CountUp to={26} />%
-                      </>
-                    ) : item.id === "guest-support" ? (
-                      <>
-                        <CountUp to={24} />/7
-                      </>
-                    ) : (
-                      item.value
-                    )}
-                  </strong>
-                  <p>{item.text}</p>
-                  <div className={styles.storyIcon}>
-                    <Icon aria-hidden="true" />
-                  </div>
-                </article>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      <section className={styles.teamSection}>
-        <motion.div {...fadeUp} className={styles.teamCard}>
-          <Image
-            src="/Found_myself..jpg"
-            alt="Summerhouses editorial portrait"
-            width={96}
-            height={96}
-            className={styles.teamAvatar}
-          />
-          <div>
-            <h2>Summerhouses Team</h2>
-            <p>Island hospitality, villa curation, and practical guest care.</p>
-          </div>
-          <Link href="/contact" aria-label="Contact Summerhouses">
-            <FiArrowUpRight aria-hidden="true" />
-          </Link>
-        </motion.div>
-
-        <motion.blockquote
-          variants={teamQuoteVariant}
-          initial="initial"
-          whileInView="whileInView"
-          viewport={teamQuoteVariant.viewport}
-          className={styles.teamQuote}
-        >
-          "Summerhouses began with a simple belief: the best stays in Bali are not the loudest ones. They
-          are the homes that let the day unfold naturally, with good light, thoughtful spaces, and people
-          nearby when you need them."
-        </motion.blockquote>
-
-        <div className={styles.pillMarquee} aria-label="Summerhouses values">
-          <div className={styles.pillMarqueeTrack}>
-            {valuePillItems.map((pill) => {
-              const Icon = pill.icon;
-              return (
-                <span key={pill.renderId} className={styles.valuePill}>
-                  <span>
-                    <Icon aria-hidden="true" />
-                  </span>
-                  {pill.label}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.gallerySection}>
-        <motion.div {...fadeUp} className={styles.sectionIntro}>
-          <p className={styles.darkEyebrow}>Gallery</p>
-          <h2>Inside the quieter side of Bali.</h2>
-          <Link href="/gallery" className={styles.smallCta}>
-            Explore Full Gallery
-          </Link>
-        </motion.div>
-
-        <div className={styles.galleryGrid}>
-          {galleryItems.map((item, index) => {
-            if (item.type === "text") {
-              return (
-                <motion.div
-                  variants={zoomInVariant}
-                  custom={index}
-                  initial="initial"
-                  whileInView="whileInView"
-                  viewport={{ once: true, amount: 0.12 }}
-                  key={item.id}
-                  className={`${styles.galleryTextCard} ${item.className}`}
-                >
-                  <span className={styles.galleryTextLabel}>{item.label}</span>
-                  <h3 className={styles.galleryTextTitle}>{item.title}</h3>
-                  <p className={styles.galleryTextDesc}>{item.text}</p>
-                </motion.div>
-              );
-            }
-            return (
-              <motion.figure
-                variants={zoomInVariant}
-                custom={index}
-                initial="initial"
-                whileInView="whileInView"
-                viewport={{ once: true, amount: 0.12 }}
-                key={item.id}
-                className={`${styles.galleryItem} ${item.className}`}
-              >
-                <Image
-                  key={`${item.id}-image`}
-                  src={item.src!}
-                  alt={item.alt!}
-                  fill
-                  sizes="(min-width: 1100px) 24vw, (min-width: 680px) 42vw, 88vw"
-                  className={styles.coverImage}
-                />
-                <figcaption key={`${item.id}-caption`}>
-                  <span>{item.index}</span>
-                  {item.label}
-                </figcaption>
-              </motion.figure>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className={styles.highlightsSection}>
-        <motion.div {...fadeUp} className={styles.sectionIntro}>
-          <p className={styles.darkEyebrow}>Why choose Summerhouses</p>
-          <h2>Everything feels easier when the details are already cared for.</h2>
-          <p>
-            Whether you are arriving for a honeymoon, a family pause, or a longer stay between work and
-            waves, our role is to make the home feel ready for the life you came to live.
-          </p>
-        </motion.div>
-
-        <div className={styles.highlightCards}>
-          {homeHighlights.map((highlight, index) => (
-            <motion.article
-              variants={highlightsCardVariant}
-              custom={index}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={highlightsCardVariant.viewport}
-              key={highlight.id}
-              className={styles.highlightCard}
-            >
-              <strong key={`${highlight.id}-value`}>
-                {highlight.id === "curated-stays" ? (
-                  <CountUp to={43} />
-                ) : highlight.id === "support" ? (
-                  <>
-                    <CountUp to={24} />/7
-                  </>
-                ) : highlight.id === "guest-sentiment" ? (
-                  <CountUp to={4.9} decimals={1} />
-                ) : (
-                  highlight.value
-                )}
-              </strong>
-              <div key={`${highlight.id}-copy`}>
-                <h3>{highlight.label}</h3>
-                <p>{highlight.text}</p>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-
-        <div className={styles.amenityGrid}>
-          {amenities.map((amenity, index) => {
-            const Icon = amenity.icon;
-            return (
-              <motion.div
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: index * 0.035 }}
-                key={amenity.id}
-                className={styles.amenityItem}
-              >
-                <span key={`${amenity.id}-label`}>{amenity.label}</span>
-                <Icon key={`${amenity.id}-icon`} aria-hidden="true" />
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <motion.div {...fadeUp} className={styles.promoBanner}>
-          <Image
-            key="promo-image"
-            src="/homepage_villa/curated-4-view.webp"
-            alt="Summerhouses Bali villa view for a calm stay"
-            fill
-            sizes="(min-width: 900px) 82vw, 100vw"
-            className={styles.coverImage}
-          />
-          <div key="promo-copy">
-            <p className={styles.lightEyebrow}>Begin with a home</p>
-            <h3>Discover your next unforgettable stay.</h3>
-            <Link href="/villas" className={styles.reserveButton}>
-              <span>
-                <FiArrowUpRight aria-hidden="true" />
-              </span>
-              Reserve Now
-            </Link>
-          </div>
-        </motion.div>
-      </section>
+      <ServicesList />
 
       <section className={styles.newReviewsSection}>
         <div className={styles.newReviewsContainer}>
           {/* Header */}
           <div className={styles.newReviewsHeader}>
             <span className={styles.newReviewsKicker}>Reviews</span>
-            <h2 className={styles.newReviewsHeading}>What do our guests say</h2>
+            <h2 className={styles.newReviewsHeading}>What our guests say about Summerhouses</h2>
+            <p>
+              Real notes from stays shaped by calm homes, clear support, and details handled before arrival.
+            </p>
           </div>
 
-          {/* Grid Layout (2-column on desktop, stacked on mobile) */}
-          <div className={styles.newReviewsGrid}>
-            
-            {/* Left Card: Summary Rating Dashboard */}
-            <div className={styles.ratingSummaryCard}>
-              <div className={styles.ratingBigRow}>
-                <span className={styles.ratingStarIcon}>★</span>
-                <span className={styles.ratingValueBig}>4.8</span>
-              </div>
-              
-              <div className={styles.ratingMetricRows}>
-                <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>Cleanliness</span>
-                  <div className={styles.metricBarTrack}>
-                    <div className={styles.metricBarFill} style={{ width: "98%" }} />
-                  </div>
-                  <span className={styles.metricVal}>4.9</span>
-                </div>
-                
-                <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>Location</span>
-                  <div className={styles.metricBarTrack}>
-                    <div className={styles.metricBarFill} style={{ width: "94%" }} />
-                  </div>
-                  <span className={styles.metricVal}>4.7</span>
-                </div>
-                
-                <div className={styles.metricRow}>
-                  <span className={styles.metricLabel}>Value</span>
-                  <div className={styles.metricBarTrack}>
-                    <div className={styles.metricBarFill} style={{ width: "96%" }} />
-                  </div>
-                  <span className={styles.metricVal}>4.8</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Active Testimonial Card */}
-            <div className={styles.activeTestimonialBlock}>
-              <div className={styles.testimonialContentArea}>
-                <motion.div
-                  key={activeReviewIndex}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  {/* Star Rating */}
-                  <div className={styles.testimonialStars}>
-                    {Array.from({ length: 5 }).map((_, idx) => (
-                      <span 
-                        key={idx} 
-                        className={idx < testimonials[activeReviewIndex].stars ? styles.starSolid : styles.starOutline}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Quote Text */}
-                  <blockquote className={styles.testimonialQuoteText}>
-                    “{testimonials[activeReviewIndex].text}”
-                  </blockquote>
-
-                  {/* Author Info Group */}
-                  <div className={styles.testimonialAuthorRow}>
-                    <div className={styles.authorAvatarWrapper}>
+          {hasTestimonials && activeTestimonial ? (
+            <>
+              <div className={styles.newReviewsGrid}>
+                <div className={styles.ratingSummaryCard}>
+                  <motion.div
+                    key={`${activeTestimonial.id}-portrait`}
+                    className={styles.testimonialPortrait}
+                    initial={{ opacity: 0, x: -24, rotate: -1.5 }}
+                    animate={{ opacity: 1, x: 0, rotate: 0 }}
+                    transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {activeTestimonial.avatar ? (
                       <Image
-                        src={testimonials[activeReviewIndex].avatar}
-                        alt={testimonials[activeReviewIndex].author}
+                        src={activeTestimonial.avatar}
+                        alt={activeTestimonial.author}
                         fill
-                        sizes="48px"
-                        className="object-cover rounded-full"
+                        sizes="(min-width: 960px) 22vw, 78vw"
+                        className={styles.coverImage}
                       />
-                    </div>
-                    <div className={styles.authorMeta}>
-                      <strong className={styles.authorName}>{testimonials[activeReviewIndex].author}</strong>
-                      <span className={styles.authorLocation}>{testimonials[activeReviewIndex].location}</span>
-                    </div>
+                    ) : (
+                      <div className={styles.testimonialPortraitFallback} aria-hidden="true">
+                        <span>{activeTestimonial.initials || activeTestimonial.author.charAt(0)}</span>
+                      </div>
+                    )}
+                  </motion.div>
+                  <div className={styles.testimonialPortraitMeta}>
+                    <strong>{activeTestimonial.author}</strong>
+                    <span>{activeTestimonial.location}</span>
+                    {activeTestimonial.villaName ? (
+                      <span className={styles.testimonialVillaLabel}>Stayed at {activeTestimonial.villaName}</span>
+                    ) : null}
                   </div>
-                </motion.div>
+                </div>
+
+                <div className={styles.activeTestimonialBlock}>
+                  <div className={styles.testimonialContentArea}>
+                    <motion.div
+                      key={activeReviewIndex}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <div className={styles.testimonialStars} aria-label={`${activeTestimonial.stars} out of 5 stars`}>
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <span
+                            key={idx}
+                            aria-hidden="true"
+                            className={idx < activeTestimonial.stars ? styles.starSolid : styles.starOutline}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+
+                      {(activeTestimonial.isVerified || activeTestimonial.sourceLabel) ? (
+                        <div className={styles.testimonialBadgeRow}>
+                          {activeTestimonial.isVerified ? (
+                            <span className={styles.testimonialVerifiedBadge}>Verified stay</span>
+                          ) : null}
+                          {activeTestimonial.sourceLabel ? (
+                            <span className={styles.testimonialSourceBadge}>{activeTestimonial.sourceLabel}</span>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      <blockquote className={styles.testimonialQuoteText}>
+                        &ldquo;{activeTestimonial.text}&rdquo;
+                      </blockquote>
+
+                      <div className={styles.testimonialAuthorRow}>
+                        <div className={styles.authorAvatarWrapper}>
+                          {activeTestimonial.avatar ? (
+                            <Image
+                              src={activeTestimonial.avatar}
+                              alt={activeTestimonial.author}
+                              fill
+                              sizes="48px"
+                              className="object-cover rounded-full"
+                            />
+                          ) : (
+                            <div className={styles.authorAvatarFallback} aria-hidden="true">
+                              <span>{activeTestimonial.initials || activeTestimonial.author.charAt(0)}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.authorMeta}>
+                          <strong className={styles.authorName}>{activeTestimonial.author}</strong>
+                          <span className={styles.authorLocation}>{activeTestimonial.location}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  <div className={styles.testimonialNavCtrls}>
+                    <button
+                      type="button"
+                      onClick={handlePrev}
+                      className={styles.testimonialNavArrow}
+                      aria-label="Previous review"
+                    >
+                      <FiChevronLeft aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className={styles.testimonialNavArrow}
+                      aria-label="Next review"
+                    >
+                      <FiChevronRight aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* Navigation Arrows on the right side */}
-              <div className={styles.testimonialNavCtrls}>
-                <button 
-                  type="button" 
-                  onClick={handlePrev} 
-                  className={styles.testimonialNavArrow} 
-                  aria-label="Previous review"
+              <div className={styles.ctaButtonWrapper}>
+                <InteractiveHoverButton
+                  href="/villas"
+                  className={`${styles.airbnbCtaButton} ihb-fill-dark`}
+                  arrow={null}
                 >
-                  ↑
-                </button>
-                <button 
-                  type="button" 
-                  onClick={handleNext} 
-                  className={styles.testimonialNavArrow} 
-                  aria-label="Next review"
-                >
-                  ↓
-                </button>
+                  Read more guest stories
+                </InteractiveHoverButton>
               </div>
+            </>
+          ) : (
+            <div className={styles.newReviewsEmpty}>
+              <p>Guest stories are on their way. Check back soon for words from our first Summerhouse stays.</p>
             </div>
-
-          </div>
-
-          {/* Centered CTA Button */}
-          <div className={styles.ctaButtonWrapper}>
-            <a 
-              href="https://www.airbnb.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className={styles.airbnbCtaButton}
-            >
-              Check all 200+ reviews
-            </a>
-          </div>
+          )}
         </div>
       </section>
 
@@ -1023,12 +817,12 @@ export default function About({ destinations = [], testimonials: testimonialsPro
         <div className={styles.faqIntro}>
           <p className={styles.darkEyebrow}>FAQ</p>
           <h2>Everything you need to know.</h2>
-          <Link href="/contact" className={styles.reserveButtonDark}>
+          <InteractiveHoverButton href="/contact" className={`${styles.reserveButtonDark} ihb-fill-light`} arrow={null}>
             <span>
               <FiArrowUpRight aria-hidden="true" />
             </span>
             Ask Us
-          </Link>
+          </InteractiveHoverButton>
         </div>
         <div className={styles.faqList}>
           {faqs.map((faq, index) => (
@@ -1051,7 +845,7 @@ export default function About({ destinations = [], testimonials: testimonialsPro
 
       <JournalPreviewSection articles={journalArticles} />
 
-      <section className={styles.destinationSection}>
+      <section className={`${styles.destinationSection} ${styles.darkScrollChapter}`}>
         <div className={styles.destinationInner}>
           <motion.div {...fadeUp} className={styles.destinationHeader}>
             <p className={styles.lightEyebrow}>Location</p>

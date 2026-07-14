@@ -1,11 +1,11 @@
 .contactPage {
-  --contact-bg: #FAFAF9;
-  --contact-ink: #171715;
-  --contact-muted: rgba(23, 23, 21, 0.58);
-  --contact-soft: rgba(23, 23, 21, 0.1);
-  --contact-line: rgba(23, 23, 21, 0.14);
-  --contact-green: #446B4A;
-  --contact-green-deep: #355538;
+  --contact-bg: var(--color-page);
+  --contact-ink: var(--color-text);
+  --contact-muted: var(--color-text-muted);
+  --contact-soft: var(--color-border);
+  --contact-line: var(--color-border-strong);
+  --contact-green: var(--color-brand);
+  --contact-green-deep: var(--color-brand-pressed);
 
   position: relative;
   min-height: 100dvh;
@@ -45,7 +45,7 @@
 
 .eyebrow {
   margin: 0;
-  color: rgba(23, 23, 21, 0.45);
+  color: var(--color-text-soft);
   font-size: 0.78rem;
   font-weight: 850;
   line-height: 1.1;
@@ -140,7 +140,7 @@
   grid-template-columns: 1.25rem minmax(0, 1fr);
   gap: 0.95rem;
   align-items: start;
-  color: rgba(23, 23, 21, 0.82);
+  color: var(--color-text);
   font-size: 1rem;
   font-weight: 820;
   line-height: 1.35;
@@ -186,7 +186,7 @@
 }
 
 .form label span {
-  color: rgba(23, 23, 21, 0.74);
+  color: var(--color-text-muted);
   font-size: 0.76rem;
   font-weight: 850;
 }
@@ -221,19 +221,19 @@
 
 .form input::placeholder,
 .form textarea::placeholder {
-  color: rgba(23, 23, 21, 0.34);
+  color: var(--color-text-disabled);
 }
 
 .form select {
   appearance: none;
-  color: rgba(23, 23, 21, 0.64);
+  color: var(--color-text-muted);
 }
 
 .selectField svg {
   position: absolute;
   right: 0;
   bottom: 1.1rem;
-  color: rgba(23, 23, 21, 0.42);
+  color: var(--color-text-soft);
   pointer-events: none;
 }
 
@@ -250,7 +250,7 @@
   width: 100%;
   height: 2.75rem;
   padding: 0 0 0.58rem;
-  border-bottom: 1px solid rgba(23, 23, 21, 0.16);
+  border-bottom: 1px solid var(--color-border-strong);
   color: var(--contact-ink);
   font: 720 0.98rem/1.45 var(--font-dm-sans), system-ui, sans-serif;
   cursor: pointer;
@@ -267,7 +267,7 @@
 }
 
 .subjectTrigger[data-placeholder="true"] {
-  color: rgba(23, 23, 21, 0.34);
+  color: var(--color-text-disabled);
   font-weight: 500;
 }
 
@@ -311,7 +311,7 @@
 
 .subjectMenu li[data-highlighted],
 .subjectMenu li:focus-visible {
-  background: rgba(23, 23, 21, 0.06);
+  background: var(--color-button-secondary-bg-hover);
 }
 
 .subjectMenu li[aria-selected="true"] {
@@ -330,7 +330,7 @@
   margin-top: 0.2rem;
   border: 0;
   background: var(--contact-green);
-  color: #FFFFFF;
+  color: var(--color-button-primary-text);
   font-size: 0.78rem;
   font-weight: 900;
   text-transform: uppercase;
@@ -352,7 +352,7 @@
 }
 
 .formError {
-  color: #a9493c;
+  color: var(--color-state-error);
 }
 
 .formSuccess {
@@ -398,7 +398,7 @@
   align-items: center;
   border: 0;
   background: transparent;
-  color: rgba(23, 23, 21, 0.78);
+  color: var(--color-text);
   min-height: 5.1rem;
   padding: 1.25rem 0;
   text-align: left;

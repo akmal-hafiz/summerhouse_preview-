@@ -84,7 +84,7 @@ export default function DashboardSettings() {
       <section className="dash-hero">
         <div className="dash-hero-copy">
           <h1 className="dash-hero-title">Pengaturan akun</h1>
-          <p>Ubah nama atau password. Email tidak bisa diubah di sini — hubungi concierge untuk pindah email.</p>
+          <p>Ubah nama atau password. Untuk pindah email, hubungi concierge Summerhouse.</p>
         </div>
         <span className="dash-date-pill">
           {formatDateID(new Date())}

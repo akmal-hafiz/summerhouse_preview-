@@ -152,6 +152,8 @@ export type SignatureVilla = HomepageStayVilla & {
   eyebrow: string;
   title: string;
   subtitle: string;
+  /** CMS-editable "Why this home" copy. Falls back to subtitle when empty. */
+  whyThisHome: string;
   address: string;
   images: string[];
 };
@@ -185,4 +187,9 @@ export type VillaDetail = {
   guests: number;
   bedrooms: number;
   bathrooms: number;
+};
+
+export type PortfolioStats = {
+  /** Count of unique, active, publicly displayable Lodgify properties. Null when Lodgify is unreachable and no cached data exists. */
+  homesCount: number | null;
 };

@@ -72,9 +72,9 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
         source: "summerhouses-destinations",
         filter: ["has", "point_count"],
         paint: {
-          "circle-color": "#2E5C45",
+          "circle-color": "#446B4A",
           "circle-radius": ["step", ["get", "point_count"], 22, 4, 28, 8, 34],
-          "circle-stroke-color": "#FFFDF7",
+          "circle-stroke-color": "#FAFAF9",
           "circle-stroke-width": 2,
           "circle-opacity": 0.92,
         },
@@ -91,7 +91,7 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
           "text-size": 13,
         },
         paint: {
-          "text-color": "#FFFDF7",
+          "text-color": "#FAFAF9",
         },
       });
 
@@ -101,9 +101,9 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
         source: "summerhouses-destinations",
         filter: ["!", ["has", "point_count"]],
         paint: {
-          "circle-color": "#D9C7A8",
+          "circle-color": "#C7A58A",
           "circle-radius": 10,
-          "circle-stroke-color": "#FFFDF7",
+          "circle-stroke-color": "#FAFAF9",
           "circle-stroke-width": 2,
         },
       });
@@ -121,8 +121,8 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
           "text-anchor": "top",
         },
         paint: {
-          "text-color": "#FFFDF7",
-          "text-halo-color": "#11130F",
+          "text-color": "#FAFAF9",
+          "text-halo-color": "#2E2E2C",
           "text-halo-width": 1.2,
         },
       });

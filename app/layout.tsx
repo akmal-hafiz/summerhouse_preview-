@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Outfit, Playfair_Display } from "next/font/google";
+import { Outfit } from "next/font/google";
 import { getMetadataBase } from "@/lib/site";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
@@ -8,11 +8,6 @@ const outfit = Outfit({
   variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
 });
 
 
@@ -53,6 +48,9 @@ export const metadata: Metadata = {
 import SmoothScrolling from "@/components/common/SmoothScrolling";
 import CustomCursor from "@/components/common/CustomCursor";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { AuthModalProvider } from "@/components/providers/AuthModalProvider";
+import { ToastProvider } from "@/components/providers/ToastProvider";
+import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 export default function RootLayout({
   children,
@@ -67,13 +65,19 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body
-        className={`${outfit.variable} ${playfair.variable} antialiased`}
+        className={`${outfit.variable} antialiased`}
       >
         <AuthProvider>
-          <CustomCursor />
-          <SmoothScrolling>
-            {children}
-          </SmoothScrolling>
+          <LanguageProvider>
+            <ToastProvider>
+              <AuthModalProvider>
+                <CustomCursor />
+                <SmoothScrolling>
+                  {children}
+                </SmoothScrolling>
+              </AuthModalProvider>
+            </ToastProvider>
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

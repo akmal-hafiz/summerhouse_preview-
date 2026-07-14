@@ -125,9 +125,9 @@ export const JournalViewer = () => {
   const pages = journalPages.map((p) => ({ front: p.front, back: p.back }));
 
   return (
-    <div className="relative w-full h-[600px] rounded-[32px] overflow-hidden bg-[#0a0a0a]">
+    <div className="relative w-full h-[600px] rounded-[32px] overflow-hidden bg-[var(--color-surface-dark)]">
       {/* Subtle ambient gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a2a1f]/60 via-transparent to-[#0a0a0a] pointer-events-none z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[rgba(68,107,74,0.34)] via-transparent to-[var(--color-surface-dark)] pointer-events-none z-[1]" />
 
       {/* 3D Canvas */}
       <Canvas

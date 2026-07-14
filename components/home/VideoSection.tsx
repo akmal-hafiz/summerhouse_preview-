@@ -46,7 +46,7 @@ const VideoSection = () => {
     }, []);
 
     return (
-        <section className="w-full bg-[#FAFAF9] py-20 md:py-24 lg:py-32 flex flex-col items-center">
+        <section className="w-full bg-[var(--color-page)] py-20 md:py-24 lg:py-32 flex flex-col items-center">
 
             {/* 1. MEDIA CONTAINER — Edge-to-Edge on Mobile, Contained Cinematic on Desktop */}
             <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
@@ -71,9 +71,9 @@ const VideoSection = () => {
                     
                     {/* Left Column - Subtitle */}
                     <div className="md:col-span-4 flex items-start">
-                        <div className="w-6 lg:w-10 h-px bg-black/30 mt-3 mr-4 hidden sm:block"></div>
+                        <div className="w-6 lg:w-10 h-px bg-[var(--color-border-strong)] mt-3 mr-4 hidden sm:block"></div>
                         <h3
-                            className="text-[#1a1a1a] text-[11px] md:text-[12px] font-bold uppercase tracking-[0.2em] leading-[1.8]"
+                            className="text-[var(--color-text)] text-[11px] md:text-[12px] font-bold uppercase tracking-[0.2em] leading-[1.8]"
                             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                         >
                             Enhanced by smart <br className="hidden md:block" />
@@ -84,7 +84,7 @@ const VideoSection = () => {
                     {/* Right Column - Description */}
                     <div className="md:col-span-7 md:col-start-6">
                         <p
-                            className="text-[#65635e] text-[15px] md:text-[17px] lg:text-[19px] leading-[1.8] font-light"
+                            className="text-[var(--color-text-muted)] text-[15px] md:text-[17px] lg:text-[19px] leading-[1.8] font-light"
                             style={{ fontFamily: "var(--font-dm-sans), sans-serif" }}
                         >
                             Each residence is a showcase of craftsmanship, blending marble, oak, and contemporary fixtures into an

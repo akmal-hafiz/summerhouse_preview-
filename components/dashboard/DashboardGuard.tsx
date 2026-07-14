@@ -1,22 +1,23 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useAuthModal } from "@/components/providers/AuthModalProvider";
 
 type DashboardGuardProps = {
   children: ReactNode;
 };
 
 export default function DashboardGuard({ children }: DashboardGuardProps) {
-  const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
+  const { openAuth } = useAuthModal();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      openAuth("login");
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, openAuth]);
 
   if (isLoading) {
     return (
@@ -33,8 +34,14 @@ export default function DashboardGuard({ children }: DashboardGuardProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="dash-loading-shell">
-        <p>Mengalihkan ke halaman masuk...</p>
+      <div className="dash-loading-shell" role="status" aria-live="polite">
+        <p>Masuk untuk membuka dashboard.</p>
+        <div className="dash-loading-actions">
+          <button type="button" onClick={() => openAuth("login")}>
+            Masuk ke akun
+          </button>
+          <Link href="/">Kembali ke beranda</Link>
+        </div>
       </div>
     );
   }

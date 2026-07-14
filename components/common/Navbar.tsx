@@ -2,22 +2,169 @@
 
 import "./navbar-user.css";
 import Link from "next/link";
-import React, { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FiGrid, FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser } from "react-icons/fi";
 import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useAuthModal } from "@/components/providers/AuthModalProvider";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import { LiquidDropdownSurface } from "@/components/ui/liquid-dropdown-surface";
+import { safeHttpHref } from "@/lib/safe-url";
 
 const navbarNavItems = [
-  { label: "Villas", href: "/villas" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Services", href: "/services" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: { en: "Villas", id: "Vila" }, href: "/villas" },
+  { label: { en: "Gallery", id: "Galeri" }, href: "/gallery" },
+  { label: { en: "Services", id: "Layanan" }, href: "/services" },
+  { label: { en: "About", id: "Tentang" }, href: "/about" },
+  { label: { en: "Contact", id: "Kontak" }, href: "/contact" },
 ];
 
 interface NavbarProps {
   alwaysSolid?: boolean;
+}
+
+type NavbarLanguage = "en" | "id";
+
+type MobileNavigationMenuProps = {
+  language: NavbarLanguage;
+  toggleLanguage: () => void;
+};
+
+function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenuProps) {
+  const [open, setOpen] = useState(false);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const summaryRef = useRef<HTMLElement>(null);
+
+  const closeMenu = useCallback((restoreFocus = true) => {
+    if (detailsRef.current) {
+      detailsRef.current.open = false;
+    }
+    setOpen(false);
+
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => summaryRef.current?.focus());
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const panel = document.getElementById("global-mobile-navigation-panel");
+      const focusable = Array.from(
+        panel?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((element) => !element.hasAttribute("disabled") && element.offsetParent !== null);
+
+      if (!focusable.length) {
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById("global-mobile-navigation-panel")
+        ?.querySelector<HTMLElement>('a[href], button:not([disabled])')
+        ?.focus();
+    });
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeMenu, open]);
+
+  return (
+    <details
+      ref={detailsRef}
+      className="global-mobile-menu global-mobile-menu--standalone"
+      onToggle={() => setOpen(Boolean(detailsRef.current?.open))}
+    >
+      <summary
+        ref={summaryRef}
+        aria-label={open ? "Close navigation" : "Open navigation"}
+        aria-controls="global-mobile-navigation-panel"
+        aria-expanded={open}
+      >
+        <FiMenu aria-hidden="true" />
+      </summary>
+      {open ? (
+        <button
+          type="button"
+          className="global-mobile-menu__backdrop"
+          aria-label="Close navigation menu"
+          tabIndex={-1}
+          onClick={() => closeMenu()}
+        />
+      ) : null}
+      <LiquidDropdownSurface
+        id="global-mobile-navigation-panel"
+        className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel"
+        variant="drawer"
+      >
+        {navbarNavItems.map((item) => (
+          <Link
+            href={item.href}
+            key={`standalone-mobile-${item.href}`}
+            onClick={() => closeMenu(false)}
+          >
+            {item.label[language]}
+          </Link>
+        ))}
+        <InteractiveHoverButton
+          href="/villas"
+          className="global-mobile-menu__cta"
+          arrow={null}
+          onClick={() => closeMenu(false)}
+        >
+          {language === "id" ? "Pesan Vila" : "Book our Villas"}
+        </InteractiveHoverButton>
+        <button
+          type="button"
+          className="summerhouse-liquid-glass summerhouse-liquid-glass--language global-language-toggle global-language-toggle--mobile"
+          onClick={toggleLanguage}
+        >
+          {language === "id" ? "Bahasa Indonesia" : "English"}
+        </button>
+      </LiquidDropdownSurface>
+    </details>
+  );
 }
 
 export default function Navbar({ alwaysSolid = false }: NavbarProps) {
@@ -26,15 +173,11 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   const [isSavedCountReady, setIsSavedCountReady] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
-
-  const loginHref = (() => {
-    if (!pathname || pathname === "/login" || pathname === "/register" || pathname === "/") {
-      return "/login";
-    }
-    return `/login?redirect=${encodeURIComponent(pathname)}`;
-  })();
+  const { openAuth } = useAuthModal();
+  const { language, toggleLanguage } = useLanguage();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -47,11 +190,25 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, [userMenuOpen]);
 
-  const adminUrl = process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin";
+  const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin", "/dashboard");
 
   const handleLogout = async () => {
     setUserMenuOpen(false);
     await logout();
+  };
+
+  const handleSearchClick = () => {
+    const target = document.getElementById("home-hero-search");
+
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      window.setTimeout(() => {
+        target.querySelector<HTMLButtonElement>(".villa-search-form__group--location button")?.focus();
+      }, 420);
+      return;
+    }
+
+    router.push(pathname === "/" ? "#home-hero-search" : "/#home-hero-search");
   };
 
   useEffect(() => {
@@ -76,31 +233,27 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   return (
     <header className={`global-mini-header ${isScrolled || alwaysSolid ? "is-scrolled" : ""}`}>
       <div className="global-mini-header__brand">
-        <Link href="/" className="global-mini-logo">SUMMERHOUSE</Link>
-        <span>Bali private stays</span>
+        <Link href="/" className="global-mini-logo" aria-label="Summerhouse Bali">
+          <i className="global-mini-logo-mark" aria-hidden="true" />
+        </Link>
       </div>
 
-      <details className="global-mobile-menu global-mobile-menu--standalone">
-        <summary aria-label="Open navigation">
-          <FiMenu aria-hidden="true" />
-        </summary>
-        <div className="global-mobile-menu__panel">
-          {navbarNavItems.map((item) => (
-            <Link href={item.href} key={`standalone-mobile-${item.href}`}>{item.label}</Link>
-          ))}
-          <Link href="/villas" style={{ fontWeight: 700, color: "#2e5c45" }}>Book our Villas</Link>
-        </div>
-      </details>
+      <MobileNavigationMenu language={language} toggleLanguage={toggleLanguage} />
 
       <nav className="global-mini-nav" aria-label="Global navigation">
         {navbarNavItems.map((item) => (
-          <Link href={item.href} key={item.href}>{item.label}</Link>
+          <Link href={item.href} key={item.href}>{item.label[language]}</Link>
         ))}
       </nav>
 
       <div className="global-mini-actions">
-        <Link href="/villas" className="global-mini-link">Book our Villas</Link>
-        <button type="button" className="global-icon-button" aria-label="Search villas">
+        <InteractiveHoverButton href="/villas" className="global-mini-link" arrow={null}>
+          {language === "id" ? "Pesan Vila" : "Book our Villas"}
+        </InteractiveHoverButton>
+        <button type="button" className="global-language-toggle" aria-label="Switch language" onClick={toggleLanguage}>
+          {language === "id" ? "ID" : "EN"}
+        </button>
+        <button type="button" className="global-icon-button global-icon-button--search" aria-label="Search villas" onClick={handleSearchClick}>
           <FiSearch aria-hidden="true" />
         </button>
         <Link
@@ -126,17 +279,18 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
               </span>
             </button>
           ) : (
-            <Link
-              href={loginHref}
+            <button
+              type="button"
               className="global-icon-button"
               aria-label="Sign in or register"
+              onClick={() => openAuth("login")}
             >
               <FiUser aria-hidden="true" />
-            </Link>
+            </button>
           )}
 
           {isAuthenticated && userMenuOpen && user && (
-            <div className="global-user-menu" role="menu">
+            <LiquidDropdownSurface className="global-user-menu" variant="navigation" role="menu">
               <div className="global-user-menu__header">
                 <strong>{user.name}</strong>
                 <span>{user.email}</span>
@@ -150,7 +304,7 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
                 {isAdmin && (
                   <a href={adminUrl} role="menuitem">
                     <FiShield aria-hidden="true" />
-                    <span>Admin dashboard</span>
+                  <span>Admin dashboard</span>
                   </a>
                 )}
                 <Link href="/dashboard/saved" role="menuitem" onClick={() => setUserMenuOpen(false)}>
@@ -159,23 +313,12 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
                 </Link>
                 <button type="button" role="menuitem" onClick={handleLogout}>
                   <FiLogOut aria-hidden="true" />
-                  <span>Sign out</span>
+                  <span>{language === "id" ? "Keluar" : "Sign out"}</span>
                 </button>
               </div>
-            </div>
+            </LiquidDropdownSurface>
           )}
         </div>
-        <details className="global-mobile-menu">
-          <summary aria-label="Open navigation">
-            <FiMenu aria-hidden="true" />
-          </summary>
-          <div className="global-mobile-menu__panel">
-            {navbarNavItems.map((item) => (
-              <Link href={item.href} key={`mobile-${item.href}`}>{item.label}</Link>
-            ))}
-            <Link href="/villas" style={{ fontWeight: 700, color: "#2e5c45" }}>Book our Villas</Link>
-          </div>
-        </details>
       </div>
 
     </header>

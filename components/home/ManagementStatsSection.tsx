@@ -10,7 +10,7 @@ const stats = [
 
 export const ManagementStatsSection = () => {
     return (
-        <section className="w-full bg-[#FAFAF9] py-20 lg:py-32 touch-pan-y">
+        <section className="w-full bg-[var(--color-page)] py-20 lg:py-32 touch-pan-y">
             <div className="mx-auto w-full max-w-[1400px] px-6 md:px-12 lg:px-24">
                 
                 {/* Micro-label Header */}
@@ -19,7 +19,7 @@ export const ManagementStatsSection = () => {
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#C7A58A]"
+                        className="text-[11px] font-bold uppercase tracking-[0.3em] text-[var(--color-brand)]"
                         style={{ fontFamily: 'var(--font-dm-sans), sans-serif' }}
                     >
                         Proven Performance
@@ -29,7 +29,7 @@ export const ManagementStatsSection = () => {
                         whileInView={{ width: 40 }}
                         viewport={{ once: true }}
                         transition={{ duration: 1, delay: 0.5 }}
-                        className="mt-2 h-[2px] bg-[#C7A58A]/30"
+                        className="mt-2 h-[2px] bg-[var(--color-border-warm)]"
                     />
                 </div>
 
@@ -40,7 +40,7 @@ export const ManagementStatsSection = () => {
                             
                             {/* Vertical Divider for Desktop */}
                             {index < stats.length - 1 && (
-                                <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-16 w-px bg-black/[0.05]" />
+                                <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 h-16 w-px bg-[var(--color-border)]" />
                             )}
                         </div>
                     ))}
@@ -48,7 +48,7 @@ export const ManagementStatsSection = () => {
                 
                 {/* Bottom decorative accent line */}
                 <div className="mt-20 flex justify-center">
-                    <div className="h-px w-full max-w-4xl bg-gradient-to-r from-transparent via-black/[0.05] to-transparent" />
+                    <div className="h-px w-full max-w-4xl bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
                 </div>
             </div>
         </section>

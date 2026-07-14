@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 import { sendPasswordResetOtp, resetPasswordRequest } from "@/lib/auth-client";
+import { useToast } from "@/components/providers/ToastProvider";
 import OtpDigitInput from "./OtpDigitInput";
 import CountdownRing from "./CountdownRing";
 import AuthStatusBanner from "./AuthStatusBanner";
@@ -14,6 +15,7 @@ type Step = "email" | "verify";
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
+  const toast = useToast();
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [otpCode, setOtpCode] = useState("");
@@ -54,10 +56,13 @@ export default function ForgotPasswordForm() {
       setOtpCode("");
       setOtpHasError(false);
       setInfo(`Jika ${email} terdaftar, kode reset telah dikirim. Cek inbox dan folder spam.`);
+      toast.info({ title: "Reset code sent", message: "Check your inbox and spam folder." });
     } catch (err: unknown) {
       const data = (err as { data?: { errors?: Record<string, string[]>; message?: string } }).data;
       const firstError = data?.errors ? Object.values(data.errors).flat()[0] : null;
-      setError(firstError || data?.message || (err as Error).message || "Failed to send reset code");
+      const message = firstError || data?.message || (err as Error).message || "Failed to send reset code";
+      setError(message);
+      toast.error({ title: "Could not send code", message });
     } finally {
       setIsSubmitting(false);
       setPendingAction(null);
@@ -84,13 +89,17 @@ export default function ForgotPasswordForm() {
       if (!result.success) throw new Error(result.message || "Gagal reset password");
       setCompleted(true);
       setInfo(result.message || "Password berhasil diperbarui.");
-      setTimeout(() => router.push("/login"), 2200);
+      toast.success({ title: "Password updated", message: "Log in with your new password." });
+      window.history.replaceState(null, "", "/");
+      setTimeout(() => router.replace("/?auth=login"), 1400);
     } catch (err: unknown) {
       const data = (err as { data?: { errors?: Record<string, string[]>; message?: string } }).data;
       const firstError = data?.errors ? Object.values(data.errors).flat()[0] : null;
       setOtpHasError(true);
       setTimeout(() => setOtpHasError(false), 400);
-      setError(firstError || data?.message || (err as Error).message || "Gagal reset password");
+      const message = firstError || data?.message || (err as Error).message || "Gagal reset password";
+      setError(message);
+      toast.error({ title: "Could not reset password", message });
     } finally {
       setIsSubmitting(false);
       setPendingAction(null);
@@ -118,8 +127,8 @@ export default function ForgotPasswordForm() {
       </h1>
       <p className="auth-subheading">
         {step === "email"
-          ? "Masukkan email akun kamu. Jika terdaftar, kami akan kirim kode 6 digit untuk reset password."
-          : `Masukkan kode 6 digit yang kami kirim ke ${email}, lalu buat password baru.`}
+          ? "Masukkan email akun Summerhouse. Jika terdaftar, kami akan kirim kode reset password."
+          : `Masukkan kode yang tim Summerhouse kirim ke ${email}, lalu buat password baru.`}
       </p>
 
       {step === "email" ? (
@@ -241,7 +250,7 @@ export default function ForgotPasswordForm() {
 
       <p className="auth-footer">
         Sudah ingat password?{" "}
-        <Link href="/login">Sign in</Link>
+        <Link href="/?auth=login">Sign in</Link>
       </p>
 
       {step === "email" && (
