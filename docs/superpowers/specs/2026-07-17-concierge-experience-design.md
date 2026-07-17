@@ -110,7 +110,7 @@ No mandatory snap is used on desktop because hard snapping would make the refere
 2. Editorial catalogue intro.
 3. Concierge service catalogue.
 4. Concierge testimonial chapter.
-5. Direct-contact CTA.
+5. Minimal booking action.
 6. Existing global footer.
 
 ### 4.3 Catalogue design
@@ -123,7 +123,7 @@ The page follows the third reference:
 - Two columns on tablet and one column on mobile.
 - Each item includes a dominant image, coral index, navy serif title, and concise supporting copy.
 - Image ratios and card heights remain consistent within each breakpoint.
-- Cards do not open empty detail routes in this release. The catalogue is informational and leads toward the final Concierge contact CTA.
+- Cards do not open empty detail routes in this release. The catalogue is informational and leads toward the final booking action.
 
 The grid displays all active services ordered by `display_order`. If fewer than three services are available, the remaining space is left intentional rather than duplicating content.
 
@@ -141,14 +141,14 @@ The testimonial chapter follows the fourth reference:
 
 Only approved guest reviews explicitly placed on Concierge are eligible. Owner testimonials remain exclusive to the Services page.
 
-### 4.5 Final contact CTA
+### 4.5 Final booking action
 
-The final CTA explains that Concierge requests are coordinated by the Summerhouse guest team. It uses existing CMS contact settings:
+The page does not end with a generic conversion banner. After the testimonial chapter, the layout provides deliberate negative space and one action only:
 
-- WhatsApp is the primary action when configured.
-- Email is the secondary action when configured.
-- Missing or invalid contact values are omitted without rendering broken links.
-- If neither is configured, the fallback route is `/contact`.
+- Button label: `Book Now`
+- Destination: `/villas`
+- No headline, description, eyebrow, icon row, WhatsApp link, email link, gradient, decorative blob, or secondary action.
+- The button aligns to the editorial grid and reuses the established Summerhouse button interaction so it feels like part of the site rather than a standalone marketing component.
 
 ## 5. Visual Asset Strategy
 
@@ -223,7 +223,6 @@ Add `ConciergePageManager` under `Website Pages`. Unlike untouched placeholder p
 - About preview eyebrow, heading, and description
 - Catalogue eyebrow, heading, and intro
 - Testimonial eyebrow and heading
-- Final CTA heading, description, primary label, and secondary label
 
 The service catalogue itself remains in `ConciergeServiceResource` so copy fields and repeated service records are not mixed.
 
@@ -250,7 +249,7 @@ Migration behavior:
 - Service create/update/delete/restore operations invalidate Concierge catalogue and About-featured caches.
 - Testimonial changes invalidate Concierge testimonial cache.
 - Frontend CMS fetch failures use a small truthful fallback service set and hide the testimonial chapter if no approved reviews are available.
-- Empty service responses still render the page intro and direct-contact CTA.
+- Empty service responses still render the page intro and the single `Book Now` action.
 - Broken image records are not exposed by the public endpoint when active validation fails.
 
 ## 8. Content and Interaction Rules
@@ -259,6 +258,7 @@ Migration behavior:
 - Use concise benefit-led service descriptions.
 - Do not claim guaranteed availability; requests are coordinated and confirmed by the team.
 - “View all Concierge” is retained on the About CTA to stay close to the reference, while footer copy uses the clearer “Concierge Services.”
+- The Concierge page closes with only `Book Now` linking to `/villas`; no additional conversion copy or contact action is permitted.
 - Testimonial navigation is manual and accessible.
 - The fixed navbar must not cover the pinned chapter heading at section entry.
 
