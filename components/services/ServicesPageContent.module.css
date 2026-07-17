@@ -1,0 +1,1403 @@
+/* ─── SERVICES REDESIGN CORE DESIGN TOKENS & STYLING ─── */
+
+.container {
+  --color-cream-bg: var(--color-page);
+  --color-green-accent: var(--color-brand);
+  --color-green-light: var(--color-brand-hover);
+  --color-green-dark: var(--color-brand-pressed);
+  --color-ink-dark: var(--color-text);
+  --color-muted-grey: var(--color-text-muted);
+  --color-line-soft: var(--color-border);
+  --color-card-bg: rgba(242, 237, 227, 0.56);
+  
+  background-color: var(--color-cream-bg);
+  color: var(--color-ink-dark);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+/* ─── REUSABLE UTILITIES ─── */
+.eyebrow {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-green-accent);
+  margin-bottom: 0.75rem;
+}
+
+.italicText {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.sectionHeader {
+  max-width: 700px;
+  margin-bottom: clamp(3rem, 5vw, 4.5rem);
+}
+
+.sectionTitle {
+  font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-ink-dark);
+  letter-spacing: -0.02em;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: var(--color-line-soft);
+  margin: clamp(5.5rem, 9vw, 9.5rem) 0;
+}
+
+/* ─── BUTTONS ─── */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--color-green-accent);
+  color: var(--color-button-primary-text);
+  padding: 0.95rem 1.8rem;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 15px rgba(49, 95, 69, 0.15);
+  text-decoration: none;
+}
+
+.btnPrimary:hover {
+  background-color: var(--color-green-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(49, 95, 69, 0.25);
+}
+
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  color: var(--color-ink-dark);
+  border: 1px solid var(--color-ink-dark);
+  padding: 0.85rem 1.6rem;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btnOutline:hover {
+  background-color: var(--color-ink-dark);
+  color: var(--color-button-primary-text);
+  transform: translateY(-1px);
+}
+
+.btnPrimaryLarge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--color-green-accent);
+  color: var(--color-button-primary-text);
+  padding: 1.1rem 2.2rem;
+  border-radius: 30px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(49, 95, 69, 0.18);
+}
+
+.btnPrimaryLarge:hover {
+  background-color: var(--color-green-light);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(49, 95, 69, 0.28);
+}
+
+/* ─── 1. SERVICE EXPERIENCE SHOWCASE ─── */
+.showcaseSection {
+  position: relative;
+  background-color: var(--color-cream-bg);
+  padding: 0 clamp(0.75rem, 2vw, 1.5rem) clamp(2rem, 4vw, 4rem);
+}
+
+/* ── Tab Navigation Strip ── */
+.showcaseTabStrip {
+  background-color: var(--color-cream-bg);
+  padding: clamp(1.6rem, 3.5vh, 2.8rem) clamp(1rem, 3vw, 4rem) clamp(1rem, 2vh, 1.6rem);
+  display: flex;
+  justify-content: center;
+}
+
+.showcaseTabNav {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.showcaseTabBtn {
+  background: transparent;
+  border: 0;
+  color: rgba(17, 17, 17, 0.38);
+  font-size: clamp(0.78rem, 1.05vw, 0.98rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 0.5rem 0.3rem;
+  position: relative;
+  transition: color 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.showcaseTabBtn:hover {
+  color: var(--color-text-muted);
+}
+
+.showcaseTabBtnActive {
+  color: var(--color-text);
+}
+
+.showcaseActiveDot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--color-text);
+  border-radius: 50%;
+}
+
+.showcaseInactiveDot {
+  width: 5px;
+  height: 5px;
+  background-color: rgba(17, 17, 17, 0.15);
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.showcaseTabBtn:hover .showcaseInactiveDot {
+  background-color: rgba(17, 17, 17, 0.35);
+}
+
+/* ── Cinematic Video Panel ── */
+.showcaseVideoPanel {
+  position: relative;
+  width: 100%;
+  height: clamp(50vh, 72vh, 82vh);
+  min-height: 460px;
+  overflow: hidden;
+  background-color: var(--color-surface-dark);
+  border-radius: clamp(18px, 3.5vw, 42px);
+  box-shadow:
+    0 8px 40px rgba(28, 27, 24, 0.08),
+    0 2px 12px rgba(28, 27, 24, 0.04);
+}
+
+.showcaseVideoElement {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* ─── 2. PERKS SECTION ─── */
+.perks {
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.perksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.8rem;
+}
+
+.perkCard {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 1.25rem;
+  padding: 2.2rem 1.8rem;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+}
+
+.perkCard:hover {
+  transform: translateY(-5px);
+  background: var(--color-card-bg);
+  border-color: rgba(49, 95, 69, 0.2);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+}
+
+.perkIconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  background-color: rgba(49, 95, 69, 0.08);
+  color: var(--color-green-accent);
+  margin-bottom: 1.4rem;
+}
+
+.perkIcon {
+  font-size: 1.35rem;
+}
+
+.perkCard h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--color-ink-dark);
+}
+
+.perkCard p {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--color-muted-grey);
+  margin: 0;
+}
+
+/* ─── 3. SPECIALTIES SECTION ─── */
+.specialties {
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.specialtiesHeader {
+  max-width: 750px;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.specialtiesHeader h2 {
+  font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.specialtiesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.specialtyCard {
+  border-left: 1px solid var(--color-line-soft);
+  padding: 1rem 0 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: border-color 0.3s ease;
+}
+
+.specialtyCard:hover {
+  border-left-color: var(--color-green-accent);
+}
+
+.cardNum {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-green-accent);
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+}
+
+.specialtyCard h3 {
+  font-size: 1.45rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+  letter-spacing: -0.01em;
+}
+
+.specialtyCard p {
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--color-muted-grey);
+  margin: 0 0 1.5rem 0;
+  flex-grow: 1;
+}
+
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-green-accent);
+  text-decoration: none;
+  transition: gap 0.25s ease;
+}
+
+.specialtyCard:hover .cardLink {
+  gap: 0.8rem;
+}
+
+/* ─── 4. INTERACTIVE SCROLL-ZOOM TESTIMONIAL SECTION ─── */
+.interactiveZoomSection {
+  position: relative;
+  height: 280vh; /* Optimized scroll track length */
+  background: var(--color-cream-bg);
+}
+
+.stickyZoomContainer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-cream-bg);
+}
+
+/* Villa Background Container & Parallax Scaling */
+.stickyBgContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.bgImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.stickyBgImage {
+  object-fit: cover;
+}
+
+.stickyBgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--color-page) 0%,
+    rgba(250, 250, 249, 0.15) 30%,
+    rgba(250, 250, 249, 0.15) 70%,
+    var(--color-page) 100%
+  );
+  z-index: 2;
+}
+
+.zoomHeadline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+  gap: clamp(1.5rem, 3.5vw, 4rem);
+  padding: 0 5vw;
+  box-sizing: border-box;
+  background: transparent; /* Changed from white to transparent to show BG */
+  z-index: 3;
+}
+
+.wordLeft {
+  font-size: clamp(3rem, 7.5vw, 8rem);
+  font-weight: 700;
+  color: var(--color-ink-dark);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  z-index: 3;
+  flex: 1;
+  text-align: right;
+}
+
+.wordRight {
+  font-size: clamp(3rem, 7.5vw, 8rem);
+  font-weight: 700;
+  color: var(--color-ink-dark);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  z-index: 3;
+  flex: 1;
+  text-align: left;
+}
+
+.imageSpacer {
+  width: 24vw;
+  height: 1px;
+  flex-shrink: 0;
+}
+
+/* Wide Horizontal Testimonial Card (Apple-style frosted glass) */
+.testimonialCardCenteringWrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.testimonialCardWrapper {
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.45) 0%, 
+    rgba(255, 255, 255, 0.2) 100%
+  ); /* Translucent gradient */
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border-radius: 32px;
+  box-shadow: 
+    0 30px 70px rgba(28, 27, 24, 0.12), 
+    0 10px 20px rgba(28, 27, 24, 0.04), 
+    inset 0 1px 0px 0px rgba(255, 255, 255, 0.6), /* Top edge light reflection */
+    inset 0 -1px 0px 0px rgba(0, 0, 0, 0.05); /* Bottom edge shadow */
+  display: grid;
+  grid-template-columns: 1fr auto;
+  overflow: hidden;
+  width: min(92vw, 840px);
+  height: max-content;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  padding: 44px;
+  box-sizing: border-box;
+  gap: 32px;
+  align-items: start;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.testimonialCardWrapper:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 
+    0 35px 80px rgba(28, 27, 24, 0.16), 
+    0 12px 24px rgba(28, 27, 24, 0.06), 
+    inset 0 1px 0px 0px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 0px 0px rgba(0, 0, 0, 0.08);
+}
+
+.testimonialContentArea {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.testimonialVillaTag {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-brand);
+  margin-bottom: 12px;
+  letter-spacing: 0.08em;
+}
+
+.testimonialQuoteText {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(16px, 1.8vw, 20px);
+  font-weight: 400;
+  color: var(--color-ink-dark);
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+  padding: 0;
+  font-style: italic;
+}
+
+.ownerMetricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1.2rem 0;
+}
+
+.ownerMetricItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.ownerMetricItem strong {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  line-height: 1.2;
+}
+
+.ownerMetricItem span {
+  font-size: 0.8rem;
+  color: var(--color-muted-grey);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.testimonialAuthorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.authorAvatarWrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-card-bg-warm);
+  flex-shrink: 0;
+}
+
+.authorMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorName {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-ink-dark);
+}
+
+.authorLocation {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--color-muted-grey);
+  font-weight: 400;
+}
+
+.authorVilla {
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--color-brand);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Navigation controls (arrow buttons stacked vertically) */
+.testimonialNavCtrls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.testimonialNavArrow {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-ink-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  outline: none;
+}
+
+.testimonialNavArrow:hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.06);
+}
+
+.testimonialNavArrow:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.navIconDesktop {
+  display: block;
+}
+
+.navIconMobile {
+  display: none;
+}
+
+/* ─── 5. DETAILED SERVICES DEEP DIVE ─── */
+.deepDiveSection {
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.deepDiveHeader {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  gap: clamp(3rem, 6vw, 6rem);
+  align-items: start;
+}
+
+.pillLabel {
+  display: inline-block;
+  background-color: rgba(68, 107, 74, 0.1);
+  color: var(--color-green-dark);
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin-bottom: 1.5rem;
+}
+
+.deepDiveHeader h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+}
+
+.specialtyDescription {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-muted-grey);
+  margin-bottom: 2.2rem;
+  font-style: italic;
+}
+
+.subServicesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.8rem;
+}
+
+.subServiceCard {
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 1rem;
+  padding: 1.8rem;
+  transition: all 0.3s ease;
+}
+
+.subServiceCard:hover {
+  border-color: rgba(49, 95, 69, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.subCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.subCardNum {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-green-accent);
+  opacity: 0.6;
+}
+
+.subServiceCard h3 {
+  font-size: 1.1rem;
+  font-weight: 650;
+  color: var(--color-ink-dark);
+  margin: 0;
+}
+
+.subServiceCard p {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-muted-grey);
+  margin: 0;
+}
+
+/* ─── 6. STATS SECTION ─── */
+.statsSection {
+  background-color: var(--color-ink-dark);
+  color: var(--color-text-on-dark);
+  padding: clamp(5rem, 9vw, 8rem) clamp(1rem, 4vw, 4rem);
+  text-align: center;
+}
+
+.statsInner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.statsTitle {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.statsTitle strong {
+  font-weight: 700;
+}
+
+.accentText {
+  color: var(--color-green-light);
+  font-weight: 700;
+}
+
+.statsCountersGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.counterBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.counterHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.counterHeader span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.counterBlock strong {
+  font-size: clamp(2.5rem, 6vw, 5.2rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--color-text-on-dark);
+}
+
+.counterLabel {
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+/* ─── 7. FAQ SECTION ─── */
+.faq {
+  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.faqGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.faqLeft {
+  max-width: 380px;
+}
+
+.faqLeft h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.faqLeft p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-muted-grey);
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--color-line-soft);
+  padding-bottom: 1.2rem;
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  padding: 0.8rem 0;
+  font-size: clamp(1.05rem, 1.2vw, 1.25rem);
+  font-weight: 600;
+  text-align: left;
+  color: var(--color-ink-dark);
+  cursor: pointer;
+}
+
+.faqIcon {
+  font-size: 1.2rem;
+  color: var(--color-muted-grey);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.faqItem.active .faqIcon {
+  transform: rotate(180deg);
+  color: var(--color-green-accent);
+}
+
+.faqAnswer {
+  overflow: hidden;
+}
+
+.faqAnswer p {
+  margin: 0;
+  padding: 0.4rem 0 1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--color-muted-grey);
+}
+
+/* ─── 8. BOTTOM CTA SECTION ─── */
+.bottomCta {
+  position: relative;
+  margin: 0 4vw 6rem;
+  border-radius: 2rem;
+  overflow: hidden;
+  padding: clamp(6rem, 12vw, 12rem) clamp(1.5rem, 5vw, 5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+}
+
+.ctaBgImage {
+  object-fit: cover;
+}
+
+.ctaOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 27, 24, 0.45);
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 820px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ctaEyebrow {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 720;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: var(--color-green-light);
+  margin-bottom: 1rem;
+}
+
+.ctaTitle {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--color-text-on-dark);
+  margin: 0 0 1.5rem 0;
+  text-transform: none;
+}
+
+.ctaDescription {
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--color-text-on-dark-muted);
+  margin: 0 0 3rem 0;
+  max-width: 680px;
+}
+
+.btnGlassLarge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1.25rem 2.2rem;
+  border-radius: 50px;
+  color: var(--color-text-on-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.btnGlassLarge:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.btnGlassText {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.btnGlassArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.btnGlassLarge:hover .btnGlassArrow {
+  transform: translateX(5px);
+}
+
+/* ─── 0. HERO SECTION ─── */
+.heroSection {
+  position: relative;
+  margin: 7rem 4vw clamp(5.5rem, 9vw, 9.5rem);
+  border-radius: 2.5rem;
+  overflow: hidden;
+  height: 80vh;
+  min-height: 580px;
+  display: flex;
+  align-items: center;
+}
+
+.heroBgVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(28, 27, 24, 0.2) 0%, rgba(28, 27, 24, 0.65) 100%);
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  padding: clamp(2.5rem, 5vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.heroFloatingCard {
+  position: absolute;
+  top: clamp(2rem, 4vw, 4rem);
+  right: clamp(2rem, 4vw, 4rem);
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 1.5rem;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease;
+  max-width: 320px;
+}
+
+.heroFloatingCard:hover {
+  transform: translateY(-4px) scale(1.02);
+  background: var(--color-card-bg);
+}
+
+.heroPlayBtn {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: var(--color-surface-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.heroFloatingCard:hover .heroPlayBtn {
+  transform: scale(1.1);
+}
+
+.heroCardText h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.15rem 0;
+  color: var(--color-text);
+}
+
+.heroCardText p {
+  font-size: 0.82rem;
+  color: var(--color-muted-grey);
+  margin: 0;
+}
+
+.heroLeftContainer {
+  margin-top: auto;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.heroTitle {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--color-text-on-dark);
+  margin: 0;
+}
+
+.heroBtnPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--color-card-bg);
+  color: var(--color-text);
+  padding: 0.95rem 1.8rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.heroBtnPill:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.heroBtnArrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--color-button-primary-bg);
+  color: var(--color-button-primary-text);
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.heroBtnPill:hover .heroBtnArrow {
+  transform: translateX(3px) rotate(-15deg);
+}
+
+.heroDesc {
+  position: absolute;
+  bottom: clamp(2.5rem, 5vw, 5rem);
+  right: clamp(2.5rem, 5vw, 5rem);
+  max-width: clamp(280px, 32vw, 420px);
+  font-size: clamp(0.92rem, 1.15vw, 1.1rem);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ── VIDEO LIGHTBOX MODAL ── */
+.videoModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 46, 44, 0.9);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.videoModalContent {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  aspect-ratio: 16/9;
+  background: var(--color-surface-dark);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.videoModalClose {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 0;
+  color: var(--color-text-on-dark);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.videoModalClose:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.videoModalElement {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ─── RESPONSIVE OVERRIDES ─── */
+@media (max-width: 1023px) {
+  .showcaseTabNav {
+    max-width: 100%;
+    gap: clamp(1.2rem, 2.5vw, 2.5rem);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .specialtiesGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .specialtyCard {
+    border-left: 2px solid var(--color-line-soft);
+    padding: 0.5rem 0 0.5rem 1.5rem;
+  }
+  .deepDiveHeader {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .faqGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Showcase Section — Mobile */
+  .showcaseSection {
+    padding: 0 clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2vw, 1.5rem);
+  }
+  .showcaseTabStrip {
+    padding: 1rem 0;
+  }
+  .showcaseTabNav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 1.8rem;
+    padding: 0 1.2rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .showcaseTabNav::-webkit-scrollbar {
+    display: none;
+  }
+  .showcaseTabBtn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+  .showcaseVideoPanel {
+    height: 50vh;
+    min-height: 320px;
+    border-radius: clamp(14px, 3vw, 24px);
+  }
+
+  .subServicesGrid {
+    grid-template-columns: 1fr;
+  }
+  .statsCountersGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .wordLeft,
+  .wordRight {
+    font-size: clamp(2rem, 6vw, 4.5rem);
+  }
+  .imageSpacer {
+    width: 18vw;
+  }
+  .testimonialCardWrapper {
+    grid-template-columns: 1fr;
+    height: max-content;
+    width: 90vw;
+    max-width: 400px;
+    padding: 20px;
+    gap: 12px;
+  }
+  .testimonialVillaTag {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+  .testimonialQuoteText {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .ownerMetricsGrid {
+    margin: 0.75rem 0;
+    padding: 0.75rem 0;
+    gap: 0.8rem;
+    border-top: 1px solid rgba(28, 27, 24, 0.06);
+    border-bottom: 1px solid rgba(28, 27, 24, 0.06);
+  }
+  .ownerMetricItem strong {
+    font-size: 1.15rem;
+  }
+  .ownerMetricItem span {
+    font-size: 0.75rem;
+    margin-top: 1px;
+  }
+  .testimonialAuthorRow {
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .authorAvatarWrapper {
+    width: 40px;
+    height: 40px;
+  }
+  .authorName {
+    font-size: 14px;
+  }
+  .authorLocation {
+    font-size: 12px;
+  }
+  .authorVilla {
+    font-size: 11px;
+    margin-top: 1px;
+  }
+  .testimonialNavCtrls {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    margin-top: 8px;
+    gap: 16px;
+  }
+  .testimonialNavArrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .heroSection {
+    margin: 5.5rem 2vw 2.5rem;
+    border-radius: 1.5rem;
+    height: 75vh;
+  }
+  .heroContent {
+    padding: 1.5rem;
+  }
+  .heroFloatingCard {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.8rem 1rem;
+    max-width: 240px;
+    border-radius: 1rem;
+  }
+  .heroPlayBtn {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.8rem;
+  }
+  .heroCardText h3 {
+    font-size: 0.9rem;
+  }
+  .heroCardText p {
+    font-size: 0.72rem;
+  }
+  .heroLeftContainer {
+    margin-bottom: 7rem;
+    gap: 1.25rem;
+  }
+  .heroTitle {
+    font-size: 2.2rem;
+  }
+  .heroBtnPill {
+    padding: 0.8rem 1.4rem;
+    font-size: 0.88rem;
+  }
+  .heroBtnArrow {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.9rem;
+  }
+  .heroDesc {
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    max-width: 100%;
+    font-size: 0.85rem;
+  }
+}
+
+/* --- Owner testimonial CMS additions --- */
+
+.authorAvatarFallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface-dark);
+  color: var(--color-text-on-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+}
+
+.ownerFormSection {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 2rem);
+}

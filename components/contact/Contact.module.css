@@ -1,0 +1,527 @@
+.contactPage {
+  --contact-bg: var(--color-page);
+  --contact-ink: var(--color-text);
+  --contact-muted: var(--color-text-muted);
+  --contact-soft: var(--color-border);
+  --contact-line: var(--color-border-strong);
+  --contact-green: var(--color-brand);
+  --contact-green-deep: var(--color-brand-pressed);
+
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: var(--contact-bg);
+  color: var(--contact-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+.contactPage::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.contactPage > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  display: grid;
+  width: min(88rem, calc(100% - clamp(2rem, 7vw, 8rem)));
+  margin-inline: auto;
+  justify-items: center;
+  gap: 1rem;
+  padding-top: clamp(7.2rem, 9vw, 8.8rem);
+  padding-bottom: clamp(2.6rem, 5vw, 4.2rem);
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 65rem;
+  margin: 0;
+  color: var(--contact-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(3.65rem, 7.2vw, 6.9rem);
+  font-weight: 850;
+  line-height: 0.92;
+  text-transform: none;
+}
+
+.hero > p:last-child {
+  max-width: 32rem;
+  margin: 0;
+  color: var(--contact-muted);
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  font-weight: 720;
+  line-height: 1.5;
+}
+
+.divider {
+  display: grid;
+  width: min(88rem, calc(100% - clamp(2rem, 7vw, 8rem)));
+  grid-template-columns: minmax(1rem, 1fr) auto minmax(1rem, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 2vw, 1.55rem);
+  margin-inline: auto;
+}
+
+.dividerLine {
+  display: block;
+  height: 1px;
+  background: var(--contact-soft);
+}
+
+.dividerDot {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(68, 107, 74, 0.22);
+  border-radius: 50%;
+  background: rgba(68, 107, 74, 0.16);
+}
+
+.contactGrid,
+.faqSection {
+  display: grid;
+  width: min(88rem, calc(100% - clamp(2rem, 7vw, 8rem)));
+  grid-template-columns: minmax(18rem, 0.42fr) minmax(0, 1fr);
+  gap: clamp(3rem, 6vw, 6.2rem);
+  margin-inline: auto;
+  padding-block: clamp(4.6rem, 8vw, 6.6rem);
+}
+
+.faqSection {
+  grid-template-columns: minmax(21rem, 28rem) minmax(34rem, 1fr);
+  gap: clamp(4rem, 7vw, 7.25rem);
+  align-items: start;
+}
+
+.contactInfo {
+  display: grid;
+  max-width: 22rem;
+  align-content: start;
+  gap: clamp(2rem, 4vw, 2.8rem);
+}
+
+.contactInfo p,
+.faqIntro > p:last-child {
+  margin: 0;
+  color: var(--contact-muted);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.contactInfo ul {
+  display: grid;
+  gap: 1.28rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contactInfo li {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  gap: 0.95rem;
+  align-items: start;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 820;
+  line-height: 1.35;
+}
+
+.contactInfo li svg {
+  margin-top: 0.12rem;
+  color: var(--contact-green);
+  stroke-width: 2.15;
+}
+
+.contactInfo a {
+  color: inherit;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.whatsappLink {
+  width: max-content;
+  max-width: 100%;
+  border-bottom: 1px solid rgba(68, 107, 74, 0.32);
+  color: var(--contact-green);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.form {
+  display: grid;
+  gap: 1.18rem;
+}
+
+.fieldPair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.9rem, 2vw, 1.15rem);
+}
+
+.form label {
+  position: relative;
+  display: grid;
+  gap: 0.72rem;
+}
+
+.form label span {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--contact-line);
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  color: var(--contact-ink);
+  font: 720 0.98rem/1.45 var(--font-dm-sans), system-ui, sans-serif;
+  transition:
+    border-color 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.form input,
+.form select {
+  height: 2.75rem;
+  padding: 0 0 0.58rem;
+}
+
+.form textarea {
+  min-height: 9.25rem;
+  resize: vertical;
+  padding: 0.35rem 0 0.7rem;
+}
+
+.form input::placeholder,
+.form textarea::placeholder {
+  color: var(--color-text-disabled);
+}
+
+.form select {
+  appearance: none;
+  color: var(--color-text-muted);
+}
+
+.selectField svg {
+  position: absolute;
+  right: 0;
+  bottom: 1.1rem;
+  color: var(--color-text-soft);
+  pointer-events: none;
+}
+
+/* Custom Subject dropdown — replaces native <select> for LiquidGlass menu */
+.subjectField {
+  position: relative;
+}
+
+.subjectTrigger {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 0 0.58rem;
+  border-bottom: 1px solid var(--color-border-strong);
+  color: var(--contact-ink);
+  font: 720 0.98rem/1.45 var(--font-dm-sans), system-ui, sans-serif;
+  cursor: pointer;
+  transition:
+    border-color 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    color 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.subjectTriggerText {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.subjectTrigger[data-placeholder="true"] {
+  color: var(--color-text-disabled);
+  font-weight: 500;
+}
+
+.subjectTrigger:focus-visible {
+  border-bottom-color: rgba(68, 107, 74, 0.72);
+  outline: none;
+}
+
+.subjectField[data-open="true"] .subjectTrigger {
+  border-bottom-color: rgba(68, 107, 74, 0.72);
+}
+
+.subjectMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 0.35rem;
+}
+
+.subjectMenu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-height: min(24rem, calc(100vh - 6rem));
+  overflow-y: auto;
+}
+
+.subjectMenu li {
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  font: 500 0.9rem/1.25 var(--font-dm-sans), system-ui, sans-serif;
+  color: var(--contact-ink);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease-editorial, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.subjectMenu li[data-highlighted],
+.subjectMenu li:focus-visible {
+  background: var(--color-button-secondary-bg-hover);
+}
+
+.subjectMenu li[aria-selected="true"] {
+  color: var(--brand-primary, #446B4A);
+  font-weight: 600;
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus {
+  border-bottom-color: rgba(68, 107, 74, 0.72);
+}
+
+.form > button {
+  min-height: 3.8rem;
+  margin-top: 0.2rem;
+  border: 0;
+  background: var(--contact-green);
+  color: var(--color-button-primary-text);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  transition:
+    background-color 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.form > button:disabled {
+  cursor: progress;
+  opacity: 0.62;
+}
+
+.formError,
+.formSuccess {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.formError {
+  color: var(--color-state-error);
+}
+
+.formSuccess {
+  color: var(--contact-green);
+}
+
+.faqIntro {
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+}
+
+.faqIntro h2 {
+  max-width: 28rem;
+  margin: 0;
+  color: var(--contact-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(3rem, 4.55vw, 4.65rem);
+  font-weight: 850;
+  line-height: 0.94;
+  text-transform: uppercase;
+  overflow-wrap: normal;
+}
+
+.faqList {
+  display: grid;
+  align-content: start;
+}
+
+.faqItem {
+  border-top: 1px solid var(--contact-soft);
+}
+
+.faqItem:last-child {
+  border-bottom: 1px solid var(--contact-soft);
+}
+
+.faqItem button {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  min-height: 5.1rem;
+  padding: 1.25rem 0;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.faqItem button span:first-child {
+  max-width: 52rem;
+  line-height: 1.35;
+}
+
+.faqItem button span:last-child {
+  color: var(--contact-green);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.faqAnswer {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.faqAnswer[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.faqAnswer p {
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 3rem 1.15rem 0;
+  color: var(--contact-muted);
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.62;
+}
+
+.heroReveal,
+.scrollReveal {
+  visibility: visible;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .form > button:hover {
+    background: var(--contact-green-deep);
+    transform: translateY(-1px);
+  }
+
+  .contactInfo a:hover,
+  .whatsappLink:hover {
+    color: var(--contact-green-deep);
+  }
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .divider,
+  .contactGrid,
+  .faqSection {
+    width: min(100% - 2rem, 44rem);
+  }
+
+  .contactGrid,
+  .faqSection {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .contactInfo {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    gap: 0.8rem;
+    padding-top: 7.15rem;
+    padding-bottom: 2.8rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 15vw, 4.7rem);
+    line-height: 0.94;
+  }
+
+  .fieldPair {
+    grid-template-columns: 1fr;
+    gap: 1.18rem;
+  }
+
+  .contactGrid,
+  .faqSection {
+    padding-block: 3.8rem;
+  }
+
+  .faqIntro h2 {
+    max-width: 100%;
+    font-size: clamp(2.45rem, 11.4vw, 3.75rem);
+    line-height: 0.96;
+  }
+
+  .faqAnswer p {
+    padding-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroReveal,
+  .scrollReveal {
+    visibility: visible;
+  }
+
+  .form input,
+  .form select,
+  .form textarea,
+  .form > button,
+  .faqAnswer {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,210 @@
+/* Summerhouses Auth Modal: simple Airbnb-style sheet */
+
+:root {
+  --auth-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: rgba(26, 26, 26, 0.48);
+  animation: auth-overlay-in 180ms ease;
+  overflow-y: auto;
+}
+
+@keyframes auth-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.auth-modal-shell {
+  width: min(100%, 568px);
+  animation: auth-panel-in 240ms var(--auth-ease);
+}
+
+@keyframes auth-panel-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.auth-modal-panel {
+  --auth-ink: #1a1a1a;
+  --auth-muted: rgba(26, 26, 26, 0.62);
+  --auth-line: rgba(26, 26, 26, 0.14);
+  --auth-primary: var(--brand-primary, #446B4A);
+  --auth-primary-deep: var(--brand-primary-deep, #355538);
+  --auth-bg: var(--brand-bg, #FAFAF9);
+  --auth-card: #ffffff;
+  --auth-radius-pill: 999px;
+  --auth-radius-lg: 24px;
+  --auth-radius-md: 16px;
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #ffffff;
+  color: var(--auth-ink);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+  padding: clamp(2.25rem, 5vw, 3.25rem);
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(26, 26, 26, 0.82);
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.auth-modal-close:hover {
+  background: rgba(26, 26, 26, 0.07);
+}
+
+.auth-modal-close:active {
+  transform: scale(0.94);
+}
+
+.auth-modal-close svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+.auth-modal-panel .auth-form {
+  width: 100%;
+  max-width: none;
+}
+
+.auth-modal-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(72px, 10vw, 92px);
+  margin: 0 auto 1.15rem;
+  overflow: visible;
+}
+
+.auth-modal-brand img {
+  display: block;
+  width: clamp(220px, 26vw, 300px);
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.auth-modal-panel .auth-heading-airbnb {
+  margin-bottom: 1.65rem;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  line-height: 1.12;
+}
+
+.auth-modal-panel .auth-fields {
+  gap: 0.9rem;
+}
+
+.auth-modal-panel .auth-field input {
+  width: 100%;
+  min-height: 58px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border-color: rgba(26, 26, 26, 0.18);
+  background: #ffffff;
+  padding: 1rem 1.25rem;
+}
+
+.auth-modal-panel .auth-field input:focus {
+  border-color: var(--auth-primary);
+  box-shadow: 0 0 0 4px rgba(68, 107, 74, 0.14);
+}
+
+.auth-modal-panel .auth-submit {
+  width: 100%;
+  min-height: 58px;
+  border-radius: 999px;
+  background: var(--auth-primary);
+  box-shadow: none;
+}
+
+.auth-modal-panel .auth-submit:hover:not(:disabled) {
+  background: var(--auth-primary-deep);
+}
+
+.auth-modal-panel .auth-submit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.auth-modal-panel .auth-avatar {
+  background: var(--auth-primary);
+}
+
+.auth-modal-panel .auth-masked-email,
+.auth-modal-panel .auth-otp-meta-row {
+  background: rgba(68, 107, 74, 0.05);
+  border: 1px solid rgba(68, 107, 74, 0.14);
+}
+
+.auth-modal-panel .otp-digit-cell {
+  background: #ffffff;
+}
+
+.auth-modal-panel .auth-resend-pill {
+  background: var(--auth-primary);
+}
+
+.auth-modal-panel .auth-resend-pill:hover:not(:disabled) {
+  background: var(--auth-primary-deep);
+}
+
+.auth-text-link--inline {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--auth-primary) !important;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal-overlay,
+  .auth-modal-shell {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .auth-modal-shell {
+    width: 100%;
+  }
+
+  .auth-modal-panel {
+    border-radius: 28px 28px 0 0;
+    padding: 2rem 1.5rem 2.25rem;
+  }
+}

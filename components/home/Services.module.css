@@ -1,0 +1,354 @@
+.servicesPage {
+  overflow-x: clip;
+  background: var(--color-page);
+  color: var(--color-text);
+}
+
+.motionContents {
+  display: contents;
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  min-height: 86svh;
+  place-items: end start;
+  overflow: hidden;
+  padding: clamp(8rem, 14vw, 13rem) clamp(1.25rem, 5vw, 5rem) clamp(4.5rem, 8vw, 7rem);
+  isolation: isolate;
+}
+
+.heroImage,
+.coverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroOverlay,
+.ctaOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(14, 20, 16, 0.24) 0%, rgba(14, 20, 16, 0.08) 42%, rgba(14, 20, 16, 0.78) 100%),
+    linear-gradient(90deg, rgba(14, 20, 16, 0.66) 0%, rgba(14, 20, 16, 0.12) 68%);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 64rem);
+  color: var(--color-text-on-dark);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-text-on-dark-muted);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.heroContent h1,
+.overviewIntro h2,
+.detailCopy h2,
+.journeyHeader h2,
+.ctaContent h2 {
+  margin: 0;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.heroContent h1 {
+  max-width: 64rem;
+  margin-top: 1.2rem;
+  color: var(--color-text-on-dark);
+  font-size: clamp(4rem, 8.2vw, 8.8rem);
+  line-height: 0.88;
+}
+
+.heroContent p:last-child {
+  max-width: 42rem;
+  margin: 1.6rem 0 0;
+  color: var(--color-text-on-dark-muted);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(1rem, 1.25vw, 1.16rem);
+  line-height: 1.75;
+}
+
+.overview,
+.detailBlocks,
+.journey {
+  width: min(100%, 92rem);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+.overview {
+  padding-top: clamp(5.5rem, 10vw, 9rem);
+  padding-bottom: clamp(5.5rem, 10vw, 9rem);
+}
+
+.overviewIntro {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.34fr) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: end;
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.overviewIntro h2,
+.detailCopy h2,
+.journeyHeader h2,
+.ctaContent h2 {
+  color: var(--color-text);
+  font-size: clamp(3rem, 6.2vw, 6.6rem);
+  line-height: 0.9;
+}
+
+.pillarGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.pillarCard {
+  min-height: 25rem;
+  padding: 1.45rem;
+  border: 1px solid var(--color-card-border);
+  border-radius: 1rem;
+  background: var(--color-card-bg-warm);
+}
+
+.pillarCard span,
+.journeyRow span {
+  display: block;
+  color: var(--color-brand);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.pillarCard h3,
+.journeyRow h3 {
+  margin: 5rem 0 1rem;
+  color: var(--color-text);
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(1.85rem, 2.9vw, 2.65rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.pillarCard p,
+.detailCopy p,
+.journeyRow p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.78;
+}
+
+.detailBlocks {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(24rem, 0.86fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: center;
+  padding-top: clamp(1rem, 3vw, 2rem);
+  padding-bottom: clamp(5.5rem, 10vw, 9rem);
+}
+
+.detailImage {
+  overflow: hidden;
+  margin: 0;
+  aspect-ratio: 16 / 12;
+  border-radius: 1.2rem;
+  background: var(--color-surface-warm);
+  box-shadow: 0 2.5rem 6rem rgba(50, 43, 34, 0.15);
+}
+
+.detailCopy {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.detailCopy h2 {
+  max-width: 40rem;
+  font-size: clamp(3rem, 5.6vw, 5.8rem);
+}
+
+.reasonList {
+  display: grid;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.reasonList span {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.journey {
+  padding-top: clamp(5rem, 9vw, 8rem);
+  padding-bottom: clamp(5.5rem, 10vw, 9rem);
+  border-top: 1px solid var(--color-border);
+}
+
+.journeyHeader {
+  max-width: 58rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.journeyRows {
+  display: grid;
+  border-top: 1px solid var(--color-border);
+}
+
+.journeyRow {
+  display: grid;
+  grid-template-columns: 5rem minmax(14rem, 0.9fr) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+  padding: 2.1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.journeyRow h3 {
+  margin: 0;
+}
+
+.cta {
+  position: relative;
+  display: grid;
+  min-height: 36rem;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(4rem, 8vw, 7rem) 1.25rem;
+  text-align: center;
+  isolation: isolate;
+}
+
+.ctaOverlay {
+  background:
+    linear-gradient(180deg, rgba(16, 22, 18, 0.2) 0%, rgba(16, 22, 18, 0.74) 100%),
+    rgba(16, 22, 18, 0.18);
+}
+
+.ctaContent {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 1.35rem;
+  width: min(100%, 58rem);
+}
+
+.ctaContent h2 {
+  color: var(--color-text-on-dark);
+}
+
+.ctaContent a {
+  display: inline-flex;
+  min-width: 12rem;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--color-button-secondary-bg);
+  color: var(--color-button-secondary-text);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: transform 220ms ease, background 220ms ease;
+}
+
+.ctaContent a:hover {
+  transform: translateY(-2px);
+  background: var(--color-surface-warm);
+}
+
+@media (max-width: 1024px) {
+  .pillarGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detailBlocks {
+    grid-template-columns: 1fr;
+  }
+
+  .journeyRow {
+    grid-template-columns: 4rem minmax(0, 1fr);
+  }
+
+  .journeyRow p {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: 84svh;
+    padding: 7rem 1rem 3.5rem;
+  }
+
+  .heroContent h1,
+  .overviewIntro h2,
+  .detailCopy h2,
+  .journeyHeader h2,
+  .ctaContent h2 {
+    font-size: clamp(2.7rem, 13vw, 4rem);
+    line-height: 0.94;
+  }
+
+  .overview,
+  .detailBlocks,
+  .journey {
+    padding-inline: 1rem;
+  }
+
+  .overviewIntro {
+    grid-template-columns: 1fr;
+  }
+
+  .pillarGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pillarCard {
+    min-height: 16rem;
+  }
+
+  .pillarCard h3 {
+    margin-top: 2.8rem;
+  }
+
+  .detailImage {
+    aspect-ratio: 4 / 4.6;
+    border-radius: 0.9rem;
+  }
+
+  .journeyRow {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .journeyRow p {
+    grid-column: auto;
+  }
+
+  .cta {
+    min-height: 32rem;
+  }
+}
