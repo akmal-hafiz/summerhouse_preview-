@@ -14,12 +14,17 @@ No CMS schema, Lodgify mapping, database migration, villa selection logic, or ho
 
 ### Desktop
 
-Restore the previous bento composition:
+Reproduce the approved reference composition:
 
-- A left column containing the villa name, location metadata, and primary image.
-- A wider right column containing two supporting images and two content areas.
-- Preserve the original proportions, spacing, image radii, and visual hierarchy.
-- Remove the current oversized location treatment from the main header.
+- Use a full-width title header followed by location metadata and a thin divider.
+- Keep the villa name and location in the header only.
+- Use three open editorial columns below the divider.
+- The left column occupies about 34 percent of the content width and contains one tall portrait image.
+- The center column occupies about 31 percent and contains a landscape image above an open `Key features` block.
+- The right column occupies the remaining width and contains open distinctive copy above a landscape image.
+- Use generous negative space and approximately 20 pixel media radii.
+- Content areas must not use white cards, borders, or nested panel styling.
+- Preserve the reference alignment, with the landscape images positioned lower than the start of the portrait image.
 
 ### Mobile
 
@@ -33,7 +38,7 @@ Restore the previous vertical sequence and spacing:
 - Feature information.
 - Final supporting image.
 
-The mobile layout must retain the existing responsive behavior and reduced-motion support.
+The mobile layout must retain the existing responsive behavior, approximately 20 pixel media radii, generous vertical spacing, and reduced-motion support.
 
 ## Content
 
@@ -43,6 +48,7 @@ Keep the current client-approved content:
 - Location appears as small metadata directly below the villa name.
 - `Key features` uses normalized Lodgify amenities and capacity facts.
 - `What makes it distinct` uses the current CMS-backed editorial copy.
+- `View this stay` remains the only action inside the section.
 - Price is not shown.
 - Redundant labels such as `Most Exclusive Stay`, `Why This Home`, and repeated property names remain removed.
 
@@ -60,11 +66,13 @@ Preserve:
 
 ## Acceptance Criteria
 
-- Desktop composition visually matches the previous Signature Villa layout.
+- Desktop composition matches the approved reference geometry at 1440 and 1600 pixel widths.
+- The portrait image is visibly taller than both supporting images.
+- The center and right supporting images use consistent landscape proportions.
+- Feature and distinctive copy areas remain visually open without card containers.
 - Mobile composition follows the previous section order.
 - Location is visible only as small metadata below the villa name.
 - New client-approved copy remains unchanged.
 - No pricing or redundant labels return.
 - TypeScript typecheck and production build pass.
 - Desktop and mobile browser QA show no overlap, clipping, or console errors.
-
