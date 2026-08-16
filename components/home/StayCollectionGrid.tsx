@@ -128,11 +128,24 @@ function StayVillaCard({
 }
 
 export default function StayCollectionGrid({ villas }: StayCollectionGridProps) {
+  const displayVillas = villas.slice(0, 6);
+  const row1 = displayVillas.slice(0, 3);
+  const row2 = displayVillas.slice(3, 6);
+
   return (
-    <div className={styles.grid}>
-      {villas.slice(0, 6).map((villa, index) => (
-        <StayVillaCard key={String(villa.id)} villa={villa} index={index} />
-      ))}
+    <div className={styles.gridContainer}>
+      <div className={styles.scrollRow} role="region" aria-label="Featured stays row 1">
+        {row1.map((villa, index) => (
+          <StayVillaCard key={String(villa.id)} villa={villa} index={index} />
+        ))}
+      </div>
+      {row2.length > 0 && (
+        <div className={styles.scrollRow} role="region" aria-label="Featured stays row 2">
+          {row2.map((villa, index) => (
+            <StayVillaCard key={String(villa.id)} villa={villa} index={index + 3} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
