@@ -4138,7 +4138,216 @@ img {
   }
 }
 
-/* Final villa detail layout guardrail: keep the detail page close to the attached premium preview. */
+/* Final pass: restore the original hero glass mood and fix date panel geometry */
+.home-hero-section .villa-search-form--hero {
+  border-color: rgba(255, 255, 255, 0.2);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)),
+    rgba(18, 19, 17, 0.28);
+  box-shadow:
+    0 1rem 2.8rem rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(22px) saturate(155%);
+  -webkit-backdrop-filter: blur(22px) saturate(155%);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group > button,
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates,
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button {
+  border-color: rgba(255, 255, 255, 0.22);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+    rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0.55rem 1.25rem rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button {
+  border-color: transparent;
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button:first-child {
+  border-right-color: rgba(255, 255, 255, 0.2);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group span {
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.home-hero-section .villa-search-form--hero .villa-search-form__group strong,
+.home-hero-section .villa-search-form--hero .villa-search-form__chevron {
+  color: #fff;
+}
+
+.villa-search-form__panel--dates {
+  max-height: min(34rem, calc(100svh - 7rem));
+  overflow: auto;
+}
+
+.villa-search-form__panel--dates .villa-search-calendar__nav {
+  top: 1rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .villa-search-form__panel--dates {
+    width: min(40rem, calc(100vw - 3rem));
+    padding: 1.05rem 1.35rem 1.35rem;
+  }
+
+  .villa-search-calendar {
+    gap: 1.3rem;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin-bottom: 1rem;
+  }
+
+  .villa-search-calendar__weekdays span {
+    font-size: 0.72rem;
+  }
+
+  .villa-search-calendar__grid {
+    gap: 0.16rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: 2rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-hero-section .villa-search-form--hero {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05)),
+      rgba(18, 19, 17, 0.34);
+  }
+
+  .home-hero-section .villa-search-form--hero .villa-search-form__group > button,
+  .home-hero-section .villa-search-form--hero .villa-search-form__group--dates,
+  .home-hero-section .villa-search-form--hero .villa-search-form__group--dates > button {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08)),
+      rgba(255, 255, 255, 0.12);
+  }
+
+  .villa-search-form__panel--dates {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.65rem !important;
+    bottom: 0.65rem !important;
+    left: 0.65rem !important;
+    width: auto !important;
+    max-height: min(76svh, 35rem);
+    padding: 1rem 0.9rem 1.15rem;
+    transform: none !important;
+    border-radius: 1.15rem;
+  }
+
+  .villa-search-form__panel--dates .villa-search-calendar__nav {
+    top: 0.8rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .villa-search-calendar__nav:first-child {
+    left: 0.85rem;
+  }
+
+  .villa-search-calendar__nav:last-child {
+    right: 0.85rem;
+  }
+
+  .villa-search-calendar {
+    width: 100%;
+    gap: 0;
+  }
+
+  .villa-search-calendar__month {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .villa-search-calendar__month h4 {
+    margin: 0 2.35rem 0.9rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  .villa-search-calendar__weekdays {
+    margin-bottom: 0.2rem;
+  }
+
+  .villa-search-calendar__weekdays span {
+    padding: 0.2rem 0;
+    font-size: 0.68rem;
+  }
+
+  .villa-search-calendar__grid {
+    gap: 0.18rem;
+  }
+
+  .villa-search-calendar__day {
+    min-height: clamp(2.15rem, 8.2vw, 2.7rem);
+    border-radius: 0.62rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* Search popover geometry guardrail: keep date picker readable after all legacy overrides */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .villa-search-form .villa-search-form__panel--dates {
+    position: absolute !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: calc(100% + 0.85rem) !important;
+    left: 50% !important;
+    width: min(40rem, calc(100vw - 2.5rem)) !important;
+    max-height: min(80svh, 34rem) !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .villa-search-form .villa-search-calendar {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .villa-search-form .villa-search-calendar .villa-search-calendar__month:nth-child(2) {
+    display: block !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .villa-search-form .villa-search-form__panel--dates {
+    position: fixed !important;
+    top: auto !important;
+    right: 0.65rem !important;
+    bottom: 4.6rem !important;
+    left: 0.65rem !important;
+    width: auto !important;
+    max-height: min(72svh, 35rem) !important;
+    transform: none !important;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.86)),
+      rgba(255, 255, 255, 0.84) !important;
+  }
+}
+
+.villa-detail-route-shell {
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+}
+
 .villa-detail-page--preview {
   --villa-preview-bg: var(--color-surface-warm);
   --villa-preview-paper: var(--color-surface);
@@ -4155,6 +4364,7 @@ img {
   display: flex;
   min-height: 100svh;
   padding: clamp(0.85rem, 1.5vw, 1.4rem);
+  padding-top: clamp(5.25rem, 7vw, 6.25rem);
 }
 
 .villa-detail-page--preview .villa-detail-frame {
@@ -4169,37 +4379,6 @@ img {
   background: var(--villa-preview-paper);
   box-shadow: 0 1.7rem 5rem rgba(28, 27, 24, 0.1);
 }
-
-.villa-detail-page--preview .villa-detail-mini-header {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  display: grid;
-  grid-template-columns: minmax(210px, 1fr) auto minmax(280px, 1fr);
-  align-items: center;
-  gap: clamp(1rem, 2vw, 2rem);
-  min-height: 4.75rem;
-  border-bottom: 1px solid var(--villa-preview-line);
-  background: rgba(255, 255, 255, 0.74);
-  padding: 0 clamp(1rem, 2.6vw, 2.8rem);
-  backdrop-filter: blur(22px) saturate(160%);
-}
-
-.villa-detail-page--preview .villa-detail-mini-header__brand {
-  display: grid;
-  gap: 0.16rem;
-  justify-self: start;
-}
-
-.villa-detail-page--preview .villa-detail-mini-logo {
-  color: var(--villa-preview-ink);
-  font-family: var(--font-sans), Inter, Arial, sans-serif;
-  font-size: 1rem;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-}
-
 .villa-detail-page--preview .villa-detail-mini-header__brand span {
   color: rgba(68, 107, 74, 0.78);
   font-size: 0.57rem;
@@ -13166,28 +13345,34 @@ details.global-mobile-menu.global-mobile-menu--standalone[open] {
 
 details.global-mobile-menu.global-mobile-menu--standalone summary,
 details.global-mobile-menu.global-mobile-menu--standalone summary:hover,
-details.global-mobile-menu.global-mobile-menu--standalone summary:active,
-details.global-mobile-menu.global-mobile-menu--standalone[open] summary {
+details.global-mobile-menu.global-mobile-menu--standalone summary:active {
   appearance: none !important;
   -webkit-appearance: none !important;
   border: 0 !important;
   border-radius: 999px !important;
   outline: 0 !important;
   overflow: hidden !important;
-  border: 1px solid rgba(255, 255, 255, 0.62) !important;
-  background:
-    radial-gradient(140% 130% at 28% -28%, rgba(255, 255, 255, 0.82), transparent 48%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.18)),
-    rgba(248, 247, 242, 0.32) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.96) !important;
   box-shadow:
-    0 12px 28px -12px rgba(10, 20, 12, 0.34),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.42),
-    inset 0 1px 1px rgba(255, 255, 255, 0.86),
-    inset 0 -2px 4px rgba(40, 60, 44, 0.12) !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+    0 8px 20px -6px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
   filter: none !important;
   -webkit-tap-highlight-color: transparent !important;
+}
+
+.global-mini-header.is-scrolled details.global-mobile-menu.global-mobile-menu--standalone summary,
+.global-mini-header.is-scrolled details.global-mobile-menu.global-mobile-menu--standalone summary:hover,
+.global-mini-header.is-scrolled details.global-mobile-menu.global-mobile-menu--standalone summary:active {
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #1f1f1d !important;
+  box-shadow:
+    0 8px 20px -6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
 details.global-mobile-menu.global-mobile-menu--standalone summary:focus-visible {
@@ -13392,21 +13577,16 @@ details.global-mobile-menu.global-mobile-menu--standalone[open] {
 
 details.global-mobile-menu.global-mobile-menu--standalone summary,
 details.global-mobile-menu.global-mobile-menu--standalone summary:hover,
-details.global-mobile-menu.global-mobile-menu--standalone summary:active,
-details.global-mobile-menu.global-mobile-menu--standalone[open] summary {
+details.global-mobile-menu.global-mobile-menu--standalone summary:active {
   overflow: hidden !important;
-  border: 1px solid rgba(255, 255, 255, 0.62) !important;
-  background:
-    radial-gradient(140% 130% at 28% -28%, rgba(255, 255, 255, 0.82), transparent 48%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.18)),
-    rgba(248, 247, 242, 0.32) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.96) !important;
   box-shadow:
-    0 12px 28px -12px rgba(10, 20, 12, 0.34),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.42),
-    inset 0 1px 1px rgba(255, 255, 255, 0.86),
-    inset 0 -2px 4px rgba(40, 60, 44, 0.12) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(170%) contrast(1.04) !important;
-  backdrop-filter: blur(24px) saturate(170%) contrast(1.04) !important;
+    0 8px 20px -6px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
 }
 
 /* ==========================================================================
@@ -13786,27 +13966,45 @@ details.global-mobile-menu.global-mobile-menu--standalone[open] {
 
 details.global-mobile-menu.global-mobile-menu--standalone summary,
 details.global-mobile-menu.global-mobile-menu--standalone summary:hover,
-details.global-mobile-menu.global-mobile-menu--standalone summary:active,
-details.global-mobile-menu.global-mobile-menu--standalone[open] summary {
+details.global-mobile-menu.global-mobile-menu--standalone summary:active {
   appearance: none !important;
   -webkit-appearance: none !important;
   overflow: hidden !important;
-  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   border-radius: 999px !important;
   outline: 0 !important;
-  background:
-    radial-gradient(140% 130% at 28% -28%, rgba(255, 255, 255, 0.92), transparent 48%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(236, 239, 233, 0.66)),
-    #f2f3ee !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.96) !important;
   box-shadow:
-    0 12px 28px -12px rgba(10, 20, 12, 0.34),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.42),
-    inset 0 1px 1px rgba(255, 255, 255, 0.92),
-    inset 0 -2px 4px rgba(40, 60, 44, 0.12) !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+    0 8px 20px -6px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(150%) !important;
+  backdrop-filter: blur(16px) saturate(150%) !important;
   filter: none !important;
   -webkit-tap-highlight-color: transparent !important;
+}
+
+.global-mini-header.is-scrolled details.global-mobile-menu.global-mobile-menu--standalone summary,
+.global-mini-header.is-scrolled details.global-mobile-menu.global-mobile-menu--standalone summary:hover,
+.global-mini-header.is-scrolled details.global-mobile-menu.global-mobile-menu--standalone summary:active {
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #1f1f1d !important;
+  box-shadow:
+    0 8px 20px -6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+details.global-mobile-menu.global-mobile-menu--standalone[open] summary {
+  border-color: rgba(68, 107, 74, 0.35) !important;
+  background: rgba(68, 107, 74, 0.16) !important;
+  color: #1f1f1d !important;
+}
+
+.global-mini-header:not(.is-scrolled) details.global-mobile-menu.global-mobile-menu--standalone[open] summary {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
 }
 
 details.global-mobile-menu.global-mobile-menu--standalone summary:focus-visible {

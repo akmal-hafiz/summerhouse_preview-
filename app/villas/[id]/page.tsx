@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FiHeart, FiMenu, FiSearch, FiUser } from "react-icons/fi";
+import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import AvailabilityCalendar from "@/components/booking/AvailabilityCalendar";
 import VillaAmenities from "@/components/booking/VillaAmenities";
@@ -15,13 +15,6 @@ interface VillaDetailPageProps {
     id: string;
   }>;
 }
-
-const villaDetailNavItems = [
-  { label: "Villas", href: "/villas" },
-  { label: "Services", href: "/services" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
 
 export async function generateMetadata({ params }: VillaDetailPageProps) {
   const { id } = await params;
@@ -44,6 +37,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
   if (!villa) {
     return (
       <main className="villa-detail-page">
+        <Navbar alwaysSolid={true} />
         <section className="villa-detail-missing">
           <h1>Villa not found</h1>
           <Link href="/villas">Back to villa collection</Link>
@@ -63,45 +57,11 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
     : `${villa.address || villa.city}, Indonesia`;
 
   return (
-    <main className="villa-detail-page villa-detail-page--preview">
-      <section className="villa-detail-stage">
-        <div className="villa-detail-frame">
-          <header className="villa-detail-mini-header">
-            <div className="villa-detail-mini-header__brand">
-              <Link href="/" className="villa-detail-mini-logo">SUMMERHOUSE</Link>
-              <span>Bali private stays</span>
-            </div>
-
-            <nav className="villa-detail-mini-nav" aria-label="Villa detail navigation">
-              {villaDetailNavItems.map((item) => (
-                <Link href={item.href} key={item.href}>{item.label}</Link>
-              ))}
-            </nav>
-
-            <div className="villa-detail-mini-actions">
-              <Link href="/villas" className="villa-detail-mini-link">Book our Villas</Link>
-              <button type="button" className="villa-detail-icon-button" aria-label="Search villas">
-                <FiSearch aria-hidden="true" />
-              </button>
-              <button type="button" className="villa-detail-icon-button" aria-label={`Save ${villa.name}`}>
-                <FiHeart aria-hidden="true" />
-              </button>
-              <button type="button" className="villa-detail-icon-button" aria-label="Open user profile">
-                <FiUser aria-hidden="true" />
-              </button>
-              <details className="villa-detail-mobile-menu">
-                <summary aria-label="Open navigation">
-                  <FiMenu aria-hidden="true" />
-                </summary>
-                <div className="villa-detail-mobile-menu__panel">
-                  {villaDetailNavItems.map((item) => (
-                    <Link href={item.href} key={`mobile-${item.href}`}>{item.label}</Link>
-                  ))}
-                  <Link href="/villas">Book our Villas</Link>
-                </div>
-              </details>
-            </div>
-          </header>
+    <div className="villa-detail-route-shell">
+      <Navbar alwaysSolid={true} />
+      <main className="villa-detail-page villa-detail-page--preview">
+        <section className="villa-detail-stage">
+          <div className="villa-detail-frame">
 
           <div className="villa-detail-hero-copy">
             <Link href="/villas" className="villa-detail-back">Villa collection</Link>
@@ -233,6 +193,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
 
       <Footer />
     </main>
+  </div>
   );
 }
 
