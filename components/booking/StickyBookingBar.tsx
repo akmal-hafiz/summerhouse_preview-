@@ -113,8 +113,8 @@ export default function StickyBookingBar({
         >
           {bookingLabel}
         </a>
-        {!isValid && error && whatsAppFallbackUrl && (
-          <small>
+        {whatsAppFallbackUrl && (
+          <small className="villa-booking-bar__help">
             Need help? <a href={whatsAppFallbackUrl} target="_blank" rel="noopener noreferrer">WhatsApp us</a>.
           </small>
         )}

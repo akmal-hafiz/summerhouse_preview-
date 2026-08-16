@@ -8,9 +8,13 @@ import styles from "./JournalPreviewSection.module.css";
 
 type JournalPreviewSectionProps = {
   articles: ArticleListItem[];
+  content?: {
+    eyebrow?: string;
+    title?: string;
+  };
 };
 
-export default function JournalPreviewSection({ articles }: JournalPreviewSectionProps) {
+export default function JournalPreviewSection({ articles, content }: JournalPreviewSectionProps) {
   const sorted = [...articles].sort((a, b) => {
     const dateA = a.date ? new Date(a.date).getTime() : 0;
     const dateB = b.date ? new Date(b.date).getTime() : 0;
@@ -33,8 +37,8 @@ export default function JournalPreviewSection({ articles }: JournalPreviewSectio
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className={styles.eyebrow}>Featured Stories</p>
-          <h2 className={styles.title}>The Journal.</h2>
+          <p className={styles.eyebrow}>{content?.eyebrow || "Featured Stories"}</p>
+          <h2 className={styles.title}>{content?.title || "The Journal."}</h2>
         </motion.header>
 
         <div className={styles.grid}>

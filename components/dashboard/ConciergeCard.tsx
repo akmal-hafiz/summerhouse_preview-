@@ -3,15 +3,14 @@
 import { useEffect, useState } from "react";
 import { FiMail, FiPhone, FiArrowUpRight, FiClock } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
+import { useGlobalContactSettings } from "@/hooks/useGlobalContactSettings";
+import { buildEmailHref, buildPhoneHref, buildWhatsAppHref } from "@/lib/contact-settings";
 
 type ConciergeSettings = {
   "concierge.subtitle"?: string | null;
   "concierge.hours"?: string | null;
-  "concierge.whatsapp"?: string | null;
   "concierge.whatsapp_label"?: string | null;
-  "concierge.phone"?: string | null;
   "concierge.phone_label"?: string | null;
-  "concierge.email"?: string | null;
   "concierge.email_label"?: string | null;
 };
 
@@ -20,36 +19,16 @@ const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:80
 const SETTING_KEYS = [
   "concierge.subtitle",
   "concierge.hours",
-  "concierge.whatsapp",
   "concierge.whatsapp_label",
-  "concierge.phone",
   "concierge.phone_label",
-  "concierge.email",
   "concierge.email_label",
 ].join(",");
 
 const DEFAULT_SUBTITLE = "Tim Bali kami siap bantu pilih villa, cek ketersediaan, atau atur jadwal kunjungan.";
 
-function buildWhatsappUrl(rawNumber: string): string {
-  const digits = rawNumber.replace(/[^\d]/g, "");
-  if (digits.length < 8) return "";
-  return `https://wa.me/${digits}`;
-}
-
-function buildTelUrl(rawNumber: string): string {
-  const cleaned = rawNumber.replace(/[^\d+]/g, "");
-  if (cleaned.replace(/\D/g, "").length < 8) return "";
-  return `tel:${cleaned}`;
-}
-
-function buildMailUrl(rawEmail: string): string {
-  const email = rawEmail.trim();
-  if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email)) return "";
-  return `mailto:${email}`;
-}
-
 export default function ConciergeCard() {
   const [settings, setSettings] = useState<ConciergeSettings | null>(null);
+  const contact = useGlobalContactSettings();
 
   useEffect(() => {
     let abort = false;
@@ -65,15 +44,12 @@ export default function ConciergeCard() {
 
   const subtitle = settings?.["concierge.subtitle"] || DEFAULT_SUBTITLE;
   const hours = settings?.["concierge.hours"];
-  const wa = settings?.["concierge.whatsapp"];
   const waLabel = settings?.["concierge.whatsapp_label"] ?? "WhatsApp";
-  const phone = settings?.["concierge.phone"];
   const phoneLabel = settings?.["concierge.phone_label"] ?? "Telepon";
-  const email = settings?.["concierge.email"];
   const emailLabel = settings?.["concierge.email_label"] ?? "Email";
-  const waHref = wa ? buildWhatsappUrl(wa) : "";
-  const phoneHref = phone ? buildTelUrl(phone) : "";
-  const emailHref = email ? buildMailUrl(email) : "";
+  const waHref = buildWhatsAppHref(contact.whatsapp);
+  const phoneHref = buildPhoneHref(contact.phone);
+  const emailHref = buildEmailHref(contact.reservationEmail);
 
   if (!waHref && !emailHref && !phoneHref && settings !== null) {
     return null;

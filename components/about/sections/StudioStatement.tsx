@@ -30,6 +30,12 @@ const RIGHT_IMAGES = [
   "/homepage_villa/88east.webp",
 ];
 
+function buildRailImages(images: string[] | undefined, fallback: string[]) {
+  const usable = (images || []).filter((image) => typeof image === "string" && image.trim());
+  const source = usable.length ? usable : fallback;
+  return Array.from({ length: Math.max(8, source.length) }, (_, index) => source[index % source.length]);
+}
+
 /**
  * Dark editorial "About us" stage — a left-aligned manifesto floating in black
  * negative space, flanked by two vertical image rails. The section is exactly
@@ -37,7 +43,18 @@ const RIGHT_IMAGES = [
  * (parallax tied to scroll position — no autoplay), both drifting upward at
  * slightly different rates as the section passes through the viewport.
  */
-export default function StudioStatement() {
+export default function StudioStatement({
+  content,
+}: {
+  content?: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    button_label?: string;
+    left_images?: string[];
+    right_images?: string[];
+  };
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -46,12 +63,14 @@ export default function StudioStatement() {
 
   const leftY = useTransform(scrollYProgress, [0, 1], ["-6%", "-34%"]);
   const rightY = useTransform(scrollYProgress, [0, 1], ["-4%", "-40%"]);
+  const leftImages = buildRailImages(content?.left_images, LEFT_IMAGES);
+  const rightImages = buildRailImages(content?.right_images, RIGHT_IMAGES);
 
   return (
     <section ref={sectionRef} className={styles.section} aria-label="About Summerhouses">
       <div className={styles.col} aria-hidden="true">
         <motion.div className={styles.track} style={{ y: leftY }}>
-          {LEFT_IMAGES.map((src, index) => (
+          {leftImages.map((src, index) => (
             <div className={styles.frame} key={`${src}-${index}`}>
               <Image src={src} alt="" fill sizes="240px" className={styles.img} />
             </div>
@@ -60,25 +79,25 @@ export default function StudioStatement() {
       </div>
 
       <div className={styles.center}>
-        <p className={styles.eyebrow}>The gallery</p>
+        <p className={styles.eyebrow}>{content?.eyebrow || "The gallery"}</p>
         <p className={styles.primary}>
-          A closer look at the spaces you&rsquo;ll actually live in.
+          {content?.title || "A closer look at the spaces you will actually live in."}
         </p>
         <p className={styles.secondary}>
-          The light through the morning kitchen, the pool at dusk, the quiet corners between rooms.
-          Every villa is photographed the way you&rsquo;ll remember it — so what you see is what you arrive to.
+          {content?.description ||
+            "The light through the morning kitchen, the pool at dusk, the quiet corners between rooms. Every villa is photographed the way you will remember it, so what you see is what you arrive to."}
         </p>
         <InteractiveHoverButton
           href="/gallery"
           className={`${styles.galleryCta} ihb-fill-light`}
         >
-          View the full gallery
+          {content?.button_label || "View the full gallery"}
         </InteractiveHoverButton>
       </div>
 
       <div className={styles.col} aria-hidden="true">
         <motion.div className={styles.track} style={{ y: rightY }}>
-          {RIGHT_IMAGES.map((src, index) => (
+          {rightImages.map((src, index) => (
             <div className={styles.frame} key={`${src}-${index}`}>
               <Image src={src} alt="" fill sizes="240px" className={styles.img} />
             </div>

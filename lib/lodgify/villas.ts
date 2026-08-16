@@ -1,5 +1,12 @@
 import { isValidDateRange } from "@/lib/date";
-import { getCmsBaliCollections, getCmsSection, getHomepageVillaSelections, type CmsHomepageSlots } from "@/lib/cms";
+import { cache } from "react";
+import {
+  CMS_LODGIFY_REVALIDATE,
+  getCmsBaliCollections,
+  getCmsSection,
+  getHomepageVillaSelections,
+  type CmsHomepageSlots,
+} from "@/lib/cms";
 import { fetchAvailabilityItems, fetchProperties, fetchPropertyById, fetchPropertyImages, fetchPropertyRooms } from "./client";
 import { buildAvailabilityMapFromItems, isRangeAvailable } from "./availability";
 import { getDirectBookingUrl } from "./booking";
@@ -20,7 +27,7 @@ import {
 } from "./normalizers";
 import { compact, unique } from "./runtime";
 import type {
-  FeaturedCollectionVilla,
+  HomepageVillaCard,
   HomepageStayGroup,
   HomepageStayVilla,
   LodgifyProperty,
@@ -39,9 +46,8 @@ export const getPropertyById = fetchPropertyById;
 export const getPropertyRooms = fetchPropertyRooms;
 export const getPropertyImages = fetchPropertyImages;
 
-const DEFAULT_FEATURED_PROPERTY_IDS = ["475365", "475366", "475372", "703452"];
 const DEFAULT_FEATURED_HOME_IDS = ["796460", "475365", "475372"];
-const DEFAULT_SHORT_STAY_IDS = ["703452", "475366", "751982"];
+const DEFAULT_SHORT_STAY_IDS = ["703452", "475366", "761507"];
 const DEFAULT_EXTENDED_STAY_IDS = ["796460", "761507", "762712"];
 const FALLBACK_COLLECTION_IMAGES = [
   "/homepage_villa/VillaZen.webp",
@@ -51,39 +57,9 @@ const FALLBACK_COLLECTION_IMAGES = [
   "/homepage_villa/rumahmimosa.webp",
 ];
 
-function getConfiguredFeaturedPropertyIds() {
-  const configured = process.env.FEATURED_PROPERTY_IDS || process.env.HOMEPAGE_FEATURED_PROPERTY_IDS || "";
-  const ids = configured
-    .split(",")
-    .map((id) => id.trim())
-    .filter(Boolean);
-
-  return ids.length ? ids : DEFAULT_FEATURED_PROPERTY_IDS;
-}
-
-function getConfiguredIds(envKey: string, fallback: string[]) {
-  const configured = process.env[envKey] || "";
-  const ids = configured
-    .split(",")
-    .map((id) => id.trim())
-    .filter(Boolean);
-
-  return ids.length ? ids : fallback;
-}
-
 function getSlotIds(slots: CmsHomepageSlots | null, slot: keyof CmsHomepageSlots): string[] {
   if (!slots?.[slot]?.length) return [];
   return slots[slot]!.map((row) => row.lodgify_property_id).filter(Boolean);
-}
-
-async function resolveSlotIds(
-  slot: keyof CmsHomepageSlots,
-  envKey: string,
-  fallback: string[],
-  cachedSlots?: CmsHomepageSlots | null,
-): Promise<string[]> {
-  const { ids } = await resolveSlotConfig(slot, envKey, fallback, cachedSlots);
-  return ids;
 }
 
 type SlotSource = "cms" | "env" | "default";
@@ -111,19 +87,15 @@ async function resolveConfiguredProperties(
   properties: LodgifyProperty[],
   configuredIds: string[],
 ): Promise<LodgifyProperty[]> {
-  const resolved = await Promise.all(
-    configuredIds.map(async (id) => {
-      const fromList = properties.find((p) => String(p.id) === String(id));
-      if (fromList) return fromList;
-      try {
-        const fetched = await fetchPropertyById(id);
-        return fetched ?? null;
-      } catch {
-        return null;
-      }
-    }),
+  const activeById = new Map(
+    properties
+      .filter((property) => property.id && property.is_active !== false)
+      .map((property) => [String(property.id), property]),
   );
-  return resolved.filter((p): p is LodgifyProperty => Boolean(p?.id));
+
+  return configuredIds
+    .map((id) => activeById.get(String(id)))
+    .filter((property): property is LodgifyProperty => Boolean(property));
 }
 
 function normalizeGuestCount(params: VillaSearchParams) {
@@ -131,10 +103,30 @@ function normalizeGuestCount(params: VillaSearchParams) {
   return Number(params.adults || 0) + Number(params.children || 0) || 1;
 }
 
-function matchesLocation(property: LodgifyProperty, location?: string) {
+function normalizeLocation(value?: string | null) {
+  return String(value || "")
+    .normalize("NFKC")
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/\s*-\s*/g, " - ")
+    .replace(/\s+/g, " ");
+}
+
+export function matchesLocation(
+  property: LodgifyProperty,
+  location?: string,
+  match: VillaSearchParams["match"] = "fuzzy",
+) {
   if (!location || location.toLowerCase() === "all") return true;
 
-  const needle = location.toLowerCase();
+  const needle = normalizeLocation(location);
+  if (match === "exact") {
+    return [property.city, property.location?.name]
+      .filter(Boolean)
+      .some((value) => normalizeLocation(value) === needle);
+  }
+
   const haystack = [
     property.country,
     property.country_code,
@@ -144,8 +136,8 @@ function matchesLocation(property: LodgifyProperty, location?: string) {
     property.name,
   ]
     .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
+    .map((value) => normalizeLocation(String(value)))
+    .join(" ");
 
   return haystack.includes(needle);
 }
@@ -267,10 +259,10 @@ export async function getVillaSearchOptions() {
   };
 }
 
-function propertyToFeaturedCollectionVilla(
+function propertyToHomepageVillaCard(
   property: LodgifyProperty,
   rooms: LodgifyRoom[]
-): FeaturedCollectionVilla | null {
+): HomepageVillaCard | null {
   const summary = propertyToSummary(property);
   if (!summary) return null;
 
@@ -293,71 +285,48 @@ function propertyToFeaturedCollectionVilla(
   };
 }
 
-export async function getHomepageFeaturedVillas(limit = 4) {
-  const [properties, slots] = await Promise.all([
-    fetchProperties().then((all) => all.filter((property) => property.is_active !== false)),
-    getHomepageVillaSelections(),
-  ]);
-  const cmsIds = getSlotIds(slots, "featured_collection");
-  const cmsExclusive = cmsIds.length > 0;
-  const configuredIds = cmsExclusive ? cmsIds : getConfiguredFeaturedPropertyIds();
-
-  let selectedProperties: LodgifyProperty[];
-
-  if (cmsExclusive) {
-    // Strict CMS mode: use ONLY admin-picked IDs in saved order.
-    // Fetch individually for IDs missing from the bulk Lodgify response.
-    selectedProperties = (await resolveConfiguredProperties(properties, configuredIds)).slice(0, limit);
-  } else {
-    const configuredSet = new Set(configuredIds.map(String));
-    const configuredProperties = propertiesByConfiguredIds(properties, configuredIds);
-    const fallbackProperties = properties.filter((property) => property.is_featured || !configuredSet.has(String(property.id)));
-    const seenPropertyIds = new Set<string>();
-    selectedProperties = [...configuredProperties, ...fallbackProperties].filter((property) => {
-      if (!property.id) return false;
-      const id = String(property.id);
-      if (seenPropertyIds.has(id)) return false;
-      seenPropertyIds.add(id);
-      return true;
-    }).slice(0, limit);
-  }
-
-  const villas = await Promise.all(
-    selectedProperties.map(async (property) => {
-      if (!property.id) return null;
-      const rooms = await fetchPropertyRooms(property.id);
-      return propertyToFeaturedCollectionVilla(property, rooms);
-    })
-  );
-
-  return compact(villas);
-}
-
 function propertyToHomepageStayVilla(
   property: LodgifyProperty,
   rooms: LodgifyRoom[]
 ): HomepageStayVilla | null {
-  const featured = propertyToFeaturedCollectionVilla(property, rooms);
-  if (!featured) return null;
+  const card = propertyToHomepageVillaCard(property, rooms);
+  if (!card) return null;
 
   return {
-    ...featured,
+    ...card,
+    description: getHomepageCardDescription(card.description),
+    images: card.images?.slice(0, 4) || [card.imageUrl],
     amenitiesPreview: getAmenityPreview(rooms),
     priceValue: getComparablePrice(property),
   };
 }
 
+function getHomepageCardDescription(description: string) {
+  const compactDescription = description
+    .replace(/[—–]/g, ",")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (compactDescription.length <= 220) return compactDescription;
+
+  const withinLimit = compactDescription.slice(0, 220);
+  const sentenceEnd = Math.max(
+    withinLimit.lastIndexOf(". "),
+    withinLimit.lastIndexOf("! "),
+    withinLimit.lastIndexOf("? "),
+  );
+
+  if (sentenceEnd >= 80) return withinLimit.slice(0, sentenceEnd + 1);
+  return `${withinLimit.slice(0, 217).trimEnd()}...`;
+}
+
 async function getHomepageVillaFromProperty(property: LodgifyProperty) {
   if (!property.id) return null;
-  const rooms = await fetchPropertyRooms(property.id);
+  const rooms = await getHomepagePropertyRooms(String(property.id));
   return propertyToHomepageStayVilla(property, rooms);
 }
 
-function propertiesByConfiguredIds(properties: LodgifyProperty[], ids: string[]) {
-  return ids
-    .map((id) => properties.find((property) => String(property.id) === id))
-    .filter((property): property is LodgifyProperty => Boolean(property));
-}
+const getHomepagePropertyRooms = cache(async (propertyId: string) => fetchPropertyRooms(propertyId));
 
 async function buildStayGroup(
   properties: LodgifyProperty[],
@@ -366,29 +335,23 @@ async function buildStayGroup(
   description: string,
   configuredIds: string[],
   fallbackProperties: LodgifyProperty[],
-  cmsExclusive: boolean = false,
+  resolveVilla: (property: LodgifyProperty) => Promise<HomepageStayVilla | null>,
 ) {
-  let candidates: LodgifyProperty[];
+  const configuredProperties = configuredIds
+    .map((propertyId) => properties.find((property) => String(property.id) === String(propertyId)))
+    .filter((property): property is LodgifyProperty => Boolean(property));
+  const seen = new Set<string>();
+  const candidates = [...configuredProperties, ...fallbackProperties, ...properties]
+    .filter((property) => {
+      if (!property.id || property.is_active === false) return false;
+      const propertyId = String(property.id);
+      if (seen.has(propertyId)) return false;
+      seen.add(propertyId);
+      return true;
+    })
+    .slice(0, 6);
 
-  if (cmsExclusive) {
-    // Strict CMS mode: use ONLY the admin-picked IDs in their saved order.
-    // If a property is missing from the bulk list (e.g. marked inactive in Lodgify),
-    // fetch it individually so the admin's choice is honored.
-    candidates = await resolveConfiguredProperties(properties, configuredIds);
-  } else {
-    const seen = new Set<string>();
-    candidates = [...propertiesByConfiguredIds(properties, configuredIds), ...fallbackProperties]
-      .filter((property) => {
-        if (!property.id) return false;
-        const propertyId = String(property.id);
-        if (seen.has(propertyId)) return false;
-        seen.add(propertyId);
-        return true;
-      })
-      .slice(0, 8);
-  }
-
-  const villas = compact(await Promise.all(candidates.map(getHomepageVillaFromProperty))).slice(0, 3);
+  const villas = compact(await Promise.all(candidates.map(resolveVilla))).slice(0, 6);
 
   return {
     id,
@@ -412,6 +375,16 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
   const short = await resolveSlotConfig("short_stays", "SHORT_STAY_PROPERTY_IDS", DEFAULT_SHORT_STAY_IDS, slots);
   const extended = await resolveSlotConfig("extended_stays", "EXTENDED_STAY_PROPERTY_IDS", DEFAULT_EXTENDED_STAY_IDS, slots);
   const featuredHomes = await resolveSlotConfig("featured_homes", "FEATURED_HOME_PROPERTY_IDS", DEFAULT_FEATURED_HOME_IDS, slots);
+  const villaPromises = new Map<string, Promise<HomepageStayVilla | null>>();
+  const resolveVilla = (property: LodgifyProperty) => {
+    const propertyId = String(property.id);
+    const existing = villaPromises.get(propertyId);
+    if (existing) return existing;
+
+    const pending = getHomepageVillaFromProperty(property);
+    villaPromises.set(propertyId, pending);
+    return pending;
+  };
 
   return Promise.all([
     buildStayGroup(
@@ -421,7 +394,7 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "Weekend escapes and easy Bali breaks for a lighter, flexible stay.",
       short.ids,
       byPriceAsc,
-      short.source === "cms",
+      resolveVilla,
     ),
     buildStayGroup(
       properties,
@@ -430,7 +403,7 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "Private homes made for settling in, working slowly, and living with more room.",
       extended.ids,
       extendedFallback,
-      extended.source === "cms",
+      resolveVilla,
     ),
     buildStayGroup(
       properties,
@@ -439,7 +412,7 @@ export async function getHomepageStayGroups(): Promise<HomepageStayGroup[]> {
       "Handpicked SummerHouse stays with standout design, setting, and guest comfort.",
       featuredHomes.ids,
       byPriceDesc,
-      featuredHomes.source === "cms",
+      resolveVilla,
     ),
   ]);
 }
@@ -460,15 +433,18 @@ export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null
   const [properties, slots, cms] = await Promise.all([
     fetchProperties().then((all) => all.filter((property) => property.is_active !== false)),
     getHomepageVillaSelections(),
-    getCmsSection<SignatureVillaCms>("home", "signature_villa"),
+    getCmsSection<SignatureVillaCms>("home", "signature_villa", {
+      revalidate: CMS_LODGIFY_REVALIDATE,
+    }),
   ]);
 
   const signatureIds = getSlotIds(slots, "signature");
+  const signatureSelection = slots?.signature?.[0];
   let property: LodgifyProperty | undefined;
 
   if (signatureIds.length) {
-    // Strict CMS mode: top of the list (sort_order = 0) is the live pick.
-    // Fall back to fetchPropertyById when the property is missing from the bulk list.
+    // The bulk list is the source of truth for currently active properties.
+    // A removed CMS selection falls back below without issuing a repeated 404.
     const resolved = await resolveConfiguredProperties(properties, [signatureIds[0]]);
     property = resolved[0];
   }
@@ -478,12 +454,21 @@ export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null
   }
   if (!property?.id) return null;
 
-  const rooms = await fetchPropertyRooms(property.id);
+  const rooms = await getHomepagePropertyRooms(String(property.id));
   const villa = propertyToHomepageStayVilla(property, rooms);
   if (!villa) return null;
 
-  const images = getImageSet(property, rooms);
+  const images = getImageSet(property, rooms).slice(0, 5);
   const subtitle = getSignatureSubtitle(villa);
+  const award = signatureSelection?.show_award && signatureSelection.award_name?.trim()
+    ? {
+        name: signatureSelection.award_name.trim(),
+        issuer: signatureSelection.award_issuer?.trim() || null,
+        year: signatureSelection.award_year?.trim() || null,
+        url: signatureSelection.award_url?.trim() || null,
+        logo: signatureSelection.award_logo?.trim() || null,
+      }
+    : null;
 
   return {
     ...villa,
@@ -494,6 +479,7 @@ export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null
     description: cms?.description?.trim() || `A private ${villa.bedrooms ? `${villa.bedrooms}-bedroom ` : ""}estate with pool, full-villa comfort, and a calm island rhythm.`,
     address: property.city ? `${property.city}, Bali` : "Bali",
     images,
+    award,
   };
 }
 
@@ -665,7 +651,8 @@ export async function getHomepageBaliCollections(limit = 6): Promise<BaliCollect
       villaCount: `${cityProperties.length} ${cityProperties.length === 1 ? "villa" : "villas"}`,
       price: minPrice ? `From ${getRealPriceLabel(minPrice)} / night` : "Price confirmed at booking",
       cta: `Explore Villas in ${city}`,
-      href: `/villas?location=${encodeURIComponent(city)}`,
+      href: `/villas?location=${encodeURIComponent(city)}&match=exact`,
+      mediaType: "image" as const,
       image: galleryImages[0] || FALLBACK_COLLECTION_IMAGES[index % FALLBACK_COLLECTION_IMAGES.length],
       imageAlt: `SummerHouse villa collection in ${city}`,
       galleryImages,
@@ -710,7 +697,7 @@ export async function searchAvailableVillas(params: VillaSearchParams = {}) {
   const guests = normalizeGuestCount(params);
   const availabilityByProperty: Record<string, ReturnType<typeof buildAvailabilityMapFromItems>> = {};
   const candidateProperties = properties.filter((property) => {
-    if (!matchesLocation(property, params.location)) return false;
+    if (!matchesLocation(property, params.location, params.match)) return false;
 
     const comparablePrice = getComparablePrice(property);
     if (params.minPrice && comparablePrice && comparablePrice < params.minPrice) return false;

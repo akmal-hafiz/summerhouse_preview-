@@ -1,276 +1,236 @@
-/* Korda-style persistent-active media rail.
-   Pure black stage, sharp-cornered cards on a fixed height. Each card's width
-   is aspect x height, so the strip carries varied-but-bounded widths. The
-   active card scales ~2x symmetrically about the row's centreline; neighbours
-   are pushed outward as the centred row reflows. */
-
 .stage {
-  --rail-h: clamp(128px, 15.5vw, 168px);
-  --rail-h-active: calc(var(--rail-h) * 2);
-  /* One uniform card aspect (width / height) for every item, so every card —
-     and its ~2x hover/active size — is identical. Single rule, no overrides. */
-  --aspect: 0.82;
-  --rail-gap: 4px;
-  --rail-ink: #f4f3f1;
-  --rail-ink-soft: #9a9a97;
-  --ease-rail: cubic-bezier(0.25, 1, 0.4, 1);
-  --dur-rail: 620ms;
-
+  --inactive-size: clamp(9.75rem, 13vw, 15.5rem);
+  --active-size: clamp(25rem, 26.5vw, 32rem);
+  --rail-gap: clamp(0.45rem, 0.6vw, 0.75rem);
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  /* Full-bleed: the black stage spans the whole viewport, edge to edge, no
-     radius. Symmetric negative margins reach both edges regardless of the
-     scrollbar; the section clips any overshoot (overflow: hidden). */
   width: auto;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  margin-top: clamp(2.25rem, 4vw, 3.5rem);
-  border-radius: 0;
-  background: #060606;
-  /* Room above the strip, and below for the reveal caption. */
-  padding: clamp(3.5rem, 7vw, 6.5rem) 0 clamp(6rem, 9vw, 8.5rem);
+  min-height: clamp(45rem, 53vw, 60rem);
+  margin: clamp(3.5rem, 6vw, 6rem) calc(50% - 50vw) 0;
+  padding: clamp(6rem, 9vw, 10rem) 0 clamp(6rem, 9vw, 9rem);
   overflow: hidden;
+  background: #050605;
+  color: #fafaf9;
 }
 
-/* Keep the interactive content within a readable measure inside the full-bleed
-   black; the strip and caption stay centred. */
-.rail,
-.captionOuter {
-  max-width: 1360px;
-  margin-inline: auto;
-}
-
-/* ---------- Rail row ---------- */
 .rail {
+  position: relative;
   display: flex;
+  width: min(calc(100% - clamp(2rem, 4vw, 5rem)), 118rem);
+  height: calc(var(--active-size) + 10.5rem);
   align-items: center;
   justify-content: center;
   gap: var(--rail-gap);
-  height: var(--rail-h-active);
-  padding: 0 clamp(1rem, 3vw, 3rem);
+  margin-inline: auto;
+  overflow: visible;
+  scrollbar-width: none;
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
 }
 
 .card {
   position: relative;
-  flex: 0 0 auto;
-  height: var(--rail-h);
-  width: calc(var(--aspect, 0.82) * var(--rail-h));
-  transition: width var(--dur-rail) var(--ease-rail), height var(--dur-rail) var(--ease-rail);
+  display: block;
+  width: var(--inactive-size);
+  height: var(--inactive-size);
+  flex: 0 0 var(--inactive-size);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    width 760ms var(--ease-editorial),
+    height 760ms var(--ease-editorial),
+    flex-basis 760ms var(--ease-editorial),
+    opacity 420ms ease;
+  scroll-snap-align: center;
+  touch-action: pan-x pan-y;
 }
 
 .card[data-active="true"] {
-  height: var(--rail-h-active);
-  width: calc(var(--aspect, 0.82) * var(--rail-h-active));
   z-index: 2;
+  width: var(--active-size);
+  height: var(--active-size);
+  flex-basis: var(--active-size);
 }
 
-.cardButton {
+.card:focus-visible {
+  outline: none;
+}
+
+.card:focus-visible .media {
+  box-shadow: 0 0 0 2px #fafaf9, 0 0 0 5px #446b4a;
+}
+
+.media {
   position: relative;
   display: block;
   width: 100%;
   height: 100%;
-  padding: 0;
-  border: 0;
-  background: #101010;
-  cursor: pointer;
-  overflow: visible;
-}
-
-.cardButton:focus-visible {
-  outline: none;
-}
-
-.card[data-active="false"] .cardButton:focus-visible .media {
-  box-shadow: 0 0 0 2px var(--rail-ink);
-}
-
-.media {
-  position: absolute;
-  inset: 0;
   overflow: hidden;
-  background: #101010;
+  background: #151715;
 }
 
 .photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.6) saturate(0.88);
-  transition: filter 460ms var(--ease-rail);
+  filter: brightness(0.48) saturate(0.75);
+  transform: scale(1.04);
+  transition:
+    filter 560ms var(--ease-editorial),
+    transform 950ms var(--ease-editorial);
 }
 
 .card[data-active="true"] .photo {
-  filter: brightness(1) saturate(1);
+  filter: brightness(0.96) saturate(0.96);
+  transform: scale(1);
 }
 
-/* ---------- Diagonal viewfinder ticks (active only) ---------- */
-.tickTR,
-.tickBL {
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  border: 0 solid rgba(244, 243, 241, 0.55);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 300ms var(--ease-rail) 200ms;
-}
-
-.tickTR {
-  top: -6px;
-  right: -6px;
-  border-top-width: 1px;
-  border-right-width: 1px;
-}
-
-.tickBL {
-  bottom: -6px;
-  left: -6px;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-}
-
-.card[data-active="true"] .tickTR,
-.card[data-active="true"] .tickBL {
-  opacity: 1;
-}
-
-/* ---------- Reveal caption (anchored beneath active card) ---------- */
 .caption {
   position: absolute;
-  top: 100%;
+  top: calc(100% + clamp(1.25rem, 1.8vw, 1.75rem));
   left: 0;
-  margin-top: 14px;
-  min-width: 220px;
-  max-width: max(220px, 118%);
+  display: grid;
+  gap: 0.45rem;
+  width: min(100%, 32rem);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 0.9rem, 0);
+  transition:
+    opacity 300ms ease 100ms,
+    transform 540ms var(--ease-editorial) 100ms;
 }
 
-/* Below the strip on scrollable breakpoints; hidden on desktop. */
-.captionOuter {
-  display: none;
-  margin-top: 1.1rem;
-  padding: 0 clamp(1rem, 3vw, 3rem);
+.card[data-active="true"] .caption {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
-.captionLink {
-  display: block;
-  text-decoration: none;
-}
-
-.captionTitle {
-  margin: 0;
+.category {
+  color: #8fa696;
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--rail-ink);
 }
 
-.captionDesc {
-  margin: 0.5rem 0 0;
+.caption strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.75rem, 2.2vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.description {
+  max-width: 31rem;
+  color: rgb(250 250 249 / 0.6);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.82rem;
+  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
   line-height: 1.55;
-  color: var(--rail-ink-soft);
-  max-width: 22rem;
 }
 
-.captionLink:focus-visible .captionTitle {
-  outline: 2px solid var(--rail-ink);
-  outline-offset: 3px;
+.mobileHint {
+  display: none;
 }
 
-@media (hover: hover) {
-  .captionLink:hover .captionTitle {
-    color: #ffffff;
+@media (hover: hover) and (pointer: fine) {
+  .card:not([data-active="true"]):hover {
+    opacity: 0.9;
   }
 }
 
-/* ---------- Scrollable breakpoints: swap in the stage-level caption ----------
-   overflow-x:auto forces overflow-y:auto, which would clip the in-card caption,
-   so below 1024px the caption lives beneath the strip instead. */
-@media (max-width: 1023px) {
-  .caption {
-    display: none;
-  }
-
-  .captionOuter {
-    display: block;
-  }
-
-  .rail {
-    justify-content: flex-start;
-    /* overflow-x:auto forces overflow-y:auto; the extra height keeps the
-       active card's outside ticks from triggering a vertical scroll. */
-    height: calc(var(--rail-h-active) + 22px);
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .rail::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-/* ---------- Tablet ---------- */
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (max-width: 1439px) {
   .stage {
-    --rail-h: clamp(112px, 15vw, 140px);
-  }
-
-  .rail {
-    scroll-padding: 0 clamp(1rem, 3vw, 3rem);
+    --inactive-size: clamp(8.5rem, 12.1vw, 10.75rem);
+    --active-size: clamp(22rem, 28vw, 25rem);
+    min-height: clamp(40rem, 55vw, 48rem);
   }
 }
 
-/* ---------- Mobile: same strip, scaled, horizontally scrollable ---------- */
+@media (max-width: 1023px) {
+  .stage {
+    --inactive-size: clamp(8rem, 24vw, 12rem);
+    --active-size: clamp(20rem, 52vw, 27rem);
+    min-height: 0;
+    padding-block: 5rem 4.5rem;
+  }
+
+  .rail {
+    width: 100%;
+    height: calc(var(--active-size) + 9.5rem);
+    justify-content: flex-start;
+    padding-inline: 20vw;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 20vw;
+    scroll-snap-type: x mandatory;
+  }
+}
+
 @media (max-width: 639px) {
   .stage {
-    --rail-h: 104px;
-    --rail-gap: 4px;
-    padding: 2.75rem 0 5.25rem;
+    --active-size: 76vw;
+    --inactive-size: var(--active-size);
+    margin-top: 3rem;
+    padding-block: 3.75rem 3.25rem;
   }
 
   .rail {
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
-    scroll-padding-inline: 40vw;
-    padding: 0 1rem;
+    height: calc(var(--active-size) + 11.5rem);
+    gap: 0.45rem;
+    padding-inline: 12vw;
+    scroll-padding-inline: 12vw;
   }
 
-  .rail::-webkit-scrollbar {
-    display: none;
+  .card {
+    opacity: 0.48;
+    transform: scale(0.78);
+    transition:
+      opacity 360ms ease,
+      transform 620ms var(--ease-editorial);
+  }
+
+  .card[data-active="true"] {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .caption {
-    min-width: 200px;
-    max-width: 62vw;
+    top: calc(100% + 1rem);
+    gap: 0.35rem;
   }
 
-  .captionDesc {
-    max-width: 62vw;
+  .caption strong {
+    font-size: 1.75rem;
+  }
+
+  .description {
+    display: block;
+    max-width: 74vw;
+    overflow: visible;
+    font-size: 0.76rem;
+    line-height: 1.48;
+  }
+
+  .mobileHint {
+    display: block;
+    margin: 0;
+    padding: 0 12vw;
+    color: rgb(250 250 249 / 0.42);
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 }
 
-/* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   .card,
   .photo,
-  .tickTR,
-  .tickBL {
+  .caption {
     transition: none;
   }
-}
-
-/* ---------- SR-only ---------- */
-.srList {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }

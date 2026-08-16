@@ -15,8 +15,13 @@ export type BaliCollectionItem = {
   price: string;
   cta: string;
   href: string;
+  mediaType?: "image" | "video";
   image: string;
+  video?: string | null;
+  videoPoster?: string | null;
+  mobilePoster?: string | null;
   imageAlt: string;
+  mediaAccessibilityLabel?: string | null;
   galleryImages: string[];
   lifestylePillars?: Array<{
     title: string;
@@ -42,7 +47,7 @@ export const baliCollections: BaliCollectionItem[] = [
     villaCount: "15 villas",
     price: "From Rp 700.000 / night",
     cta: "Explore Villas in Canggu - Berawa",
-    href: "/villas?location=Canggu%20-%20Berawa",
+    href: "/villas?location=Canggu%20-%20Berawa&match=exact",
     image: "/homepage_villa/curated-3-corner.webp",
     imageAlt: "SummerHouse villa collection in Canggu Berawa",
     galleryImages: [
@@ -75,7 +80,7 @@ export const baliCollections: BaliCollectionItem[] = [
     villaCount: "6 villas",
     price: "From Rp 1.100.000 / night",
     cta: "Explore Villas in Pererenan",
-    href: "/villas?location=Pererenan",
+    href: "/villas?location=Pererenan&match=exact",
     image: "/homepage_villa/curated-6-exterior.webp",
     imageAlt: "SummerHouse villa collection in Pererenan",
     galleryImages: [
@@ -108,7 +113,7 @@ export const baliCollections: BaliCollectionItem[] = [
     villaCount: "4 villas",
     price: "From Rp 1.030.000 / night",
     cta: "Explore Villas in Canggu",
-    href: "/villas?location=Canggu",
+    href: "/villas?location=Canggu&match=exact",
     image: "/homepage_villa/curated-8.webp",
     imageAlt: "SummerHouse villa collection in Canggu",
     galleryImages: [
@@ -141,7 +146,7 @@ export const baliCollections: BaliCollectionItem[] = [
     villaCount: "4 villas",
     price: "From Rp 900.000 / night",
     cta: "Explore Villas in Canggu - Padonan",
-    href: "/villas?location=Canggu%20-%20Padonan",
+    href: "/villas?location=Canggu%20-%20Padonan&match=exact",
     image: "/homepage_villa/curated-4-view.webp",
     imageAlt: "SummerHouse villa collection in Canggu Padonan",
     galleryImages: [
@@ -174,7 +179,7 @@ export const baliCollections: BaliCollectionItem[] = [
     villaCount: "4 villas",
     price: "From Rp 1.120.000 / night",
     cta: "Explore Villas in Umalas",
-    href: "/villas?location=Umalas",
+    href: "/villas?location=Umalas&match=exact",
     image: "/homepage_villa/villaarta.webp",
     imageAlt: "SummerHouse villa collection in Umalas",
     galleryImages: [
@@ -207,7 +212,7 @@ export const baliCollections: BaliCollectionItem[] = [
     villaCount: "2 villas",
     price: "From Rp 1.240.000 / night",
     cta: "Explore Villas in Ubud",
-    href: "/villas?location=Ubud",
+    href: "/villas?location=Ubud&match=exact",
     image: "/homepage_villa/VillaZen.webp",
     imageAlt: "SummerHouse villa collection in Ubud",
     galleryImages: [

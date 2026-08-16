@@ -4,7 +4,8 @@ import "./navbar-user.css";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { FiGrid, FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser } from "react-icons/fi";
+import { createPortal } from "react-dom";
+import { FiGrid, FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser, FiX } from "react-icons/fi";
 import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
@@ -14,7 +15,7 @@ import { LiquidDropdownSurface } from "@/components/ui/liquid-dropdown-surface";
 import { safeHttpHref } from "@/lib/safe-url";
 
 const navbarNavItems = [
-  { label: { en: "Villas", id: "Vila" }, href: "/villas" },
+  { label: { en: "Stays", id: "Menginap" }, href: "/villas" },
   { label: { en: "Gallery", id: "Galeri" }, href: "/gallery" },
   { label: { en: "Services", id: "Layanan" }, href: "/services" },
   { label: { en: "About", id: "Tentang" }, href: "/about" },
@@ -34,8 +35,12 @@ type MobileNavigationMenuProps = {
 
 function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenuProps) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
+
+  useEffect(() => setMounted(true), []);
 
   const closeMenu = useCallback((restoreFocus = true) => {
     if (detailsRef.current) {
@@ -55,9 +60,18 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
     document.body.style.overflow = "hidden";
 
     const handlePointerDown = (event: MouseEvent) => {
-      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        detailsRef.current &&
+        !detailsRef.current.contains(target) &&
+        !portalRef.current?.contains(target)
+      ) {
         closeMenu();
       }
+    };
+
+    const handleResize = () => {
+      if (window.matchMedia("(min-width: 1181px)").matches) closeMenu(false);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -96,6 +110,7 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
 
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
     window.requestAnimationFrame(() => {
       document
         .getElementById("global-mobile-navigation-panel")
@@ -107,63 +122,78 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
     };
   }, [closeMenu, open]);
 
   return (
-    <details
-      ref={detailsRef}
-      className="global-mobile-menu global-mobile-menu--standalone"
-      onToggle={() => setOpen(Boolean(detailsRef.current?.open))}
-    >
-      <summary
-        ref={summaryRef}
-        aria-label={open ? "Close navigation" : "Open navigation"}
-        aria-controls="global-mobile-navigation-panel"
-        aria-expanded={open}
+    <>
+      <details
+        ref={detailsRef}
+        open={open}
+        className="global-mobile-menu global-mobile-menu--standalone"
       >
-        <FiMenu aria-hidden="true" />
-      </summary>
-      {open ? (
-        <button
-          type="button"
-          className="global-mobile-menu__backdrop"
-          aria-label="Close navigation menu"
-          tabIndex={-1}
-          onClick={() => closeMenu()}
-        />
-      ) : null}
-      <LiquidDropdownSurface
-        id="global-mobile-navigation-panel"
-        className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel"
-        variant="drawer"
-      >
-        {navbarNavItems.map((item) => (
-          <Link
-            href={item.href}
-            key={`standalone-mobile-${item.href}`}
-            onClick={() => closeMenu(false)}
-          >
-            {item.label[language]}
-          </Link>
-        ))}
-        <InteractiveHoverButton
-          href="/villas"
-          className="global-mobile-menu__cta"
-          arrow={null}
-          onClick={() => closeMenu(false)}
+        <summary
+          ref={summaryRef}
+          aria-label={open ? "Close navigation" : "Open navigation"}
+          aria-controls="global-mobile-navigation-panel"
+          aria-expanded={open}
+          onClick={(event) => {
+            event.preventDefault();
+            setOpen((current) => !current);
+          }}
         >
-          {language === "id" ? "Pesan Vila" : "Book our Villas"}
-        </InteractiveHoverButton>
-        <button
-          type="button"
-          className="summerhouse-liquid-glass summerhouse-liquid-glass--language global-language-toggle global-language-toggle--mobile"
-          onClick={toggleLanguage}
-        >
-          {language === "id" ? "Bahasa Indonesia" : "English"}
-        </button>
-      </LiquidDropdownSurface>
-    </details>
+          {open ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+        </summary>
+      </details>
+      {mounted && open
+        ? createPortal(
+            <div ref={portalRef} className="global-mobile-menu__portal">
+              <button
+                type="button"
+                className="global-mobile-menu__backdrop"
+                aria-label="Close navigation menu"
+                tabIndex={-1}
+                onClick={() => closeMenu()}
+              />
+              <LiquidDropdownSurface
+                id="global-mobile-navigation-panel"
+                className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel"
+                variant="drawer"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Site navigation"
+              >
+                {navbarNavItems.map((item) => (
+                  <Link
+                    href={item.href}
+                    key={`standalone-mobile-${item.href}`}
+                    onClick={() => closeMenu(false)}
+                  >
+                    {item.label[language]}
+                  </Link>
+                ))}
+                <InteractiveHoverButton
+                  href="/villas"
+                  className="global-mobile-menu__cta"
+                  arrow={null}
+                  onClick={() => closeMenu(false)}
+                >
+                  {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
+                </InteractiveHoverButton>
+                <button
+                  type="button"
+                  className="summerhouse-liquid-glass summerhouse-liquid-glass--language global-language-toggle global-language-toggle--mobile"
+                  onClick={toggleLanguage}
+                >
+                  {language === "id" ? "Bahasa Indonesia" : "English"}
+                </button>
+              </LiquidDropdownSurface>
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
   );
 }
 
@@ -247,8 +277,8 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
       </nav>
 
       <div className="global-mini-actions">
-        <InteractiveHoverButton href="/villas" className="global-mini-link" arrow={null}>
-          {language === "id" ? "Pesan Vila" : "Book our Villas"}
+        <InteractiveHoverButton href="/#home-hero-search" className="global-mini-link" arrow={null}>
+          {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
         </InteractiveHoverButton>
         <button type="button" className="global-language-toggle" aria-label="Switch language" onClick={toggleLanguage}>
           {language === "id" ? "ID" : "EN"}

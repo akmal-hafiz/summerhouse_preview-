@@ -9,6 +9,7 @@ import { getVillaSearchOptions, searchAvailableVillas } from "@/lib/lodgify";
 import { isISODate, isValidDateRange } from "@/lib/date";
 import { clampInteger, safeString } from "@/lib/security/validation";
 import { logServerError } from "@/lib/security/logger";
+import { getCmsPageSections } from "@/lib/cms";
 
 export const metadata = {
   title: "Villa Collection",
@@ -68,6 +69,7 @@ async function getFilters(searchParams: Promise<Record<string, string | string[]
 
   return {
     location: safeString(firstParam(params.location), 80),
+    match: firstParam(params.match) === "exact" ? "exact" as const : "fuzzy" as const,
     checkIn: hasValidRange || isISODate(checkIn) ? checkIn : "",
     checkOut: hasValidRange ? checkOut : "",
     adults: numberParam(params.adults, 1, 40) || 1,
@@ -80,12 +82,14 @@ async function getFilters(searchParams: Promise<Record<string, string | string[]
 }
 
 export default async function VillasPage({ searchParams }: VillasPageProps) {
-  const [filters, optionsResult] = await Promise.allSettled([
+  const [filters, optionsResult, pageContentResult] = await Promise.allSettled([
     getFilters(searchParams),
     getVillaSearchOptions(),
+    getCmsPageSections("villas"),
   ]);
   const resolvedFilters = filters.status === "fulfilled" ? filters.value : {
     location: "",
+    match: "fuzzy" as const,
     checkIn: "",
     checkOut: "",
     adults: 1,
@@ -96,35 +100,32 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
     maxPrice: undefined,
   };
   const options = optionsResult.status === "fulfilled" ? optionsResult.value : { locations: [], priceRange: { min: null, max: null } };
-  const hasActiveSearch = Boolean(resolvedFilters.location || resolvedFilters.checkIn || resolvedFilters.checkOut || resolvedFilters.children || resolvedFilters.minPrice || resolvedFilters.maxPrice);
+  const pageContent = pageContentResult.status === "fulfilled" ? pageContentResult.value : null;
+  const hero = pageContent?.hero ?? {};
+  const heroHeading = typeof hero.heading === "string" && hero.heading.trim()
+    ? hero.heading
+    : "Find your place in Bali.";
+  const heroDescription = typeof hero.description === "string" && hero.description.trim()
+    ? hero.description
+    : "Private villas and apartments, selected across Bali.";
+  const savedLabel = typeof hero.saved_label === "string" && hero.saved_label.trim()
+    ? hero.saved_label
+    : "Saved Villas";
 
   return (
     <div className="villa-collection-page">
       <Navbar />
 
       <main>
-        <header className="villa-collection-hero">
+        {hero.is_visible !== false ? <header className="villa-collection-hero">
           <div className="villa-collection-shell">
             <div className="villa-collection-hero-copy">
-              <p className="villa-collection-eyebrow">Summerhouses Bali</p>
-              <h1>Find a villa that fits your journey.</h1>
-              <p>
-                Explore private Bali stays by neighborhood, dates, and guests, then
-                open each villa to see photos, amenities, availability, and reserve with ease.
-              </p>
+              <h1>{heroHeading}</h1>
+              <p>{heroDescription}</p>
             </div>
+            <Link className="villa-collection-saved-link" href="/saved-villas">{savedLabel}</Link>
           </div>
-        </header>
-
-        <section className="villa-collection-toolbar">
-          <div className="villa-collection-shell villa-collection-toolbar-inner">
-            <div>
-              <span>{hasActiveSearch ? "Search results" : "Collection"}</span>
-              <strong>{hasActiveSearch ? "Stays that match your trip" : "All available stays"}</strong>
-            </div>
-            <Link href="/saved-villas">Saved villas</Link>
-          </div>
-        </section>
+        </header> : null}
 
         <section className="villa-collection-search">
           <div className="villa-collection-shell">

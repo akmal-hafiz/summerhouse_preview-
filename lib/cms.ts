@@ -2,10 +2,10 @@ import { logServerWarning } from "@/lib/security/logger";
 import type { BaliCollectionItem } from "@/data/baliCollections";
 
 const CMS_BASE_URL = process.env.CMS_API_URL || "http://localhost:8000/api";
-const DEFAULT_REVALIDATE = 300;
+export const CMS_LODGIFY_REVALIDATE = 300;
 const SUPPRESS_CMS_LOGS = process.env.CMS_SUPPRESS_LOGS === "1" || process.env.NODE_ENV === "production";
 
-type FetchOptions = {
+export type CmsFetchOptions = {
   revalidate?: number;
 };
 
@@ -22,13 +22,17 @@ function isNetworkError(error: unknown): boolean {
   );
 }
 
-async function cmsFetch<T>(path: string, options: FetchOptions = {}): Promise<T | null> {
+async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): Promise<T | null> {
   const url = `${CMS_BASE_URL}${path}`;
+  const cacheOptions =
+    typeof options.revalidate === "number"
+      ? { next: { revalidate: options.revalidate } }
+      : { cache: "no-store" as const };
 
   try {
     const response = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: options.revalidate ?? DEFAULT_REVALIDATE },
+      ...cacheOptions,
     });
 
     if (!response.ok) {
@@ -55,15 +59,55 @@ async function cmsFetch<T>(path: string, options: FetchOptions = {}): Promise<T 
   }
 }
 
+export type CmsHomepageVillaSelection = {
+  lodgify_property_id: string;
+  override_title?: string | null;
+  override_description?: string | null;
+  award_name?: string | null;
+  award_issuer?: string | null;
+  award_year?: string | null;
+  award_url?: string | null;
+  award_logo?: string | null;
+  show_award?: boolean;
+};
+
 export type CmsHomepageSlots = {
-  featured_collection?: Array<{ lodgify_property_id: string; override_title?: string | null; override_description?: string | null }>;
-  short_stays?: Array<{ lodgify_property_id: string; override_title?: string | null; override_description?: string | null }>;
-  extended_stays?: Array<{ lodgify_property_id: string; override_title?: string | null; override_description?: string | null }>;
-  featured_homes?: Array<{ lodgify_property_id: string; override_title?: string | null; override_description?: string | null }>;
-  signature?: Array<{ lodgify_property_id: string; override_title?: string | null; override_description?: string | null }>;
+  short_stays?: CmsHomepageVillaSelection[];
+  extended_stays?: CmsHomepageVillaSelection[];
+  featured_homes?: CmsHomepageVillaSelection[];
+  signature?: CmsHomepageVillaSelection[];
 };
 
 export type CmsPageContent = Record<string, Record<string, unknown> | null>;
+
+export type CmsDestinationChapter = {
+  eyebrow?: string | null;
+  title: string;
+  description: string;
+  image?: string | null;
+  image_alt?: string | null;
+};
+
+export type CmsDestination = BaliCollectionItem & {
+  locationKey?: string | null;
+  eyebrow?: string | null;
+  heroTitle?: string | null;
+  introduction?: string | null;
+  heroMediaType?: "image" | "video";
+  heroImage?: string | null;
+  heroVideo?: string | null;
+  heroVideoPoster?: string | null;
+  editorialGallery?: Array<Record<string, unknown>>;
+  editorialChapters?: CmsDestinationChapter[];
+  relatedJournalTags?: string[];
+  lodgifyLocation?: string | null;
+  showRelatedVillas?: boolean;
+  relatedVillasHeading?: string | null;
+  manualVillaOverrides?: Array<Record<string, unknown>>;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  socialImage?: string | null;
+};
 
 export type CmsArticleSummary = {
   slug: string;
@@ -152,8 +196,12 @@ export type CmsFaq = {
 };
 
 export type CmsServiceCard = {
+  slug?: string | null;
   title: string;
   text: string;
+  image?: string | null;
+  alt_text?: string | null;
+  featured_on_about?: boolean;
 };
 
 export type CmsGalleryItem = {
@@ -174,18 +222,34 @@ export type CmsGalleryItem = {
   created_at?: string | null;
 };
 
-export async function getCmsPageSections(page: string): Promise<CmsPageContent | null> {
-  const data = await cmsFetch<{ success: boolean; sections: CmsPageContent }>(`/v1/cms/page/${page}`);
+export async function getCmsPageSections(
+  page: string,
+  options: CmsFetchOptions = {},
+): Promise<CmsPageContent | null> {
+  const data = await cmsFetch<{ success: boolean; sections: CmsPageContent }>(
+    `/v1/cms/page/${page}`,
+    options,
+  );
   return data?.success ? data.sections : null;
 }
 
-export async function getCmsSection<T = Record<string, unknown>>(page: string, section: string): Promise<T | null> {
-  const data = await cmsFetch<{ success: boolean; content: T }>(`/v1/cms/page/${page}/section/${section}`);
+export async function getCmsSection<T = Record<string, unknown>>(
+  page: string,
+  section: string,
+  options: CmsFetchOptions = {},
+): Promise<T | null> {
+  const data = await cmsFetch<{ success: boolean; content: T }>(
+    `/v1/cms/page/${page}/section/${section}`,
+    options,
+  );
   return data?.success ? data.content : null;
 }
 
 export async function getHomepageVillaSelections(): Promise<CmsHomepageSlots | null> {
-  const data = await cmsFetch<{ success: boolean; slots: CmsHomepageSlots }>("/v1/cms/homepage/villa-selections");
+  const data = await cmsFetch<{ success: boolean; slots: CmsHomepageSlots }>(
+    "/v1/cms/homepage/villa-selections",
+    { revalidate: CMS_LODGIFY_REVALIDATE },
+  );
   return data?.success ? data.slots : null;
 }
 
@@ -267,7 +331,6 @@ export async function getCmsVillaReviews(lodgifyId: string): Promise<CmsVillaRev
   const safe = encodeURIComponent(lodgifyId);
   const data = await cmsFetch<{ success: boolean; summary: CmsVillaReviewSummary; reviews: CmsVillaReview[] }>(
     `/v1/cms/villas/${safe}/reviews`,
-    { revalidate: 120 },
   );
   return data?.success ? { summary: data.summary, reviews: data.reviews } : null;
 }
@@ -324,7 +387,7 @@ export async function getCmsFaqs(page: string): Promise<CmsFaq[] | null> {
   return data?.success ? data.faqs : null;
 }
 
-export async function getCmsServiceCards(category: "operational" | "marketing" | "project"): Promise<CmsServiceCard[] | null> {
+export async function getCmsServiceCards(category: "concierge" | "operational" | "marketing" | "project"): Promise<CmsServiceCard[] | null> {
   const data = await cmsFetch<{ success: boolean; cards: CmsServiceCard[] }>(`/v1/cms/service-cards/${category}`);
   return data?.success ? data.cards : null;
 }
@@ -337,6 +400,22 @@ export async function getCmsGalleryItems(): Promise<CmsGalleryItem[] | null> {
 export async function getCmsSetting<T = unknown>(key: string): Promise<T | null> {
   const data = await cmsFetch<{ success: boolean; value: T }>(`/v1/cms/settings/${encodeURIComponent(key)}`);
   return data?.success ? data.value : null;
+}
+
+export async function getCmsDestinationBySlug(slug: string): Promise<CmsDestination | null> {
+  const safe = encodeURIComponent(slug);
+  const data = await cmsFetch<{ success: boolean; destination: CmsDestination }>(
+    `/v1/cms/destinations/${safe}`,
+  );
+  return data?.success ? data.destination : null;
+}
+
+export async function getCmsSettings(keys: readonly string[]): Promise<Record<string, unknown> | null> {
+  const query = encodeURIComponent(keys.join(","));
+  const data = await cmsFetch<{ success: boolean; settings: Record<string, unknown> }>(
+    `/v1/cms/settings?keys=${query}`,
+  );
+  return data?.success ? data.settings : null;
 }
 
 export function getHomepageSlotIds(slots: CmsHomepageSlots | null, slot: keyof CmsHomepageSlots): string[] {

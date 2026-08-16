@@ -2,6 +2,22 @@ import { sanitizeHtml, stripHtml } from "@/lib/sanitize";
 import { asArray, asBoolean, asNumber, asOptionalString, asRecordArray, asString, getRecord, isRecord, unique } from "./runtime";
 import type { LodgifyId, LodgifyProperty, LodgifyRoom } from "./types";
 
+const LODGIFY_IMAGE_MAX_WIDTH = "1920";
+
+function limitLodgifyImageSize(url: URL) {
+  const hostname = url.hostname.toLowerCase();
+  const isLodgifyImageCdn = hostname === "icdbcdn.com"
+    || hostname.endsWith(".icdbcdn.com")
+    || hostname === "cdbcdn.com"
+    || hostname.endsWith(".cdbcdn.com");
+
+  if (!isLodgifyImageCdn || url.searchParams.has("w")) return;
+
+  url.searchParams.set("w", LODGIFY_IMAGE_MAX_WIDTH);
+  url.searchParams.set("h", "0");
+  url.searchParams.set("mode", "max");
+}
+
 export function ensureProtocol(url?: string | null) {
   const value = url?.trim();
   if (!value) return "";
@@ -11,7 +27,10 @@ export function ensureProtocol(url?: string | null) {
 
   try {
     const parsed = new URL(normalized);
-    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.toString() : "";
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return "";
+
+    limitLodgifyImageSize(parsed);
+    return parsed.toString();
   } catch {
     return "";
   }

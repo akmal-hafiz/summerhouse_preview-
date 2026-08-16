@@ -41,12 +41,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const storedToken = getStoredAuthToken();
     const storedUser = getStoredAuthUser();
 
     if (!storedToken) {
       setIsLoading(false);
-      return;
+      return () => {
+        isMounted = false;
+      };
     }
 
     setToken(storedToken);
@@ -54,6 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     fetchCurrentUser(storedToken)
       .then((freshUser) => {
+        if (!isMounted) return;
+
         if (freshUser) {
           setUser(freshUser);
           setStoredAuth(storedToken, freshUser);
@@ -64,7 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setToken(null);
         }
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {

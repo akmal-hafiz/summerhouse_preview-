@@ -3,7 +3,7 @@ import Footer from "@/components/common/Footer";
 import About from "@/components/about/About";
 import editorialStyles from "@/components/about/AboutEditorialSections.module.css";
 import { getProperties, getPortfolioStats } from "@/lib/lodgify";
-import { getCmsFaqs, getCmsGalleryItems, getCmsTestimonials } from "@/lib/cms";
+import { getCmsFaqs, getCmsGalleryItems, getCmsPageSections } from "@/lib/cms";
 import { listArticles } from "@/lib/journal";
 import { logServerError } from "@/lib/security/logger";
 
@@ -95,12 +95,12 @@ async function getGallerySectionData() {
 }
 
 export default async function AboutPage() {
-  const [destinations, testimonials, faqs, journalArticles, gallerySection] = await Promise.all([
+  const [destinations, faqs, journalArticles, gallerySection, cmsContent] = await Promise.all([
     getDestinationSummaries(),
-    getCmsTestimonials("about"),
     getCmsFaqs("about"),
     listArticles(),
     getGallerySectionData(),
+    getCmsPageSections("about"),
   ]);
 
   return (
@@ -109,11 +109,11 @@ export default async function AboutPage() {
       <main className={editorialStyles.aboutPageMain}>
         <About
           destinations={destinations}
-          testimonials={testimonials}
           faqs={faqs}
           journalArticles={journalArticles}
           portfolioStats={gallerySection.portfolioStats}
           cmsGalleryItems={gallerySection.cmsGalleryItems}
+          cmsContent={cmsContent}
         />
       </main>
       <Footer />

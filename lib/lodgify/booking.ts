@@ -1,7 +1,7 @@
 import type { LodgifyId } from "./types";
 
 const DEFAULT_LODGIFY_CHECKOUT_URL = "https://checkout.lodgify.com/en/summerhouse--bali/{propertyId}/reservation?currency=EUR";
-const WHATSAPP_FALLBACK_NUMBER = "62811388999";
+const WHATSAPP_FALLBACK_NUMBER = "6281932387121";
 
 function getCheckoutBaseUrl() {
   return (
@@ -84,11 +84,13 @@ export function buildBookingWhatsAppUrl({
   checkIn,
   checkOut,
   guests,
+  whatsappNumber,
 }: {
   villaName: string;
   checkIn?: string;
   checkOut?: string;
   guests?: number;
+  whatsappNumber?: string;
 }) {
   const message = [
     `Hello Summerhouses, I would like help booking ${villaName}.`,
@@ -97,7 +99,8 @@ export function buildBookingWhatsAppUrl({
     guests ? `Guests: ${guests}` : "",
   ].filter(Boolean).join("\n");
 
-  const url = new URL(`https://wa.me/${WHATSAPP_FALLBACK_NUMBER}`);
+  const digits = (whatsappNumber || WHATSAPP_FALLBACK_NUMBER).replace(/\D/g, "");
+  const url = new URL(`https://wa.me/${digits.length >= 8 ? digits : WHATSAPP_FALLBACK_NUMBER}`);
   url.searchParams.set("text", message);
   return url.toString();
 }

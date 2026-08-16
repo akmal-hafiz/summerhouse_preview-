@@ -4,50 +4,82 @@ import Hero from "@/components/home/Hero";
 
 type HeroProps = NonNullable<ComponentProps<typeof Hero>>;
 import Footer from "@/components/common/Footer";
-import MobileHomepage from "@/components/home/MobileHomepage";
-import DesktopHomepage from "@/components/home/DesktopHomepage";
-import { getCmsPageSections } from "@/lib/cms";
+import ExploreBaliBookSection from "@/components/sections/ExploreBaliBookSection";
+import SignatureVillaSpotlight from "@/components/home/SignatureVillaSpotlight";
+import StayStylesShowcase from "@/components/home/StayStylesShowcase";
+import WhyStaySection, { type WhyStayContent } from "@/components/home/WhyStaySection";
+import GuestStoriesSection from "@/components/testimonials/GuestStoriesSection";
+import {
+  CMS_LODGIFY_REVALIDATE,
+  getCmsSection,
+  getCmsTestimonials,
+} from "@/lib/cms";
 import {
   getHomepageBaliCollections,
-  getHomepageFeaturedVillas,
   getHomepageSignatureVilla,
   getHomepageStayGroups,
 } from "@/lib/lodgify";
 
 export default async function Home() {
-  const [featuredVillas, stayGroups, signatureVilla, baliCollections, cmsSections] = await Promise.all([
-    getHomepageFeaturedVillas(),
+  const [
+    stayGroups,
+    signatureVilla,
+    baliCollections,
+    heroCms,
+    stayStylesCms,
+    whyStayCms,
+    testimonialCms,
+    exploreBaliCms,
+    testimonials,
+  ] = await Promise.all([
     getHomepageStayGroups(),
     getHomepageSignatureVilla(),
     getHomepageBaliCollections(),
-    getCmsPageSections("home"),
+    getCmsSection<Record<string, unknown>>("home", "hero"),
+    getCmsSection<{
+      heading?: string;
+      is_visible?: boolean;
+    }>("home", "stay_styles", { revalidate: CMS_LODGIFY_REVALIDATE }),
+    getCmsSection<WhyStayContent>("home", "why_stay"),
+    getCmsSection<{
+      eyebrow?: string;
+      title?: string;
+      title_emphasis?: string;
+      trust_label?: string;
+      supporting_copy?: string;
+      is_visible?: boolean;
+    }>("home", "testimonials"),
+    getCmsSection<{
+      kicker?: string;
+      title?: string;
+      description?: string;
+      is_visible?: boolean;
+    }>("home", "explore_bali"),
+    getCmsTestimonials("home"),
   ]);
-
-  const heroCms = cmsSections?.hero as Record<string, unknown> | undefined;
 
   return (
     <div className="summerhouses-main-layout">
       <Navbar />
       <main className="summerhouses-main-content">
-        <Hero cms={heroCms as HeroProps["cms"]} />
-        {/* Desktop Layout Showcase */}
+        <Hero cms={(heroCms || undefined) as HeroProps["cms"]} />
+        <StayStylesShowcase groups={stayGroups} content={stayStylesCms || undefined} />
         <div className="desktop-only">
-          <DesktopHomepage
-            featuredVillas={featuredVillas}
-            stayGroups={stayGroups}
-            signatureVilla={signatureVilla}
-            baliCollections={baliCollections}
-          />
+          <SignatureVillaSpotlight villa={signatureVilla} variant="desktop" />
         </div>
-        {/* Premium 1:1 Stitch Mobile Homepage Canvas */}
         <div className="mobile-only">
-          <MobileHomepage
-            featuredVillas={featuredVillas}
-            stayGroups={stayGroups}
-            signatureVilla={signatureVilla}
-            baliCollections={baliCollections}
-          />
+          <SignatureVillaSpotlight villa={signatureVilla} variant="mobile" />
         </div>
+        <WhyStaySection content={whyStayCms || undefined} />
+        <GuestStoriesSection
+          testimonials={testimonials}
+          placement="homepage"
+          content={testimonialCms || undefined}
+        />
+        <ExploreBaliBookSection
+          collections={baliCollections}
+          content={exploreBaliCms || undefined}
+        />
       </main>
       <Footer />
     </div>

@@ -1,0 +1,427 @@
+.page {
+  min-height: 100vh;
+  background: #fafaf9;
+  color: var(--color-text);
+}
+
+.hero {
+  display: grid;
+  min-height: min(54rem, 92vh);
+  grid-template-columns: minmax(18rem, 0.72fr) minmax(0, 1.28fr);
+  padding-top: clamp(5.5rem, 9vw, 8rem);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(3rem, 6vw, 6.5rem) clamp(1.5rem, 4vw, 4.5rem);
+}
+
+.eyebrow,
+.fieldNotes > div > p,
+.chapterCopy > p:first-child,
+.contactSheet header p,
+.related header p,
+.finalCta > p {
+  margin: 0;
+  color: var(--color-brand);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  max-width: 8ch;
+  margin: 1rem 0 1.5rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(3.4rem, 7.4vw, 8.4rem);
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.065em;
+}
+
+.introduction {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.heroFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 2rem;
+}
+
+.heroFacts span {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--color-border-moss);
+  color: var(--color-brand);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heroMedia {
+  position: relative;
+  min-height: 38rem;
+  overflow: hidden;
+  background: var(--color-surface-warm);
+}
+
+.cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cornerMark {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 4rem;
+  height: 4rem;
+  border-top: 1px solid rgba(250, 250, 249, 0.8);
+  border-right: 1px solid rgba(250, 250, 249, 0.8);
+}
+
+.fieldNotes {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(2rem, 8vw, 8rem);
+  padding: clamp(5rem, 9vw, 9rem) clamp(1.5rem, 6vw, 6.5rem);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.fieldNotes h2,
+.contactSheet h2,
+.related h2,
+.finalCta h2 {
+  max-width: 12ch;
+  margin: 1rem 0 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(2.35rem, 4.7vw, 5.4rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.fieldNotes dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.fieldNotes dl div {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.fieldNotes dl div:nth-child(odd) {
+  padding-right: 1.25rem;
+}
+
+.fieldNotes dt {
+  color: var(--color-text-soft);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fieldNotes dd {
+  margin: 0;
+  font-size: clamp(1rem, 1.5vw, 1.3rem);
+}
+
+.chapters {
+  display: grid;
+}
+
+.chapter {
+  display: grid;
+  min-height: 46rem;
+  grid-template-columns: minmax(0, 1.28fr) minmax(18rem, 0.72fr);
+}
+
+.chapter[data-reverse="true"] {
+  grid-template-columns: minmax(18rem, 0.72fr) minmax(0, 1.28fr);
+}
+
+.chapter[data-reverse="true"] .chapterMedia {
+  order: 2;
+}
+
+.chapterMedia {
+  position: relative;
+  min-height: 35rem;
+  overflow: hidden;
+  background: var(--color-surface-warm);
+}
+
+.chapterCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3rem, 7vw, 7rem);
+  background: var(--color-surface-raised);
+}
+
+.chapterCopy h2 {
+  max-width: 10ch;
+  margin: 1rem 0 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(2.5rem, 5vw, 5.8rem);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+}
+
+.chapterRule {
+  width: 3rem;
+  margin: 2rem 0;
+  border-top: 1px solid var(--color-brand);
+}
+
+.chapterCopy > p:last-child {
+  max-width: 37rem;
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+}
+
+.contactSheet {
+  padding: clamp(5rem, 9vw, 9rem) 0;
+  overflow: hidden;
+  background: #080a08;
+  color: #fafaf9;
+}
+
+.contactSheet header,
+.related header {
+  display: grid;
+  grid-template-columns: 0.55fr 1fr;
+  align-items: end;
+  gap: 2rem;
+  padding: 0 clamp(1.5rem, 6vw, 6.5rem) clamp(3rem, 6vw, 5rem);
+}
+
+.contactSheet h2 {
+  color: #fafaf9;
+}
+
+.gallery {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: max-content;
+  padding-inline: clamp(1.5rem, 6vw, 6.5rem);
+}
+
+.gallery figure {
+  position: relative;
+  width: clamp(10rem, 18vw, 19rem);
+  height: clamp(14rem, 25vw, 28rem);
+  margin: 0;
+  overflow: hidden;
+}
+
+.gallery figure:nth-child(2),
+.gallery figure:nth-child(4) {
+  width: clamp(15rem, 29vw, 30rem);
+  height: clamp(19rem, 35vw, 38rem);
+}
+
+.related {
+  padding: clamp(5rem, 9vw, 9rem) 0;
+}
+
+.villaShelf {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-border);
+}
+
+.villaCard {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1rem;
+  background: #fafaf9;
+  color: inherit;
+  text-decoration: none;
+}
+
+.villaMedia {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--color-surface-warm);
+}
+
+.villaMedia .cover {
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.villaCard:hover .villaMedia .cover {
+  transform: scale(1.035);
+}
+
+.villaCopy {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0 0.25rem 0.5rem;
+}
+
+.villaCopy small {
+  color: var(--color-brand);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.villaCopy strong {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.villaCopy > span {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.villaCard:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+
+.finalCta {
+  display: grid;
+  justify-items: center;
+  gap: 1.5rem;
+  padding: clamp(6rem, 12vw, 12rem) 1.5rem;
+  text-align: center;
+  background: var(--color-surface-warm);
+}
+
+.finalCta h2 {
+  max-width: 15ch;
+  margin: 0;
+}
+
+.finalCta a {
+  display: inline-flex;
+  min-height: 3.35rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 2.25rem;
+  border-radius: 999px;
+  background: #446b4a;
+  color: #fafaf9;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 220ms ease, background-color 220ms ease;
+}
+
+.finalCta a:hover {
+  transform: translateY(-2px);
+  background: var(--color-brand-hover);
+}
+
+.finalCta a:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 899px) {
+  .hero,
+  .fieldNotes,
+  .chapter,
+  .chapter[data-reverse="true"] {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: 0;
+  }
+
+  .heroCopy {
+    min-height: 35rem;
+  }
+
+  .heroMedia {
+    min-height: 68vw;
+  }
+
+  .chapter[data-reverse="true"] .chapterMedia {
+    order: 0;
+  }
+
+  .chapterMedia {
+    min-height: 72vw;
+  }
+
+  .contactSheet header,
+  .related header {
+    grid-template-columns: 1fr;
+  }
+
+  .villaShelf {
+    display: flex;
+    gap: 1px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .villaCard {
+    flex: 0 0 min(76vw, 24rem);
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 599px) {
+  .heroCopy {
+    min-height: 31rem;
+    padding-top: 7rem;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(3.3rem, 19vw, 5.8rem);
+  }
+
+  .fieldNotes dl {
+    grid-template-columns: 1fr;
+  }
+
+  .fieldNotes dl div:nth-child(odd) {
+    padding-right: 0;
+  }
+
+  .chapter {
+    min-height: 0;
+  }
+
+  .chapterCopy {
+    min-height: 28rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .villaMedia .cover,
+  .finalCta a {
+    transition: none;
+  }
+}

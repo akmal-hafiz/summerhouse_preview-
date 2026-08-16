@@ -11,11 +11,12 @@ import styles from "./GalleryPage.module.css";
 
 type GalleryPageProps = {
   items?: CmsGalleryItem[] | null;
+  content?: Record<string, unknown> | null;
 };
 
 const ALL = "__all__";
 
-export default function GalleryPage({ items: itemsProp }: GalleryPageProps = {}) {
+export default function GalleryPage({ items: itemsProp, content }: GalleryPageProps = {}) {
   const entries = useGalleryEntries(itemsProp);
   const prefersReduced = usePrefersReducedMotion();
 
@@ -55,16 +56,19 @@ export default function GalleryPage({ items: itemsProp }: GalleryPageProps = {})
   );
 
   const tabs = [{ key: ALL, label: "All" }, ...categories.map((c) => ({ key: c, label: c }))];
+  const heading = typeof content?.heading === "string" && content.heading.trim()
+    ? content.heading
+    : "Selected Projects.";
+  const sectionLabel = typeof content?.section_label === "string" ? content.section_label.trim() : "";
+  const subheading = typeof content?.subheading === "string" ? content.subheading.trim() : "";
 
   return (
     <div className={styles.galleryPage}>
-      <header className={styles.pageHeader}>
-        <h1 className={styles.headline}>Selected Projects.</h1>
-        <p className={styles.lede}>
-          A curated look at the spaces Summerhouse Bali has designed, renovated, and
-          transformed.
-        </p>
-      </header>
+      {content?.is_visible !== false ? <header className={styles.pageHeader}>
+        {sectionLabel ? <span className={styles.sectionLabel}>{sectionLabel}</span> : null}
+        <h1 className={styles.headline}>{heading}</h1>
+        {subheading ? <p className={styles.subheading}>{subheading}</p> : null}
+      </header> : null}
 
       {tabs.length > 1 && (
         <div className={styles.tabStrip}>
@@ -111,7 +115,7 @@ export default function GalleryPage({ items: itemsProp }: GalleryPageProps = {})
         </section>
       ) : (
         <div className={styles.emptyState}>
-          <p>Nothing here yet — try another category.</p>
+          <p>Nothing here yet. Try another category.</p>
           <button type="button" onClick={() => setCategory(ALL)}>
             Show everything
           </button>
@@ -131,7 +135,7 @@ export default function GalleryPage({ items: itemsProp }: GalleryPageProps = {})
         {entries.map((entry) => (
           <li key={`sr-${entry.id}`}>
             <strong>{entry.title}</strong>
-            {" — "}
+            {". "}
             {entry.story} ({entry.alt})
           </li>
         ))}

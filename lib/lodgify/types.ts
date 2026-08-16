@@ -60,6 +60,7 @@ export type LodgifyProperty = {
 
 export type VillaSearchParams = {
   location?: string;
+  match?: "exact" | "fuzzy";
   checkIn?: string;
   checkOut?: string;
   adults?: number;
@@ -122,7 +123,7 @@ export type VillaSearchResult = VillaSummary & {
   isAvailableForSearch: boolean;
 };
 
-export type FeaturedCollectionVilla = {
+export type HomepageVillaCard = {
   id: LodgifyId;
   name: string;
   location: string;
@@ -136,7 +137,7 @@ export type FeaturedCollectionVilla = {
   images?: string[];
 };
 
-export type HomepageStayVilla = FeaturedCollectionVilla & {
+export type HomepageStayVilla = HomepageVillaCard & {
   amenitiesPreview: string[];
   priceValue: number;
 };
@@ -156,6 +157,13 @@ export type SignatureVilla = HomepageStayVilla & {
   whyThisHome: string;
   address: string;
   images: string[];
+  award: {
+    name: string;
+    issuer: string | null;
+    year: string | null;
+    url: string | null;
+    logo: string | null;
+  } | null;
 };
 
 export type VillaDetail = {

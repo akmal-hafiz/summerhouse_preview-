@@ -2,7 +2,11 @@
 
 import { Suspense, createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
-import AuthModal from "@/components/auth/AuthModal";
+import dynamic from "next/dynamic";
+
+const AuthModal = dynamic(() => import("@/components/auth/AuthModal"), {
+  ssr: false,
+});
 
 type Mode = "login" | "register";
 

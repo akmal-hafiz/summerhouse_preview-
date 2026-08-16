@@ -12,8 +12,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   FiArrowUpRight,
   FiChevronDown,
-  FiChevronLeft,
-  FiChevronRight,
   FiCompass,
   FiHeart,
   FiHome,
@@ -48,20 +46,6 @@ export type AboutDestination = {
   longitude?: number;
 };
 
-type AboutTestimonial = {
-  author: string;
-  location?: string | null;
-  stars: number;
-  text: string;
-  avatar?: string | null;
-  source?: string | null;
-  sourceLabel?: string | null;
-  isVerified?: boolean;
-  reviewDate?: string | null;
-  villaName?: string | null;
-  villaLocation?: string | null;
-};
-
 type AboutFaq = {
   question: string;
   answer: string;
@@ -71,18 +55,51 @@ import JournalPreviewSection from "./JournalPreviewSection";
 import OurStoryHero from "./sections/OurStoryHero";
 import TrustRecognition from "./sections/TrustRecognition";
 import StudioStatement from "./sections/StudioStatement";
-import ServicesList from "./sections/ServicesList";
+import BookingProcess from "./sections/BookingProcess";
+import ConciergeHorizontalStory from "./sections/ConciergeHorizontalStory";
 import type { ArticleListItem } from "@/lib/journal";
 import type { PortfolioStats } from "@/lib/lodgify";
-import type { CmsGalleryItem } from "@/lib/cms";
+import type { CmsGalleryItem, CmsPageContent } from "@/lib/cms";
 
 type AboutProps = {
   destinations?: AboutDestination[];
-  testimonials?: AboutTestimonial[] | null;
   faqs?: AboutFaq[] | null;
   journalArticles?: ArticleListItem[];
   portfolioStats?: PortfolioStats;
   cmsGalleryItems?: CmsGalleryItem[] | null;
+  cmsContent?: CmsPageContent | null;
+};
+
+type AboutCopy = {
+  is_visible?: boolean;
+  heading?: string;
+  lead?: string;
+  body?: string;
+  scroll_label?: string;
+  eyebrow?: string;
+  title?: string;
+  title_emphasis?: string;
+  description?: string;
+  button_label?: string;
+  trust_label?: string;
+  closing_copy?: string;
+  link_label?: string;
+  quote?: string;
+  steps?: Array<{
+    title?: string;
+    description?: string;
+    images?: string[];
+  }>;
+  left_images?: string[];
+  right_images?: string[];
+  pillars?: Array<{
+    id?: string;
+    name?: string;
+    scope?: string;
+    desc?: string;
+    image?: string;
+  }>;
+  [key: string]: unknown;
 };
 
 const defaultDestinations: AboutDestination[] = [
@@ -314,15 +331,6 @@ const servicePromises = [
   },
 ];
 
-function getInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
-}
-
 const defaultFaqs = [
   {
     id: "villa-selection",
@@ -522,11 +530,11 @@ function CountUp({ to, duration = 1.4, decimals = 0 }: { to: number; duration?: 
 
 export default function About({
   destinations = [],
-  testimonials: testimonialsProp,
   faqs: faqsProp,
   journalArticles = [],
   portfolioStats,
   cmsGalleryItems,
+  cmsContent,
 }: AboutProps) {
   const aboutRootRef = useRef<HTMLDivElement>(null);
   const domeGalleryImages = useMemo(() => {
@@ -553,19 +561,6 @@ export default function About({
     return mapped.length ? mapped : fallbackDomeGalleryImages;
   }, [cmsGalleryItems]);
   const homesCount = portfolioStats?.homesCount ?? null;
-  const testimonials = (testimonialsProp ?? []).map((t, i) => ({
-    id: `cms-review-${i}`,
-    author: t.author,
-    location: t.location ?? "",
-    stars: t.stars,
-    text: t.text,
-    avatar: t.avatar ?? null,
-    initials: getInitials(t.author),
-    sourceLabel: t.sourceLabel ?? null,
-    isVerified: Boolean(t.isVerified),
-    villaName: t.villaName ?? null,
-  }));
-  const hasTestimonials = testimonials.length > 0;
   const faqs = faqsProp && faqsProp.length
     ? faqsProp.map((f, i) => ({
         id: `cms-faq-${i}`,
@@ -573,34 +568,6 @@ export default function About({
         answer: f.answer,
       }))
     : defaultFaqs;
-  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
-
-  useEffect(() => {
-    if (!hasTestimonials) return;
-    const timer = setInterval(() => {
-      setActiveReviewIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [hasTestimonials, testimonials.length]);
-
-  useEffect(() => {
-    if (activeReviewIndex >= testimonials.length) {
-      setActiveReviewIndex(0);
-    }
-  }, [testimonials.length, activeReviewIndex]);
-
-  const handlePrev = () => {
-    if (!hasTestimonials) return;
-    setActiveReviewIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
-
-  const handleNext = () => {
-    if (!hasTestimonials) return;
-    setActiveReviewIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const activeTestimonial = hasTestimonials ? testimonials[activeReviewIndex] : null;
-
   useGSAP(
     () => {
       const root = aboutRootRef.current;
@@ -659,20 +626,35 @@ export default function About({
     ...featurePills.map((pill) => ({ ...pill, renderId: `${pill.id}-primary` })),
     ...featurePills.map((pill) => ({ ...pill, renderId: `${pill.id}-mirror` })),
   ];
+  const sectionCopy = (key: string): AboutCopy =>
+    (cmsContent?.[key] as AboutCopy | null | undefined) || {};
+  const isVisible = (key: string): boolean => sectionCopy(key).is_visible !== false;
+  const ourStory = sectionCopy("our_story");
+  const trustRecognition = sectionCopy("trust_recognition");
+  const studioStatement = sectionCopy("studio_statement");
+  const bookingProcess = sectionCopy("booking_process");
+  const concierge = sectionCopy("concierge");
+  const faqIntro = sectionCopy("faq_intro");
+  const journalPreview = sectionCopy("journal_preview");
+  const destinationFootprint = sectionCopy("destination_footprint");
+  const finalCta = sectionCopy("final_cta");
 
   return (
     <div className={styles.aboutShell} ref={aboutRootRef}>
-      <OurStoryHero />
+      {isVisible("our_story") ? <OurStoryHero content={ourStory} /> : null}
 
-      <TrustRecognition villas={totalVillas} />
+      {isVisible("trust_recognition") ? (
+        <TrustRecognition villas={totalVillas} content={trustRecognition} />
+      ) : null}
 
-      <StudioStatement />
+      {isVisible("studio_statement") ? <StudioStatement content={studioStatement} /> : null}
 
-      <ServicesList />
+      {isVisible("booking_process") ? <BookingProcess content={bookingProcess} /> : null}
 
-      <section className={styles.newReviewsSection}>
+      {isVisible("concierge") ? <ConciergeHorizontalStory content={concierge} /> : null}
+      {/* Legacy About testimonial markup retained temporarily for stylesheet migration.
         <div className={styles.newReviewsContainer}>
-          {/* Header */}
+          Legacy header
           <div className={styles.newReviewsHeader}>
             <span className={styles.newReviewsKicker}>Reviews</span>
             <h2 className={styles.newReviewsHeading}>What our guests say about Summerhouses</h2>
@@ -694,7 +676,7 @@ export default function About({
                   >
                     {activeTestimonial.avatar ? (
                       <Image
-                        src={activeTestimonial.avatar}
+                        src={activeTestimonial.avatar ?? ""}
                         alt={activeTestimonial.author}
                         fill
                         sizes="(min-width: 960px) 22vw, 78vw"
@@ -754,7 +736,7 @@ export default function About({
                         <div className={styles.authorAvatarWrapper}>
                           {activeTestimonial.avatar ? (
                             <Image
-                              src={activeTestimonial.avatar}
+                              src={activeTestimonial.avatar ?? ""}
                               alt={activeTestimonial.author}
                               fill
                               sizes="48px"
@@ -811,17 +793,17 @@ export default function About({
             </div>
           )}
         </div>
-      </section>
+      </section> */}
 
-      <section className={styles.faqSection}>
+      {isVisible("faq_intro") ? <section className={styles.faqSection}>
         <div className={styles.faqIntro}>
-          <p className={styles.darkEyebrow}>FAQ</p>
-          <h2>Everything you need to know.</h2>
+          <p className={styles.darkEyebrow}>{String(faqIntro.eyebrow || "FAQ")}</p>
+          <h2>{String(faqIntro.title || "Everything you need to know.")}</h2>
           <InteractiveHoverButton href="/contact" className={`${styles.reserveButtonDark} ihb-fill-light`} arrow={null}>
             <span>
               <FiArrowUpRight aria-hidden="true" />
             </span>
-            Ask Us
+            {String(faqIntro.button_label || "Ask Us")}
           </InteractiveHoverButton>
         </div>
         <div className={styles.faqList}>
@@ -841,18 +823,22 @@ export default function About({
             </motion.div>
           ))}
         </div>
-      </section>
+      </section> : null}
 
-      <JournalPreviewSection articles={journalArticles} />
+      {isVisible("journal_preview") ? (
+        <JournalPreviewSection articles={journalArticles} content={journalPreview} />
+      ) : null}
 
-      <section className={`${styles.destinationSection} ${styles.darkScrollChapter}`}>
+      {isVisible("destination_footprint") ? <section className={`${styles.destinationSection} ${styles.darkScrollChapter}`}>
         <div className={styles.destinationInner}>
           <motion.div {...fadeUp} className={styles.destinationHeader}>
-            <p className={styles.lightEyebrow}>Location</p>
-            <h2>Where Summerhouses stays unfold.</h2>
+            <p className={styles.lightEyebrow}>{String(destinationFootprint.eyebrow || "Location")}</p>
+            <h2>{String(destinationFootprint.title || "Where Summerhouses stays unfold.")}</h2>
             <p>
-              The collection is centered around Bali's most requested stay areas, with villas selected for
-              privacy, atmosphere, and access to the island's everyday rituals.
+              {String(
+                destinationFootprint.description ||
+                  "The collection is centered around Bali's most requested stay areas, with villas selected for privacy, atmosphere, and access to the island's everyday rituals.",
+              )}
             </p>
           </motion.div>
 
@@ -934,8 +920,15 @@ export default function About({
             </div>
           </div>
         </div>
-      </section>
+      </section> : null}
 
+      {isVisible("final_cta") ? (
+        <section className={styles.finalCta}>
+          <p>{String(finalCta.eyebrow || "Your Bali stay")}</p>
+          <h2>{String(finalCta.title || "Find the home that feels right.")}</h2>
+          <Link href="/villas">{String(finalCta.button_label || "Book now")}</Link>
+        </section>
+      ) : null}
     </div>
   );
 }

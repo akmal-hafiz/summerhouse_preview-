@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import GalleryPage from "@/components/gallery/GalleryPage";
-import { getCmsGalleryItems } from "@/lib/cms";
+import { getCmsGalleryItems, getCmsPageSections } from "@/lib/cms";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -26,13 +26,16 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryRoute() {
-  const items = await getCmsGalleryItems();
+  const [items, sections] = await Promise.all([
+    getCmsGalleryItems(),
+    getCmsPageSections("gallery"),
+  ]);
 
   return (
     <div className="gallery-route-shell">
       <Navbar alwaysSolid={true} />
       <main className="gallery-route-main">
-        <GalleryPage items={items} />
+        <GalleryPage items={items} content={sections?.intro ?? null} />
       </main>
       <Footer />
     </div>

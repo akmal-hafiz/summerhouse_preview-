@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { FiChevronDown, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
+import { FiChevronDown } from "react-icons/fi";
 import { useToast } from "@/components/providers/ToastProvider";
 import { LiquidDropdownSurface } from "@/components/ui/liquid-dropdown-surface";
 import styles from "./Contact.module.css";
@@ -23,7 +24,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 
 const DEFAULT_CONTACT = {
-  email: "info@summerhousebali.com",
+  generalEmail: "info@summerhousebali.com",
+  reservationEmail: "reservation.summerhouse@gmail.com",
   phone: "+62 819 3238 7121",
   whatsapp: "+62 819 3238 7121",
   address: "Bali, Indonesia",
@@ -50,7 +52,8 @@ const defaultFaqs = [
 ];
 
 type ContactSettings = {
-  email?: string | null;
+  generalEmail?: string | null;
+  reservationEmail?: string | null;
   phone?: string | null;
   whatsapp?: string | null;
   address?: string | null;
@@ -79,18 +82,6 @@ function phoneHref(value: string): string {
 function emailHref(value: string): string {
   const email = value.trim();
   return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email) ? `mailto:${email}` : "";
-}
-
-function maskPhone(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.length < 8) return "+62 8xx xxxx xxxx";
-
-  const prefix = digits.startsWith("62") ? "+62" : `+${digits.slice(0, Math.min(2, digits.length - 6))}`;
-  const local = digits.startsWith("62") ? digits.slice(2) : digits.slice(Math.min(2, digits.length - 6));
-  const visibleStart = local.slice(0, 3);
-  const visibleEnd = local.slice(-3);
-
-  return `${prefix} ${visibleStart} *** *** ${visibleEnd}`;
 }
 
 type ContactSubjectFieldProps = {
@@ -248,7 +239,8 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
 
   const contact = useMemo(
     () => ({
-      email: settings?.email || DEFAULT_CONTACT.email,
+      generalEmail: settings?.generalEmail || DEFAULT_CONTACT.generalEmail,
+      reservationEmail: settings?.reservationEmail || DEFAULT_CONTACT.reservationEmail,
       phone: settings?.phone || DEFAULT_CONTACT.phone,
       whatsapp: settings?.whatsapp || settings?.phone || DEFAULT_CONTACT.whatsapp,
       address: settings?.address || DEFAULT_CONTACT.address,
@@ -256,9 +248,9 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
     }),
     [settings],
   );
-  const maskedPhone = maskPhone(contact.phone);
   const contactPhoneHref = phoneHref(contact.phone);
-  const contactEmailHref = emailHref(contact.email);
+  const contactEmailHref = emailHref(contact.generalEmail);
+  const reservationEmailHref = emailHref(contact.reservationEmail);
   const contactWhatsappHref = whatsappHref(contact.whatsapp);
 
   useGSAP(
@@ -270,18 +262,6 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
         heroItems,
         { autoAlpha: 0, y: 28 },
         { autoAlpha: 1, y: 0, duration: 1.05, ease: "power3.out", stagger: 0.09 },
-      );
-
-      gsap.fromTo(
-        `.${styles.dividerLine}`,
-        { scaleX: 0 },
-        { scaleX: 1, duration: 1.1, ease: "power3.out", transformOrigin: "center center", delay: 0.32 },
-      );
-
-      gsap.fromTo(
-        `.${styles.dividerDot}`,
-        { autoAlpha: 0, scale: 0.45 },
-        { autoAlpha: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)", delay: 0.62 },
       );
 
       gsap.utils.toArray<HTMLElement>(`.${styles.scrollReveal}`).forEach((element, index) => {
@@ -341,49 +321,23 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
 
   return (
     <div ref={rootRef} className={styles.contactPage}>
-      <section className={styles.hero} aria-labelledby="contact-title">
-        <p className={`${styles.eyebrow} ${styles.heroReveal}`}>/ Contact</p>
-        <h1 id="contact-title" className={styles.heroReveal}>Get in touch</h1>
-        <p className={styles.heroReveal}>Tell us what kind of Bali stay you are imagining.</p>
-      </section>
+      <section className={styles.contactHero} aria-labelledby="contact-title">
+        <div className={styles.contactHeading}>
+          <div>
+            <p className={`${styles.eyebrow} ${styles.heroReveal}`}><span />Contact us<span /></p>
+            <h1 id="contact-title" className={styles.heroReveal}>Share your Bali<br /><em>vision with us</em></h1>
+          </div>
+          <p className={styles.heroReveal}>Tell us about your dates, preferred area, and the kind of stay you have in mind. Our Bali team will make the next step feel simple.</p>
+        </div>
 
-      <div className={styles.divider} aria-hidden="true">
-        <span className={styles.dividerLine} />
-        <span className={styles.dividerDot} />
-        <span className={styles.dividerLine} />
-      </div>
+        <div className={styles.contactGrid} aria-label="Contact form">
+          <figure className={`${styles.heroImage} ${styles.scrollReveal}`}>
+            <Image src="/Hero_Section.png" alt="A calm Summerhouse villa pool in Bali" fill priority sizes="(min-width: 901px) 46vw, 100vw" />
+            <span className={styles.imageCutTop} aria-hidden="true" />
+            <span className={styles.imageCutBottom} aria-hidden="true" />
+          </figure>
 
-      <section className={styles.contactGrid} aria-label="Contact details and form">
-        <aside className={`${styles.contactInfo} ${styles.scrollReveal}`}>
-          <p>We are here to help. Ask about villas, arrivals, long stays, or a slower Bali rhythm.</p>
-          <ul>
-            <li>
-              <FiMapPin aria-hidden="true" />
-              <span>{contact.address}</span>
-            </li>
-            {contactPhoneHref && (
-              <li>
-                <FiPhone aria-hidden="true" />
-                <a href={contactPhoneHref} aria-label="Call Summerhouse">
-                  {maskedPhone}
-                </a>
-              </li>
-            )}
-            {contactEmailHref && (
-              <li>
-                <FiMail aria-hidden="true" />
-                <a href={contactEmailHref}>{contact.email}</a>
-              </li>
-            )}
-          </ul>
-          {contactWhatsappHref && (
-            <a className={styles.whatsappLink} href={contactWhatsappHref} target="_blank" rel="noreferrer">
-              WhatsApp / {contact.responseTime}
-            </a>
-          )}
-        </aside>
-
-        <form className={`${styles.form} ${styles.scrollReveal}`} onSubmit={handleSubmit}>
+          <form className={`${styles.form} ${styles.scrollReveal}`} onSubmit={handleSubmit}>
           <label className={styles.fullField}>
             <span>Name</span>
             <input type="text" placeholder="Jane Smith" value={name} onChange={(e) => setName(e.target.value)} required />
@@ -415,20 +369,45 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
           {submittedOk && <p className={styles.formSuccess}>Thanks. The Summerhouse team will reach out soon.</p>}
 
           <button type="submit" disabled={submitting}>
-            {submitting ? "Sending..." : "Submit"}
+            {submitting ? "Saving inquiry..." : "Send message"}
           </button>
-        </form>
+          </form>
+        </div>
       </section>
 
-      <div className={styles.divider} aria-hidden="true">
-        <span className={styles.dividerLine} />
-        <span className={styles.dividerDot} />
-        <span className={styles.dividerLine} />
-      </div>
+      <section className={styles.connected} aria-labelledby="connected-title">
+        <div className={`${styles.connectedIntro} ${styles.scrollReveal}`}>
+          <p className={styles.eyebrow}><span />Connect<span /></p>
+          <h2 id="connected-title">Stay <em>Connected</em></h2>
+          <dl>
+            <div><dt>General inquiries</dt><dd><a href={contactEmailHref}>{contact.generalEmail}</a></dd></div>
+            <div><dt>Bookings & stay planning</dt><dd><a href={reservationEmailHref}>{contact.reservationEmail}</a></dd></div>
+            <div><dt>Based in</dt><dd>{contact.address}</dd></div>
+          </dl>
+        </div>
+
+        <div className={`${styles.connectedChannels} ${styles.scrollReveal}`}>
+          <dl>
+            <div><dt>Phone</dt><dd><a href={contactPhoneHref}>{contact.phone}</a></dd></div>
+            <div><dt>Response time</dt><dd>{contact.responseTime}</dd></div>
+            <div><dt>Socials</dt><dd><a href="https://www.instagram.com/summerhouse.bali/" target="_blank" rel="noreferrer">Instagram</a><a href="https://pin.it/3CgvbgIq5" target="_blank" rel="noreferrer">Pinterest</a></dd></div>
+          </dl>
+          <p>Travel feels better when every detail has room to breathe. We help turn a villa search into a stay that feels considered from the beginning.</p>
+        </div>
+
+        <div className={`${styles.connectedVisual} ${styles.scrollReveal}`}>
+          <span className={styles.yearMark}>Bali</span>
+          <div className={styles.photoStack}>
+            <figure><Image src="/Found_myself..jpg" alt="A quiet Summerhouse interior moment" fill sizes="(min-width: 901px) 30vw, 90vw" /></figure>
+            <i aria-hidden="true" /><i aria-hidden="true" />
+          </div>
+          {contactWhatsappHref && <a href={contactWhatsappHref} target="_blank" rel="noreferrer">Start on WhatsApp <span>↗</span></a>}
+        </div>
+      </section>
 
       <section className={styles.faqSection} aria-labelledby="faq-title">
         <div className={`${styles.faqIntro} ${styles.scrollReveal}`}>
-          <p className={styles.eyebrow}>/ FAQ</p>
+          <p className={styles.eyebrow}><span />FAQ<span /></p>
           <h2 id="faq-title">Frequently asked questions</h2>
           <p>Everything you need to know before planning a stay with Summerhouse.</p>
         </div>

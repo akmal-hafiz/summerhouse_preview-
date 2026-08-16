@@ -1,19 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useTransform, AnimatePresence, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   FiArrowRight, 
-  FiCheck, 
   FiChevronDown, 
-  FiChevronUp,
-  FiLayers, 
-  FiTrendingUp, 
-  FiCpu, 
-  FiActivity, 
-  FiShield, 
   FiChevronLeft, 
   FiChevronRight,
   FiHelpCircle,
@@ -39,15 +32,6 @@ type OwnerTestimonialView = {
 };
 
 const OWNER_BG_FALLBACK = "/homepage_villa/curated-1-main.webp";
-
-function getInitials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 // ── SUB-SERVICES DATA FOR SECTION 1 (Operational) ──
 const defaultOperationalServices = [
@@ -110,6 +94,25 @@ const defaultFaqs = [
   }
 ];
 
+const defaultPartnershipPoints = [
+  {
+    title: "Hands-on local management",
+    description: "A Bali-based team stays close to the property, its people, and everyday operations.",
+  },
+  {
+    title: "Revenue-led decisions",
+    description: "Pricing, distribution, and reporting are guided by performance, not guesswork.",
+  },
+  {
+    title: "Design-conscious positioning",
+    description: "Every home is presented with a clear point of view that respects its architecture and audience.",
+  },
+  {
+    title: "Guest experience that builds value",
+    description: "Thoughtful stays earn stronger reviews, repeat demand, and long-term property value.",
+  },
+];
+
 // ── ANIMATION VARIANTS ──
 const fadeUpVariants: any = {
   hidden: { opacity: 0, y: 35 },
@@ -148,6 +151,7 @@ type ServicesPageContentProps = {
   projectServices?: ServiceCardProp[] | null;
   faqs?: FaqProp[] | null;
   ownerTestimonials?: OwnerTestimonialProp[] | null;
+  content?: Record<string, Record<string, unknown> | null> | null;
 };
 
 export default function ServicesPageContent({
@@ -156,6 +160,7 @@ export default function ServicesPageContent({
   projectServices: prProp,
   faqs: faqsProp,
   ownerTestimonials: ownerProp,
+  content,
 }: ServicesPageContentProps = {}) {
   const operationalServices = opProp && opProp.length ? opProp : defaultOperationalServices;
   const marketingServices = mkProp && mkProp.length ? mkProp : defaultMarketingServices;
@@ -177,38 +182,38 @@ export default function ServicesPageContent({
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  // Scroll target for the text separation and card fade-in effect
-  const zoomSectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: rawScrollYProgress } = useScroll({
-    target: hasOwnerTestimonials ? zoomSectionRef : undefined,
-    offset: ["start start", "end end"]
-  });
-
-  // Smooth out raw scroll position using useSpring to filter out scroll wheel steps
-  const scrollYProgress = useSpring(rawScrollYProgress, {
-    stiffness: 75,
-    damping: 22,
-    mass: 0.35,
-    restDelta: 0.001
-  });
-
-  // Explicitly translate text to push them completely off-screen
-  const textLeftX = useTransform(scrollYProgress, [0.0, 0.35], ["0vw", "-58vw"], { clamp: true });
-  const textRightX = useTransform(scrollYProgress, [0.0, 0.35], ["0vw", "58vw"], { clamp: true });
-  
-  // Scale and opacity transformations for 3D zoom-out fly-through text effect
-  const textScale = useTransform(scrollYProgress, [0.0, 0.35], [1.0, 1.15], { clamp: true });
-  const textOpacity = useTransform(scrollYProgress, [0.0, 0.35], [1.0, 0.0], { clamp: true });
-
-  // Background scale and opacity for parallax background villa photos
-  const bgScale = useTransform(scrollYProgress, [0.0, 0.4], [1.0, 1.06], { clamp: true });
-  const bgOpacity = useTransform(scrollYProgress, [0.0, 0.3], [0.15, 1.0], { clamp: true });
-
-  // Testimonial card entrance and scale animations (remains visible until section end)
-  const cardOpacity = useTransform(scrollYProgress, [0.25, 0.45], [0, 1], { clamp: true });
-  const cardY = useTransform(scrollYProgress, [0.25, 0.45], [50, 0], { clamp: true });
-  const cardScale = useTransform(scrollYProgress, [0.25, 0.45], [0.95, 1.0], { clamp: true });
-  const cardPointerEvents = useTransform(scrollYProgress, (value) => value >= 0.25 ? "auto" : "none");
+  const partnership = content?.partnership;
+  const management = content?.management;
+  const ownerSection = content?.owner_testimonials;
+  const finalCta = content?.final_cta;
+  const partnershipTitle = typeof partnership?.title === "string" && partnership.title.trim()
+    ? partnership.title
+    : "The value of a closer partnership.";
+  const cmsPoints = Array.isArray(partnership?.points) ? partnership.points : [];
+  const partnershipPoints = cmsPoints.length === 4
+    ? cmsPoints.map((point) => {
+        const row = point && typeof point === "object" ? point as Record<string, unknown> : {};
+        return {
+          title: typeof row.title === "string" ? row.title : "",
+          description: typeof row.description === "string" ? row.description : "",
+        };
+      })
+    : defaultPartnershipPoints;
+  const managementHeading = typeof management?.heading === "string" && management.heading.trim()
+    ? management.heading
+    : "What we manage.";
+  const ownerHeading = typeof ownerSection?.heading === "string" && ownerSection.heading.trim()
+    ? ownerSection.heading
+    : "What thoughtful management feels like.";
+  const ctaTitle = typeof finalCta?.title === "string" && finalCta.title.trim()
+    ? finalCta.title
+    : "Good care goes a long way.";
+  const ctaDescription = typeof finalCta?.description === "string" && finalCta.description.trim()
+    ? finalCta.description
+    : "We look after the property, the people in it, and everything in between.";
+  const ctaLabel = typeof finalCta?.button_label === "string" && finalCta.button_label.trim()
+    ? finalCta.button_label
+    : "Partner With Us";
 
   const handleNextTestimonial = () => {
     if (!hasOwnerTestimonials) return;
@@ -220,9 +225,17 @@ export default function ServicesPageContent({
     setActiveTestimonial((prev) => (prev - 1 + ownerTestimonials.length) % ownerTestimonials.length);
   };
 
-  const activeOwner = hasOwnerTestimonials
-    ? ownerTestimonials[Math.min(activeTestimonial, ownerTestimonials.length - 1)]
-    : null;
+  const activeOwner: OwnerTestimonialView = ownerTestimonials[
+    Math.min(activeTestimonial, Math.max(ownerTestimonials.length - 1, 0))
+  ] ?? {
+    owner: "",
+    role: "Villa Owner",
+    villa: "",
+    image: OWNER_BG_FALLBACK,
+    portrait: null,
+    quote: "",
+    metrics: [],
+  };
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -276,7 +289,7 @@ export default function ServicesPageContent({
       </section>
 
       {/* ── 2. PARTNERSHIP PERKS SECTION ── */}
-      <motion.section 
+      {partnership?.is_visible !== false ? <motion.section
         className={styles.perks}
         initial="hidden"
         whileInView="visible"
@@ -285,49 +298,21 @@ export default function ServicesPageContent({
       >
         <motion.div className={styles.sectionHeader} variants={fadeUpVariants}>
           <span className={styles.eyebrow}>Why Partner With Us</span>
-          <h2 className={styles.sectionTitle}>The perks of partnering with summerhouse</h2>
+          <h2 className={styles.sectionTitle}>{partnershipTitle}</h2>
         </motion.div>
         <motion.div className={styles.perksGrid} variants={staggerContainer}>
-          <motion.div className={styles.perkCard} variants={fadeUpVariants}>
-            <div className={styles.perkIconWrapper}>
-              <FiShield className={styles.perkIcon} />
-            </div>
-            <h3>Hands-On Expert</h3>
-            <p>The Summerhouse team brings experience across the full rental property cycle.</p>
-          </motion.div>
-          <motion.div className={styles.perkCard} variants={fadeUpVariants}>
-            <div className={styles.perkIconWrapper}>
-              <FiCpu className={styles.perkIcon} />
-            </div>
-            <h3>Minimal Fees</h3>
-            <p>We offer competitive rates for our full-service management, with no hidden costs, making sure you get the best value.</p>
-          </motion.div>
-          <motion.div className={styles.perkCard} variants={fadeUpVariants}>
-            <div className={styles.perkIconWrapper}>
-              <FiTrendingUp className={styles.perkIcon} />
-            </div>
-            <h3>Maximizing ROI</h3>
-            <p>We help to make sure that your property investment performs to its maximum potential by utilizing our proven strategies.</p>
-          </motion.div>
-          <motion.div className={styles.perkCard} variants={fadeUpVariants}>
-            <div className={styles.perkIconWrapper}>
-              <FiLayers className={styles.perkIcon} />
-            </div>
-            <h3>Transparency</h3>
-            <p>Providing you with detailed financial reports, ensuring you are always informed about every aspect of your rental property.</p>
-          </motion.div>
-          <motion.div className={styles.perkCard} variants={fadeUpVariants}>
-            <div className={styles.perkIconWrapper}>
-              <FiActivity className={styles.perkIcon} />
-            </div>
-            <h3>Hassle-Free</h3>
-            <p>We take care of every detail, freeing you up from the hassle of dealing with the everyday operations of your rental property.</p>
-          </motion.div>
+          {partnershipPoints.map((point, index) => (
+            <motion.article className={styles.perkCard} variants={fadeUpVariants} key={point.title}>
+              <span className={styles.perkNumber}>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{point.title}</h3>
+              <p>{point.description}</p>
+            </motion.article>
+          ))}
         </motion.div>
-      </motion.section>
+      </motion.section> : null}
 
       {/* ── 3. SPECIALTIES SPLIT ── */}
-      <motion.section 
+      {management?.is_visible !== false ? <motion.section
         className={styles.specialties}
         initial="hidden"
         whileInView="visible"
@@ -335,8 +320,7 @@ export default function ServicesPageContent({
         variants={staggerContainer}
       >
         <motion.div className={styles.specialtiesHeader} variants={fadeUpVariants}>
-          <span className={styles.eyebrow}>Our Specialties</span>
-          <h2>Our professional service is divided into 3 different specialties</h2>
+          <h2>{managementHeading}</h2>
         </motion.div>
         <motion.div className={styles.specialtiesGrid} variants={staggerContainer}>
           <motion.div className={styles.specialtyCard} variants={fadeUpVariants}>
@@ -358,150 +342,72 @@ export default function ServicesPageContent({
             <a href="#project-management" className={styles.cardLink}>Explore Details <FiArrowRight /></a>
           </motion.div>
         </motion.div>
-      </motion.section>
+      </motion.section> : null}
 
       {/* ── 4. INTERACTIVE SCROLL-LINKED TESTIMONIAL SECTION (real owner testimonials from the CMS; hidden until one is approved) ── */}
-      {hasOwnerTestimonials && activeOwner ? (
-        <section ref={zoomSectionRef} className={styles.interactiveZoomSection}>
-          <div className={styles.stickyZoomContainer}>
-
-            {/* Villa Background Image (fades on active testimonial change, scales on scroll) */}
-            <div className={styles.stickyBgContainer}>
-              {ownerTestimonials.map((item, idx) => (
-                <motion.div
-                  key={`${item.owner}-${idx}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: idx === activeTestimonial ? 1 : 0 }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                  style={{ position: "absolute", inset: 0 }}
-                >
-                  <motion.div
-                    style={{ scale: bgScale, opacity: bgOpacity }}
-                    className={styles.bgImageWrapper}
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.villa || "Summerhouse managed villa"}
-                      fill
-                      priority={idx === 0}
-                      sizes="100vw"
-                      className={styles.stickyBgImage}
-                    />
-                    <div className={styles.stickyBgOverlay} />
-                  </motion.div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Scroll Zoom Text Headline */}
-            <div className={styles.zoomHeadline}>
-              <motion.span style={{ x: textLeftX, scale: textScale, opacity: textOpacity }} className={styles.wordLeft}>
-                Better
-              </motion.span>
-
-              {/* Transparent spacer that matches the gap between text */}
-              <div className={styles.imageSpacer} />
-
-              <motion.span style={{ x: textRightX, scale: textScale, opacity: textOpacity }} className={styles.wordRight}>
-                Managed
-              </motion.span>
-            </div>
-
-            {/* Testimonial Card Centering Wrapper (Resolves absolute positioning stretch bug on iOS devices) */}
-            <div className={styles.testimonialCardCenteringWrapper}>
-              <motion.div
-                style={{ opacity: cardOpacity, y: cardY, scale: cardScale, pointerEvents: cardPointerEvents }}
-                className={styles.testimonialCardWrapper}
-              >
-                <div className={styles.testimonialContentArea}>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeTestimonial}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -12 }}
-                      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      {activeOwner.villa ? (
-                        <div className={styles.testimonialVillaTag}>
-                          <span>{activeOwner.villa}</span>
-                        </div>
-                      ) : null}
-
-                      <blockquote className={styles.testimonialQuoteText}>
-                        &ldquo;{activeOwner.quote}&rdquo;
-                      </blockquote>
-
-                      {activeOwner.metrics.length > 0 ? (
-                        <div className={styles.ownerMetricsGrid}>
-                          {activeOwner.metrics.map((metric, midx) => (
-                            <div key={midx} className={styles.ownerMetricItem}>
-                              <strong>{metric.value}</strong>
-                              <span>{metric.label}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : null}
-
-                      <div className={styles.testimonialAuthorRow}>
-                        <div className={styles.authorAvatarWrapper}>
-                          {activeOwner.portrait ? (
-                            <Image
-                              src={activeOwner.portrait}
-                              alt={activeOwner.owner}
-                              fill
-                              sizes="48px"
-                              className="object-cover rounded-full"
-                            />
-                          ) : (
-                            <div className={styles.authorAvatarFallback} aria-hidden="true">
-                              {getInitials(activeOwner.owner) || activeOwner.owner.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div className={styles.authorMeta}>
-                          <strong className={styles.authorName}>{activeOwner.owner}</strong>
-                          <span className={styles.authorLocation}>{activeOwner.role}</span>
-                          {activeOwner.villa ? (
-                            <span className={styles.authorVilla}>Owner of {activeOwner.villa}</span>
-                          ) : null}
-                        </div>
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Navigation Arrows on the right side of the card */}
-                {ownerTestimonials.length > 1 ? (
-                  <div className={styles.testimonialNavCtrls}>
-                    <button
-                      type="button"
-                      onClick={handlePrevTestimonial}
-                      className={styles.testimonialNavArrow}
-                      aria-label="Previous testimonial"
-                    >
-                      <FiChevronUp className={styles.navIconDesktop} />
-                      <FiChevronLeft className={styles.navIconMobile} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleNextTestimonial}
-                      className={styles.testimonialNavArrow}
-                      aria-label="Next testimonial"
-                    >
-                      <FiChevronDown className={styles.navIconDesktop} />
-                      <FiChevronRight className={styles.navIconMobile} />
-                    </button>
-                  </div>
-                ) : null}
-              </motion.div>
-            </div>
-
+      {ownerSection?.is_visible !== false && hasOwnerTestimonials && activeOwner ? (
+        <motion.section
+          className={styles.ownerTestimonialSection}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeUpVariants}
+        >
+          <div className={styles.ownerTestimonialHeader}>
+            <h2>{ownerHeading}</h2>
+            <p>Direct notes from owners whose homes are cared for by the Summerhouse team.</p>
           </div>
-        </section>
+          <div className={styles.ownerTestimonialGrid}>
+            <div className={styles.ownerTestimonialMedia}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`owner-image-${activeTestimonial}`}
+                  className={styles.ownerTestimonialImageLayer}
+                  initial={{ opacity: 0, scale: 1.015 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <Image
+                    src={activeOwner.image}
+                    alt={activeOwner.villa || "Summerhouse managed villa"}
+                    fill
+                    sizes="(min-width: 900px) 48vw, 100vw"
+                    className={styles.ownerTestimonialImage}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            <div className={styles.ownerTestimonialCopy}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`owner-copy-${activeTestimonial}`}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {activeOwner.villa ? <span className={styles.ownerVillaLabel}>{activeOwner.villa}</span> : null}
+                  <blockquote>&ldquo;{activeOwner.quote}&rdquo;</blockquote>
+                  <div className={styles.ownerIdentity}>
+                    <strong>{activeOwner.owner}</strong>
+                    <span>{activeOwner.role}</span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+              {ownerTestimonials.length > 1 ? (
+                <div className={styles.ownerTestimonialNav}>
+                  <button type="button" onClick={handlePrevTestimonial} aria-label="Previous owner testimonial"><FiChevronLeft /></button>
+                  <span>{String(activeTestimonial + 1).padStart(2, "0")} / {String(ownerTestimonials.length).padStart(2, "0")}</span>
+                  <button type="button" onClick={handleNextTestimonial} aria-label="Next owner testimonial"><FiChevronRight /></button>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </motion.section>
       ) : null}
 
-      {/* Owner testimonial submission — always available so the first real story can arrive */}
+      {/* Owner testimonial submission stays available so the first real story can arrive. */}
       <section className={styles.ownerFormSection}>
         <OwnerTestimonialForm />
       </section>
@@ -663,7 +569,7 @@ export default function ServicesPageContent({
       </motion.section>
 
       {/* ── 7. BOOK APPOINTMENT CTA ── */}
-      <motion.section 
+      {finalCta?.is_visible !== false ? <motion.section
         className={styles.bottomCta}
         initial="hidden"
         whileInView="visible"
@@ -679,19 +585,16 @@ export default function ServicesPageContent({
         />
         <div className={styles.ctaOverlay} />
         <div className={styles.ctaContent}>
-          <span className={styles.ctaEyebrow}>Villa owner support</span>
-          <h2 className={styles.ctaTitle}>Start a considered conversation</h2>
-          <p className={styles.ctaDescription}>
-            We are happy to speak with you about how we can assist you in creating a successful and fulfilling rental villa business through our services.
-          </p>
-          <InteractiveHoverButton href="/contact" className={`${styles.btnGlassLarge} ihb-fill-dark`} arrow={null}>
-            <span className={styles.btnGlassText}>Contact the team</span>
+          <h2 className={styles.ctaTitle}>{ctaTitle}</h2>
+          <p className={styles.ctaDescription}>{ctaDescription}</p>
+          <InteractiveHoverButton href="/contact?inquiry=property-partnership" className={`${styles.btnGlassLarge} ihb-fill-dark`} arrow={null}>
+            <span className={styles.btnGlassText}>{ctaLabel}</span>
             <span className={styles.btnGlassArrow}>
               <FiArrowRight />
             </span>
           </InteractiveHoverButton>
         </div>
-      </motion.section>
+      </motion.section> : null}
 
       {/* ── VIDEO LIGHTBOX MODAL ── */}
       <AnimatePresence>

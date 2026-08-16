@@ -17,6 +17,7 @@ import {
   startOfMonth,
 } from "@/lib/date";
 import { buildBookingWhatsAppUrl, buildLodgifyCheckoutUrl } from "@/lib/lodgify/booking";
+import { useGlobalContactSettings } from "@/hooks/useGlobalContactSettings";
 
 type AvailabilityDay = {
   date: string;
@@ -54,6 +55,7 @@ export default function AvailabilityCalendar({
   priceLabel,
   maxGuests = 12,
 }: AvailabilityCalendarProps) {
+  const contact = useGlobalContactSettings();
   const today = useMemo(() => startOfMonth(new Date()), []);
   const [visibleMonth, setVisibleMonth] = useState(today);
   const [availabilityMap, setAvailabilityMap] = useState<Record<string, AvailabilityDay>>({});
@@ -92,7 +94,8 @@ export default function AvailabilityCalendar({
     checkIn,
     checkOut,
     guests,
-  }), [checkIn, checkOut, guests, villaName]);
+    whatsappNumber: contact.whatsapp,
+  }), [checkIn, checkOut, contact.whatsapp, guests, villaName]);
 
   useEffect(() => {
     const controller = new AbortController();

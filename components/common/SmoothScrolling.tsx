@@ -1,8 +1,13 @@
 "use client";
 
-import { ReactLenis } from "@studio-freight/react-lenis";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+
+const ReactLenis = dynamic(
+    () => import("@studio-freight/react-lenis").then((module) => module.ReactLenis),
+    { ssr: false },
+);
 
 function SmoothScrolling({ children }: { children: React.ReactNode }) {
     const [isMobile, setIsMobile] = useState(false);
@@ -13,13 +18,13 @@ function SmoothScrolling({ children }: { children: React.ReactNode }) {
         const checkMobile = () => {
             const mobile = window.innerWidth < 1024;
             setIsMobile(mobile);
-            
+
             // Clean up lenis class on mobile to prevent CSS conflicts
             if (mobile) {
                 document.documentElement.classList.remove('lenis');
             }
         };
-        
+
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
@@ -54,4 +59,4 @@ function SmoothScrolling({ children }: { children: React.ReactNode }) {
 }
 
 export default SmoothScrolling;
-
+

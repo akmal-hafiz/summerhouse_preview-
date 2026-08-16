@@ -1,37 +1,33 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { motion, useSpring } from 'framer-motion';
+import { useEffect, useRef } from "react";
 
 export default function CustomCursor() {
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [isHovered, setIsHovered] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
-
-    const springConfig = { stiffness: 300, damping: 30, mass: 0.5 };
-    const x = useSpring(0, springConfig);
-    const y = useSpring(0, springConfig);
+    const cursorRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const cursor = cursorRef.current;
+        if (!cursor || !window.matchMedia("(pointer: fine) and (min-width: 1024px)").matches) {
+            return;
+        }
+
         const mouseMove = (e: MouseEvent) => {
-            x.set(e.clientX);
-            y.set(e.clientY);
-            if (!isVisible) setIsVisible(true);
+            cursor.style.opacity = "1";
+            cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%) scale(${cursor.dataset.hovered === "true" ? 2 : 1})`;
         };
 
         const mouseOver = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            if (
-                target.tagName === 'BUTTON' || 
-                target.tagName === 'A' || 
-                target.closest('button') || 
-                target.closest('a') ||
-                target.classList.contains('cursor-pointer')
-            ) {
-                setIsHovered(true);
-            } else {
-                setIsHovered(false);
-            }
+            const hovered = Boolean(
+                target.tagName === "BUTTON" ||
+                target.tagName === "A" ||
+                target.closest("button") ||
+                target.closest("a") ||
+                target.classList.contains("cursor-pointer")
+            );
+
+            cursor.dataset.hovered = String(hovered);
+            cursor.style.backgroundColor = hovered ? "rgba(68, 107, 74, 0.1)" : "rgba(68, 107, 74, 0)";
         };
 
         window.addEventListener("mousemove", mouseMove);
@@ -41,24 +37,26 @@ export default function CustomCursor() {
             window.removeEventListener("mousemove", mouseMove);
             window.removeEventListener("mouseover", mouseOver);
         };
-    }, [isVisible, x, y]);
-
-    if (!isVisible) return null;
+    }, []);
 
     return (
-        <motion.div
-            className="fixed top-0 left-0 w-8 h-8 rounded-full border border-[#446B4A] pointer-events-none z-[9999] hidden lg:block"
+        <div
+            ref={cursorRef}
+            aria-hidden="true"
             style={{
-                x,
-                y,
-                translateX: "-50%",
-                translateY: "-50%",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "2rem",
+                height: "2rem",
+                borderRadius: "9999px",
+                border: "1px solid #446B4A",
+                pointerEvents: "none",
+                zIndex: 9999,
+                opacity: 0,
+                transition: "opacity 160ms ease, background-color 160ms ease",
+                willChange: "transform",
             }}
-            animate={{
-                scale: isHovered ? 2 : 1,
-                backgroundColor: isHovered ? "rgba(68, 107, 74, 0.1)" : "rgba(68, 107, 74, 0)",
-            }}
-            transition={{ type: "spring", stiffness: 250, damping: 20 }}
         />
     );
 }

@@ -111,7 +111,9 @@ function GalleryTile({
               src={entry.mediaSrc}
               alt={entry.alt}
               fill
-              sizes="(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 100vw"
+              sizes="(min-width: 1024px) 32vw, 48vw"
+              loading={order === 0 ? "eager" : "lazy"}
+              fetchPriority={order === 0 ? "high" : "auto"}
               className={styles.tileImage}
               onError={() => setImageFailed(true)}
             />

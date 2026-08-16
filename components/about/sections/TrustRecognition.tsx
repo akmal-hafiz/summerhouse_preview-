@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { FiPlus, FiX } from "react-icons/fi";
 import styles from "./TrustRecognition.module.css";
@@ -88,8 +88,39 @@ function CountUp({ to, duration = 1.6, decimals = 0, suffix = "" }: { to: number
   );
 }
 
-export default function TrustRecognition({ villas = 43 }: { villas?: number }) {
-  const [openId, setOpenId] = useState<string>(PILLARS[0].id);
+export default function TrustRecognition({
+  villas = 43,
+  content,
+}: {
+  villas?: number;
+  content?: {
+    heading?: string;
+    pillars?: Array<Partial<Pillar>>;
+  };
+}) {
+  const resolvedPillars = useMemo(() => {
+    if (!content?.pillars?.length) return PILLARS;
+
+    return content.pillars
+      .map((pillar, index) => {
+        const fallback = PILLARS[index % PILLARS.length];
+        return {
+          id: pillar.id || fallback.id,
+          name: pillar.name || fallback.name,
+          scope: pillar.scope || fallback.scope,
+          desc: pillar.desc || fallback.desc,
+          image: pillar.image || fallback.image,
+        };
+      })
+      .filter((pillar) => pillar.id && pillar.name);
+  }, [content?.pillars]);
+  const [openId, setOpenId] = useState<string>(resolvedPillars[0].id);
+
+  useEffect(() => {
+    if (!resolvedPillars.some((pillar) => pillar.id === openId)) {
+      setOpenId(resolvedPillars[0]?.id || "");
+    }
+  }, [openId, resolvedPillars]);
 
   const stats: Stat[] = [
     { id: "guests", label: "Happy Guests", to: 200, suffix: "+" },
@@ -108,11 +139,11 @@ export default function TrustRecognition({ villas = 43 }: { villas?: number }) {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
-          A decade of stays, thoughtfully hosted.
+          {content?.heading || "A decade of stays, thoughtfully hosted."}
         </motion.h2>
 
         <div className={styles.list}>
-          {PILLARS.map((pillar) => {
+          {resolvedPillars.map((pillar) => {
             const isOpen = openId === pillar.id;
             return (
               <div key={pillar.id} className={`${styles.row} ${isOpen ? styles.rowOpen : ""}`}>

@@ -1,7 +1,7 @@
 import Navbar from "@/components/common/Navbar";
 import ServicesPageContent from "@/components/services/ServicesPageContent";
 import Footer from "@/components/common/Footer";
-import { getCmsFaqs, getCmsOwnerTestimonials, getCmsServiceCards } from "@/lib/cms";
+import { getCmsFaqs, getCmsOwnerTestimonials, getCmsPageSections, getCmsServiceCards } from "@/lib/cms";
 
 export const metadata = {
   title: "Villa Management Services | Summerhouse Bali",
@@ -9,12 +9,13 @@ export const metadata = {
 };
 
 export default async function ServicesPage() {
-  const [operationalServices, marketingServices, projectServices, faqs, ownerTestimonials] = await Promise.all([
+  const [operationalServices, marketingServices, projectServices, faqs, ownerTestimonials, content] = await Promise.all([
     getCmsServiceCards("operational"),
     getCmsServiceCards("marketing"),
     getCmsServiceCards("project"),
     getCmsFaqs("services"),
     getCmsOwnerTestimonials(),
+    getCmsPageSections("services"),
   ]);
 
   return (
@@ -27,6 +28,7 @@ export default async function ServicesPage() {
           projectServices={projectServices}
           faqs={faqs}
           ownerTestimonials={ownerTestimonials}
+          content={content}
         />
       </main>
       <Footer />
