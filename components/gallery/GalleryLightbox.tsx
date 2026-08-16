@@ -172,11 +172,6 @@ export default function GalleryLightbox({
                 Explore our houses
               </Link>
             )}
-            {entry.propertyId && (
-              <Link href="/villas" className={styles.lightboxCtaGhost}>
-                All houses
-              </Link>
-            )}
           </div>
         </div>
       </div>
