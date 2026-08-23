@@ -1,9 +1,9 @@
 .section {
   --booking-bg: #f3f5f6;
-  --booking-ink: #09254a;
-  --booking-muted: #49505a;
+  --booking-ink: var(--brand-charcoal, #2E2E2C);
+  --booking-muted: var(--color-text-muted, #74716B);
   --booking-line: rgba(9, 37, 74, 0.23);
-  --booking-accent: #f05c4d;
+  --booking-accent: var(--brand-primary, #446B4A);
   width: 100%;
   overflow: hidden;
   background: var(--booking-bg);
@@ -49,27 +49,6 @@
   justify-content: center;
   padding: clamp(32px, 5vw, 76px);
   text-align: center;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  margin: 0 0 clamp(18px, 2vw, 28px);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: clamp(9px, 0.72vw, 11px);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  color: var(--booking-accent);
-  text-transform: uppercase;
-}
-
-.eyebrow span {
-  display: block;
-  width: 20px;
-  height: 1px;
-  background: currentColor;
 }
 
 .title {

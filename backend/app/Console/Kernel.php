@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('media:prune --hours=24')->daily();
+        $schedule->command('queue:prune-failed --hours=168')->daily();
     }
 
     /**

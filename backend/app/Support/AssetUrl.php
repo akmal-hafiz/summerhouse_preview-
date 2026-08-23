@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Services\Media\ManagedMediaService;
+
 class AssetUrl
 {
     /**
@@ -10,14 +12,18 @@ class AssetUrl
     public const MEDIA_KEYS = [
         'image', 'image_url', 'images',
         'hero_image', 'heroImage',
-        'poster', 'poster_image', 'video_poster',
+        'poster', 'poster_image', 'video_poster', 'videoPoster',
+        'mobile_poster', 'mobilePoster',
         'video', 'video_url', 'videoUrl',
         'avatar', 'author_avatar', 'authorAvatar',
         'thumbnail', 'thumbnail_url',
         'background', 'background_image', 'bg_image',
-        'src', 'cover', 'cover_image',
+        'src', 'cover', 'cover_image', 'social_image', 'socialImage',
+        'hero_video', 'heroVideo', 'hero_video_poster', 'heroVideoPoster',
         'gallery_images', 'galleryImages',
-        'logo', 'icon',
+        'left_images', 'leftImages', 'right_images', 'rightImages',
+        'uploaded_images', 'uploadedImages',
+        'logo', 'award_logo', 'awardLogo', 'icon',
     ];
 
     public static function resolve(?string $value): ?string
@@ -25,6 +31,10 @@ class AssetUrl
         if ($value === null || $value === '') return $value;
 
         $value = trim($value);
+
+        if (str_starts_with($value, ManagedMediaService::REFERENCE_PREFIX)) {
+            return app(ManagedMediaService::class)->resolve($value);
+        }
 
         if ($value === '' || preg_match('/[\x00-\x1F\x7F]/', $value)) {
             return null;

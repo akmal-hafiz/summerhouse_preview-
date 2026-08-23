@@ -3,6 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\SiteSetting;
+use App\Models\VillaCache;
+use App\Services\LodgifyService;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -36,23 +38,38 @@ class SiteSettingsManager extends Page implements HasForms
         // Concierge tab
         'concierge.subtitle' => 'concierge.subtitle',
         'concierge.hours' => 'concierge.hours',
-        'concierge.whatsapp' => 'concierge.whatsapp',
         'concierge.whatsapp_label' => 'concierge.whatsapp_label',
-        'concierge.phone' => 'concierge.phone',
         'concierge.phone_label' => 'concierge.phone_label',
-        'concierge.email' => 'concierge.email',
         'concierge.email_label' => 'concierge.email_label',
 
-        // Contact page tab
-        'contact.email' => 'contact.email',
+        // Global contact & communication tab
+        'contact.general_email' => 'contact.general_email',
+        'contact.reservation_email' => 'contact.reservation_email',
         'contact.phone' => 'contact.phone',
         'contact.whatsapp' => 'contact.whatsapp',
         'contact.address' => 'contact.address',
         'contact.response_time' => 'contact.response_time',
+
+        // Global footer tab
+        'footer.newsletter_title' => 'footer.newsletter_title',
+        'footer.newsletter_description' => 'footer.newsletter_description',
+        'footer.newsletter_consent' => 'footer.newsletter_consent',
+        'footer.closing_statement' => 'footer.closing_statement',
+        'footer.stay_heading' => 'footer.stay_heading',
+        'footer.stay_locations' => 'footer.stay_locations',
+        'footer.owners_heading' => 'footer.owners_heading',
+        'footer.owner_links' => 'footer.owner_links',
+        'footer.navigation_heading' => 'footer.navigation_heading',
+        'footer.navigation_links' => 'footer.navigation_links',
+        'footer.inquiries_heading' => 'footer.inquiries_heading',
+        'footer.social_links' => 'footer.social_links',
+        'footer.copyright_suffix' => 'footer.copyright_suffix',
     ];
 
     public function mount(): void
     {
+        LodgifyService::make()->syncIfStale();
+
         $values = [];
         foreach (self::KEY_MAP as $path => $key) {
             data_set($values, $path, SiteSetting::getByKey($key));
@@ -87,15 +104,9 @@ class SiteSettingsManager extends Page implements HasForms
 
                         Forms\Components\Section::make('WhatsApp')
                             ->schema([
-                                Forms\Components\TextInput::make('concierge.whatsapp')
+                                Forms\Components\Placeholder::make('concierge_whatsapp_source')
                                     ->label('Nomor WhatsApp')
-                                    ->required()
-                                    ->placeholder('+6281234567890')
-                                    ->regex('/^\+\d{9,15}$/')
-                                    ->validationMessages([
-                                        'regex' => 'Format harus internasional, contoh: +6281234567890 (tanpa spasi).',
-                                    ])
-                                    ->helperText('Format internasional dengan +62, tanpa spasi atau tanda hubung.'),
+                                    ->content('Menggunakan nomor global dari tab Contact & Communication.'),
 
                                 Forms\Components\TextInput::make('concierge.whatsapp_label')
                                     ->label('Label tombol WhatsApp')
@@ -107,14 +118,9 @@ class SiteSettingsManager extends Page implements HasForms
 
                         Forms\Components\Section::make('Telepon')
                             ->schema([
-                                Forms\Components\TextInput::make('concierge.phone')
+                                Forms\Components\Placeholder::make('concierge_phone_source')
                                     ->label('Nomor telepon')
-                                    ->placeholder('+62361123456')
-                                    ->regex('/^\+\d{9,15}$/')
-                                    ->validationMessages([
-                                        'regex' => 'Format harus internasional, contoh: +62361123456.',
-                                    ])
-                                    ->helperText('Kosongkan kalau tidak mau tampilkan tombol telepon.'),
+                                    ->content('Menggunakan nomor global dari tab Contact & Communication.'),
 
                                 Forms\Components\TextInput::make('concierge.phone_label')
                                     ->label('Label tombol telepon')
@@ -125,12 +131,9 @@ class SiteSettingsManager extends Page implements HasForms
 
                         Forms\Components\Section::make('Email')
                             ->schema([
-                                Forms\Components\TextInput::make('concierge.email')
+                                Forms\Components\Placeholder::make('concierge_email_source')
                                     ->label('Alamat email')
-                                    ->required()
-                                    ->email()
-                                    ->placeholder('concierge@summerhousebali.com')
-                                    ->helperText('Alamat tujuan untuk inquiry villa.'),
+                                    ->content('Menggunakan reservation email dari tab Contact & Communication.'),
 
                                 Forms\Components\TextInput::make('concierge.email_label')
                                     ->label('Label tombol email')
@@ -141,18 +144,25 @@ class SiteSettingsManager extends Page implements HasForms
                             ])->columns(2),
                     ]),
 
-                Forms\Components\Tabs\Tab::make('Contact')
+                Forms\Components\Tabs\Tab::make('Contact & Communication')
                     ->icon('heroicon-o-envelope')
                     ->schema([
-                        Forms\Components\Section::make('Contact page details')
-                            ->description('Detail utama yang tampil di halaman Contact.')
+                        Forms\Components\Section::make('Global contact channels')
+                            ->description('Satu sumber untuk Contact page, Footer, Concierge, dan bantuan booking villa.')
                             ->schema([
-                                Forms\Components\TextInput::make('contact.email')
-                                    ->label('Email contact')
+                                Forms\Components\TextInput::make('contact.general_email')
+                                    ->label('General / business email')
                                     ->required()
                                     ->email()
                                     ->placeholder('info@summerhousebali.com')
-                                    ->helperText('Email utama yang tampil di halaman Contact dan dipakai untuk mailto link.'),
+                                    ->helperText('Untuk pertanyaan umum dan business enquiries. Belum digunakan untuk pengiriman otomatis.'),
+
+                                Forms\Components\TextInput::make('contact.reservation_email')
+                                    ->label('Reservation email')
+                                    ->required()
+                                    ->email()
+                                    ->placeholder('reservation.summerhouse@gmail.com')
+                                    ->helperText('Ditampilkan sebagai kontak reservasi. Inquiry website tetap disimpan di database.'),
 
                                 Forms\Components\TextInput::make('contact.phone')
                                     ->label('Nomor telepon')
@@ -161,7 +171,7 @@ class SiteSettingsManager extends Page implements HasForms
                                     ->validationMessages([
                                         'regex' => 'Format harus internasional, contoh: +6281932387121.',
                                     ])
-                                    ->helperText('Format internasional dengan +, tanpa spasi atau tanda hubung.'),
+                                    ->helperText('Satu nomor telepon global. Format internasional dengan +, tanpa spasi.'),
 
                                 Forms\Components\TextInput::make('contact.whatsapp')
                                     ->label('Nomor WhatsApp')
@@ -170,7 +180,7 @@ class SiteSettingsManager extends Page implements HasForms
                                     ->validationMessages([
                                         'regex' => 'Format harus internasional, contoh: +6281932387121.',
                                     ])
-                                    ->helperText('Kosongkan kalau ingin memakai nomor telepon.'),
+                                    ->helperText('Kosongkan untuk otomatis memakai nomor telepon global.'),
 
                                 Forms\Components\Textarea::make('contact.address')
                                     ->label('Alamat')
@@ -184,6 +194,142 @@ class SiteSettingsManager extends Page implements HasForms
                                     ->maxLength(80)
                                     ->placeholder('Within 2 hours')
                                     ->helperText('Tampil sebagai detail kecil di halaman Contact.'),
+                            ])->columns(2),
+                    ]),
+
+                Forms\Components\Tabs\Tab::make('Footer')
+                    ->icon('heroicon-o-bars-3-bottom-left')
+                    ->schema([
+                        Forms\Components\Section::make('Newsletter')
+                            ->description('Copy shown beside the email subscription field.')
+                            ->schema([
+                                Forms\Components\TextInput::make('footer.newsletter_title')
+                                    ->label('Heading')
+                                    ->required()
+                                    ->default('Join Our Newsletter')
+                                    ->maxLength(100),
+                                Forms\Components\Textarea::make('footer.newsletter_description')
+                                    ->label('Supporting copy')
+                                    ->required()
+                                    ->default('Occasional notes on Bali, new stays, and places worth knowing.')
+                                    ->rows(3)
+                                    ->maxLength(240),
+                                Forms\Components\TextInput::make('footer.newsletter_consent')
+                                    ->label('Consent label')
+                                    ->required()
+                                    ->default('I agree to receive occasional Summerhouse updates.')
+                                    ->maxLength(180),
+                            ]),
+
+                        Forms\Components\Section::make('Stay locations')
+                            ->description('Locations come from active Lodgify villas. Links automatically open the exact Villas filter.')
+                            ->schema([
+                                Forms\Components\TextInput::make('footer.stay_heading')
+                                    ->label('Column heading')
+                                    ->required()
+                                    ->default('Stay')
+                                    ->maxLength(50),
+                                Forms\Components\Repeater::make('footer.stay_locations')
+                                    ->label('Locations')
+                                    ->schema([
+                                        Forms\Components\Select::make('location')
+                                            ->label('Lodgify location')
+                                            ->required()
+                                            ->searchable()
+                                            ->native(false)
+                                            ->options(fn (): array => VillaCache::query()
+                                                ->whereNotNull('location')
+                                                ->orderBy('location')
+                                                ->pluck('location', 'location')
+                                                ->filter()
+                                                ->all()),
+                                        Forms\Components\TextInput::make('label')
+                                            ->label('Display label, optional')
+                                            ->maxLength(80)
+                                            ->helperText('Leave blank to use the Lodgify location name.'),
+                                    ])
+                                    ->columns(2)
+                                    ->maxItems(8)
+                                    ->reorderable()
+                                    ->collapsed()
+                                    ->itemLabel(fn (array $state): ?string => $state['label'] ?? $state['location'] ?? 'New location'),
+                            ]),
+
+                        Forms\Components\Section::make('Footer columns')
+                            ->schema([
+                                Forms\Components\TextInput::make('footer.owners_heading')
+                                    ->label('Villa owners heading')
+                                    ->required()
+                                    ->default('For Villa Owners'),
+                                Forms\Components\Repeater::make('footer.owner_links')
+                                    ->label('Villa owner links')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('label')->required()->maxLength(80),
+                                        Forms\Components\TextInput::make('href')
+                                            ->label('URL or internal path')
+                                            ->required()
+                                            ->maxLength(2048),
+                                    ])
+                                    ->columns(2)
+                                    ->maxItems(8)
+                                    ->reorderable()
+                                    ->collapsed()
+                                    ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'New link'),
+                                Forms\Components\TextInput::make('footer.navigation_heading')
+                                    ->label('Navigation heading')
+                                    ->required()
+                                    ->default('Navigation'),
+                                Forms\Components\Repeater::make('footer.navigation_links')
+                                    ->label('Navigation links')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('label')->required()->maxLength(80),
+                                        Forms\Components\TextInput::make('href')
+                                            ->label('URL or internal path')
+                                            ->required()
+                                            ->maxLength(2048),
+                                    ])
+                                    ->columns(2)
+                                    ->maxItems(10)
+                                    ->reorderable()
+                                    ->collapsed()
+                                    ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'New link'),
+                                Forms\Components\TextInput::make('footer.inquiries_heading')
+                                    ->label('Inquiries heading')
+                                    ->required()
+                                    ->default('Inquiries'),
+                            ])->columns(2),
+
+                        Forms\Components\Section::make('Social links')
+                            ->schema([
+                                Forms\Components\Repeater::make('footer.social_links')
+                                    ->label('')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('label')->required()->maxLength(80),
+                                        Forms\Components\TextInput::make('href')
+                                            ->label('Public URL')
+                                            ->url()
+                                            ->required()
+                                            ->maxLength(2048),
+                                    ])
+                                    ->columns(2)
+                                    ->maxItems(8)
+                                    ->reorderable()
+                                    ->collapsed()
+                                    ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'New social link'),
+                            ]),
+
+                        Forms\Components\Section::make('Closing')
+                            ->schema([
+                                Forms\Components\TextInput::make('footer.closing_statement')
+                                    ->label('Closing statement')
+                                    ->required()
+                                    ->default('Stay well. Know Bali better.')
+                                    ->maxLength(140),
+                                Forms\Components\TextInput::make('footer.copyright_suffix')
+                                    ->label('Copyright text after the year')
+                                    ->required()
+                                    ->default('SUMMERHOUSE / ALL RIGHTS RESERVED')
+                                    ->maxLength(140),
                             ])->columns(2),
                     ]),
 

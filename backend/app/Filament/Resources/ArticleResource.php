@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\Components\ManagedImageUpload;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Models\Article;
 use Filament\Forms;
@@ -17,7 +18,7 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
-    protected static ?string $navigationGroup = 'Editorial';
+    protected static ?string $navigationGroup = 'Content Library';
 
     protected static ?int $navigationSort = 70;
 
@@ -73,7 +74,7 @@ class ArticleResource extends Resource
             ]),
 
             Forms\Components\Section::make('Hero Image')->columns(2)->schema([
-                Forms\Components\FileUpload::make('hero_image')
+                ManagedImageUpload::make('hero_image')
                     ->label('Hero Image')
                     ->image()
                     ->imageEditor()
@@ -89,7 +90,7 @@ class ArticleResource extends Resource
                 Forms\Components\TextInput::make('author_name')->default('Summerhouses Team')->required(),
                 Forms\Components\TextInput::make('author_role')->placeholder('Editorial Studio'),
                 Forms\Components\Textarea::make('author_bio')->rows(2)->columnSpanFull(),
-                Forms\Components\FileUpload::make('author_avatar')
+                ManagedImageUpload::make('author_avatar')
                     ->label('Author Avatar')
                     ->image()
                     ->imageEditor()
@@ -126,7 +127,7 @@ class ArticleResource extends Resource
                             })
                             ->visible(fn (Forms\Get $get) => in_array($get('type'), ['paragraph', 'heading', 'subheading', 'quote']))
                             ->columnSpan(3),
-                        Forms\Components\FileUpload::make('src')
+                        ManagedImageUpload::make('src')
                             ->label('Image')
                             ->image()
                             ->imageEditor()

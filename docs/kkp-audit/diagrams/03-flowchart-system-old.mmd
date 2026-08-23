@@ -1,0 +1,19 @@
+flowchart TD
+    S([Mulai]) --> V[/Pengunjung membuka website WordPress/]
+    V --> I[Melihat informasi villa di website utama]
+    I --> D{Perlu cek availability atau booking?}
+    D -- Tidak --> E([Selesai / lanjut membaca informasi])
+    D -- Ya --> R[/Dialihkan ke subdomain/platform Lodgify terpisah/]
+    R --> L[Pengunjung melakukan cek atau booking di Lodgify]
+    L --> E
+    A([Admin mulai]) --> W[Memperbarui konten melalui WordPress]
+    W --> WP[(Database/CMS WordPress)]
+    WP --> I
+    classDef startend fill:#d8ead3,stroke:#446B4A,color:#111;
+    classDef process fill:#fff,stroke:#555,color:#111;
+    classDef decision fill:#fff4cc,stroke:#9b7d00,color:#111;
+    classDef external fill:#e8f1fb,stroke:#356a9a,color:#111;
+    class S,E,A startend;
+    class I,L,W process;
+    class D decision;
+    class V,R external;

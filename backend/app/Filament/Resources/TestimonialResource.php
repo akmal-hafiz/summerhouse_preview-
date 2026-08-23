@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\Components\ManagedImageUpload;
 use App\Filament\Resources\TestimonialResource\Pages;
 use App\Models\Testimonial;
 use App\Models\VillaCache;
@@ -20,7 +21,7 @@ class TestimonialResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    protected static ?string $navigationGroup = 'Static Pages';
+    protected static ?string $navigationGroup = 'Content Library';
 
     protected static ?string $navigationLabel = 'Reviews & Testimonials';
 
@@ -92,7 +93,7 @@ class TestimonialResource extends Resource
                         ->helperText('Never shown publicly. Used only if we need to reach the guest.')
                         ->columnSpan(6),
 
-                    Forms\Components\FileUpload::make('avatar')
+                    ManagedImageUpload::make('avatar')
                         ->label('Avatar')
                         ->image()
                         ->imageEditor()
@@ -231,11 +232,11 @@ class TestimonialResource extends Resource
                         ->label('Villa detail')
                         ->helperText('Needs a linked villa.')
                         ->visible(fn (?Testimonial $record) => !$isOwner($record)),
-                    Forms\Components\Toggle::make('show_on_about')
-                        ->label('About page')
-                        ->visible(fn (?Testimonial $record) => !$isOwner($record)),
                     Forms\Components\Toggle::make('show_on_home')
                         ->label('Homepage')
+                        ->visible(fn (?Testimonial $record) => !$isOwner($record)),
+                    Forms\Components\Toggle::make('show_on_concierge')
+                        ->label('Concierge page')
                         ->visible(fn (?Testimonial $record) => !$isOwner($record)),
                     Forms\Components\Toggle::make('show_on_services')
                         ->label('Services page')
@@ -292,6 +293,7 @@ class TestimonialResource extends Resource
                             'about' => 'About',
                             'services' => 'Services',
                             'home' => 'Homepage',
+                            'concierge' => 'Concierge',
                             'villa' => 'Villa detail',
                         ])
                         ->default('villa')
@@ -399,8 +401,8 @@ class TestimonialResource extends Resource
                     ->state(function (Testimonial $r): string {
                         $spots = array_filter([
                             $r->show_on_villa ? 'Villa' : null,
-                            $r->show_on_about ? 'About' : null,
                             $r->show_on_home ? 'Home' : null,
+                            $r->show_on_concierge ? 'Concierge' : null,
                             $r->show_on_services ? 'Services' : null,
                         ]);
 

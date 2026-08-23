@@ -34,6 +34,7 @@ class Testimonial extends Model
     public const PLACEMENT_ABOUT = 'show_on_about';
     public const PLACEMENT_HOME = 'show_on_home';
     public const PLACEMENT_SERVICES = 'show_on_services';
+    public const PLACEMENT_CONCIERGE = 'show_on_concierge';
 
     public const TYPE_GUEST_REVIEW = 'guest_review';
     public const TYPE_OWNER_TESTIMONIAL = 'owner_testimonial';
@@ -95,6 +96,7 @@ class Testimonial extends Model
         'show_on_about',
         'show_on_home',
         'show_on_services',
+        'show_on_concierge',
         'is_pinned',
         'created_by_id',
         'updated_by_id',
@@ -112,6 +114,7 @@ class Testimonial extends Model
         'show_on_about' => 'boolean',
         'show_on_home' => 'boolean',
         'show_on_services' => 'boolean',
+        'show_on_concierge' => 'boolean',
         'metrics' => 'array',
         'is_pinned' => 'boolean',
         'stay_date' => 'date',
@@ -126,7 +129,7 @@ class Testimonial extends Model
         $flush = function (Testimonial $row) {
             Cache::forget("cms.testimonials.{$row->page}");
             // Placements let one review appear on several pages, so flush all page caches.
-            foreach (['about', 'home', 'services', 'villa'] as $page) {
+            foreach (['about', 'home', 'services', 'villa', 'concierge'] as $page) {
                 Cache::forget("cms.testimonials.{$page}");
             }
             Cache::forget('cms.testimonials.featured');

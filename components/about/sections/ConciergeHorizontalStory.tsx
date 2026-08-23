@@ -30,7 +30,9 @@ export default function ConciergeHorizontalStory({
     const track = trackRef.current;
     if (!section || !track) return;
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+    // The Concierge story is intentionally scroll-led on desktop. Keep the
+    // horizontal journey active even when the operating system reduces motion.
+    mm.add("(min-width: 1024px)", () => {
       const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
       const tween = gsap.to(track, {
         x: () => -distance(), ease: "none",
@@ -45,7 +47,6 @@ export default function ConciergeHorizontalStory({
     <section ref={sectionRef} className={styles.section} aria-labelledby="about-concierge-title">
       <div ref={trackRef} className={styles.track}>
         <header className={styles.intro}>
-          <p className={styles.eyebrow}><span />{content?.eyebrow || "Concierge"}<span /></p>
           <h2 id="about-concierge-title">
             {content?.title || "More than a villa"}
             <em>{content?.title_emphasis || "your Bali stay, considered."}</em>

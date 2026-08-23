@@ -1,0 +1,43 @@
+@startuml
+title Activity Diagram — Pengelolaan Konten Admin
+|Admin|
+start
+:Buka /admin dan login Filament;
+|Filament / Laravel|
+:Autentikasi session;
+if (users.role = admin?) then (ya)
+  |Admin|
+  :Pilih modul artikel/galeri/testimoni/FAQ/service card/dll.;
+  :Pilih tambah, ubah, hapus, atau moderasi;
+  |Filament / Laravel|
+  :Validasi form, ukuran/tipe media, atau transisi status;
+  if (Valid?) then (ya)
+    |Database / Public Storage|
+    :Simpan atau hapus record/media;
+    |Filament / Laravel|
+    :Model event menghapus key cache terkait;
+    if (Modul Homepage Manager?) then (ya)
+      :Sinkronkan villa cache bila stale saat mount;
+      :Simpan PageSection dan HomepageVillaSelection;
+      :Flush cache homepage;
+    endif
+    note right
+      Cache::forget() hanya menghapus cache Laravel.
+      Next.js mengambil data baru pada request atau
+      revalidation berikutnya; tidak ada push/on-demand
+      revalidation dari Laravel yang ditemukan.
+    end note
+    |Next.js Frontend|
+    :Request/revalidation CMS berikutnya memakai data baru;
+    |Admin|
+    :Menerima notifikasi sukses;
+  else (tidak)
+    |Admin|
+    :Melihat pesan validasi / transisi ditolak;
+  endif
+else (tidak)
+  |Filament / Laravel|
+  :Tolak akses panel;
+endif
+stop
+@enduml

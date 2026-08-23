@@ -45,11 +45,10 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->navigationGroups([
-                NavigationGroup::make('Homepage'),
-                NavigationGroup::make('Static Pages'),
-                NavigationGroup::make('Editorial'),
-                NavigationGroup::make('Inbox'),
-                NavigationGroup::make('System')->collapsed(),
+                NavigationGroup::make('Website Pages'),
+                NavigationGroup::make('Content Library'),
+                NavigationGroup::make('People & Enquiries'),
+                NavigationGroup::make('Settings')->collapsed(),
             ])
             ->renderHook(
                 'panels::head.end',

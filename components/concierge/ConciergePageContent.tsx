@@ -29,7 +29,6 @@ export default function ConciergePageContent({
       <section className={styles.catalogue} aria-labelledby="concierge-title">
         <header className={styles.header}>
           <div>
-            <p className={styles.eyebrow}><span />Beyond the villa<span /></p>
             <h1 id="concierge-title">Thoughtful care<em>throughout your stay</em></h1>
           </div>
           <p>Practical local support, coordinated by the Summerhouse team before arrival and while you are in Bali.</p>

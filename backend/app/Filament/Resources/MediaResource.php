@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Jobs\ProcessUploadedImage;
 use App\Filament\Resources\MediaResource\Pages;
 use App\Models\Media;
 use Filament\Forms;
@@ -17,11 +18,16 @@ class MediaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
-    protected static ?string $navigationGroup = 'System';
+    protected static ?string $navigationGroup = 'Content Library';
 
     protected static ?string $navigationLabel = 'Media Library';
 
     protected static ?int $navigationSort = 80;
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -59,16 +65,35 @@ class MediaResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('path')
                     ->disk('public')
+                    ->getStateUsing(fn (Media $record): ?string => $record->isReady() ? $record->processed_path : null)
                     ->square()
                     ->size(60),
                 Tables\Columns\TextColumn::make('filename')->searchable()->weight('bold')->limit(40),
                 Tables\Columns\TextColumn::make('mime_type')->badge(),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'ready' => 'success',
+                        'failed' => 'danger',
+                        'processing' => 'warning',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('size')
                     ->formatStateUsing(fn ($state) => $state ? round($state / 1024) . ' KB' : '—'),
                 Tables\Columns\TextColumn::make('created_at')->dateTime('M j, Y')->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
+                Tables\Actions\Action::make('retry')
+                    ->label('Retry processing')
+                    ->icon('heroicon-o-arrow-path')
+                    ->visible(fn (Media $record): bool => in_array($record->status, ['failed', 'pending'], true))
+                    ->action(function (Media $record): void {
+                        $record->update(['status' => 'pending', 'error_message' => null]);
+                        ProcessUploadedImage::dispatch($record->id)
+                            ->onQueue((string) config('media.queue', 'media'))
+                            ->afterCommit();
+                    }),
                 Tables\Actions\Action::make('copyUrl')
                     ->label('Copy URL')
                     ->icon('heroicon-o-clipboard')

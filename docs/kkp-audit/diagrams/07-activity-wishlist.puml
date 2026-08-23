@@ -1,0 +1,52 @@
+@startuml
+title Activity Diagram — Pengelolaan dan Sinkronisasi Wishlist
+|Pengunjung/User|
+start
+if (Pemicu aktivitas?) then (A. Simpan/hapus villa)
+  :Tekan simpan atau hapus villa;
+  |Browser / Next.js|
+  :Baca dan ubah wishlist localStorage;
+  if (Token auth tersedia?) then (ya)
+    if (Aksi simpan?) then (ya)
+      :POST /v1/wishlist dengan bearer token;
+    else (hapus)
+      :DELETE /v1/wishlist/{lodgifyPropertyId};
+    endif
+    |Laravel REST API|
+    :Autentikasi Sanctum dan validasi ID numerik;
+    |Database MySQL|
+    if (Aksi simpan?) then (ya)
+      :firstOrCreate user_id + lodgify_property_id;
+    else (hapus)
+      :Hapus wishlist milik user;
+    endif
+    |Browser / Next.js|
+    :Perbarui UI dari daftar localStorage;
+  else (tidak)
+    :Tampilkan wishlist lokal tanpa login;
+  endif
+else (B. Login berhasil)
+  |User|
+  :Berhasil login pada perangkat ini;
+  |Browser / Next.js|
+  :Simpan token Sanctum dan ambil local IDs;
+  if (Ada local IDs?) then (ya)
+    :POST /v1/wishlist/sync;
+    |Laravel REST API|
+    :Validasi max 200 ID dan autentikasi;
+    |Database MySQL|
+    :Ambil ID existing; merge ID baru dengan firstOrCreate;
+    :Kembalikan seluruh ID server;
+  else (tidak)
+    |Browser / Next.js|
+    :GET /v1/wishlist;
+    |Laravel REST API|
+    |Database MySQL|
+    :Kembalikan wishlist user;
+  endif
+  |Browser / Next.js|
+  :Tulis daftar hasil ke localStorage;
+  :Wishlist tersedia lintas perangkat setelah sync;
+endif
+stop
+@enduml

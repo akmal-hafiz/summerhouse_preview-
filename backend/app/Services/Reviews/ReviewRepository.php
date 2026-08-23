@@ -13,9 +13,7 @@ class ReviewRepository
 
     public function featuredTestimonials(int $limit = 6, ?string $page = null): Collection
     {
-        $cacheKey = "cms.testimonials.featured." . ($page ?? 'any') . ".{$limit}";
-
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($limit, $page) {
+        return (function () use ($limit, $page) {
             $baseQuery = Testimonial::query()
                 ->published()
                 ->whereNotNull('text')
@@ -30,6 +28,9 @@ class ReviewRepository
                     ->ofType(Testimonial::TYPE_GUEST_REVIEW);
             } elseif ($page === 'home') {
                 $baseQuery->placedOn(Testimonial::PLACEMENT_HOME)
+                    ->ofType(Testimonial::TYPE_GUEST_REVIEW);
+            } elseif ($page === 'concierge') {
+                $baseQuery->placedOn(Testimonial::PLACEMENT_CONCIERGE)
                     ->ofType(Testimonial::TYPE_GUEST_REVIEW);
             } elseif ($page) {
                 $baseQuery->where(function ($q) use ($page) {
@@ -67,14 +68,12 @@ class ReviewRepository
                 ->get();
 
             return $featured->concat($fallback);
-        });
+        })();
     }
 
     public function servicesTestimonials(int $limit = 6): Collection
     {
-        // Key matches the model's flush loop (no limit suffix) so moderation
-        // changes invalidate this cache immediately.
-        return Cache::remember('cms.testimonials.services', self::CACHE_TTL, function () use ($limit) {
+        return (function () use ($limit) {
             return Testimonial::query()
                 ->published()
                 ->ofType(Testimonial::TYPE_OWNER_TESTIMONIAL)
@@ -87,7 +86,7 @@ class ReviewRepository
                 ->orderByDesc('published_at')
                 ->limit($limit)
                 ->get();
-        });
+        })();
     }
 
     public function publishedByVilla(string $lodgifyId, int $limit = 20): Collection

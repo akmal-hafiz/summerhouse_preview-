@@ -1,6 +1,6 @@
 .section {
-  --stories-ink: #0a2a56;
-  --stories-accent: #ff3b2f;
+  --stories-ink: var(--color-text, #2E2E2C);
+  --stories-accent: var(--brand-primary, #446B4A);
   display: grid;
   grid-template-columns: 36% 64%;
   min-height: 58rem;
@@ -224,24 +224,6 @@
   border-right: 1px dashed #c3c9d4;
 }
 
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1.4rem;
-  color: var(--stories-accent);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.eyebrow span {
-  width: 1.6rem;
-  border-top: 1px solid currentColor;
-}
-
 .storyIntro h2 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
@@ -282,7 +264,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: #5e6268;
+  color: var(--color-text-muted, #74716B);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.82rem;
   line-height: 1.35;
@@ -326,7 +308,7 @@
 
 .quoteBody p {
   margin-top: auto;
-  color: #62666d;
+  color: var(--color-text-muted, #74716B);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.9rem;
 }

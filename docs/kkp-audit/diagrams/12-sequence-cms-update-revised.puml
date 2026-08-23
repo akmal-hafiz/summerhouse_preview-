@@ -1,0 +1,40 @@
+@startuml
+title Revisi Sequence Diagram — Pembaruan Konten CMS
+autonumber
+actor Admin
+boundary "Filament Resource/Livewire" as Filament
+control "Eloquent Model\n(Article, FAQ, Gallery, dll.)" as Model
+database "MySQL" as DB
+collections "public storage" as Storage
+collections "Laravel Cache" as Cache
+boundary "Next.js Frontend" as Next
+control "Laravel CmsController" as Cms
+
+Admin -> Filament : Tambah/ubah/hapus atau moderasi konten
+Filament -> Filament : Autentikasi panel dan validasi form
+Filament -> Model : save()/delete()/transition
+alt ada file upload
+  Model -> Storage : Simpan/hapus berkas public
+end
+Model -> DB : INSERT/UPDATE/DELETE
+DB --> Model : hasil penyimpanan
+Model -> Cache : Cache::forget(key terkait)
+Cache --> Model : key terhapus
+Model --> Filament : hasil operasi
+Filament --> Admin : notifikasi sukses/gagal
+
+... request atau revalidation berikutnya ...
+Next -> Cms : GET CMS API
+Cms -> Cache : Cache::remember(key, 300)
+alt cache kosong setelah invalidasi
+  Cache -> DB : baca data terbaru
+  DB --> Cache : data terbaru
+end
+Cache --> Cms : data CMS
+Cms --> Next : JSON konten
+note over Cache,Next
+Cache::forget() tidak mengirim request ke Next.js dan tidak
+memanggil on-demand revalidation. Data baru dipakai pada request/
+revalidation Next.js berikutnya.
+end note
+@enduml

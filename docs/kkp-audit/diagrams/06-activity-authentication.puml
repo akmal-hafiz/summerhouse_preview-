@@ -1,0 +1,62 @@
+@startuml
+title Activity Diagram — Registrasi dan Autentikasi Pengguna
+|Pengunjung/User|
+start
+:Buka login atau register;
+:Masukkan email;
+|Next.js Frontend|
+:POST /v1/auth/lookup;
+|Laravel REST API|
+:Validasi email dan cari user;
+|Next.js Frontend|
+if (User sudah ada?) then (ya)
+  |Pengunjung/User|
+  :Masukkan password;
+  |Laravel REST API|
+  :POST /v1/auth/login;
+  :Validasi kredensial;
+  if (Kredensial benar?) then (ya)
+    |Database MySQL|
+    :Buat personal access token Sanctum;
+    |Laravel REST API|
+    :Kembalikan token dan role;
+  else (tidak)
+    |Next.js Frontend|
+    :Tampilkan invalid credentials;
+    stop
+  endif
+else (tidak)
+  |Pengunjung/User|
+  :Isi nama, password, konfirmasi password;
+  |Laravel REST API|
+  :POST /v1/auth/register/send-otp;
+  :Validasi email unik dan data register;
+  |Database MySQL|
+  :Simpan OTP registration berumur 10 menit;
+  |Resend Email|
+  :Kirim kode OTP;
+  |Pengunjung/User|
+  :Masukkan OTP;
+  |Laravel REST API|
+  :POST /v1/auth/register/verify-otp;
+  if (OTP valid, belum dipakai, attempts < 5?) then (ya)
+    |Database MySQL|
+    :Tandai OTP used;
+    :Buat user role=user dan token Sanctum;
+    |Laravel REST API|
+    :Kembalikan token dan role;
+  else (tidak)
+    |Next.js Frontend|
+    :Tampilkan OTP salah/kedaluwarsa;
+    stop
+  endif
+endif
+|Next.js Frontend|
+:Simpan token/user di localStorage;
+if (role = admin?) then (ya)
+  :Tampilkan tautan menuju /admin;
+else (tidak)
+  :Arahkan ke halaman tujuan/dashboard;
+endif
+stop
+@enduml

@@ -2,8 +2,8 @@
     <div class="sh-page-intro">
         <h2>Homepage sections</h2>
         <p>
-            Edit hero, stay styles, signature villa, featured collection, and the Explore Bali section.
-            Villa selections pull live data from Lodgify by ID — changes go live within ~5 minutes.
+            Edit hero, stay styles, signature villa, testimonials, and the Bali Destination Guide.
+            Villa selections and destination counts pull live data from Lodgify. Changes go live within about five minutes.
         </p>
     </div>
 

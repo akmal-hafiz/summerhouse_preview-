@@ -17,14 +17,19 @@ class ServiceCard extends Model
 
     protected $fillable = [
         'category',
+        'slug',
         'title',
         'text',
+        'image',
+        'alt_text',
+        'featured_on_about',
         'sort_order',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'featured_on_about' => 'boolean',
     ];
 
     public function scopeActive(Builder $query): Builder

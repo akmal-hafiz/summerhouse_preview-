@@ -160,7 +160,6 @@ function ConciergeGuestStory({ reviews, content }: { reviews: CmsTestimonial[]; 
   return (
     <section className={`${styles.section} ${styles.concierge}`} aria-labelledby="concierge-guest-stories-title">
       <div className={styles.storyIntro}>
-        <p className={styles.eyebrow}><span />{content?.eyebrow || "Guest stories"}<span /></p>
         <h2 id="concierge-guest-stories-title">
           {content?.title || "Stays made easier"}
           <em>{content?.title_emphasis || "by thoughtful care"}</em>

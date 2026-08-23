@@ -1,0 +1,43 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+title Use Case Admin CMS — Summerhouses
+
+actor Admin
+actor "Lodgify REST API v2" as Lodgify
+
+rectangle "Filament CMS / Laravel" {
+  usecase "UC-A01\nLogin panel & lihat dashboard" as A01
+  usecase "UC-A02\nKelola homepage" as A02
+  usecase "UC-A03\nKelola Bali collection" as A03
+  usecase "UC-A04\nKelola artikel" as A04
+  usecase "UC-A05\nKelola galeri & media" as A05
+  usecase "UC-A06\nKelola FAQ & service card" as A06
+  usecase "UC-A07\nModerasi review/testimoni" as A07
+  usecase "UC-A08\nKelola pengguna" as A08
+  usecase "UC-A09\nTindak lanjuti kontak" as A09
+  usecase "UC-A10\nKelola site settings" as A10
+  usecase "Validasi role admin" as CheckRole
+  usecase "Invalidasi cache CMS" as ClearCache
+}
+
+Admin --> A01
+Admin --> A02
+Admin --> A03
+Admin --> A04
+Admin --> A05
+Admin --> A06
+Admin --> A07
+Admin --> A08
+Admin --> A09
+Admin --> A10
+A01 .> CheckRole : <<include>>
+A02 .> ClearCache : <<include>>
+A03 .> ClearCache : <<include>>
+A04 .> ClearCache : <<include>>
+A05 .> ClearCache : <<include>>
+A06 .> ClearCache : <<include>>
+A07 .> ClearCache : <<include>>
+A10 .> ClearCache : <<include>>
+A02 --> Lodgify : sinkron cache villa saat mount
+@enduml

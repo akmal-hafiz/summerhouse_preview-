@@ -17,7 +17,7 @@ class ContactSubmissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
 
-    protected static ?string $navigationGroup = 'Inbox';
+    protected static ?string $navigationGroup = 'People & Enquiries';
 
     protected static ?string $navigationLabel = 'Contact Inquiries';
 

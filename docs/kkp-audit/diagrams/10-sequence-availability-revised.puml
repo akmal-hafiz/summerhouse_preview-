@@ -1,0 +1,41 @@
+@startuml
+title Revisi Sequence Diagram — Pencarian Availability Villa
+autonumber
+actor Pengunjung
+boundary "Next.js halaman /villas\ndan VillaSearchForm" as NextPage
+control "Next.js route handler\n/api/lodgify/availability" as Availability
+control "lib/lodgify" as LodgifyLib
+entity "Lodgify REST API v2" as Lodgify
+
+Pengunjung -> NextPage : Isi lokasi, tanggal, dan tamu
+NextPage -> LodgifyLib : searchAvailableVillas(filters)
+LodgifyLib -> Lodgify : GET property/search data
+Lodgify --> LodgifyLib : properti dan data ketersediaan
+LodgifyLib --> NextPage : daftar villa cocok / kosong
+NextPage --> Pengunjung : tampilkan hasil atau pesan kosong
+
+Pengunjung -> NextPage : Buka detail dan kalender
+NextPage -> Availability : GET availability?propertyId&start&end
+alt property ID atau tanggal tidak valid
+  Availability --> NextPage : 400 validasi
+else melewati rate limit
+  Availability --> NextPage : 429 Too Many Requests
+else valid
+  Availability -> LodgifyLib : getAvailabilityMap(...)
+  LodgifyLib -> Lodgify : GET availability/property calendar
+  alt Lodgify berhasil
+    Lodgify --> LodgifyLib : availability map
+    LodgifyLib --> Availability : map + rangeAvailable
+    Availability --> NextPage : 200 JSON
+  else Lodgify gagal
+    Lodgify --> LodgifyLib : error
+    LodgifyLib --> Availability : error
+    Availability --> NextPage : 500 pesan publik
+  end
+end
+NextPage --> Pengunjung : kalender/validasi availability
+note over Availability
+Rate limit availability: 90 request/menit.
+Tidak ada Laravel/MySQL pada alur ini.
+end note
+@enduml

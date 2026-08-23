@@ -1,0 +1,42 @@
+flowchart TD
+    S([Mulai]) --> B[/Pengunjung mengakses Next.js frontend/]
+    B --> C[Frontend meminta konten CMS]
+    C --> API[Laravel REST API]
+    API --> CH{Cache CMS tersedia?}
+    CH -- Ya --> OUT[Return konten cache]
+    CH -- Tidak --> DB[(MySQL: konten CMS)]
+    DB --> PUT[Cache konten 300 detik]
+    PUT --> OUT
+    OUT --> SHOW[Frontend menampilkan konten terbaru sesuai revalidate]
+    SHOW --> Q{Pengunjung mencari villa?}
+    Q -- Tidak --> END([Selesai])
+    Q -- Ya --> FILTER[/Lokasi, tanggal, jumlah tamu, harga/]
+    FILTER --> LAPI[[Lodgify REST API v2]]
+    LAPI --> FOUND{Villa/availability ditemukan?}
+    FOUND -- Tidak --> EMPTY[Informasikan hasil kosong atau error]
+    EMPTY --> END
+    FOUND -- Ya --> DETAIL[Menampilkan hasil/detail dan kalender]
+    DETAIL --> BOOK{Pilih kanal booking}
+    BOOK -- Lodgify --> CHECKOUT[/Redirect Lodgify Checkout/]
+    BOOK -- WhatsApp --> WA[/Buka WhatsApp dengan pesan booking/]
+    CHECKOUT --> END
+    WA --> END
+    AD([Admin mulai]) --> LOGIN[/Login Filament/]
+    LOGIN --> ROLE{Role admin?}
+    ROLE -- Tidak --> DENY[Panel ditolak]
+    DENY --> AEND([Selesai])
+    ROLE -- Ya --> MODULE[Memilih modul CMS]
+    MODULE --> CRUD[Tambah / ubah / hapus konten]
+    CRUD --> WRITE[(MySQL dan/atau public storage)]
+    WRITE --> INVALIDATE[Invalidasi key cache CMS]
+    INVALIDATE -. "Data digunakan pada request/revalidate berikutnya" .-> C
+    classDef startend fill:#d8ead3,stroke:#446B4A,color:#111;
+    classDef process fill:#fff,stroke:#555,color:#111;
+    classDef decision fill:#fff4cc,stroke:#9b7d00,color:#111;
+    classDef external fill:#e8f1fb,stroke:#356a9a,color:#111;
+    classDef datastore fill:#f4e7ff,stroke:#76559b,color:#111;
+    class S,END,AD,AEND startend;
+    class C,API,OUT,PUT,SHOW,EMPTY,DETAIL,FILTER,LOGIN,MODULE,CRUD,WRITE,INVALIDATE,DENY process;
+    class CH,Q,FOUND,BOOK,ROLE decision;
+    class B,CHECKOUT,WA,LAPI external;
+    class DB datastore;

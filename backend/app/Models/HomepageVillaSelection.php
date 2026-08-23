@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Cache;
 
 class HomepageVillaSelection extends Model
 {
+    protected $attributes = [
+        'show_award' => false,
+    ];
+
     protected static function booted(): void
     {
         $flush = fn () => Cache::forget('cms.homepage.villa-selections');
@@ -21,6 +25,16 @@ class HomepageVillaSelection extends Model
         'sort_order',
         'override_title',
         'override_description',
+        'award_name',
+        'award_issuer',
+        'award_year',
+        'award_url',
+        'award_logo',
+        'show_award',
+    ];
+
+    protected $casts = [
+        'show_award' => 'boolean',
     ];
 
     public function scopeForSlot(Builder $query, string $slot): Builder
@@ -43,6 +57,12 @@ class HomepageVillaSelection extends Model
                 'lodgify_property_id' => $selection->lodgify_property_id,
                 'override_title' => $selection->override_title,
                 'override_description' => $selection->override_description,
+                'award_name' => $selection->award_name,
+                'award_issuer' => $selection->award_issuer,
+                'award_year' => $selection->award_year,
+                'award_url' => $selection->award_url,
+                'award_logo' => $selection->award_logo,
+                'show_award' => $selection->show_award,
             ];
         }
 

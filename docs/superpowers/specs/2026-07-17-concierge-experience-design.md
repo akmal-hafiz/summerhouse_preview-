@@ -33,7 +33,8 @@ Only services already supported by existing Summerhouse copy and contact flows m
 5. Local Itinerary Planning
 6. Long-Stay Setup
 7. Home Readiness
-8. In-Stay Guest Support
+8. Beach Days & Island Recommendations
+9. In-Stay Guest Support
 
 The site must not advertise private jets, hotel reservations, event tickets, private chefs, wellness treatments, babysitting, or other unsupported services. Copy should use careful wording such as “our team can help coordinate” where Summerhouse assists through trusted partners.
 
@@ -155,7 +156,7 @@ The page does not end with a generic conversion banner. After the testimonial ch
 The current `public/homepage_villa` library is strong for villas but does not cover the full guest-service narrative. Implementation follows the image-to-code workflow:
 
 1. Generate a cohesive visual reference using the supplied screenshots as composition targets.
-2. Generate or select a restrained set of Summerhouse-specific editorial images for the eight truthful services.
+2. Generate or select a restrained set of Summerhouse-specific editorial images for the nine truthful services.
 3. Keep subjects, lighting, palette, crop, and grain consistent across the set.
 4. Store final optimized assets under `public/concierge/`.
 5. Use Next Image with truthful alt text, responsive sizes, and lazy loading below the fold.

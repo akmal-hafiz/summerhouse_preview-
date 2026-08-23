@@ -1,0 +1,44 @@
+@startuml
+title Deployment Diagram Rancangan Sistem Summerhouses
+skinparam componentStyle rectangle
+
+node "Browser Pengunjung/Admin" as browser {
+  artifact "Web browser" as web
+}
+cloud "Internet" as internet
+node "Dewaweb Cloud Hosting\n<<Planned Production Environment /\nRencana Lingkungan Produksi>>" as dewa {
+  node "Node.js runtime\n(logical deployment)" as nodejs {
+    artifact "Next.js frontend\nApp Router + route handlers" as next
+  }
+  node "PHP runtime / web server\n(logical deployment)" as php {
+    artifact "Laravel REST API" as laravel
+    artifact "Filament admin panel\n/admin" as filament
+  }
+  database "MySQL" as mysql
+  folder "Laravel public storage\n/uploads" as storage
+  folder "File cache" as cache
+}
+cloud "Lodgify REST API v2\nExternal Service" as lodgify
+cloud "Lodgify Checkout\nExternal Service" as checkout
+cloud "Resend Email\nExternal Service" as resend
+
+web --> internet : HTTPS
+internet --> next : HTTPS 443
+internet --> laravel : HTTPS /api
+internet --> filament : HTTPS /admin
+next --> laravel : HTTPS REST /api
+next --> lodgify : HTTPS REST API v2
+web --> checkout : HTTPS redirect booking
+laravel --> mysql : PDO MySQL
+filament --> mysql : Eloquent/Livewire
+laravel --> storage : local public disk
+filament --> storage : FileUpload
+laravel --> cache : file cache
+laravel --> resend : HTTPS email API
+
+note bottom of dewa
+Target deployment dari pemilik project, direncanakan setelah sidang.
+Repository tidak memuat konfigurasi Dewaweb.
+Node.js runtime harus tersedia untuk Next.js SSR dan route handlers.
+end note
+@enduml

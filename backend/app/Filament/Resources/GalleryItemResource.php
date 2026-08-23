@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\Components\ManagedImageUpload;
 use App\Filament\Resources\GalleryItemResource\Pages;
 use App\Models\GalleryItem;
 use App\Models\VillaCache;
@@ -17,7 +18,7 @@ class GalleryItemResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
-    protected static ?string $navigationGroup = 'Static Pages';
+    protected static ?string $navigationGroup = 'Content Library';
 
     protected static ?int $navigationSort = 60;
 
@@ -47,7 +48,7 @@ class GalleryItemResource extends Resource
             ])->columns(2),
 
             Forms\Components\Section::make('Image')->schema([
-                Forms\Components\FileUpload::make('src')
+                ManagedImageUpload::make('src')
                     ->label('Image')
                     ->image()
                     ->imageEditor()
@@ -73,7 +74,7 @@ class GalleryItemResource extends Resource
                     ->directory('uploads/gallery/videos')
                     ->visibility('public')
                     ->required(fn (Forms\Get $get) => $get('type') === 'video'),
-                Forms\Components\FileUpload::make('video_poster')
+                ManagedImageUpload::make('video_poster')
                     ->label('Poster Image')
                     ->image()
                     ->imageEditor()

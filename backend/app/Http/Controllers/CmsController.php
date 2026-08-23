@@ -31,11 +31,18 @@ class CmsController extends Controller
                 ->get()
                 ->mapWithKeys(fn ($row) => [$row->section => $row->content]);
         });
+        $sectionData = $sections instanceof \Illuminate\Support\Collection
+            ? $sections->toArray()
+            : $sections;
+
+        if ($page === 'home' && is_array($sectionData['why_stay'] ?? null)) {
+            $sectionData['why_stay'] = $this->withoutRecognitionLogos($sectionData['why_stay']);
+        }
 
         return response()->json([
             'success' => true,
             'page' => $page,
-            'sections' => AssetUrl::walk($sections instanceof \Illuminate\Support\Collection ? $sections->toArray() : $sections),
+            'sections' => AssetUrl::walk($sectionData),
         ]);
     }
 
@@ -49,6 +56,10 @@ class CmsController extends Controller
             return response()->json(['success' => false, 'error' => 'Section not found'], 404);
         }
 
+        if ($page === 'home' && $section === 'why_stay') {
+            $content = $this->withoutRecognitionLogos($content);
+        }
+
         return response()->json([
             'success' => true,
             'page' => $page,
@@ -57,10 +68,40 @@ class CmsController extends Controller
         ]);
     }
 
+    private function withoutRecognitionLogos(array $content): array
+    {
+        foreach (['recognitions', 'awards'] as $collection) {
+            if (!is_array($content[$collection] ?? null)) {
+                continue;
+            }
+
+            $content[$collection] = array_values(array_map(
+                function ($item) {
+                    if (!is_array($item)) {
+                        return $item;
+                    }
+
+                    unset($item['logo'], $item['logo_alt']);
+                    return $item;
+                },
+                $content[$collection]
+            ));
+        }
+
+        return $content;
+    }
+
     public function homepageVillaSelections(): JsonResponse
     {
         $data = Cache::remember('cms.homepage.villa-selections', self::CACHE_TTL, function () {
-            return HomepageVillaSelection::getAllSlots();
+            $slots = HomepageVillaSelection::getAllSlots();
+            if (!empty($slots['signature'])) {
+                $slots['signature'] = array_map(function (array $row): array {
+                    $row['award_logo'] = AssetUrl::resolve($row['award_logo'] ?? null);
+                    return $row;
+                }, $slots['signature']);
+            }
+            return $slots;
         });
 
         return response()->json([
@@ -72,30 +113,133 @@ class CmsController extends Controller
     public function baliCollections(): JsonResponse
     {
         $collections = Cache::remember('cms.bali-collections', self::CACHE_TTL, function () {
-            return BaliCollection::active()->ordered()->get()->map(fn ($c) => [
-                'id' => $c->collection_id,
-                'location' => $c->location,
-                'category' => $c->category,
-                'tag' => $c->tag,
-                'moods' => $c->moods ?? [],
-                'description' => $c->description,
-                'highlights' => $c->highlights ?? [],
-                'bestFor' => $c->best_for ?? [],
-                'facts' => $c->facts ?? [],
-                'villaCount' => $c->villa_count,
-                'price' => $c->price,
-                'cta' => $c->cta,
-                'href' => $c->href,
-                'image' => AssetUrl::resolve($c->image),
-                'imageAlt' => $c->image_alt,
-                'galleryImages' => array_map([AssetUrl::class, 'resolve'], $c->gallery_images ?? []),
-                'lifestylePillars' => $c->lifestyle_pillars,
-            ]);
+            return BaliCollection::active()
+                ->published()
+                ->ordered()
+                ->get()
+                ->map(fn (BaliCollection $collection) => $this->serializeDestination($collection, false));
         });
 
         return response()->json([
             'success' => true,
             'collections' => $collections,
+        ]);
+    }
+
+    public function destination(string $slug): JsonResponse
+    {
+        $destination = Cache::remember("cms.destination.{$slug}", self::CACHE_TTL, function () use ($slug) {
+            $collection = BaliCollection::active()
+                ->published()
+                ->where('collection_id', $slug)
+                ->first();
+
+            return $collection ? $this->serializeDestination($collection, true) : null;
+        });
+
+        if (!$destination) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Destination not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'destination' => $destination,
+        ]);
+    }
+
+    private function serializeDestination(BaliCollection $collection, bool $withEditorial): array
+    {
+        $location = $collection->lodgify_location ?: $collection->location;
+        $villas = VillaCache::query()
+            ->where('location', $location)
+            ->get(['lodgify_id', 'name', 'thumbnail_url', 'bedrooms', 'max_guests', 'location', 'raw']);
+        $villaCount = $villas->count();
+
+        $summary = [
+            'id' => $collection->collection_id,
+            'location' => $collection->location,
+            'locationKey' => $collection->location_key,
+            'category' => $collection->category,
+            'tag' => $collection->tag,
+            'moods' => $collection->moods ?? [],
+            'description' => $collection->description,
+            'highlights' => $collection->highlights ?? [],
+            'bestFor' => $collection->best_for ?? [],
+            'facts' => $collection->facts ?? [],
+            'villaCount' => "{$villaCount} " . ($villaCount === 1 ? 'villa' : 'villas'),
+            'price' => $collection->price,
+            'href' => '/villas?location=' . rawurlencode((string) $location) . '&match=exact',
+            'mediaType' => $collection->media_type ?: 'image',
+            'image' => AssetUrl::resolve($collection->image),
+            'video' => AssetUrl::resolve($collection->video),
+            'videoPoster' => AssetUrl::resolve($collection->video_poster ?: $collection->image),
+            'mobilePoster' => AssetUrl::resolve(
+                $collection->mobile_poster ?: $collection->video_poster ?: $collection->image
+            ),
+            'imageAlt' => $collection->image_alt,
+            'mediaAccessibilityLabel' => $collection->media_accessibility_label
+                ?: "View Summerhouse villas in {$collection->location}",
+            'galleryImages' => array_values(array_filter(array_map(
+                [AssetUrl::class, 'resolve'],
+                $collection->gallery_images ?? []
+            ))),
+            'lifestylePillars' => $collection->lifestyle_pillars ?? [],
+        ];
+
+        if (!$withEditorial) {
+            return $summary;
+        }
+
+        $editorialChapters = $collection->editorial_chapters ?? [];
+        if ($editorialChapters === []) {
+            $sourceChapters = $collection->lifestyle_pillars ?: array_map(
+                fn (string $title): array => [
+                    'title' => $title,
+                    'description' => "{$title} is part of the everyday character that makes {$collection->location} worth exploring slowly.",
+                ],
+                array_slice($collection->highlights ?? [], 0, 3)
+            );
+            $gallery = $collection->gallery_images ?? [];
+            $editorialChapters = array_values(array_map(
+                function (array $chapter, int $index) use ($gallery, $collection): array {
+                    return [
+                        'eyebrow' => str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) . ' / Field note',
+                        'title' => $chapter['title'] ?? "Discover {$collection->location}",
+                        'description' => $chapter['description'] ?? $collection->description,
+                        'image' => AssetUrl::resolve($gallery[$index] ?? $collection->image),
+                        'image_alt' => ($chapter['title'] ?? 'Field note') . " in {$collection->location}",
+                    ];
+                },
+                $sourceChapters,
+                array_keys($sourceChapters)
+            ));
+        }
+
+        return array_merge($summary, [
+            'eyebrow' => $collection->eyebrow ?: 'Bali Destination Guide',
+            'heroTitle' => $collection->hero_title ?: $collection->location,
+            'introduction' => $collection->introduction ?: $collection->description,
+            'heroMediaType' => $collection->hero_media_type ?: 'image',
+            'heroImage' => AssetUrl::resolve($collection->hero_image ?: $collection->image),
+            'heroVideo' => AssetUrl::resolve($collection->hero_video),
+            'heroVideoPoster' => AssetUrl::resolve(
+                $collection->hero_video_poster ?: $collection->hero_image ?: $collection->image
+            ),
+            'editorialGallery' => AssetUrl::walk($collection->editorial_gallery ?? []),
+            'editorialChapters' => AssetUrl::walk($editorialChapters),
+            'relatedJournalTags' => $collection->related_journal_tags ?? [],
+            'lodgifyLocation' => $location,
+            'showRelatedVillas' => (bool) $collection->show_related_villas,
+            'relatedVillasHeading' => $collection->related_villas_heading ?: "Stay in {$collection->location}",
+            'manualVillaOverrides' => $collection->manual_villa_overrides ?? [],
+            'seoTitle' => $collection->seo_title ?: "{$collection->location} Guide",
+            'seoDescription' => $collection->seo_description ?: $collection->description,
+            'socialImage' => AssetUrl::resolve(
+                $collection->social_image ?: $collection->hero_image ?: $collection->image
+            ),
         ]);
     }
 
@@ -137,7 +281,7 @@ class CmsController extends Controller
                     ->map(fn (Testimonial $t) => $this->publicOwnerTestimonialCard($t));
             }
 
-            $featured = $repo->featuredTestimonials(limit: 12, page: $page);
+            $featured = $repo->featuredTestimonials(limit: $page === 'home' ? 6 : 12, page: $page);
             return $featured->map(fn (Testimonial $t) => $this->publicTestimonialCard($t));
         });
 
@@ -223,7 +367,7 @@ class CmsController extends Controller
     public function serviceCards(string $category): JsonResponse
     {
         $cards = Cache::remember("cms.service-cards.{$category}", self::CACHE_TTL, function () use ($category) {
-            return ServiceCard::active()->forCategory($category)->ordered()->get(['title', 'text']);
+            return ServiceCard::active()->forCategory($category)->ordered()->get(['slug', 'title', 'text', 'image', 'alt_text', 'featured_on_about']);
         });
 
         return response()->json([

@@ -1,0 +1,29 @@
+@startuml
+title Revisi Sequence Diagram — Delegasi Pemesanan Villa
+autonumber
+actor Pengunjung
+boundary "Next.js Detail Villa\nAvailabilityCalendar" as Next
+control "URL builder\nlib/lodgify/booking" as Builder
+entity "Lodgify Checkout\nexternal domain" as Checkout
+entity WhatsApp
+
+Pengunjung -> Next : Pilih tanggal dan jumlah tamu
+Next -> Next : Validasi availability, min stay, tamu
+alt data booking tidak valid
+  Next --> Pengunjung : Tampilkan pesan validasi/fallback WhatsApp
+else pilih Lodgify Checkout
+  Next -> Builder : buildLodgifyCheckoutUrl(propertyId, dates, guests)
+  Builder --> Next : URL checkout.lodgify.com
+  Next -> Checkout : Browser redirect (window.location.href)
+  Checkout --> Pengunjung : Proses checkout eksternal
+else pilih WhatsApp
+  Next -> Builder : buildBookingWhatsAppUrl(villa, dates, guests)
+  Builder --> Next : URL wa.me dengan pesan
+  Next -> WhatsApp : Buka tautan eksternal
+  WhatsApp --> Pengunjung : Lanjutkan komunikasi booking
+end
+note over Next,Checkout
+Tidak ada POST booking ke Laravel, controller/model Booking,
+atau tabel booking MySQL pada source code.
+end note
+@enduml

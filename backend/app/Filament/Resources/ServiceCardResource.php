@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\Components\ManagedImageUpload;
 use App\Filament\Resources\ServiceCardResource\Pages;
 use App\Models\ServiceCard;
 use Filament\Forms;
@@ -16,7 +17,7 @@ class ServiceCardResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Static Pages';
+    protected static ?string $navigationGroup = 'Content Library';
 
     protected static ?int $navigationSort = 50;
 
@@ -25,14 +26,18 @@ class ServiceCardResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Service Card')->schema([
                 Forms\Components\Select::make('category')
-                    ->options(['operational' => 'Operational', 'marketing' => 'Marketing', 'project' => 'Project'])
+                    ->options(['concierge' => 'Concierge', 'operational' => 'Operational', 'marketing' => 'Marketing', 'project' => 'Project'])
                     ->required(),
                 Forms\Components\TextInput::make('title')->required()->maxLength(200),
+                Forms\Components\TextInput::make('slug')->maxLength(200),
                 Forms\Components\Textarea::make('text')->required()->rows(3),
+                ManagedImageUpload::make('image')->image(),
+                Forms\Components\TextInput::make('alt_text')->maxLength(240),
             ]),
             Forms\Components\Section::make('Visibility & Order')->columns(2)->schema([
                 Forms\Components\TextInput::make('sort_order')->numeric()->default(0),
                 Forms\Components\Toggle::make('is_active')->default(true),
+                Forms\Components\Toggle::make('featured_on_about')->label('Featured on About'),
             ]),
         ]);
     }
@@ -55,7 +60,7 @@ class ServiceCardResource extends Resource
             ->defaultSort('sort_order')
             ->reorderable('sort_order')
             ->filters([
-                Tables\Filters\SelectFilter::make('category')->options(['operational' => 'Operational', 'marketing' => 'Marketing', 'project' => 'Project']),
+                Tables\Filters\SelectFilter::make('category')->options(['concierge' => 'Concierge', 'operational' => 'Operational', 'marketing' => 'Marketing', 'project' => 'Project']),
                 Tables\Filters\TernaryFilter::make('is_active'),
             ])
             ->actions([Tables\Actions\EditAction::make()])

@@ -40,7 +40,7 @@ class CmsContentSeeder extends Seeder
             ]],
             ['page' => 'home', 'section' => 'stay_styles', 'content' => [
                 'heading' => 'A home, not a hotel',
-                'description' => 'Choose the kind of stay that fits your rhythm, from quick Bali escapes to longer private stays and handpicked SummerHouse homes.',
+                'is_visible' => true,
                 'groups' => [
                     ['id' => 'short-stays', 'label' => 'Short Stays', 'description' => 'Weekend escapes and easy Bali breaks for a lighter, flexible stay.'],
                     ['id' => 'extended-stays', 'label' => 'Extended Stays', 'description' => 'Private homes made for settling in, working slowly, and living with more room.'],
@@ -48,19 +48,59 @@ class CmsContentSeeder extends Seeder
                 ],
             ]],
             ['page' => 'home', 'section' => 'signature_villa', 'content' => [
-                'eyebrow' => 'Signature Villa',
-                'title' => 'Most Exclusive Stay',
-                'description' => 'A five-bedroom tropical estate with private pool, full-villa comfort, and a calmer Pererenan rhythm.',
                 'why_this_home' => '',
+            ]],
+            ['page' => 'home', 'section' => 'why_stay', 'content' => [
+                'eyebrow' => 'Why Summerhouse',
+                'title' => 'A considered way to stay in Bali.',
+                'introduction' => 'Carefully chosen homes, local care you can count on, and clear guidance for a stay that feels right.',
+                'trust_points' => [
+                    [
+                        'title' => 'Curated homes',
+                        'description' => 'A smaller collection chosen for design, setting, and guest comfort.',
+                        'is_visible' => true,
+                    ],
+                    [
+                        'title' => 'Local care',
+                        'description' => 'Practical support from people who know Bali and its neighbourhoods.',
+                        'is_visible' => true,
+                    ],
+                    [
+                        'title' => 'Clear guidance',
+                        'description' => 'Useful details and straightforward booking guidance from the start.',
+                        'is_visible' => true,
+                    ],
+                ],
+                'awards' => [],
+                'recognitions' => [
+                    [
+                        'type' => 'award',
+                        'name' => 'Honeycombers',
+                        'issuer' => 'Gold Winner',
+                        'title' => 'Best Villa in Bali 2024',
+                        'year' => '2024',
+                        'villa_name' => 'Ubud Zen River House',
+                        'is_visible' => true,
+                    ],
+                ],
+                'is_visible' => true,
             ]],
             ['page' => 'home', 'section' => 'featured_collection', 'content' => [
                 'title' => 'FEATURED COLLECTION',
                 'description' => 'A curated selection of SummerHouse villas, personally chosen for exceptional design, location, comfort, and guest experience.',
             ]],
             ['page' => 'home', 'section' => 'explore_bali', 'content' => [
-                'kicker' => 'Summerhouses Journal',
-                'title' => 'Bali Destination Guide',
-                'description' => 'Discover the character of Bali through its most iconic destinations, then find the perfect villa for your stay.',
+                'kicker' => '',
+                'title' => 'Bali, by Neighbourhood',
+                'description' => 'A closer look at the neighbourhoods, landscapes, and local rhythms around our homes.',
+                'is_visible' => true,
+            ]],
+            ['page' => 'home', 'section' => 'testimonials', 'content' => [
+                'eyebrow' => 'Guest stories',
+                'title' => 'What guests remember',
+                'title_emphasis' => 'after the stay',
+                'trust_label' => 'Loved by Summerhouse guests',
+                'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'stats', 'content' => [
                 'items' => [
@@ -72,6 +112,86 @@ class CmsContentSeeder extends Seeder
             ['page' => 'about', 'section' => 'features', 'content' => [
                 'items' => ['Trusted Hospitality', 'Premium Locations', 'Full-Service Management', 'Personal Concierge', 'Transparent Ownership'],
             ]],
+            ['page' => 'about', 'section' => 'our_story', 'content' => [
+                'heading' => 'Our Story.',
+                'lead' => 'Summerhouses began as a small collection of villas in Canggu, Bali, built on one belief: a great stay should feel personal before it looks impressive.',
+                'body' => 'Years later, that still shapes every home we curate across Canggu, Ubud, Pererenan, and the quiet corners of the island in between.',
+                'scroll_label' => 'Trusted by travelers worldwide',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'trust_recognition', 'content' => [
+                'heading' => 'A decade of stays, thoughtfully hosted.',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'studio_statement', 'content' => [
+                'eyebrow' => 'The gallery',
+                'title' => 'A closer look at the spaces you will actually live in.',
+                'description' => 'The light through the morning kitchen, the pool at dusk, the quiet corners between rooms. Every villa is photographed the way you will remember it, so what you see is what you arrive to.',
+                'button_label' => 'View the full gallery',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'booking_process', 'content' => [
+                'eyebrow' => 'Booking process',
+                'title' => 'Secure your stay',
+                'title_emphasis' => 'with ease',
+                'steps' => [
+                    [
+                        'title' => 'Discover your villa',
+                        'description' => 'Browse our collection and find a home that fits the way you want to stay.',
+                        'images' => ['/homepage_villa/curated-1-main.webp', '/homepage_villa/curated-2-detail.webp'],
+                    ],
+                    [
+                        'title' => 'Choose your dates',
+                        'description' => 'Select your travel dates and see live availability for your chosen villa.',
+                        'images' => ['/homepage_villa/curated-4-pool.webp', '/homepage_villa/curated-5-lounge.webp'],
+                    ],
+                    [
+                        'title' => 'Confirm your stay',
+                        'description' => 'Review your details, live rate, and complete a secure Lodgify checkout.',
+                        'images' => ['/homepage_villa/rumahmimosa.webp', '/homepage_villa/villaarta.webp'],
+                    ],
+                    [
+                        'title' => 'Arrive with ease',
+                        'description' => 'Your Bali stay is confirmed, with our local team close by whenever needed.',
+                        'images' => ['/homepage_villa/curated-3-corner.webp', '/homepage_villa/curated-6-exterior.webp'],
+                    ],
+                ],
+                'closing_copy' => 'Your Bali stay, thoughtfully arranged.',
+                'link_label' => 'Explore villas',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'concierge', 'content' => [
+                'eyebrow' => 'Concierge',
+                'title' => 'More than a villa',
+                'title_emphasis' => 'your Bali stay, considered.',
+                'description' => 'Thoughtful support before arrival and throughout your stay.',
+                'quote' => 'The best stays feel effortless because the right help is already close.',
+                'link_label' => 'View all Concierge',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'faq_intro', 'content' => [
+                'eyebrow' => 'FAQ',
+                'title' => 'Everything you need to know.',
+                'button_label' => 'Ask Us',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'journal_preview', 'content' => [
+                'eyebrow' => 'Featured Stories',
+                'title' => 'The Journal.',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'destination_footprint', 'content' => [
+                'eyebrow' => 'Location',
+                'title' => 'Where Summerhouses stays unfold.',
+                'description' => 'The collection is centered around Bali\'s most requested stay areas, with villas selected for privacy, atmosphere, and access to the island\'s everyday rituals.',
+                'is_visible' => true,
+            ]],
+            ['page' => 'about', 'section' => 'final_cta', 'content' => [
+                'eyebrow' => 'Your Bali stay',
+                'title' => 'Find the home that feels right.',
+                'button_label' => 'Book now',
+                'is_visible' => true,
+            ]],
             ['page' => 'services', 'section' => 'hero', 'content' => [
                 'video_url' => '/video/herosection_summerhouse.mp4',
             ]],
@@ -80,7 +200,7 @@ class CmsContentSeeder extends Seeder
             ]],
             ['page' => 'contact', 'section' => 'options', 'content' => [
                 'items' => [
-                    ['type' => 'whatsapp', 'label' => 'WhatsApp', 'value' => '+62 811 388 999'],
+                    ['type' => 'whatsapp', 'label' => 'WhatsApp', 'value' => '+62 819 3238 7121'],
                     ['type' => 'email', 'label' => 'Email', 'value' => 'info@summerhousebali.com'],
                     ['type' => 'location', 'label' => 'Location', 'value' => 'Bali, Indonesia'],
                     ['type' => 'response', 'label' => 'Response Time', 'value' => 'Within 2 hours'],
@@ -100,7 +220,7 @@ class CmsContentSeeder extends Seeder
     {
         $slots = [
             'featured_collection' => ['475365', '475366', '475372', '703452'],
-            'short_stays' => ['703452', '475366', '751982'],
+            'short_stays' => ['703452', '475366', '761507'],
             'extended_stays' => ['796460', '761507', '762712'],
             'featured_homes' => ['796460', '475365', '475372'],
         ];
@@ -379,11 +499,40 @@ class CmsContentSeeder extends Seeder
     private function seedSiteSettings(): void
     {
         $settings = [
-            'contact.email' => 'info@summerhousebali.com',
+            'contact.general_email' => 'info@summerhousebali.com',
+            'contact.reservation_email' => 'reservation.summerhouse@gmail.com',
             'contact.phone' => '+6281932387121',
             'contact.whatsapp' => '+6281932387121',
             'contact.address' => 'Bali, Indonesia',
             'contact.response_time' => 'Within 2 hours',
+            'footer.newsletter_title' => 'Join Our Newsletter',
+            'footer.newsletter_description' => 'Occasional notes on Bali, new stays, and places worth knowing.',
+            'footer.newsletter_consent' => 'I agree to receive occasional Summerhouse updates.',
+            'footer.closing_statement' => 'Stay well. Know Bali better.',
+            'footer.stay_heading' => 'Stay',
+            'footer.stay_locations' => [
+                ['label' => 'Canggu, Berawa', 'location' => 'Canggu - Berawa'],
+                ['label' => 'Canggu, Padonan', 'location' => 'Canggu - Padonan'],
+                ['label' => 'Pererenan', 'location' => 'Pererenan'],
+                ['label' => 'Ubud', 'location' => 'Ubud'],
+            ],
+            'footer.owners_heading' => 'For Villa Owners',
+            'footer.owner_links' => [
+                ['label' => 'Property Management', 'href' => '/services'],
+                ['label' => 'List Your Property', 'href' => '/contact'],
+            ],
+            'footer.navigation_heading' => 'Navigation',
+            'footer.navigation_links' => [
+                ['label' => 'About us', 'href' => '/about'],
+                ['label' => 'Gallery', 'href' => '/gallery'],
+                ['label' => 'Contact us', 'href' => '/contact'],
+            ],
+            'footer.inquiries_heading' => 'Inquiries',
+            'footer.social_links' => [
+                ['label' => 'Instagram', 'href' => 'https://www.instagram.com/summerhouse.bali/'],
+                ['label' => 'Pinterest', 'href' => 'https://pin.it/3CgvbgIq5'],
+            ],
+            'footer.copyright_suffix' => 'SUMMERHOUSE / ALL RIGHTS RESERVED',
         ];
 
         foreach ($settings as $key => $value) {

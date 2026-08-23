@@ -70,6 +70,7 @@ class ReviewService
         $data[Testimonial::PLACEMENT_VILLA] = $data[Testimonial::PLACEMENT_VILLA] ?? !empty($data['villa_cache_id']);
         $data[Testimonial::PLACEMENT_ABOUT] = $data[Testimonial::PLACEMENT_ABOUT] ?? ($data['page'] === 'about');
         $data[Testimonial::PLACEMENT_HOME] = $data[Testimonial::PLACEMENT_HOME] ?? ($data['page'] === 'home');
+        $data[Testimonial::PLACEMENT_CONCIERGE] = $data[Testimonial::PLACEMENT_CONCIERGE] ?? ($data['page'] === 'concierge');
 
         $review = Testimonial::create($data)->refresh();
         $this->audit($review, 'submitted', $actor);
@@ -203,7 +204,13 @@ class ReviewService
     public function setPlacements(Testimonial $review, array $placements, ?User $actor = null): Testimonial
     {
         $payload = [];
-        foreach ([Testimonial::PLACEMENT_VILLA, Testimonial::PLACEMENT_ABOUT, Testimonial::PLACEMENT_HOME] as $key) {
+        foreach ([
+            Testimonial::PLACEMENT_VILLA,
+            Testimonial::PLACEMENT_ABOUT,
+            Testimonial::PLACEMENT_HOME,
+            Testimonial::PLACEMENT_SERVICES,
+            Testimonial::PLACEMENT_CONCIERGE,
+        ] as $key) {
             if (array_key_exists($key, $placements)) {
                 $payload[$key] = (bool) $placements[$key];
             }
@@ -239,6 +246,7 @@ class ReviewService
         $data[Testimonial::PLACEMENT_ABOUT] = false;
         $data[Testimonial::PLACEMENT_HOME] = false;
         $data[Testimonial::PLACEMENT_SERVICES] = false;
+        $data[Testimonial::PLACEMENT_CONCIERGE] = false;
 
         $review = Testimonial::create($this->normalize($data))->refresh();
         $this->audit($review, 'submitted');
@@ -255,7 +263,7 @@ class ReviewService
         $forbidden = [
             'status', 'is_featured', 'is_verified', 'is_pinned', 'published_at',
             'created_by_id', 'updated_by_id', 'moderated_by_id', 'metrics',
-            'show_on_villa', 'show_on_about', 'show_on_home',
+            'show_on_villa', 'show_on_about', 'show_on_home', 'show_on_concierge',
         ];
         foreach ($forbidden as $key) {
             unset($data[$key]);
@@ -273,6 +281,7 @@ class ReviewService
         $data[Testimonial::PLACEMENT_VILLA] = false;
         $data[Testimonial::PLACEMENT_ABOUT] = false;
         $data[Testimonial::PLACEMENT_HOME] = false;
+        $data[Testimonial::PLACEMENT_CONCIERGE] = false;
 
         $review = Testimonial::create($this->normalize($data))->refresh();
         $this->audit($review, 'submitted');

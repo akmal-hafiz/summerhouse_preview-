@@ -172,6 +172,31 @@ class ModerationV2Test extends TestCase
         $this->assertFalse($result->contains('id', $notOnAbout->id));
     }
 
+    public function test_concierge_query_respects_placement_toggle(): void
+    {
+        $shown = $this->service->create([
+            'author' => 'Concierge Guest',
+            'text' => 'Long enough approved review shown only in the concierge guest stories.',
+            'stars' => 5,
+            'status' => Testimonial::STATUS_APPROVED,
+            'page' => 'concierge',
+        ]);
+        $hidden = $this->service->create([
+            'author' => 'Villa Guest',
+            'text' => 'Long enough approved review that is not placed on the concierge page.',
+            'stars' => 5,
+            'status' => Testimonial::STATUS_APPROVED,
+            'page' => 'villa',
+            'show_on_concierge' => false,
+        ]);
+
+        $result = app(ReviewRepository::class)->featuredTestimonials(10, 'concierge');
+
+        $this->assertTrue($shown->show_on_concierge);
+        $this->assertTrue($result->contains('id', $shown->id));
+        $this->assertFalse($result->contains('id', $hidden->id));
+    }
+
     public function test_villa_reviews_respect_villa_placement(): void
     {
         $villa = $this->villa('700002');

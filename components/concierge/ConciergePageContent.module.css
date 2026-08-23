@@ -1,6 +1,6 @@
 .page {
-  --ink: #0a2a56;
-  --accent: #ff3b2f;
+  --ink: var(--color-text, #2E2E2C);
+  --accent: var(--brand-primary, #446B4A);
   overflow-x: hidden;
   padding-top: 7rem;
   background: #f1f3f9;
@@ -20,24 +20,6 @@
   margin: 0 auto 4rem;
 }
 
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1.4rem;
-  color: var(--accent);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-
-.eyebrow span {
-  width: 1.6rem;
-  border-top: 1px solid currentColor;
-}
-
 .header h1 {
   margin: 0;
   font-family: Georgia, "Times New Roman", serif;
@@ -55,7 +37,7 @@
 .header > p {
   max-width: 27rem;
   margin: 0 0 0.6rem;
-  color: #555b63;
+  color: var(--color-text-muted, #74716B);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.55;
@@ -109,11 +91,12 @@
   font-size: clamp(1.35rem, 1.7vw, 1.9rem);
   font-weight: 400;
   line-height: 1.1;
+  color: var(--ink);
 }
 
 .service p {
   margin: 0.55rem 0 0;
-  color: #555b63;
+  color: var(--color-text-muted, #74716B);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.82rem;
   line-height: 1.5;
@@ -131,8 +114,8 @@
   padding: 1.15rem 2rem;
   place-items: center;
   border-radius: 999px;
-  background: #436c49;
-  color: #fff;
+  background: var(--brand-primary, #446B4A);
+  color: var(--color-text-on-brand, #FAFAF9);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
@@ -148,7 +131,7 @@
 
   .booking a:hover {
     transform: translateY(-2px);
-    background: #1d3a25;
+    background: var(--brand-primary-deep, #355538);
   }
 }
 

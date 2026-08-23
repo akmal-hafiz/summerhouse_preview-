@@ -1,0 +1,43 @@
+@startuml
+title Revisi Sequence Diagram — Login dan Sinkronisasi Wishlist
+autonumber
+actor User
+boundary "AuthModal / AuthProvider\nNext.js" as Auth
+control "AuthController\nLaravel" as AuthApi
+control "WishlistController\nLaravel" as Wishlist
+database MySQL
+collections localStorage
+
+User -> Auth : Login email/password
+Auth -> AuthApi : POST /api/v1/auth/login
+AuthApi -> MySQL : Cari user dan verifikasi hash password
+alt kredensial salah
+  MySQL --> AuthApi : user tidak ada/password tidak cocok
+  AuthApi --> Auth : 422 Invalid credentials
+  Auth --> User : tampilkan kegagalan
+else kredensial valid
+  MySQL --> AuthApi : user valid
+  AuthApi -> MySQL : buat personal_access_token Sanctum
+  AuthApi --> Auth : 200 user + bearer token
+  Auth -> localStorage : simpan token dan user
+  Auth -> localStorage : baca saved-villas IDs
+  alt ada IDs lokal
+    Auth -> Wishlist : POST /api/v1/wishlist/sync\nAuthorization: Bearer token, {ids}
+    Wishlist -> MySQL : ambil wishlist user
+    loop setiap ID baru
+      Wishlist -> MySQL : firstOrCreate(user_id, lodgify_property_id)
+    end
+    Wishlist --> Auth : 200 ids seluruh server + merged
+  else tanpa IDs lokal
+    Auth -> Wishlist : GET /api/v1/wishlist\nAuthorization: Bearer token
+    Wishlist -> MySQL : ambil wishlist user
+    Wishlist --> Auth : 200 ids
+  end
+  Auth -> localStorage : tulis IDs hasil server
+  Auth --> User : UI wishlist terbarui
+end
+note over Wishlist
+Simpan/hapus biasa saat sudah login memakai POST /v1/wishlist
+atau DELETE /v1/wishlist/{lodgifyPropertyId}; tidak login ulang.
+end note
+@enduml

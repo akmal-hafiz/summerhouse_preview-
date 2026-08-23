@@ -1,0 +1,57 @@
+@startuml
+title Activity Diagram — Pencarian dan Pemesanan Villa
+|Pengunjung|
+start
+:Buka pencarian villa;
+:Isi lokasi, tanggal, jumlah tamu, dan harga opsional;
+|Next.js Frontend|
+:Validasi/ringkas query parameter;
+|Lodgify REST API v2|
+:Sediakan property/room dan data availability;
+if (Respons Lodgify tersedia?) then (ya)
+  |Next.js Frontend|
+  if (Villa yang cocok ada?) then (ya)
+    :Tampilkan hasil;
+    |Pengunjung|
+    :Pilih villa dan buka detail;
+    |Next.js Frontend|
+    :Minta detail villa dan review CMS;
+    |Pengunjung|
+    :Pilih rentang tanggal dan tamu;
+    |Next.js Frontend|
+    :GET /api/lodgify/availability;
+    |Lodgify REST API v2|
+    :Kembalikan availability;
+    |Next.js Frontend|
+    if (Rentang tersedia?) then (ya)
+      :GET /api/lodgify/rate-quote;
+      |Lodgify REST API v2|
+      :Kembalikan rate calendar;
+      |Next.js Frontend|
+      :Tampilkan estimate dan minimum stay;
+      |Pengunjung|
+      if (Kanal booking?) then (Lodgify Checkout)
+        |Next.js Frontend|
+        :Bangun URL checkout;
+        :Redirect browser ke URL checkout;
+        |Lodgify Checkout|
+        :Tampilkan proses checkout eksternal;
+      else (WhatsApp)
+        |Next.js Frontend|
+        :Bangun URL wa.me berisi detail pilihan;
+        :Buka tautan WhatsApp di browser;
+        |WhatsApp|
+        :Lanjutkan komunikasi booking;
+      endif
+    else (tidak)
+      :Tampilkan tanggal tidak tersedia/validasi;
+    endif
+  else (tidak)
+    :Tampilkan hasil kosong;
+  endif
+else (tidak)
+  |Next.js Frontend|
+  :Tampilkan pesan availability sementara tidak tersedia;
+endif
+stop
+@enduml

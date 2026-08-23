@@ -110,7 +110,7 @@ export default function BookingProcess({ content }: { content?: BookingProcessCo
       const media = gsap.matchMedia();
 
       media.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.from(`.${styles.eyebrow}, .${styles.title}`, {
+        gsap.from(`.${styles.title}`, {
           opacity: 0,
           y: 26,
           duration: 0.9,
@@ -162,11 +162,6 @@ export default function BookingProcess({ content }: { content?: BookingProcessCo
         <div className={`${styles.cell} ${styles.blankTopLeft}`} aria-hidden="true" />
 
         <header className={`${styles.cell} ${styles.header}`}>
-          <p className={styles.eyebrow}>
-            <span aria-hidden="true" />
-            {content?.eyebrow || "Booking process"}
-            <span aria-hidden="true" />
-          </p>
           <h2 id="booking-process-title" className={styles.title}>
             {content?.title || "Secure your stay"}
             <em>{content?.title_emphasis || "with ease"}</em>

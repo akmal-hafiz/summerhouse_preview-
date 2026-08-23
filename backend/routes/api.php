@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CmsController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\NewsletterSubscriberController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\OwnerTestimonialController;
@@ -17,6 +18,7 @@ Route::prefix('v1')->group(function () {
         Route::get('page/{page}/section/{section}', [CmsController::class, 'pageSection']);
         Route::get('homepage/villa-selections', [CmsController::class, 'homepageVillaSelections']);
         Route::get('bali-collections', [CmsController::class, 'baliCollections']);
+        Route::get('destinations/{slug}', [CmsController::class, 'destination']);
         Route::get('articles', [CmsController::class, 'articles']);
         Route::get('articles/{slug}', [CmsController::class, 'article']);
         Route::get('testimonials/{page}', [CmsController::class, 'testimonials']);
@@ -46,6 +48,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::post('contact', [ContactController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('newsletter/subscribe', [NewsletterSubscriberController::class, 'store'])
+        ->middleware('throttle:5,1');
 
     Route::post('reviews', [ReviewSubmissionController::class, 'store'])
         ->middleware('throttle:3,10');

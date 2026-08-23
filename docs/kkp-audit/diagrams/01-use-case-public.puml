@@ -1,0 +1,49 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+title Use Case Pengunjung dan User Terdaftar — Summerhouses
+
+actor Pengunjung as Visitor
+actor "User Terdaftar" as User
+User --|> Visitor
+actor "Lodgify REST API v2" as Lodgify
+actor "Resend Email" as Resend
+
+rectangle "Summerhouses" {
+  usecase "UC-P01\nMelihat konten publik" as P01
+  usecase "UC-P02\nMencari villa" as P02
+  usecase "UC-P03\nMelihat detail villa" as P03
+  usecase "UC-P04\nMemeriksa availability\ndan harga" as P04
+  usecase "UC-P05\nDelegasi checkout\natau WhatsApp" as P05
+  usecase "UC-P06\nRegistrasi OTP" as P06
+  usecase "UC-P07\nLogin dan logout" as P07
+  usecase "UC-P08\nReset/ganti password" as P08
+  usecase "UC-P09\nKelola profil" as P09
+  usecase "UC-P10\nKelola & sinkronkan wishlist" as P10
+  usecase "UC-P11\nKirim kontak" as P11
+  usecase "UC-P12\nKirim review/testimoni" as P12
+}
+
+Visitor --> P01
+Visitor --> P02
+Visitor --> P03
+Visitor --> P04
+Visitor --> P05
+Visitor --> P06
+Visitor --> P07
+Visitor --> P11
+Visitor --> P12
+User --> P08
+User --> P09
+User --> P10
+
+P03 .> P02 : <<extend>>
+P04 .> P03 : <<extend>>
+P05 .> P04 : <<extend>>
+P06 --> Resend
+P08 --> Resend
+P02 --> Lodgify
+P03 --> Lodgify
+P04 --> Lodgify
+P05 --> Lodgify
+@enduml
