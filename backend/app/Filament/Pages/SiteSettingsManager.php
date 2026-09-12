@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Models\SiteSetting;
 use App\Models\VillaCache;
-use App\Services\LodgifyService;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -68,7 +67,6 @@ class SiteSettingsManager extends Page implements HasForms
 
     public function mount(): void
     {
-        LodgifyService::make()->syncIfStale();
 
         $values = [];
         foreach (self::KEY_MAP as $path => $key) {

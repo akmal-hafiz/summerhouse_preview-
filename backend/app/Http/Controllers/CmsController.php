@@ -7,6 +7,7 @@ use App\Models\BaliCollection;
 use App\Models\Faq;
 use App\Models\GalleryItem;
 use App\Models\HomepageVillaSelection;
+use App\Models\LodgifySyncRun;
 use App\Models\PageSection;
 use App\Models\ServiceCard;
 use App\Models\SiteSetting;
@@ -21,6 +22,20 @@ use Illuminate\Support\Facades\Cache;
 class CmsController extends Controller
 {
     private const CACHE_TTL = 300;
+
+    public function lodgifySnapshot(): JsonResponse
+    {
+        $run = LodgifySyncRun::query()->whereIn('status', ['completed', 'completed_with_warnings'])->latest('finished_at')->first();
+        $properties = VillaCache::query()->where('lodgify_status', VillaCache::STATUS_ACTIVE)->orderBy('name')->get()->map(function (VillaCache $villa) {
+            $raw = is_array($villa->raw) ? $villa->raw : [];
+            $property = array_intersect_key($raw, array_flip(['id', 'name', 'internal_name', 'description', 'image_url', 'images', 'amenities', 'original_min_price', 'original_max_price', 'min_price', 'max_price', 'currency_code', 'city', 'country', 'country_code', 'state', 'address', 'latitude', 'longitude', 'location', 'is_active', 'is_featured', 'rating', 'max_people', 'max_guests', 'bedrooms', 'bathrooms', 'rooms_count', 'bathrooms_count']));
+            $rooms = collect($villa->rooms_raw ?? [])->filter(fn ($room) => is_array($room))->map(fn ($room) => array_intersect_key($room, array_flip(['id', 'name', 'image_url', 'images', 'amenities', 'max_people', 'bedrooms', 'bathrooms'])))->values();
+
+            return ['property' => $property, 'rooms' => $rooms];
+        })->values();
+
+        return response()->json(['success' => true, 'snapshotVersion' => $run?->snapshot_version, 'generatedAt' => $run?->finished_at?->toIso8601String(), 'properties' => $properties]);
+    }
 
     public function pageSections(string $page): JsonResponse
     {
@@ -71,17 +86,18 @@ class CmsController extends Controller
     private function withoutRecognitionLogos(array $content): array
     {
         foreach (['recognitions', 'awards'] as $collection) {
-            if (!is_array($content[$collection] ?? null)) {
+            if (! is_array($content[$collection] ?? null)) {
                 continue;
             }
 
             $content[$collection] = array_values(array_map(
                 function ($item) {
-                    if (!is_array($item)) {
+                    if (! is_array($item)) {
                         return $item;
                     }
 
                     unset($item['logo'], $item['logo_alt']);
+
                     return $item;
                 },
                 $content[$collection]
@@ -95,12 +111,14 @@ class CmsController extends Controller
     {
         $data = Cache::remember('cms.homepage.villa-selections', self::CACHE_TTL, function () {
             $slots = HomepageVillaSelection::getAllSlots();
-            if (!empty($slots['signature'])) {
+            if (! empty($slots['signature'])) {
                 $slots['signature'] = array_map(function (array $row): array {
                     $row['award_logo'] = AssetUrl::resolve($row['award_logo'] ?? null);
+
                     return $row;
                 }, $slots['signature']);
             }
+
             return $slots;
         });
 
@@ -137,7 +155,7 @@ class CmsController extends Controller
             return $collection ? $this->serializeDestination($collection, true) : null;
         });
 
-        if (!$destination) {
+        if (! $destination) {
             return response()->json([
                 'success' => false,
                 'error' => 'Destination not found',
@@ -169,9 +187,9 @@ class CmsController extends Controller
             'highlights' => $collection->highlights ?? [],
             'bestFor' => $collection->best_for ?? [],
             'facts' => $collection->facts ?? [],
-            'villaCount' => "{$villaCount} " . ($villaCount === 1 ? 'villa' : 'villas'),
+            'villaCount' => "{$villaCount} ".($villaCount === 1 ? 'villa' : 'villas'),
             'price' => $collection->price,
-            'href' => '/villas?location=' . rawurlencode((string) $location) . '&match=exact',
+            'href' => '/villas?location='.rawurlencode((string) $location).'&match=exact',
             'mediaType' => $collection->media_type ?: 'image',
             'image' => AssetUrl::resolve($collection->image),
             'video' => AssetUrl::resolve($collection->video),
@@ -189,7 +207,7 @@ class CmsController extends Controller
             'lifestylePillars' => $collection->lifestyle_pillars ?? [],
         ];
 
-        if (!$withEditorial) {
+        if (! $withEditorial) {
             return $summary;
         }
 
@@ -206,11 +224,11 @@ class CmsController extends Controller
             $editorialChapters = array_values(array_map(
                 function (array $chapter, int $index) use ($gallery, $collection): array {
                     return [
-                        'eyebrow' => str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) . ' / Field note',
+                        'eyebrow' => str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT).' / Field note',
                         'title' => $chapter['title'] ?? "Discover {$collection->location}",
                         'description' => $chapter['description'] ?? $collection->description,
                         'image' => AssetUrl::resolve($gallery[$index] ?? $collection->image),
-                        'image_alt' => ($chapter['title'] ?? 'Field note') . " in {$collection->location}",
+                        'image_alt' => ($chapter['title'] ?? 'Field note')." in {$collection->location}",
                     ];
                 },
                 $sourceChapters,
@@ -263,7 +281,7 @@ class CmsController extends Controller
             return $a ? $this->serializeArticle($a, true) : null;
         });
 
-        if (!$article) {
+        if (! $article) {
             return response()->json(['success' => false, 'error' => 'Article not found'], 404);
         }
 
@@ -282,6 +300,7 @@ class CmsController extends Controller
             }
 
             $featured = $repo->featuredTestimonials(limit: $page === 'home' ? 6 : 12, page: $page);
+
             return $featured->map(fn (Testimonial $t) => $this->publicTestimonialCard($t));
         });
 
@@ -296,7 +315,7 @@ class CmsController extends Controller
     {
         $villa = VillaCache::where('lodgify_id', $lodgifyId)->first();
 
-        if (!$villa) {
+        if (! $villa) {
             return response()->json(['success' => false, 'error' => 'Villa not found'], 404);
         }
 
@@ -322,7 +341,7 @@ class CmsController extends Controller
             'villaName' => $t->villa?->name ?? $t->location,
             'quote' => $t->text,
             'metrics' => collect($t->metrics ?? [])
-                ->filter(fn ($m) => is_array($m) && !empty($m['label']) && !empty($m['value']))
+                ->filter(fn ($m) => is_array($m) && ! empty($m['label']) && ! empty($m['value']))
                 ->values(),
             'avatar' => AssetUrl::resolve($t->avatar),
             'villaImage' => $t->villa?->thumbnail_url,

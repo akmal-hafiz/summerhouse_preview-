@@ -10,7 +10,6 @@ use App\Models\BaliCollection;
 use App\Models\HomepageVillaSelection;
 use App\Models\PageSection;
 use App\Models\VillaCache;
-use App\Services\LodgifyService;
 use App\Support\AssetUrl;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -38,7 +37,6 @@ class HomepageManager extends Page implements HasForms
 
     public function mount(): void
     {
-        LodgifyService::make()->syncIfStale();
         $whyStay = $this->normalizeWhyStayContent(PageSection::getSection('home', 'why_stay') ?? []);
         $testimonials = PageSection::getSection('home', 'testimonials') ?? [];
         $testimonials['title'] = $testimonials['title'] ?? 'Guest Reviews';
@@ -193,88 +191,88 @@ class HomepageManager extends Page implements HasForms
                     Forms\Components\Section::make('Honeycombers recognition')
                         ->description('The homepage has one recognition feature. Changes here are published immediately.')
                         ->schema([
-                    Forms\Components\TextInput::make('why_stay.context_title')
-                        ->label('Section title')
-                        ->default('A stay recognised for the details.')
-                        ->required()
-                        ->maxLength(180),
-                    Forms\Components\Textarea::make('why_stay.supporting_copy')
-                        ->label('Supporting copy')
-                        ->default('Ubud Zen River House was named Gold Winner for Best Villa in Bali 2024 by Honeycombers. A recognition of the thoughtful design, setting, and care behind the stay.')
-                        ->rows(3)
-                        ->required()
-                        ->maxLength(500),
-                    Forms\Components\Toggle::make('why_stay.is_visible')
-                        ->label('Show recognition')
-                        ->default(true),
-                    Forms\Components\Hidden::make('why_stay.recognition.type')->default('award'),
-                    Forms\Components\TextInput::make('why_stay.recognition.name')
-                        ->label('Publication')
-                        ->default('Honeycombers')
-                        ->required()
-                        ->maxLength(180),
-                    Forms\Components\TextInput::make('why_stay.recognition.issuer')
-                        ->label('Result')
-                        ->default('Gold Winner')
-                        ->maxLength(180),
-                    Forms\Components\TextInput::make('why_stay.recognition.title')
-                        ->label('Award title')
-                        ->default('Best Villa in Bali 2024')
-                        ->required()
-                        ->maxLength(220),
-                    Forms\Components\TextInput::make('why_stay.recognition.year')
-                        ->label('Year')
-                        ->default('2024')
-                        ->maxLength(12),
-                    Forms\Components\Select::make('why_stay.recognition.lodgify_property_id')
-                        ->label('Recognised villa')
-                        ->searchable()
-                        ->preload()
-                        ->native(false)
-                        ->options(fn (): array => VillaCache::query()->orderBy('name')->pluck('name', 'lodgify_id')->all())
-                        ->live()
-                        ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
-                            $set('why_stay.recognition.villa_name', $state
-                                ? VillaCache::query()->where('lodgify_id', $state)->value('name')
-                                : null);
-                        })
-                        ->helperText('Villa choices come from Lodgify. The recognition content itself updates immediately.'),
-                    Forms\Components\TextInput::make('why_stay.recognition.villa_name')
-                        ->label('Villa display name')
-                        ->default('Ubud Zen River House')
-                        ->maxLength(180),
-                    Forms\Components\TextInput::make('why_stay.recognition.url')
-                        ->label('Verification URL')
-                        ->url()
-                        ->maxLength(2048),
-                    ManagedImageUpload::make('why_stay.recognition.image')
-                        ->label('Supporting image')
-                        ->directory('uploads/homepage/recognition')
-                        ->helperText('Optional. Ubud Zen River House is used as the fallback image.'),
-                    Forms\Components\TextInput::make('why_stay.recognition.image_alt')
-                        ->label('Image description')
-                        ->maxLength(220),
-                    Forms\Components\Hidden::make('why_stay.recognition.is_visible')->default(true),
+                            Forms\Components\TextInput::make('why_stay.context_title')
+                                ->label('Section title')
+                                ->default('A stay recognised for the details.')
+                                ->required()
+                                ->maxLength(180),
+                            Forms\Components\Textarea::make('why_stay.supporting_copy')
+                                ->label('Supporting copy')
+                                ->default('Ubud Zen River House was named Gold Winner for Best Villa in Bali 2024 by Honeycombers. A recognition of the thoughtful design, setting, and care behind the stay.')
+                                ->rows(3)
+                                ->required()
+                                ->maxLength(500),
+                            Forms\Components\Toggle::make('why_stay.is_visible')
+                                ->label('Show recognition')
+                                ->default(true),
+                            Forms\Components\Hidden::make('why_stay.recognition.type')->default('award'),
+                            Forms\Components\TextInput::make('why_stay.recognition.name')
+                                ->label('Publication')
+                                ->default('Honeycombers')
+                                ->required()
+                                ->maxLength(180),
+                            Forms\Components\TextInput::make('why_stay.recognition.issuer')
+                                ->label('Result')
+                                ->default('Gold Winner')
+                                ->maxLength(180),
+                            Forms\Components\TextInput::make('why_stay.recognition.title')
+                                ->label('Award title')
+                                ->default('Best Villa in Bali 2024')
+                                ->required()
+                                ->maxLength(220),
+                            Forms\Components\TextInput::make('why_stay.recognition.year')
+                                ->label('Year')
+                                ->default('2024')
+                                ->maxLength(12),
+                            Forms\Components\Select::make('why_stay.recognition.lodgify_property_id')
+                                ->label('Recognised villa')
+                                ->searchable()
+                                ->preload()
+                                ->native(false)
+                                ->options(fn (): array => VillaCache::query()->orderBy('name')->pluck('name', 'lodgify_id')->all())
+                                ->live()
+                                ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
+                                    $set('why_stay.recognition.villa_name', $state
+                                        ? VillaCache::query()->where('lodgify_id', $state)->value('name')
+                                        : null);
+                                })
+                                ->helperText('Villa choices come from Lodgify. The recognition content itself updates immediately.'),
+                            Forms\Components\TextInput::make('why_stay.recognition.villa_name')
+                                ->label('Villa display name')
+                                ->default('Ubud Zen River House')
+                                ->maxLength(180),
+                            Forms\Components\TextInput::make('why_stay.recognition.url')
+                                ->label('Verification URL')
+                                ->url()
+                                ->maxLength(2048),
+                            ManagedImageUpload::make('why_stay.recognition.image')
+                                ->label('Supporting image')
+                                ->directory('uploads/homepage/recognition')
+                                ->helperText('Optional. Ubud Zen River House is used as the fallback image.'),
+                            Forms\Components\TextInput::make('why_stay.recognition.image_alt')
+                                ->label('Image description')
+                                ->maxLength(220),
+                            Forms\Components\Hidden::make('why_stay.recognition.is_visible')->default(true),
                         ]),
                     Forms\Components\Section::make('Guest Reviews')
                         ->description('Choose which approved reviews appear on the homepage. The carousel is updated immediately.')
                         ->schema([
-                    Forms\Components\TextInput::make('testimonials.title')
-                        ->label('Section title')
-                        ->default('Guest Reviews')
-                        ->required(),
-                    Forms\Components\Textarea::make('testimonials.supporting_copy')
-                        ->label('Supporting copy, optional')
-                        ->rows(2)
-                        ->maxLength(240),
-                    Forms\Components\Toggle::make('testimonials.is_visible')
-                        ->label('Show Guest Reviews')
-                        ->default(true),
-                    Forms\Components\Placeholder::make('testimonial_editor_link')
-                        ->label('')
-                        ->content(fn () => new \Illuminate\Support\HtmlString(
-                            '<a class="fi-link" href="' . e(TestimonialResource::getUrl('index')) . '">Manage reviews and Homepage placement</a>'
-                        )),
+                            Forms\Components\TextInput::make('testimonials.title')
+                                ->label('Section title')
+                                ->default('Guest Reviews')
+                                ->required(),
+                            Forms\Components\Textarea::make('testimonials.supporting_copy')
+                                ->label('Supporting copy, optional')
+                                ->rows(2)
+                                ->maxLength(240),
+                            Forms\Components\Toggle::make('testimonials.is_visible')
+                                ->label('Show Guest Reviews')
+                                ->default(true),
+                            Forms\Components\Placeholder::make('testimonial_editor_link')
+                                ->label('')
+                                ->content(fn () => new \Illuminate\Support\HtmlString(
+                                    '<a class="fi-link" href="'.e(TestimonialResource::getUrl('index')).'">Manage reviews and Homepage placement</a>'
+                                )),
                         ]),
                 ]),
 
@@ -292,7 +290,7 @@ class HomepageManager extends Page implements HasForms
                             Forms\Components\Placeholder::make('destination_editor_link')
                                 ->label('')
                                 ->content(fn () => new \Illuminate\Support\HtmlString(
-                                    '<a class="fi-link" href="' . e(BaliCollectionResource::getUrl('index')) . '">Open advanced destination media editor</a>'
+                                    '<a class="fi-link" href="'.e(BaliCollectionResource::getUrl('index')).'">Open advanced destination media editor</a>'
                                 )),
                         ]),
                 ]),
@@ -359,7 +357,9 @@ class HomepageManager extends Page implements HasForms
             ->collapsed()
             ->itemLabel(function (array $state, ?string $uuid) use ($statePath, $isSignature): ?string {
                 $id = $state['lodgify_property_id'] ?? null;
-                if (!$id) return 'New villa';
+                if (! $id) {
+                    return 'New villa';
+                }
                 $villa = VillaCache::where('lodgify_id', (string) $id)->first();
                 $name = $villa?->name ?? "Villa #{$id}";
 
@@ -368,10 +368,12 @@ class HomepageManager extends Page implements HasForms
                     $keys = array_keys(is_array($rows) ? $rows : []);
                     $firstKey = $keys[0] ?? null;
                     $isFirst = $uuid !== null ? ($uuid === $firstKey) : false;
+
                     return $isFirst
                         ? "🟢 ACTIVE  ·  {$name}"
                         : "○ On bench  ·  {$name}";
                 }
+
                 return $name;
             });
 
@@ -407,16 +409,17 @@ class HomepageManager extends Page implements HasForms
                         ->pluck('location', 'location')
                         ->filter()
                         ->all())
-                    ->getSearchResultsUsing(fn (string $search): array =>
-                        VillaCache::query()
-                            ->where('location', 'like', "%{$search}%")
-                            ->limit(20)
-                            ->pluck('location', 'location')
-                            ->all()
+                    ->getSearchResultsUsing(fn (string $search): array => VillaCache::query()
+                        ->where('location', 'like', "%{$search}%")
+                        ->limit(20)
+                        ->pluck('location', 'location')
+                        ->all()
                     )
                     ->live()
                     ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
-                        if (!$state) return;
+                        if (! $state) {
+                            return;
+                        }
                         $set('collection_id', \Illuminate\Support\Str::slug($state));
                         $set('image_alt', "Summerhouse destination guide to {$state}");
                     })
@@ -501,7 +504,7 @@ class HomepageManager extends Page implements HasForms
             }
         }
 
-        if (!$villa) {
+        if (! $villa) {
             return '<div class="sh-signature-empty">No villa data yet. Pick one in the bench below to control which villa appears on the homepage.</div>';
         }
 
@@ -509,12 +512,12 @@ class HomepageManager extends Page implements HasForms
         $thumb = AssetUrl::resolve($villa->thumbnail_url ?: ($villa->raw['image_url'] ?? null));
         $thumb = $thumb ? e($thumb) : null;
         $location = e($villa->location ?? $villa->raw['city'] ?? '');
-        $bedrooms = $villa->bedrooms ? e((string) $villa->bedrooms) . ' BR' : '';
+        $bedrooms = $villa->bedrooms ? e((string) $villa->bedrooms).' BR' : '';
         $id = e((string) $lodgifyId);
 
         $thumbHtml = $thumb
             ? "<img src=\"{$thumb}\" alt=\"\" class=\"sh-signature-thumb\">"
-            : "<div class=\"sh-signature-thumb sh-signature-thumb--fallback\">★</div>";
+            : '<div class="sh-signature-thumb sh-signature-thumb--fallback">★</div>';
 
         $pillClass = $isFallback ? 'sh-signature-pill sh-signature-pill--fallback' : 'sh-signature-pill';
         $pillText = $isFallback ? '● Live (auto-pick, highest priced)' : '● Live on homepage';
@@ -534,7 +537,6 @@ class HomepageManager extends Page implements HasForms
         </div>
         HTML;
     }
-
 
     protected function getFormActions(): array
     {
@@ -616,7 +618,7 @@ class HomepageManager extends Page implements HasForms
                     'villa_count' => $this->villaCountLabel($location),
                     'price' => 'Price confirmed at booking',
                     'cta' => 'View destination',
-                    'href' => '/villas?location=' . rawurlencode($location) . '&match=exact',
+                    'href' => '/villas?location='.rawurlencode($location).'&match=exact',
                 ]
             );
             $keptDestinationIds[] = $row->id;
@@ -655,7 +657,7 @@ class HomepageManager extends Page implements HasForms
             ?: 'Ubud Zen River House was named Gold Winner for Best Villa in Bali 2024 by Honeycombers. A recognition of the thoughtful design, setting, and care behind the stay.';
 
         $legacyRecognitions = $content['recognitions'] ?? [];
-        if ($legacyRecognitions === [] && !empty($content['awards']) && is_array($content['awards'])) {
+        if ($legacyRecognitions === [] && ! empty($content['awards']) && is_array($content['awards'])) {
             $legacyRecognitions = array_values(array_map(
                 fn (array $award): array => [
                     'type' => 'award',
@@ -671,7 +673,7 @@ class HomepageManager extends Page implements HasForms
         }
 
         $recognition = $content['recognition'] ?? null;
-        if (!is_array($recognition) || empty(array_filter([
+        if (! is_array($recognition) || empty(array_filter([
             $recognition['name'] ?? null,
             $recognition['title'] ?? null,
             $recognition['issuer'] ?? null,
@@ -687,7 +689,7 @@ class HomepageManager extends Page implements HasForms
                 )) ?? collect($legacyRecognitions)->first();
         }
 
-        if (!is_array($recognition)) {
+        if (! is_array($recognition)) {
             $recognition = [
                 'type' => 'award',
                 'name' => 'Honeycombers',
@@ -710,6 +712,7 @@ class HomepageManager extends Page implements HasForms
     private function villaCountLabel(string $location): string
     {
         $count = VillaCache::query()->where('location', $location)->count();
-        return "{$count} " . ($count === 1 ? 'villa' : 'villas');
+
+        return "{$count} ".($count === 1 ? 'villa' : 'villas');
     }
 }

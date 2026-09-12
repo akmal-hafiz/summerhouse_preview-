@@ -98,6 +98,12 @@ export default function PremiumVillaCard({
           </div>
         ) : null}
 
+        {villa.availabilityReason === "temporarily_unavailable" ? (
+          <p className="villa-catalog-card__availability" role="status">
+            Availability temporarily unavailable
+          </p>
+        ) : null}
+
         <div className="villa-catalog-card__footer">
           <p className="villa-catalog-card__price">
             {villa.priceLabel ? (

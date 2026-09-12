@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAvailabilityMap, isRangeAvailable } from "@/lib/lodgify";
+import { getAvailabilityMap, getRangeAvailabilityStatus, isRangeAvailable } from "@/lib/lodgify";
 import { logServerError } from "@/lib/security/logger";
 import { rateLimitRequest } from "@/lib/security/rateLimit";
 import { isValidPublicId, validateDateWindow, validateStayRange } from "@/lib/security/validation";
@@ -47,6 +47,7 @@ export async function GET(request: NextRequest) {
       end: safeEnd,
       map,
       rangeAvailable: checkIn && checkOut ? isRangeAvailable(map, checkIn, checkOut) : null,
+      rangeStatus: checkIn && checkOut ? getRangeAvailabilityStatus(map, checkIn, checkOut) : null,
     });
   } catch (error) {
     logServerError("[lodgify:availability]", error, {

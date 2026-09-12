@@ -121,6 +121,8 @@ export type VillaSearchResult = VillaSummary & {
   amenitiesPreview: string[];
   rating: number;
   isAvailableForSearch: boolean;
+  availabilityStatus: "available" | "unavailable" | "unknown";
+  availabilityReason: "confirmed" | "temporarily_unavailable" | "not_checked";
 };
 
 export type HomepageVillaCard = {

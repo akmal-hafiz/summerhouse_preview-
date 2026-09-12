@@ -9,6 +9,17 @@ export type CmsFetchOptions = {
   revalidate?: number;
 };
 
+export type CmsLodgifySnapshot = {
+  success: boolean;
+  snapshotVersion: string | null;
+  generatedAt: string | null;
+  properties: Array<{ property: Record<string, unknown>; rooms: Array<Record<string, unknown>> }>;
+};
+
+export async function getCmsLodgifySnapshot() {
+  return cmsFetch<CmsLodgifySnapshot>("/v1/cms/lodgify/snapshot", { revalidate: CMS_LODGIFY_REVALIDATE });
+}
+
 let cmsOfflineWarned = false;
 
 function isNetworkError(error: unknown): boolean {

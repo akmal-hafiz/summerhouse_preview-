@@ -2,10 +2,12 @@ import { asRecordArray, isRecord } from "./runtime";
 import type { LodgifyProperty, LodgifyRoom } from "./types";
 import { ensureProtocol, normalizeProperty, normalizeRoom } from "./normalizers";
 import { logServerError, logServerNotice, logServerWarning } from "@/lib/security/logger";
+import { errorKindForStatus, isRetriableStatus, LodgifyError, normalizeLodgifyError } from "./errors";
+import { lodgifyResilienceConfig, withLodgifyResilience } from "./resilience";
+import { getCmsLodgifySnapshot } from "@/lib/cms";
 
 const LODGIFY_API_KEY = process.env.LODGIFY_API_KEY;
 const BASE_URL = process.env.LODGIFY_API_BASE_URL || "https://api.lodgify.com/v2";
-const DEFAULT_TIMEOUT_MS = 12_000;
 
 if (!LODGIFY_API_KEY) {
   logServerWarning("[lodgify:config]", { message: "LODGIFY_API_KEY is not defined." });
@@ -17,28 +19,37 @@ type FetchOptions = {
 };
 
 async function lodgifyFetch(path: string, options: FetchOptions = {}) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs || DEFAULT_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(`${BASE_URL}${path}`, {
-      method: "GET",
-      headers: {
-        "X-ApiKey": LODGIFY_API_KEY || "",
-        Accept: "application/json",
-      },
-      next: options.revalidate ? { revalidate: options.revalidate } : undefined,
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Lodgify API error ${response.status} for ${path.split("?")[0]}`);
+  const operation = path.split("?")[0];
+  return withLodgifyResilience(operation, async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs || lodgifyResilienceConfig.timeoutMs);
+    try {
+      const response = await fetch(`${BASE_URL}${path}`, {
+        method: "GET",
+        headers: { "X-ApiKey": LODGIFY_API_KEY || "", Accept: "application/json" },
+        next: options.revalidate ? { revalidate: options.revalidate } : undefined,
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        throw new LodgifyError(
+          `Lodgify API returned ${response.status}`,
+          errorKindForStatus(response.status),
+          operation,
+          response.status,
+          isRetriableStatus(response.status),
+        );
+      }
+      try {
+        return await response.json() as unknown;
+      } catch (error) {
+        throw new LodgifyError("Lodgify returned invalid JSON", "invalid_response", operation, response.status, false, { cause: error });
+      }
+    } catch (error) {
+      throw normalizeLodgifyError(error, operation);
+    } finally {
+      clearTimeout(timeout);
     }
-
-    return response.json() as Promise<unknown>;
-  } finally {
-    clearTimeout(timeout);
-  }
+  });
 }
 
 const PROPERTIES_PAGE_SIZE = 50;
@@ -66,8 +77,11 @@ export async function fetchProperties(): Promise<LodgifyProperty[]> {
 
     return Array.from(seen.values());
   } catch (error) {
-    logServerError("[lodgify:properties]", error);
-    return [];
+    const normalized = normalizeLodgifyError(error, "/properties");
+    if (normalized.kind === "authentication") logServerError("[lodgify:properties]", normalized, { kind: normalized.kind });
+    else logServerWarning("[lodgify:properties]", { kind: normalized.kind, status: normalized.status, message: normalized.message });
+    const snapshot = await getCmsLodgifySnapshot();
+    return (snapshot?.properties || []).map((item) => normalizeProperty(item.property)).filter((item) => item.id && item.name);
   }
 }
 
@@ -95,8 +109,13 @@ export async function fetchPropertyRooms(id: string | number): Promise<LodgifyRo
     const data = await lodgifyFetch(`/properties/${propertyId}/rooms`, { revalidate: 3600 });
     return asRecordArray(data).map(normalizeRoom);
   } catch (error) {
-    logServerError("[lodgify:rooms]", error, { propertyId: String(id) });
-    return [];
+    const normalized = normalizeLodgifyError(error, "/properties/:id/rooms");
+    if (normalized.kind === "authentication") {
+      logServerError("[lodgify:rooms]", normalized, { propertyId: String(id), kind: normalized.kind });
+    }
+    const snapshot = await getCmsLodgifySnapshot();
+    const cached = snapshot?.properties.find((item) => String(item.property.id) === String(id));
+    return (cached?.rooms || []).map(normalizeRoom);
   }
 }
 
@@ -122,7 +141,10 @@ export async function fetchAvailabilityItems(startDate: string, endDate: string)
     const data = await lodgifyFetch(`/availability?${params.toString()}`, { revalidate: 60 });
     return asRecordArray(data);
   } catch (error) {
-    logServerError("[lodgify:availability-fetch]", error, { startDate, endDate });
+    const normalized = normalizeLodgifyError(error, "/availability");
+    const meta = { startDate, endDate, kind: normalized.kind, status: normalized.status };
+    if (normalized.kind === "authentication") logServerError("[lodgify:availability-fetch]", normalized, meta);
+    else logServerWarning("[lodgify:availability-fetch]", { ...meta, message: normalized.message });
     return null;
   }
 }

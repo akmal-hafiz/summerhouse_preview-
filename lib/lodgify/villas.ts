@@ -8,7 +8,9 @@ import {
   type CmsHomepageSlots,
 } from "@/lib/cms";
 import { fetchAvailabilityItems, fetchProperties, fetchPropertyById, fetchPropertyImages, fetchPropertyRooms } from "./client";
-import { buildAvailabilityMapFromItems, isRangeAvailable } from "./availability";
+import { buildAvailabilityMapFromItems, getRangeAvailabilityStatus } from "./availability";
+import { lodgifyResilienceConfig, mapWithConcurrency } from "./resilience";
+import { logServerWarning } from "@/lib/security/logger";
 import { getDirectBookingUrl } from "./booking";
 import {
   ensureProtocol,
@@ -676,6 +678,9 @@ async function getSearchResultForProperty(
   const images = getImageSet(property, rooms);
   const capacity = getCapacityFromRooms(rooms, property) || facts.guests;
   const amenitiesPreview = getAmenityPreview(rooms);
+  const availabilityStatus = hasDates
+    ? getRangeAvailabilityStatus(availabilityByProperty[String(property.id)] || {}, params.checkIn, params.checkOut)
+    : "unknown";
 
   return {
     ...summary,
@@ -684,9 +689,11 @@ async function getSearchResultForProperty(
     capacity,
     amenitiesPreview,
     rating: Number(property.rating || 0),
-    isAvailableForSearch: hasDates
-      ? isRangeAvailable(availabilityByProperty[String(property.id)] || {}, params.checkIn, params.checkOut)
-      : true,
+    availabilityStatus,
+    availabilityReason: hasDates
+      ? availabilityStatus === "unknown" ? "temporarily_unavailable" : "confirmed"
+      : "not_checked",
+    isAvailableForSearch: !hasDates || availabilityStatus !== "unavailable",
     ...facts,
   };
 }
@@ -719,11 +726,17 @@ export async function searchAvailableVillas(params: VillaSearchParams = {}) {
     });
   }
 
-  const detailed = await Promise.all(candidateProperties.map(async (property) => {
+  let emptyRoomResults = 0;
+  const detailed = await mapWithConcurrency(candidateProperties, lodgifyResilienceConfig.roomsConcurrency, async (property) => {
     if (!property.id) return null;
     const rooms = await fetchPropertyRooms(property.id);
+    if (rooms.length === 0) emptyRoomResults += 1;
     return getSearchResultForProperty(property, rooms, availabilityByProperty, hasDates, params);
-  }));
+  });
+
+  if (emptyRoomResults > 0) {
+    logServerWarning("[lodgify:rooms-batch]", { emptyResults: emptyRoomResults, total: candidateProperties.length });
+  }
 
   return compact(detailed).filter((villa) => {
     if (guests > villa.capacity) return false;

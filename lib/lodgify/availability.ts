@@ -120,3 +120,14 @@ export function isRangeAvailable(
     return availabilityMap[date]?.available === true;
   });
 }
+
+export function getRangeAvailabilityStatus(
+  availabilityMap: Record<string, AvailabilityDay>,
+  checkIn?: string,
+  checkOut?: string,
+): "available" | "unavailable" | "unknown" {
+  if (!isValidDateRange(checkIn, checkOut)) return "unknown";
+  const nights = eachNightInRange(checkIn as string, checkOut as string);
+  if (nights.some((date) => !availabilityMap[date] || availabilityMap[date].status === "unknown")) return "unknown";
+  return nights.every((date) => availabilityMap[date].available) ? "available" : "unavailable";
+}

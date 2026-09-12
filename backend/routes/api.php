@@ -5,8 +5,8 @@ use App\Http\Controllers\CmsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\NewsletterSubscriberController;
 use App\Http\Controllers\OtpController;
-use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\OwnerTestimonialController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ReviewSubmissionController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Http\Request;
@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function () {
         Route::get('page/{page}', [CmsController::class, 'pageSections']);
         Route::get('page/{page}/section/{section}', [CmsController::class, 'pageSection']);
         Route::get('homepage/villa-selections', [CmsController::class, 'homepageVillaSelections']);
+        Route::get('lodgify/snapshot', [CmsController::class, 'lodgifySnapshot']);
         Route::get('bali-collections', [CmsController::class, 'baliCollections']);
         Route::get('destinations/{slug}', [CmsController::class, 'destination']);
         Route::get('articles', [CmsController::class, 'articles']);

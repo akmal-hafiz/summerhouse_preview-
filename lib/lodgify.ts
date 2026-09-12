@@ -22,6 +22,7 @@ export {
   getAvailabilityForProperty,
   getAvailabilityMap,
   isRangeAvailable,
+  getRangeAvailabilityStatus,
 } from "./lodgify/availability";
 
 export {

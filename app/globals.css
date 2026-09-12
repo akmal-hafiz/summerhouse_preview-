@@ -9716,6 +9716,13 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   transition: background 180ms var(--ease-editorial), transform 180ms var(--ease-editorial), box-shadow 180ms var(--ease-editorial);
 }
 
+.villa-catalog-card__availability {
+  margin: 0;
+  color: rgba(31, 31, 29, 0.58);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .villa-catalog-card__book:hover {
     transform: translateY(-1px);
