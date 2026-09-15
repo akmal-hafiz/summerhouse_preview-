@@ -13,7 +13,12 @@ use Throwable;
 
 class LodgifyService
 {
-    public function __construct(protected string $baseUrl, protected string $apiKey, protected array $options) {}
+    protected LodgifyAuditService $audit;
+
+    public function __construct(protected string $baseUrl, protected string $apiKey, protected array $options)
+    {
+        $this->audit = app(LodgifyAuditService::class);
+    }
 
     public static function make(): self
     {
@@ -41,7 +46,7 @@ class LodgifyService
             }
             $snapshot = (string) Str::uuid();
             [$roomsById, $warnings] = $this->fetchRoomsForProperties($properties);
-            $counts = DB::transaction(fn () => $this->reconcile($properties, $roomsById, $snapshot));
+            $counts = DB::transaction(fn () => $this->reconcile($properties, $roomsById, $snapshot, $run));
 
             return $this->finish($run, $warnings ? 'completed_with_warnings' : 'completed', array_merge($counts, ['snapshot_version' => $snapshot, 'warning_count' => $warnings]));
         } catch (Throwable $error) {
@@ -104,7 +109,7 @@ class LodgifyService
         return [$rooms, $warnings];
     }
 
-    protected function reconcile(array $properties, array $roomsById, string $snapshot): array
+    protected function reconcile(array $properties, array $roomsById, string $snapshot, LodgifySyncRun $run): array
     {
         $now = now();
         $seen = [];
@@ -114,6 +119,7 @@ class LodgifyService
             $seen[] = $id;
             $status = ($property['is_active'] ?? true) === false ? VillaCache::STATUS_INACTIVE : VillaCache::STATUS_ACTIVE;
             $existing = VillaCache::where('lodgify_id', $id)->first();
+            $before = $this->audit->state($existing);
             if (! $existing) {
                 $new++;
             } elseif ($existing->lodgify_status !== $status || $existing->raw !== $property) {
@@ -121,19 +127,40 @@ class LodgifyService
             }
             $roomData = $roomsById[$id] ?? $existing?->rooms_raw;
             [$bedrooms, $guests, $thumb] = $this->aggregateRooms($roomData ?? []);
-            VillaCache::updateOrCreate(['lodgify_id' => $id], [
+            $managementStatus = $status === VillaCache::STATUS_ACTIVE
+                ? VillaCache::MANAGEMENT_MANAGED
+                : ($existing?->management_status ?? VillaCache::MANAGEMENT_MANAGED);
+            $villa = VillaCache::updateOrCreate(['lodgify_id' => $id], [
                 'name' => $property['name'] ?? "Villa {$id}", 'thumbnail_url' => $thumb ?? $this->extractThumbnail($property) ?? $existing?->thumbnail_url,
                 'bedrooms' => $bedrooms ?? $existing?->bedrooms, 'max_guests' => $guests ?? $existing?->max_guests,
                 'location' => $this->extractLocation($property), 'raw' => $property, 'rooms_raw' => $roomData,
-                'lodgify_status' => $status, 'last_seen_at' => $now, 'last_full_sync_at' => $now,
+                'lodgify_status' => $status, 'management_status' => $managementStatus,
+                'management_status_changed_at' => $existing && $existing->management_status !== $managementStatus ? $now : $existing?->management_status_changed_at,
+                'management_status_note' => $existing && $existing->management_status !== $managementStatus ? 'Restored automatically because Lodgify reported the property active.' : $existing?->management_status_note,
+                'last_seen_at' => $now, 'last_full_sync_at' => $now,
                 'consecutive_missing_count' => 0, 'snapshot_version' => $snapshot, 'synced_at' => $now,
             ]);
+            $after = $this->audit->state($villa);
+            if (! $existing) {
+                $this->audit->append($villa, 'property_discovered', $run, [], $after);
+            } elseif ($before['lodgify_status'] !== $after['lodgify_status'] || $before['management_status'] !== $after['management_status']) {
+                $eventType = $after['lodgify_status'] === VillaCache::STATUS_ACTIVE
+                    && in_array($before['lodgify_status'], [VillaCache::STATUS_SUSPECTED_MISSING, VillaCache::STATUS_MISSING], true)
+                    ? 'property_reappeared'
+                    : 'lodgify_status_changed';
+                $this->audit->append($villa, $eventType, $run, $before, $after);
+            } elseif ($before !== $after) {
+                $this->audit->append($villa, 'public_fields_changed', $run, $before, $after);
+            }
             $status === VillaCache::STATUS_ACTIVE ? $active++ : $inactive++;
         }
         $suspected = 0;
-        VillaCache::whereNotIn('lodgify_id', $seen)->get()->each(function (VillaCache $villa) use ($now, $snapshot, &$suspected) {
+        VillaCache::whereNotIn('lodgify_id', $seen)->get()->each(function (VillaCache $villa) use ($now, $snapshot, $run, &$suspected) {
+            $before = $this->audit->state($villa);
             $count = $villa->consecutive_missing_count + 1;
             $villa->update(['lodgify_status' => $count >= 2 ? VillaCache::STATUS_MISSING : VillaCache::STATUS_SUSPECTED_MISSING, 'consecutive_missing_count' => $count, 'last_full_sync_at' => $now, 'snapshot_version' => $snapshot, 'synced_at' => $now]);
+            $eventType = $count >= 2 ? 'property_missing_confirmed' : 'property_suspected_missing';
+            $this->audit->append($villa, $eventType, $run, $before, $this->audit->state($villa->fresh()));
             if ($count === 1) {
                 $suspected++;
             }

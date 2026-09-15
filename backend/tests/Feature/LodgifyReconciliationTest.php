@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\LodgifyPropertyEvent;
 use App\Models\VillaCache;
 use App\Services\LodgifyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -98,5 +99,71 @@ class LodgifyReconciliationTest extends TestCase
 
         $this->assertSame('rejected_as_anomaly', $run->status);
         $this->assertSame(3, VillaCache::count());
+    }
+
+    public function test_it_appends_only_meaningful_property_events(): void
+    {
+        $this->fakeProperties([['id' => 1, 'name' => 'One', 'is_active' => true]]);
+        $this->service()->syncAll();
+
+        $this->assertDatabaseHas('lodgify_property_events', ['lodgify_id' => '1', 'event_type' => 'property_discovered']);
+        $count = LodgifyPropertyEvent::count();
+
+        $this->service()->syncAll();
+
+        $this->assertSame($count, LodgifyPropertyEvent::count());
+    }
+
+    public function test_missing_and_recovery_transitions_are_audited(): void
+    {
+        $this->fakeProperties([['id' => 1, 'name' => 'One'], ['id' => 2, 'name' => 'Two']]);
+        $this->service()->syncAll();
+        $this->fakeProperties([['id' => 1, 'name' => 'One']]);
+        $this->service()->syncAll();
+        $this->service()->syncAll();
+        $this->fakeProperties([['id' => 1, 'name' => 'One'], ['id' => 2, 'name' => 'Two']]);
+        $this->service()->syncAll();
+
+        $types = LodgifyPropertyEvent::where('lodgify_id', '2')->pluck('event_type')->all();
+        $this->assertContains('property_suspected_missing', $types);
+        $this->assertContains('property_missing_confirmed', $types);
+        $this->assertContains('property_reappeared', $types);
+    }
+
+    public function test_active_lodgify_property_is_automatically_restored_to_managed(): void
+    {
+        VillaCache::create([
+            'lodgify_id' => '818095',
+            'name' => 'Villa Semanggi',
+            'lodgify_status' => VillaCache::STATUS_MISSING,
+            'management_status' => VillaCache::MANAGEMENT_REMOVED,
+        ]);
+        $this->fakeProperties([['id' => 818095, 'name' => 'Villa Semanggi', 'is_active' => true]]);
+
+        $this->service()->syncAll();
+
+        $this->assertDatabaseHas('villa_caches', [
+            'lodgify_id' => '818095',
+            'lodgify_status' => VillaCache::STATUS_ACTIVE,
+            'management_status' => VillaCache::MANAGEMENT_MANAGED,
+        ]);
+        $this->assertDatabaseHas('lodgify_property_events', ['lodgify_id' => '818095', 'event_type' => 'property_reappeared']);
+    }
+
+    public function test_property_events_cannot_be_updated_or_deleted(): void
+    {
+        $this->fakeProperties([['id' => 1, 'name' => 'One']]);
+        $this->service()->syncAll();
+        $event = LodgifyPropertyEvent::firstOrFail();
+
+        try {
+            $event->update(['reason' => 'changed']);
+            $this->fail('Expected append-only update protection.');
+        } catch (\LogicException) {
+            $this->assertDatabaseMissing('lodgify_property_events', ['id' => $event->id, 'reason' => 'changed']);
+        }
+
+        $this->expectException(\LogicException::class);
+        $event->delete();
     }
 }

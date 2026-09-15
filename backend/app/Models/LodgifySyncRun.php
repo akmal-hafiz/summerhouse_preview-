@@ -17,4 +17,9 @@ class LodgifySyncRun extends Model
     {
         return in_array($this->status, ['completed', 'completed_with_warnings'], true);
     }
+
+    public function propertyEvents()
+    {
+        return $this->hasMany(LodgifyPropertyEvent::class, 'sync_run_id');
+    }
 }
