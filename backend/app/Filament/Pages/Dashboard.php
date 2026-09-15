@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\ContentStatsWidget;
+use App\Filament\Widgets\LodgifyHealthWidget;
 use App\Filament\Widgets\WelcomeWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
@@ -17,6 +18,7 @@ class Dashboard extends BaseDashboard
         return [
             WelcomeWidget::class,
             ContentStatsWidget::class,
+            LodgifyHealthWidget::class,
             \App\Filament\Widgets\RecentContactsWidget::class,
         ];
     }

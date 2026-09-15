@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SyncLodgifyJob;
 use App\Models\HomepageVillaSelection;
 use App\Models\LodgifyIncident;
 use App\Models\LodgifySyncRun;
@@ -69,5 +70,37 @@ class LodgifyOperationsTest extends TestCase
         $villa->update(['lodgify_status' => VillaCache::STATUS_ACTIVE, 'management_status' => VillaCache::MANAGEMENT_MANAGED]);
         $this->assertCount(0, $validator->validate());
         $this->assertSame(LodgifyIncident::STATUS_RESOLVED, LodgifyIncident::first()->fresh()->status);
+    }
+
+    public function test_admin_can_render_lodgify_health_page(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->get('/admin/lodgify-health')->assertOk();
+    }
+
+    public function test_sync_job_has_a_stable_unique_lock(): void
+    {
+        $job = new SyncLodgifyJob;
+
+        $this->assertSame('lodgify-full-sync', $job->uniqueId());
+        $this->assertSame(600, $job->uniqueFor);
+    }
+
+    public function test_health_check_opens_and_recovers_a_stale_snapshot_incident(): void
+    {
+        $this->artisan('lodgify:health-check')->assertFailed();
+        $incident = LodgifyIncident::where('category', 'stale_snapshot')->firstOrFail();
+        $this->assertSame(LodgifyIncident::SEVERITY_CRITICAL, $incident->severity);
+
+        LodgifySyncRun::create([
+            'run_uuid' => fake()->uuid(),
+            'status' => 'completed',
+            'started_at' => now(),
+            'finished_at' => now(),
+        ]);
+
+        $this->artisan('lodgify:health-check')->assertSuccessful();
+        $this->assertSame(LodgifyIncident::STATUS_RESOLVED, $incident->fresh()->status);
     }
 }
