@@ -56,7 +56,8 @@ async function lodgifyFetch(path: string, options: FetchOptions = {}) {
 export async function fetchProperties(): Promise<LodgifyProperty[]> {
   const snapshot = await getCmsLodgifySnapshot();
   if (!snapshot?.success) {
-    if (!catalogUnavailableWarned) {
+    const isProductionBuild = process.env.NEXT_PHASE === "phase-production-build";
+    if (!catalogUnavailableWarned && !isProductionBuild) {
       catalogUnavailableWarned = true;
       logServerWarning("[lodgify:catalog-unavailable]", {
         operation: "fetch_public_catalog",
