@@ -58,6 +58,7 @@ class LodgifyReconciliationTest extends TestCase
 
         $this->assertTrue($first->succeeded());
         $this->assertTrue($second->succeeded());
+        $this->assertSame(0, $second->changed_count);
         $this->assertSame(3, VillaCache::count());
         $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '2', 'lodgify_status' => VillaCache::STATUS_INACTIVE]);
     }

@@ -8,6 +8,7 @@ import { getCmsLodgifySnapshot } from "@/lib/cms";
 
 const LODGIFY_API_KEY = process.env.LODGIFY_API_KEY;
 const BASE_URL = process.env.LODGIFY_API_BASE_URL || "https://api.lodgify.com/v2";
+let catalogUnavailableWarned = false;
 
 if (!LODGIFY_API_KEY) {
   logServerWarning("[lodgify:config]", { message: "LODGIFY_API_KEY is not defined." });
@@ -55,13 +56,18 @@ async function lodgifyFetch(path: string, options: FetchOptions = {}) {
 export async function fetchProperties(): Promise<LodgifyProperty[]> {
   const snapshot = await getCmsLodgifySnapshot();
   if (!snapshot?.success) {
-    logServerWarning("[lodgify:catalog-unavailable]", {
-      operation: "fetch_public_catalog",
-      fallback_used: false,
-      message: "No policy-filtered Lodgify catalog is available.",
-    });
+    if (!catalogUnavailableWarned) {
+      catalogUnavailableWarned = true;
+      logServerWarning("[lodgify:catalog-unavailable]", {
+        operation: "fetch_public_catalog",
+        fallback_used: false,
+        message: "No policy-filtered Lodgify catalog is available.",
+      });
+    }
     return [];
   }
+
+  catalogUnavailableWarned = false;
 
   return snapshot.properties
     .map((item) => normalizeProperty(item.property))

@@ -78,6 +78,11 @@ class LodgifyAuditService
         );
     }
 
+    public function equivalent(array $left, array $right): bool
+    {
+        return $this->hash($this->sanitize($left)) === $this->hash($this->sanitize($right));
+    }
+
     private function changes(array $before, array $after): array
     {
         $changes = [];

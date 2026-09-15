@@ -25,7 +25,7 @@ No villa cache row, homepage selection, review, wishlist, media relation, or pro
 
 - The latest successful sync is less than 10 minutes old.
 - No critical incident is open.
-- No removed or missing property is referenced by the homepage.
+- Every invalid homepage reference has a safe active fallback.
 
 No action is required.
 
@@ -41,7 +41,7 @@ Automation continues using the last-known-good snapshot. Inspect the latest sync
 - Data is more than 30 minutes old.
 - Authentication failed.
 - Repeated synchronization failed.
-- A removed or missing property remains referenced by the homepage.
+- An invalid homepage reference has no safe active fallback.
 - No safe snapshot exists.
 
 Public pages continue to prefer known-good data and controlled fallback behavior.
@@ -80,7 +80,9 @@ Public pages continue to prefer known-good data and controlled fallback behavior
 
 ## Homepage reference incident
 
-The public website already excludes the invalid property and selects an eligible fallback. The saved selection remains for auditability.
+The public website excludes the invalid property and selects an eligible fallback. A safely mitigated reference is informational and does not make system health red. The saved selection remains for auditability.
+
+The incident becomes critical only when no safe active fallback exists.
 
 Engineering may replace the selection in Homepage Manager when convenient. This is not required to keep the public page safe.
 

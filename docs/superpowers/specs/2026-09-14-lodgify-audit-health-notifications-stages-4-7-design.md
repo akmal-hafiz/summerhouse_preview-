@@ -207,7 +207,7 @@ Green:
 
 - Last successful sync is less than 10 minutes old
 - No critical incident is open
-- No removed or missing property is referenced by a published homepage selection
+- Every invalid homepage reference has a safe active fallback
 - No count anomaly is unresolved
 
 Yellow:
@@ -225,7 +225,7 @@ Red:
 - Authentication is rejected or the API key is missing
 - Three consecutive full-sync failures occur
 - A candidate snapshot is repeatedly rejected as anomalous
-- A removed or confirmed-missing villa remains in a published homepage selection
+- An invalid homepage selection has no safe active fallback
 - No usable last-known-good snapshot exists
 
 An individual inactive transition is treated as an intentional Lodgify publishing decision. It is listed informationally but does not keep the dashboard yellow and does not require acknowledgement. The four confirmed temporarily unavailable villas therefore do not generate persistent alarms. A sudden multi-property active-count drop is still evaluated as an anomaly.
@@ -369,7 +369,8 @@ Use Laravel database notifications and Filament's notification center. Notify al
 - Authentication failure: immediate critical notification
 - Count anomaly rejection: warning notification
 - Removed property active again: informational audit event; no action notification
-- Removed or missing villa used by a published homepage slot: critical notification
+- Removed or missing villa with a safe fallback: informational incident, no action notification
+- Invalid homepage villa with no safe fallback: critical notification
 - Resolution of a critical incident: one success notification
 
 Acknowledging a notification does not hide or resolve the underlying incident. It only records that an admin has seen it.
@@ -429,7 +430,7 @@ all other combinations        --> hidden or controlled fallback
 | Property absent once | `suspected_missing` | Hide property | Informational transition |
 | Property absent twice | `missing` | Hide property | Warning unless confirmed removed |
 | Removed property appears active | Restore to managed and append event | Show after normal cache refresh | Resolve prior missing/removal issue |
-| Homepage references removed property | Preserve selection | Active fallback | Critical actionable incident |
+| Homepage references removed property | Preserve selection | Active fallback | Informational incident when safely mitigated; critical only when no fallback exists |
 
 ## 11. Database and Migration Safety
 

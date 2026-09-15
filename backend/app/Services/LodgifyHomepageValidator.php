@@ -14,7 +14,8 @@ class LodgifyHomepageValidator
     public function validate(?LodgifySyncRun $run = null): array
     {
         $invalid = [];
-        HomepageVillaSelection::query()->get()->each(function (HomepageVillaSelection $selection) use (&$invalid, $run) {
+        $hasSafeFallback = VillaCache::publiclyEligible()->exists();
+        HomepageVillaSelection::query()->get()->each(function (HomepageVillaSelection $selection) use (&$invalid, $run, $hasSafeFallback) {
             $villa = VillaCache::where('lodgify_id', $selection->lodgify_property_id)->first();
             $invalidStatus = ! $villa
                 || $villa->management_status === VillaCache::MANAGEMENT_REMOVED
@@ -30,10 +31,12 @@ class LodgifyHomepageValidator
                 ];
                 $this->incidents->open(
                     'homepage_reference',
-                    LodgifyIncident::SEVERITY_CRITICAL,
-                    'Homepage villa needs an automatic fallback',
-                    "{$selection->slot} references villa {$selection->lodgify_property_id}, which is not publicly eligible.",
-                    ['slot' => $selection->slot],
+                    $hasSafeFallback ? LodgifyIncident::SEVERITY_INFO : LodgifyIncident::SEVERITY_CRITICAL,
+                    $hasSafeFallback ? 'Homepage villa fallback applied' : 'No safe homepage villa fallback is available',
+                    $hasSafeFallback
+                        ? "{$selection->slot} references villa {$selection->lodgify_property_id}. A safe active fallback is applied automatically."
+                        : "{$selection->slot} references villa {$selection->lodgify_property_id}, and no safe active fallback exists.",
+                    ['slot' => $selection->slot, 'automatic_fallback' => $hasSafeFallback],
                     (string) $selection->lodgify_property_id,
                     'homepage_selection',
                     $referenceKey,

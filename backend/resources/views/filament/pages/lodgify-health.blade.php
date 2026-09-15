@@ -46,7 +46,7 @@
                         <div class="flex flex-wrap items-start justify-between gap-3">
                             <div>
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold {{ $incident->severity === 'critical' ? 'bg-danger-100 text-danger-700' : 'bg-warning-100 text-warning-700' }}">{{ ucfirst($incident->severity) }}</span>
+                                    <span class="rounded-full px-2 py-0.5 text-xs font-semibold {{ $incident->severity === 'critical' ? 'bg-danger-100 text-danger-700' : ($incident->severity === 'warning' ? 'bg-warning-100 text-warning-700' : 'bg-info-100 text-info-700') }}">{{ ucfirst($incident->severity) }}</span>
                                     <span class="text-xs text-gray-500">{{ str_replace('_', ' ', $incident->category) }}</span>
                                 </div>
                                 <h3 class="mt-2 font-semibold text-gray-950 dark:text-white">{{ $incident->title }}</h3>

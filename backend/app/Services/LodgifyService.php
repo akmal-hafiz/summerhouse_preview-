@@ -182,8 +182,6 @@ class LodgifyService
             $before = $this->audit->state($existing);
             if (! $existing) {
                 $new++;
-            } elseif ($existing->lodgify_status !== $status || $existing->raw !== $property) {
-                $changed++;
             }
             $roomData = $roomsById[$id] ?? $existing?->rooms_raw;
             [$bedrooms, $guests, $thumb] = $this->aggregateRooms($roomData ?? []);
@@ -200,16 +198,21 @@ class LodgifyService
                 'last_seen_at' => $now, 'last_full_sync_at' => $now,
                 'consecutive_missing_count' => 0, 'snapshot_version' => $snapshot, 'synced_at' => $now,
             ]);
+            // Compare database-normalized JSON on both sides. MySQL may normalize
+            // numeric values and object key order differently from the HTTP array.
+            $villa = $villa->fresh();
             $after = $this->audit->state($villa);
             if (! $existing) {
                 $this->audit->append($villa, 'property_discovered', $run, [], $after);
             } elseif ($before['lodgify_status'] !== $after['lodgify_status'] || $before['management_status'] !== $after['management_status']) {
+                $changed++;
                 $eventType = $after['lodgify_status'] === VillaCache::STATUS_ACTIVE
                     && in_array($before['lodgify_status'], [VillaCache::STATUS_SUSPECTED_MISSING, VillaCache::STATUS_MISSING], true)
                     ? 'property_reappeared'
                     : 'lodgify_status_changed';
                 $this->audit->append($villa, $eventType, $run, $before, $after);
-            } elseif ($before !== $after) {
+            } elseif (! $this->audit->equivalent($before, $after)) {
+                $changed++;
                 $this->audit->append($villa, 'public_fields_changed', $run, $before, $after);
             }
             $status === VillaCache::STATUS_ACTIVE ? $active++ : $inactive++;
@@ -219,8 +222,10 @@ class LodgifyService
             $before = $this->audit->state($villa);
             $count = $villa->consecutive_missing_count + 1;
             $villa->update(['lodgify_status' => $count >= 2 ? VillaCache::STATUS_MISSING : VillaCache::STATUS_SUSPECTED_MISSING, 'consecutive_missing_count' => $count, 'last_full_sync_at' => $now, 'snapshot_version' => $snapshot, 'synced_at' => $now]);
-            $eventType = $count >= 2 ? 'property_missing_confirmed' : 'property_suspected_missing';
-            $this->audit->append($villa, $eventType, $run, $before, $this->audit->state($villa->fresh()));
+            if ($before['lodgify_status'] !== $villa->lodgify_status) {
+                $eventType = $count >= 2 ? 'property_missing_confirmed' : 'property_suspected_missing';
+                $this->audit->append($villa, $eventType, $run, $before, $this->audit->state($villa->fresh()));
+            }
             if ($count === 1) {
                 $suspected++;
             }

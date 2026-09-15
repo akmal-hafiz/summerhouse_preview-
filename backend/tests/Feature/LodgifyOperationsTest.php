@@ -55,6 +55,12 @@ class LodgifyOperationsTest extends TestCase
 
     public function test_homepage_validator_creates_and_resolves_one_incident_per_reference(): void
     {
+        VillaCache::create([
+            'lodgify_id' => '1',
+            'name' => 'Safe fallback',
+            'lodgify_status' => VillaCache::STATUS_ACTIVE,
+            'management_status' => VillaCache::MANAGEMENT_MANAGED,
+        ]);
         $villa = VillaCache::create([
             'lodgify_id' => '796460',
             'name' => 'Bawa House',
@@ -68,10 +74,20 @@ class LodgifyOperationsTest extends TestCase
         $this->assertCount(1, $validator->validate());
         $this->assertSame(1, LodgifyIncident::count());
         $this->assertSame(2, LodgifyIncident::first()->occurrence_count);
+        $this->assertSame(LodgifyIncident::SEVERITY_INFO, LodgifyIncident::first()->severity);
 
         $villa->update(['lodgify_status' => VillaCache::STATUS_ACTIVE, 'management_status' => VillaCache::MANAGEMENT_MANAGED]);
         $this->assertCount(0, $validator->validate());
         $this->assertSame(LodgifyIncident::STATUS_RESOLVED, LodgifyIncident::first()->fresh()->status);
+    }
+
+    public function test_invalid_homepage_reference_is_critical_only_without_a_safe_fallback(): void
+    {
+        HomepageVillaSelection::create(['slot' => 'signature', 'lodgify_property_id' => '404', 'sort_order' => 0]);
+
+        app(LodgifyHomepageValidator::class)->validate();
+
+        $this->assertSame(LodgifyIncident::SEVERITY_CRITICAL, LodgifyIncident::firstOrFail()->severity);
     }
 
     public function test_admin_can_render_lodgify_health_page(): void
