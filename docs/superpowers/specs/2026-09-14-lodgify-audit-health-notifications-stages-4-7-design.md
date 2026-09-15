@@ -2,7 +2,7 @@
 
 Date: 2026-09-14
 
-Status: Proposed for user review
+Status: Approved with zero-touch automation amendment on 2026-09-15
 
 ## 1. Executive Decision
 
@@ -19,7 +19,7 @@ The operating model is deliberately low-touch:
 - A managed property that becomes active in Lodgify may appear automatically after normal validation.
 - An inactive or missing property is automatically hidden from public discovery.
 - Admins do not approve routine five-minute synchronizations.
-- Human action is reserved for exceptional business events that an API cannot infer, such as a property leaving or rejoining Summerhouse management.
+- Lodgify active status is treated as operational approval, including when a previously removed property returns.
 - No paid monitoring or third-party alerting service is required.
 
 ## 2. Confirmed Business State
@@ -32,8 +32,8 @@ The client confirmed the following decisions on 2026-09-14.
 | `598367` | The Warehouse Loft | Managed, temporarily unavailable | Hidden while inactive; returns automatically when active |
 | `707108` | Berawa Factory II Canggu | Managed, temporarily unavailable | Hidden while inactive; returns automatically when active |
 | `831493` | Casaluna Umalas (OPS ONLY) | Managed, temporarily unavailable | Hidden while inactive; returns automatically when active |
-| `818095` | Villa Semanggi Canggu | No longer managed | Always hidden until explicitly restored to managed |
-| `796460` | Bawa House | No longer managed | Always hidden until explicitly restored to managed |
+| `818095` | Villa Semanggi Canggu | No longer managed | Hidden while inactive or absent; restored automatically if Lodgify makes it active |
+| `796460` | Bawa House | No longer managed | Hidden while inactive or absent; restored automatically if Lodgify makes it active |
 
 The last-known database records for Semanggi and Bawa House must be retained. Removing them from Lodgify must not cascade into deletion of homepage selections, reviews, wishlists, media links, or historical audit data.
 
@@ -111,9 +111,7 @@ This makes automatic return work for managed villas while keeping confirmed remo
 
 A temporarily inactive managed villa returns automatically when Lodgify reports it active.
 
-A confirmed removed villa never returns automatically, even if a stale or accidental Lodgify record becomes active. The dashboard raises one deduplicated incident. If the villa is intentionally managed again, an admin performs `Restore to managed`. The original cache row, property ID, audit history, and related records are reused.
-
-This is the only intentional manual exception. The system cannot infer a management contract from an API status.
+A confirmed removed villa remains hidden while it is inactive or absent. If Lodgify later reports it active, reconciliation automatically changes its management state back to `managed`, appends a `property_reappeared` event, and makes it eligible after the normal cache window. This trusts the dedicated Summerhouse Lodgify account as operational approval and requires no separate admin action. The original cache row, property ID, audit history, and related records are reused.
 
 ## 5. Stage 4: Append-Only Audit Trail
 
@@ -240,7 +238,7 @@ Initial configurable rules:
 - Active count drops by 20 percent or five properties in one run, whichever is smaller: open warning incident
 - Any property moves to `suspected_missing`: informational transition, no immediate critical alert
 - The same property becomes `missing` after two complete syncs: warning unless it is confirmed removed
-- Removed property becomes active in Lodgify: warning requiring review, still hidden publicly
+- Removed property becomes active in Lodgify: restore automatically and record an informational transition
 - Room failures exceed 20 percent in a run: warning
 - Authentication failure: immediate critical incident
 
@@ -270,7 +268,7 @@ Existing invalid selections are never deleted automatically. The dashboard ident
 
 Publishing behavior:
 
-- Removed or confirmed-missing selection: block saving a newly published configuration until replaced
+- Removed or confirmed-missing selection: preserve it, warn in the editor, and keep it excluded from public rendering
 - Temporarily inactive selection: allow the configuration to remain, show a warning, and let the public frontend use a recorded active fallback
 - Suspected-missing selection: allow the first observation window, show a warning, and prevent choosing it elsewhere
 - Recovered active managed selection: automatically becomes valid again
@@ -358,7 +356,7 @@ Create `lodgify_incidents` with:
 
 The fingerprint groups repeated occurrences of the same root problem. A ten-minute outage creates one incident whose count increases, not dozens of notifications.
 
-Successful recovery auto-resolves technical incidents when their recovery rule is satisfied. Business conflicts such as a removed property becoming active require explicit acknowledgement or restoration.
+Successful recovery auto-resolves technical incidents when their recovery rule is satisfied. A removed property becoming active is treated as an automatic recovery because Lodgify is the operational authority.
 
 ### 8.4 Internal notification policy
 
@@ -370,7 +368,7 @@ Use Laravel database notifications and Filament's notification center. Notify al
 - Third consecutive failure or data age above 30 minutes: critical notification
 - Authentication failure: immediate critical notification
 - Count anomaly rejection: warning notification
-- Removed property active again: warning notification
+- Removed property active again: informational audit event; no action notification
 - Removed or missing villa used by a published homepage slot: critical notification
 - Resolution of a critical incident: one success notification
 
@@ -386,7 +384,7 @@ Create `docs/operations/lodgify-incident-runbook.md` during implementation with:
 - Safe steps for timeout, authentication, count anomaly, missing property, and homepage conflict
 - How to run a manual sync
 - How to inspect a correlation ID
-- How to restore a property to managed
+- How automatic property recovery is verified
 - How to replace an invalid homepage selection
 - Which actions must never hard-delete historical records
 - Production scheduler and queue-worker checks
@@ -430,7 +428,7 @@ all other combinations        --> hidden or controlled fallback
 | Managed property becomes active | Record transition | Show automatically | Resolve inactive-related issue |
 | Property absent once | `suspected_missing` | Hide property | Informational transition |
 | Property absent twice | `missing` | Hide property | Warning unless confirmed removed |
-| Removed property appears active | Preserve removed business state | Keep hidden | Warning requiring business decision |
+| Removed property appears active | Restore to managed and append event | Show after normal cache refresh | Resolve prior missing/removal issue |
 | Homepage references removed property | Preserve selection | Active fallback | Critical actionable incident |
 
 ## 11. Database and Migration Safety
@@ -459,7 +457,7 @@ All migrations must have reversible schema operations. A rollback removes new mo
 - Client-confirmed management statuses are backfilled correctly
 - Managed inactive property returns automatically when active
 - Removed property remains hidden when Lodgify reports active
-- Restore-to-managed action is audited
+- Automatic restore-to-managed transition is audited
 - Incident fingerprints deduplicate repeated failures
 - Technical incidents auto-resolve after recovery
 - Notification thresholds avoid alert storms
@@ -497,7 +495,7 @@ Stages 4 to 7 are complete when:
 2. Current property state can be explained from the latest cache plus its event history.
 3. Confirmed client decisions for six properties are represented in runtime data.
 4. Ordinary active, inactive, and recovery transitions require no admin approval.
-5. Semanggi and Bawa House cannot reappear without `Restore to managed`.
+5. Semanggi and Bawa House remain hidden while inactive or missing and return automatically only if Lodgify reports them active.
 6. Next.js obtains its public villa catalog from Laravel's policy-filtered snapshot.
 7. Dashboard health uses one tested evaluation service.
 8. Admins can inspect current incidents, property changes, and recent sync runs.
