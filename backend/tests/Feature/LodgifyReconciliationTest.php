@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\LodgifyIncident;
 use App\Models\LodgifyPropertyEvent;
 use App\Models\VillaCache;
 use App\Services\LodgifyService;
@@ -165,5 +166,25 @@ class LodgifyReconciliationTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $event->delete();
+    }
+
+    public function test_repeated_authentication_failure_is_deduplicated_and_success_resolves_it(): void
+    {
+        $options = [
+            'timeout' => 2, 'retries' => 0, 'concurrency' => 2,
+            'page_size' => 2, 'max_pages' => 3, 'min_ratio' => 0.1,
+        ];
+        $withoutKey = new LodgifyService('https://lodgify.test/v2', '', $options);
+        $withoutKey->syncAll();
+        $withoutKey->syncAll();
+
+        $incident = LodgifyIncident::where('category', 'authentication')->firstOrFail();
+        $this->assertSame(2, $incident->occurrence_count);
+        $this->assertSame(LodgifyIncident::STATUS_OPEN, $incident->status);
+
+        $this->fakeProperties([['id' => 1, 'name' => 'Recovered']]);
+        $this->service(['page_size' => 50])->syncAll();
+
+        $this->assertSame(LodgifyIncident::STATUS_RESOLVED, $incident->fresh()->status);
     }
 }

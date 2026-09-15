@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\LodgifyIncident;
 use App\Models\LodgifySyncRun;
 use App\Models\VillaCache;
+use App\Support\LodgifyLog;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -15,9 +16,15 @@ class LodgifyService
 {
     protected LodgifyAuditService $audit;
 
+    protected LodgifyIncidentService $incidents;
+
+    protected LodgifyHomepageValidator $homepageValidator;
+
     public function __construct(protected string $baseUrl, protected string $apiKey, protected array $options)
     {
         $this->audit = app(LodgifyAuditService::class);
+        $this->incidents = app(LodgifyIncidentService::class);
+        $this->homepageValidator = app(LodgifyHomepageValidator::class);
     }
 
     public static function make(): self
@@ -36,29 +43,82 @@ class LodgifyService
     {
         $run = LodgifySyncRun::create(['run_uuid' => (string) Str::uuid(), 'status' => 'running', 'started_at' => now()]);
         if ($this->apiKey === '') {
-            return $this->fail($run, 'authentication', 'Lodgify API key is missing');
+            $run = $this->fail($run, 'authentication', 'Lodgify API key is missing');
+            $this->incidents->open('authentication', LodgifyIncident::SEVERITY_CRITICAL, 'Lodgify authentication is unavailable', 'The Lodgify API key is missing.', [], null, null, null, $run);
+
+            return $run;
         }
         try {
             $properties = $this->fetchAllProperties();
-            $previousTotal = (int) LodgifySyncRun::query()->whereIn('status', ['completed', 'completed_with_warnings'])->latest('finished_at')->value('total_count');
+            $previousRun = LodgifySyncRun::query()->whereIn('status', ['completed', 'completed_with_warnings'])->latest('finished_at')->first();
+            $previousTotal = (int) ($previousRun?->total_count ?? 0);
             if ($previousTotal > 0 && count($properties) < $previousTotal * $this->options['min_ratio']) {
-                return $this->finish($run, 'rejected_as_anomaly', ['total_count' => count($properties), 'error_count' => 1, 'error_category' => 'count_anomaly', 'error_message' => 'Candidate property count fell below the safe ratio']);
+                $run = $this->finish($run, 'rejected_as_anomaly', ['total_count' => count($properties), 'error_count' => 1, 'error_category' => 'count_anomaly', 'error_message' => 'Candidate property count fell below the safe ratio']);
+                $this->incidents->open('count_anomaly', LodgifyIncident::SEVERITY_WARNING, 'Lodgify property count was rejected', 'The candidate property count fell below the configured safe ratio. The previous snapshot was preserved.', ['previous_total' => $previousTotal, 'candidate_total' => count($properties)], null, null, null, $run);
+
+                return $run;
             }
             $snapshot = (string) Str::uuid();
             [$roomsById, $warnings] = $this->fetchRoomsForProperties($properties);
             $counts = DB::transaction(fn () => $this->reconcile($properties, $roomsById, $snapshot, $run));
+            $run = $this->finish($run, $warnings ? 'completed_with_warnings' : 'completed', array_merge($counts, ['snapshot_version' => $snapshot, 'warning_count' => $warnings]));
+            $this->afterSuccessfulSync($run, $previousRun, $warnings);
 
-            return $this->finish($run, $warnings ? 'completed_with_warnings' : 'completed', array_merge($counts, ['snapshot_version' => $snapshot, 'warning_count' => $warnings]));
+            return $run;
         } catch (Throwable $error) {
             $category = $this->category($error);
-            Log::warning('[lodgify:sync]', ['category' => $category, 'message' => $error->getMessage()]);
+            LodgifyLog::write($category === 'authentication' ? 'critical' : 'warning', 'lodgify.sync.failed', $error->getMessage(), [
+                'category' => $category,
+                'run_uuid' => $run->run_uuid,
+                'operation' => 'full_sync',
+            ]);
 
             if ($category === 'partial_sync') {
-                return $this->finish($run, 'partial', ['error_count' => 1, 'error_category' => $category, 'error_message' => Str::limit($error->getMessage(), 1000)]);
+                $run = $this->finish($run, 'partial', ['error_count' => 1, 'error_category' => $category, 'error_message' => Str::limit($error->getMessage(), 1000)]);
+            } else {
+                $run = $this->fail($run, $category, $error->getMessage());
             }
+            $severity = $category === 'authentication' ? LodgifyIncident::SEVERITY_CRITICAL : LodgifyIncident::SEVERITY_WARNING;
+            $incidentCategory = $category === 'authentication' ? 'authentication' : 'sync_failure';
+            $this->incidents->open($incidentCategory, $severity, 'Lodgify synchronization failed', 'The last-known-good property snapshot remains active.', ['error_category' => $category], null, null, null, $run);
 
-            return $this->fail($run, $category, $error->getMessage());
+            return $run;
         }
+    }
+
+    protected function afterSuccessfulSync(LodgifySyncRun $run, ?LodgifySyncRun $previousRun, int $roomWarnings): void
+    {
+        $this->incidents->resolveCategory('sync_failure');
+        $this->incidents->resolveCategory('authentication');
+        $this->incidents->resolveCategory('count_anomaly');
+
+        $roomRatio = $run->total_count > 0 ? $roomWarnings / $run->total_count : 0;
+        if ($roomRatio >= (float) config('services.lodgify.room_warning_ratio', 0.2)) {
+            $this->incidents->open('room_degradation', LodgifyIncident::SEVERITY_WARNING, 'Lodgify room data is degraded', 'Several room requests failed. Previous room snapshots were retained.', ['warning_count' => $roomWarnings, 'total_count' => $run->total_count], null, null, null, $run);
+        } else {
+            $this->incidents->resolveCategory('room_degradation');
+        }
+
+        if ($previousRun && $previousRun->active_count > 0) {
+            $drop = $previousRun->active_count - $run->active_count;
+            $ratio = $drop / $previousRun->active_count;
+            if ($drop >= min(5, max(1, (int) ceil($previousRun->active_count * (float) config('services.lodgify.active_drop_ratio', 0.2))))) {
+                $this->incidents->open('active_count_anomaly', LodgifyIncident::SEVERITY_WARNING, 'Active villa count changed sharply', 'The active villa count dropped more than the configured threshold.', ['previous_active' => $previousRun->active_count, 'current_active' => $run->active_count, 'drop_ratio' => round($ratio, 4)], null, null, null, $run);
+            } else {
+                $this->incidents->resolveCategory('active_count_anomaly');
+            }
+        }
+
+        $this->homepageValidator->validate($run);
+        LodgifyLog::write('info', 'lodgify.sync.completed', 'Lodgify synchronization completed.', [
+            'run_uuid' => $run->run_uuid,
+            'operation' => 'full_sync',
+            'total_count' => $run->total_count,
+            'active_count' => $run->active_count,
+            'inactive_count' => $run->inactive_count,
+            'warning_count' => $run->warning_count,
+            'duration_ms' => $run->finished_at?->diffInMilliseconds($run->started_at),
+        ]);
     }
 
     protected function fetchAllProperties(): array

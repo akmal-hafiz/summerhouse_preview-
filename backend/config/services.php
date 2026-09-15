@@ -47,6 +47,12 @@ return [
         'page_size' => min(50, max(1, (int) env('LODGIFY_PAGE_SIZE', 50))),
         'max_pages' => min(50, max(1, (int) env('LODGIFY_MAX_PAGES', 20))),
         'sync_min_count_ratio' => min(1, max(0.1, (float) env('LODGIFY_SYNC_MIN_COUNT_RATIO', 0.5))),
+        'health_healthy_age_minutes' => min(30, max(5, (int) env('LODGIFY_HEALTHY_AGE_MINUTES', 10))),
+        'health_critical_age_minutes' => min(120, max(15, (int) env('LODGIFY_CRITICAL_AGE_MINUTES', 30))),
+        'active_drop_ratio' => min(1, max(0.05, (float) env('LODGIFY_ACTIVE_DROP_RATIO', 0.2))),
+        'room_warning_ratio' => min(1, max(0.05, (float) env('LODGIFY_ROOM_WARNING_RATIO', 0.2))),
+        'sync_run_retention_days' => min(365, max(30, (int) env('LODGIFY_SYNC_RETENTION_DAYS', 90))),
+        'incident_retention_days' => min(1825, max(365, (int) env('LODGIFY_INCIDENT_RETENTION_DAYS', 730))),
     ],
 
 ];
