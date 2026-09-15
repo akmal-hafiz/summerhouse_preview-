@@ -6,6 +6,7 @@ use App\Forms\Components\VillaPicker;
 use App\Jobs\SyncLodgifyJob;
 use App\Models\HomepageVillaSelection;
 use App\Models\LodgifyIncident;
+use App\Models\LodgifyPropertyEvent;
 use App\Models\LodgifySyncRun;
 use App\Models\User;
 use App\Models\VillaCache;
@@ -118,5 +119,45 @@ class LodgifyOperationsTest extends TestCase
         $this->assertSame('Temporarily unavailable', $villas['2']['status_label']);
         $this->assertFalse($villas['3']['selectable']);
         $this->assertSame('No longer managed', $villas['3']['status_label']);
+    }
+
+    public function test_pruning_old_operations_never_removes_property_events(): void
+    {
+        $run = LodgifySyncRun::create([
+            'run_uuid' => fake()->uuid(),
+            'status' => 'completed',
+            'started_at' => now()->subDays(100),
+            'finished_at' => now()->subDays(100),
+        ]);
+        $villa = VillaCache::create(['lodgify_id' => '1', 'name' => 'One']);
+        LodgifyPropertyEvent::create([
+            'event_uuid' => fake()->uuid(),
+            'event_key' => hash('sha256', 'prune-test'),
+            'sync_run_id' => $run->id,
+            'villa_cache_id' => $villa->id,
+            'lodgify_id' => '1',
+            'event_type' => 'property_discovered',
+            'actor_type' => 'system',
+            'occurred_at' => now()->subDays(100),
+        ]);
+        LodgifyIncident::create([
+            'incident_uuid' => fake()->uuid(),
+            'fingerprint' => hash('sha256', 'old-incident'),
+            'severity' => 'warning',
+            'category' => 'sync_failure',
+            'status' => LodgifyIncident::STATUS_RESOLVED,
+            'title' => 'Old',
+            'message' => 'Old incident',
+            'first_seen_at' => now()->subDays(800),
+            'last_seen_at' => now()->subDays(800),
+            'resolved_at' => now()->subDays(800),
+        ]);
+
+        $this->artisan('lodgify:prune-operations')->assertSuccessful();
+
+        $this->assertDatabaseCount('lodgify_sync_runs', 0);
+        $this->assertDatabaseCount('lodgify_incidents', 0);
+        $this->assertDatabaseCount('lodgify_property_events', 1);
+        $this->assertNull(LodgifyPropertyEvent::first()->sync_run_id);
     }
 }

@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('lodgify:sync')->everyFiveMinutes()->withoutOverlapping(10);
         $schedule->command('lodgify:health-check')->everyFiveMinutes()->withoutOverlapping(10);
+        $schedule->command('lodgify:prune-operations')->daily()->withoutOverlapping(30);
         $schedule->command('media:prune --hours=24')->daily();
         $schedule->command('queue:prune-failed --hours=168')->daily();
     }
