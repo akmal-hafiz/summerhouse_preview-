@@ -26,7 +26,7 @@ class CmsController extends Controller
     public function lodgifySnapshot(): JsonResponse
     {
         $run = LodgifySyncRun::query()->whereIn('status', ['completed', 'completed_with_warnings'])->latest('finished_at')->first();
-        $properties = VillaCache::query()->where('lodgify_status', VillaCache::STATUS_ACTIVE)->orderBy('name')->get()->map(function (VillaCache $villa) {
+        $properties = VillaCache::query()->publiclyEligible()->orderBy('name')->get()->map(function (VillaCache $villa) {
             $raw = is_array($villa->raw) ? $villa->raw : [];
             $property = array_intersect_key($raw, array_flip(['id', 'name', 'internal_name', 'description', 'image_url', 'images', 'amenities', 'original_min_price', 'original_max_price', 'min_price', 'max_price', 'currency_code', 'city', 'country', 'country_code', 'state', 'address', 'latitude', 'longitude', 'location', 'is_active', 'is_featured', 'rating', 'max_people', 'max_guests', 'bedrooms', 'bathrooms', 'rooms_count', 'bathrooms_count']));
             $rooms = collect($villa->rooms_raw ?? [])->filter(fn ($room) => is_array($room))->map(fn ($room) => array_intersect_key($room, array_flip(['id', 'name', 'image_url', 'images', 'amenities', 'max_people', 'bedrooms', 'bathrooms'])))->values();
@@ -172,6 +172,7 @@ class CmsController extends Controller
     {
         $location = $collection->lodgify_location ?: $collection->location;
         $villas = VillaCache::query()
+            ->publiclyEligible()
             ->where('location', $location)
             ->get(['lodgify_id', 'name', 'thumbnail_url', 'bedrooms', 'max_guests', 'location', 'raw']);
         $villaCount = $villas->count();
@@ -405,6 +406,7 @@ class CmsController extends Controller
             ]);
 
             $villas = VillaCache::query()
+                ->publiclyEligible()
                 ->whereIn('lodgify_id', $rows->pluck('lodgify_property_id')->filter()->unique())
                 ->get(['lodgify_id', 'name', 'location'])
                 ->keyBy('lodgify_id');

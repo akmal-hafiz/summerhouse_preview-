@@ -90,7 +90,7 @@ class GalleryItemResource extends Resource
                 ->schema([
                     Forms\Components\Select::make('lodgify_property_id')
                         ->label('Property')
-                        ->options(fn () => VillaCache::query()->orderBy('name')->pluck('name', 'lodgify_id')->all())
+                        ->options(fn () => VillaCache::query()->publiclyEligible()->orderBy('name')->pluck('name', 'lodgify_id')->all())
                         ->searchable()
                         ->nullable()
                         ->placeholder('Not linked to a property'),

@@ -32,6 +32,7 @@
                     </template>
                     <div class="villa-picker-preview-body">
                         <span class="villa-picker-preview-name" x-text="selected.name"></span>
+                        <span x-show="!selected.selectable" class="text-xs font-semibold text-warning-700" x-text="selected.status_label"></span>
                         <span class="villa-picker-preview-meta">
                             <span x-text="'#' + selected.id"></span>
                             <template x-if="selected.bedrooms">
@@ -103,7 +104,7 @@
 
                     <div class="villa-picker-grid">
                         <template x-for="villa in filtered" :key="villa.id">
-                            <button type="button" class="villa-card" :class="{ 'is-selected': selected && selected.id === villa.id }" @click="pick(villa)">
+                            <button type="button" class="villa-card" :class="{ 'is-selected': selected && selected.id === villa.id, 'opacity-60': !villa.selectable }" :disabled="!villa.selectable" @click="villa.selectable && pick(villa)">
                                 <div class="villa-card-thumb">
                                     <template x-if="villa.thumbnail">
                                         <img :src="villa.thumbnail" :alt="villa.name" loading="lazy" />
@@ -115,6 +116,7 @@
                                 </div>
                                 <div class="villa-card-body">
                                     <span class="villa-card-name" x-text="villa.name"></span>
+                                    <span class="text-xs font-semibold" :class="villa.selectable ? 'text-success-700' : 'text-warning-700'" x-text="villa.status_label"></span>
                                     <span class="villa-card-meta">
                                         <template x-if="villa.bedrooms">
                                             <span class="villa-card-chip" x-text="villa.bedrooms + ' BR'"></span>

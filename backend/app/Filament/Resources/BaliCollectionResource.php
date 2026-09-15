@@ -18,9 +18,13 @@ class BaliCollectionResource extends Resource
     protected static ?string $model = BaliCollection::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-map';
+
     protected static ?string $navigationGroup = 'Content Library';
+
     protected static ?string $navigationLabel = 'Destination Guides';
+
     protected static ?int $navigationSort = 20;
+
     protected static ?string $recordTitleAttribute = 'location';
 
     public static function getGloballySearchableAttributes(): array
@@ -45,22 +49,23 @@ class BaliCollectionResource extends Resource
                                     ->searchable()
                                     ->native(false)
                                     ->options(fn (): array => VillaCache::query()
+                                        ->publiclyEligible()
                                         ->whereNotNull('location')
                                         ->orderBy('location')
                                         ->pluck('location', 'location')
                                         ->filter()
                                         ->all())
-                                    ->getSearchResultsUsing(fn (string $search): array =>
-                                        VillaCache::query()
-                                            ->where('location', 'like', "%{$search}%")
-                                            ->orderBy('location')
-                                            ->limit(20)
-                                            ->pluck('location', 'location')
-                                            ->all()
+                                    ->getSearchResultsUsing(fn (string $search): array => VillaCache::query()
+                                        ->publiclyEligible()
+                                        ->where('location', 'like', "%{$search}%")
+                                        ->orderBy('location')
+                                        ->limit(20)
+                                        ->pluck('location', 'location')
+                                        ->all()
                                     )
                                     ->live()
                                     ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
-                                        if (!$state) {
+                                        if (! $state) {
                                             return;
                                         }
 
@@ -84,17 +89,19 @@ class BaliCollectionResource extends Resource
                                     ->label('Public villas result')
                                     ->content(function (Forms\Get $get): string {
                                         $location = (string) ($get('lodgify_location') ?: $get('location'));
-                                        return '/villas?location=' . rawurlencode($location) . '&match=exact';
+
+                                        return '/villas?location='.rawurlencode($location).'&match=exact';
                                     }),
                                 Forms\Components\Placeholder::make('villa_preview')
                                     ->label('Related villa data')
                                     ->content(function (Forms\Get $get): string {
                                         $location = $get('lodgify_location') ?: $get('location');
-                                        if (!$location) {
+                                        if (! $location) {
                                             return 'Choose a location first';
                                         }
 
-                                        $count = VillaCache::query()->where('location', $location)->count();
+                                        $count = VillaCache::query()->publiclyEligible()->where('location', $location)->count();
+
                                         return "{$count} active villa records currently match";
                                     }),
                             ]),

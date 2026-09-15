@@ -236,6 +236,7 @@ class SiteSettingsManager extends Page implements HasForms
                                             ->searchable()
                                             ->native(false)
                                             ->options(fn (): array => VillaCache::query()
+                                                ->publiclyEligible()
                                                 ->whereNotNull('location')
                                                 ->orderBy('location')
                                                 ->pluck('location', 'location')

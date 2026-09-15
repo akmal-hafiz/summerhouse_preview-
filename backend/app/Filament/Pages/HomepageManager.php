@@ -229,7 +229,7 @@ class HomepageManager extends Page implements HasForms
                                 ->searchable()
                                 ->preload()
                                 ->native(false)
-                                ->options(fn (): array => VillaCache::query()->orderBy('name')->pluck('name', 'lodgify_id')->all())
+                                ->options(fn (): array => VillaCache::query()->publiclyEligible()->orderBy('name')->pluck('name', 'lodgify_id')->all())
                                 ->live()
                                 ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
                                     $set('why_stay.recognition.villa_name', $state
@@ -404,12 +404,14 @@ class HomepageManager extends Page implements HasForms
                     ->searchable()
                     ->native(false)
                     ->options(fn (): array => VillaCache::query()
+                        ->publiclyEligible()
                         ->whereNotNull('location')
                         ->orderBy('location')
                         ->pluck('location', 'location')
                         ->filter()
                         ->all())
                     ->getSearchResultsUsing(fn (string $search): array => VillaCache::query()
+                        ->publiclyEligible()
                         ->where('location', 'like', "%{$search}%")
                         ->limit(20)
                         ->pluck('location', 'location')
@@ -492,10 +494,10 @@ class HomepageManager extends Page implements HasForms
 
         if ($row) {
             $lodgifyId = (string) $row->lodgify_property_id;
-            $villa = VillaCache::where('lodgify_id', $lodgifyId)->first();
+            $villa = VillaCache::publiclyEligible()->where('lodgify_id', $lodgifyId)->first();
         } else {
             /* Mirror frontend fallback: highest-priced villa from Lodgify cache. */
-            $villa = VillaCache::all()
+            $villa = VillaCache::publiclyEligible()->get()
                 ->sortByDesc(fn (VillaCache $v) => (float) ($v->raw['max_price'] ?? 0))
                 ->first();
             if ($villa) {
@@ -711,7 +713,7 @@ class HomepageManager extends Page implements HasForms
 
     private function villaCountLabel(string $location): string
     {
-        $count = VillaCache::query()->where('location', $location)->count();
+        $count = VillaCache::query()->publiclyEligible()->where('location', $location)->count();
 
         return "{$count} ".($count === 1 ? 'villa' : 'villas');
     }

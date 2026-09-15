@@ -19,14 +19,14 @@ class BaliCollection extends Model
         static::saving(function (BaliCollection $row) {
             $location = trim((string) $row->location);
 
-            if ($location !== '' && (empty($row->collection_id) || !$row->exists)) {
+            if ($location !== '' && (empty($row->collection_id) || ! $row->exists)) {
                 $row->collection_id = Str::slug($location);
             }
 
             if ($location !== '') {
-                $row->href = '/villas?location=' . rawurlencode(
+                $row->href = '/villas?location='.rawurlencode(
                     (string) ($row->lodgify_location ?: $location)
-                ) . '&match=exact';
+                ).'&match=exact';
             }
 
             // Kept for compatibility with the original schema. The public
@@ -37,19 +37,19 @@ class BaliCollection extends Model
                 $row->image_alt = "Summerhouse destination guide to {$location}";
             }
 
-            if (empty($row->image) && !empty($row->video_poster)) {
+            if (empty($row->image) && ! empty($row->video_poster)) {
                 $row->image = $row->video_poster;
             }
 
-            if (empty($row->tag) && !empty($row->category)) {
+            if (empty($row->tag) && ! empty($row->category)) {
                 $row->tag = $row->category;
             }
 
             $row->location_key = $row->location_key ?: Str::slug((string) ($row->lodgify_location ?: $location));
             $row->lodgify_location = $row->lodgify_location ?: $location;
             if (empty($row->villa_count)) {
-                $count = VillaCache::query()->where('location', $row->lodgify_location)->count();
-                $row->villa_count = "{$count} " . ($count === 1 ? 'villa' : 'villas');
+                $count = VillaCache::query()->publiclyEligible()->where('location', $row->lodgify_location)->count();
+                $row->villa_count = "{$count} ".($count === 1 ? 'villa' : 'villas');
             }
             $row->price = $row->price ?: 'Price confirmed at booking';
             $row->eyebrow = $row->eyebrow ?: 'Bali Destination Guide';

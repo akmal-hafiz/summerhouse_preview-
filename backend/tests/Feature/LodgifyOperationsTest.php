@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Forms\Components\VillaPicker;
 use App\Jobs\SyncLodgifyJob;
 use App\Models\HomepageVillaSelection;
 use App\Models\LodgifyIncident;
@@ -102,5 +103,20 @@ class LodgifyOperationsTest extends TestCase
 
         $this->artisan('lodgify:health-check')->assertSuccessful();
         $this->assertSame(LodgifyIncident::STATUS_RESOLVED, $incident->fresh()->status);
+    }
+
+    public function test_villa_picker_preserves_invalid_values_but_only_active_managed_villas_are_selectable(): void
+    {
+        VillaCache::create(['lodgify_id' => '1', 'name' => 'Active', 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        VillaCache::create(['lodgify_id' => '2', 'name' => 'Inactive', 'lodgify_status' => VillaCache::STATUS_INACTIVE]);
+        VillaCache::create(['lodgify_id' => '3', 'name' => 'Removed', 'lodgify_status' => VillaCache::STATUS_ACTIVE, 'management_status' => VillaCache::MANAGEMENT_REMOVED]);
+
+        $villas = collect(VillaPicker::make('villa')->getVillas())->keyBy('id');
+
+        $this->assertTrue($villas['1']['selectable']);
+        $this->assertFalse($villas['2']['selectable']);
+        $this->assertSame('Temporarily unavailable', $villas['2']['status_label']);
+        $this->assertFalse($villas['3']['selectable']);
+        $this->assertSame('No longer managed', $villas['3']['status_label']);
     }
 }
