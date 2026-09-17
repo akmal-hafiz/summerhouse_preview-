@@ -9,6 +9,7 @@ use App\Services\LodgifyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class LodgifyReconciliationTest extends TestCase
@@ -43,6 +44,136 @@ class LodgifyReconciliationTest extends TestCase
     private function fakeProperties(array $properties): void
     {
         $this->properties = $properties;
+    }
+
+    private function replaceHttpFake(array|callable $responses): void
+    {
+        // Laravel merges fakes. Replace the factory so the default callback
+        // cannot intercept the failure scenario being tested.
+        Http::swap(new \Illuminate\Http\Client\Factory);
+        Http::fake($responses);
+        Http::preventStrayRequests();
+    }
+
+    public static function transientStatuses(): array
+    {
+        return array_map(fn ($status) => [$status], [429, 500, 502, 503, 504]);
+    }
+
+    #[DataProvider('transientStatuses')]
+    public function test_transient_catalog_failure_retries_once_and_recovers(int $status): void
+    {
+        $this->replaceHttpFake([
+            '*/properties?*' => Http::sequence()->push([], $status)->push(['items' => [['id' => 1, 'name' => 'Recovered']]]),
+            '*/rooms' => Http::response([], 200),
+        ]);
+
+        $run = $this->service(['retries' => 1])->syncAll();
+
+        $this->assertSame('completed', $run->status);
+        $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '1', 'name' => 'Recovered']);
+        Http::assertSentCount(3);
+    }
+
+    public static function permanentStatuses(): array
+    {
+        return [[401, 'authentication'], [403, 'authentication'], [404, 'request_failed']];
+    }
+
+    #[DataProvider('permanentStatuses')]
+    public function test_permanent_failure_never_retries_or_marks_existing_villa_missing(int $status, string $category): void
+    {
+        VillaCache::create(['lodgify_id' => '99', 'name' => 'Last known good', 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        $this->replaceHttpFake(['*' => Http::response([], $status)]);
+
+        $run = $this->service(['retries' => 1])->syncAll();
+
+        $this->assertSame('failed', $run->status);
+        $this->assertSame($category, $run->error_category);
+        $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '99', 'lodgify_status' => VillaCache::STATUS_ACTIVE, 'consecutive_missing_count' => 0]);
+        Http::assertSentCount(1);
+    }
+
+    public function test_connect_timeout_has_bounded_retry_and_preserves_last_known_good(): void
+    {
+        VillaCache::create(['lodgify_id' => '99', 'name' => 'Safe', 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        $attempts = 0;
+        $this->replaceHttpFake(function () use (&$attempts) {
+            $attempts++;
+            throw new \Illuminate\Http\Client\ConnectionException('Connect timeout');
+        });
+
+        $run = $this->service(['retries' => 1])->syncAll();
+
+        $this->assertSame(2, $attempts);
+        $this->assertSame('timeout', $run->error_category);
+        $this->assertSame('failed', $run->status);
+        $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '99', 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+    }
+
+    public function test_failure_on_later_pagination_page_never_promotes_partial_catalog(): void
+    {
+        VillaCache::create(['lodgify_id' => '99', 'name' => 'Safe', 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        $this->replaceHttpFake(['*/properties?*' => Http::sequence()
+            ->push(['items' => [['id' => 1], ['id' => 2]]])
+            ->push([], 500)]);
+
+        $run = $this->service()->syncAll();
+
+        $this->assertSame('failed', $run->status);
+        $this->assertDatabaseCount('villa_caches', 1);
+        $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '99', 'consecutive_missing_count' => 0]);
+        $this->assertDatabaseCount('lodgify_property_events', 0);
+    }
+
+    public function test_all_http_room_failures_preserve_previous_room_snapshots(): void
+    {
+        $rooms = [['bedrooms' => 3, 'max_people' => 6]];
+        VillaCache::create(['lodgify_id' => '1', 'name' => 'One', 'rooms_raw' => $rooms, 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        VillaCache::create(['lodgify_id' => '2', 'name' => 'Two', 'rooms_raw' => $rooms, 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        $this->replaceHttpFake([
+            '*/properties?*' => Http::response(['items' => [['id' => 1, 'name' => 'One'], ['id' => 2, 'name' => 'Two']]]),
+            '*/rooms' => Http::response([], 503),
+        ]);
+
+        $run = $this->service(['page_size' => 50])->syncAll();
+
+        $this->assertSame('completed_with_warnings', $run->status);
+        $this->assertSame(2, $run->warning_count);
+        foreach (VillaCache::all() as $villa) {
+            $this->assertSame($rooms, $villa->rooms_raw);
+            $this->assertSame(3, $villa->bedrooms);
+            $this->assertSame(6, $villa->max_guests);
+        }
+    }
+
+    public function test_one_room_failure_does_not_discard_other_successful_room_data(): void
+    {
+        $previous = [['bedrooms' => 2, 'max_people' => 4]];
+        VillaCache::create(['lodgify_id' => '1', 'name' => 'One', 'rooms_raw' => $previous]);
+        $this->replaceHttpFake([
+            '*/properties?*' => Http::response(['items' => [['id' => 1, 'name' => 'One'], ['id' => 2, 'name' => 'Two']]]),
+            '*/properties/1/rooms' => Http::response([], 500),
+            '*/properties/2/rooms' => Http::response([['bedrooms' => 5, 'max_people' => 10]]),
+        ]);
+
+        $run = $this->service(['page_size' => 50])->syncAll();
+
+        $this->assertSame('completed_with_warnings', $run->status);
+        $this->assertSame(1, $run->warning_count);
+        $this->assertSame($previous, VillaCache::where('lodgify_id', '1')->firstOrFail()->rooms_raw);
+        $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '2', 'bedrooms' => 5, 'max_guests' => 10]);
+    }
+
+    public function test_invalid_response_never_promotes_empty_snapshot(): void
+    {
+        VillaCache::create(['lodgify_id' => '99', 'name' => 'Safe', 'lodgify_status' => VillaCache::STATUS_ACTIVE]);
+        $this->replaceHttpFake(['*' => Http::response(['unexpected' => 'payload'])]);
+
+        $run = $this->service()->syncAll();
+
+        $this->assertSame('invalid_response', $run->error_category);
+        $this->assertDatabaseHas('villa_caches', ['lodgify_id' => '99', 'lodgify_status' => VillaCache::STATUS_ACTIVE, 'consecutive_missing_count' => 0]);
     }
 
     public function test_it_reconciles_paginated_active_and_inactive_properties_idempotently(): void
