@@ -42,7 +42,9 @@ export default function ExploreBaliSection({
                 "A closer look at the neighbourhoods, landscapes, and local rhythms around our homes."}
             </p>
             <span className="bali-collection-intro-rule" aria-hidden="true" />
-            <span className="bali-collection-monogram" aria-hidden="true">O</span>
+            <span className="bali-collection-monogram" aria-hidden="true">
+              <span className="bali-collection-enso" />
+            </span>
           </div>
         </motion.div>
 

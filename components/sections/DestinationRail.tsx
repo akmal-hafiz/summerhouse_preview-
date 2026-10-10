@@ -12,19 +12,22 @@ import { nextCarouselIndex, safeDestinationHref } from "@/lib/destination-carous
 import styles from "./DestinationRail.module.css";
 
 const SWIPE_THRESHOLD = 48;
-const AUTO_ADVANCE_MS = 6500;
+const AUTO_ADVANCE_MS = 4000;
 const formatLocation = (value: string) => value.replace(/\s+-\s+/g, " – ");
 
 export default function DestinationRail({ collections }: { collections: BaliCollectionItem[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const [pointerPaused, setPointerPaused] = useState(false);
   const [focusPaused, setFocusPaused] = useState(false);
   const [touchPaused, setTouchPaused] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
+  const [sectionVisible, setSectionVisible] = useState(false);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
   const indexRail = useRef<HTMLElement>(null);
   const indexItems = useRef<Array<HTMLButtonElement | null>>([]);
+  const remainingTime = useRef(AUTO_ADVANCE_MS);
+  const timerStartedAt = useRef<number | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const index = Math.min(activeIndex, Math.max(0, collections.length - 1));
   const active = collections[index];
@@ -60,15 +63,50 @@ export default function DestinationRail({ collections }: { collections: BaliColl
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
 
-  const interactionPaused = pointerPaused || focusPaused || touchPaused;
-  const autoplayPaused = interactionPaused || !pageVisible || reducedMotion;
+  useEffect(() => {
+    const story = storyRef.current;
+    if (!story || typeof IntersectionObserver === "undefined") {
+      setSectionVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setSectionVisible(entry.isIntersecting && entry.intersectionRatio >= 0.18),
+      { threshold: [0, 0.18, 0.5] },
+    );
+    observer.observe(story);
+    return () => observer.disconnect();
+  }, []);
+
+  const interactionPaused = focusPaused || touchPaused;
+  const autoNextPaused = interactionPaused || !pageVisible || !sectionVisible || reducedMotion;
 
   useEffect(() => {
-    if (autoplayPaused || collections.length < 2) return;
+    remainingTime.current = AUTO_ADVANCE_MS;
+    timerStartedAt.current = null;
+  }, [index]);
 
-    const timer = window.setTimeout(() => move(1), AUTO_ADVANCE_MS);
-    return () => window.clearTimeout(timer);
-  }, [autoplayPaused, collections.length, index, move]);
+  useEffect(() => {
+    if (autoNextPaused || collections.length < 2) return;
+
+    timerStartedAt.current = performance.now();
+    const timer = window.setTimeout(() => {
+      remainingTime.current = AUTO_ADVANCE_MS;
+      timerStartedAt.current = null;
+      move(1);
+    }, remainingTime.current);
+
+    return () => {
+      window.clearTimeout(timer);
+      if (timerStartedAt.current !== null) {
+        remainingTime.current = Math.max(
+          120,
+          remainingTime.current - (performance.now() - timerStartedAt.current),
+        );
+        timerStartedAt.current = null;
+      }
+    };
+  }, [autoNextPaused, collections.length, index, move]);
 
   const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
     if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
@@ -84,19 +122,14 @@ export default function DestinationRail({ collections }: { collections: BaliColl
 
   return (
     <div
+      ref={storyRef}
       className={styles.story}
-      data-autoplay-paused={autoplayPaused ? "true" : "false"}
+      data-autoplay-paused={autoNextPaused ? "true" : "false"}
       style={{ "--destination-autoplay-duration": `${AUTO_ADVANCE_MS}ms` } as CSSProperties}
       role="region"
       aria-roledescription="carousel"
       aria-label="Bali neighbourhood destinations"
       tabIndex={0}
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") setPointerPaused(true);
-      }}
-      onPointerLeave={(event) => {
-        if (event.pointerType === "mouse") setPointerPaused(false);
-      }}
       onFocusCapture={() => setFocusPaused(true)}
       onBlurCapture={handleBlur}
       onKeyDown={(event) => {
@@ -119,6 +152,10 @@ export default function DestinationRail({ collections }: { collections: BaliColl
         if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
           move(deltaX < 0 ? 1 : -1);
         }
+      }}
+      onTouchCancel={() => {
+        touchStart.current = null;
+        setTouchPaused(false);
       }}
     >
       <nav
@@ -187,7 +224,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
                 alt={active.imageAlt || `A villa in ${active.location}`}
                 fill
                 sizes="(min-width: 1024px) 66vw, 100vw"
-                quality={78}
+                quality={75}
                 priority={index === 0}
                 className={styles.image}
               />
@@ -211,7 +248,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
             <div className={styles.progress} aria-label={`Destination ${index + 1} of ${collections.length}`}>
               <span>{String(index + 1).padStart(2, "0")} / {String(collections.length).padStart(2, "0")}</span>
               <span className={styles.progressTrack} aria-hidden="true">
-                <span style={{ width: `${((index + 1) / collections.length) * 100}%` }} />
+                <span key={active.id} />
               </span>
             </div>
 

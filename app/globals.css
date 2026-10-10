@@ -11042,11 +11042,15 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   place-items: center;
   border: 1px solid #6d8d72;
   border-radius: 50%;
-  color: #446b4a;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1.3rem;
-  font-weight: 300;
-  line-height: 1;
+}
+
+.bali-collection-enso {
+  display: block;
+  width: 2.15rem;
+  height: 2.15rem;
+  background: #446b4a;
+  mask: url("/brand/enso-mark.webp") center / contain no-repeat;
+  -webkit-mask: url("/brand/enso-mark.webp") center / contain no-repeat;
 }
 
 .bali-collection-kicker {
