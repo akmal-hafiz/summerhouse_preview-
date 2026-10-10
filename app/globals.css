@@ -11629,12 +11629,16 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 
 @media (max-width: 640px) {
   .bali-collection-section {
-    padding-block: 3rem 4rem;
+    padding-block: 3.15rem 3.75rem;
   }
 
   .bali-collection-shell {
-    width: calc(100% - 2rem);
+    width: calc(100% - 2.4rem);
     padding-inline: 0;
+  }
+
+  .bali-collection-header {
+    gap: 1.6rem;
   }
 
   .bali-collection-kicker {
@@ -11648,13 +11652,17 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   }
 
   .bali-collection-stacked-title {
-    font-size: clamp(2.8rem, 13vw, 3.9rem);
-    letter-spacing: -0.05em;
+    max-width: none;
+    font-size: clamp(3.1rem, 13.6vw, 4rem);
+    line-height: 0.94;
+    letter-spacing: -0.057em;
   }
 
   .bali-collection-desc {
-    font-size: 0.86rem;
-    line-height: 1.65;
+    max-width: 34rem;
+    color: #878178;
+    font-size: 0.9rem;
+    line-height: 1.7;
   }
 
   .bali-collection-carousel {

@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useRef, useState } from "react";
+import { FiArrowLeft, FiArrowRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { BaliCollectionItem } from "@/data/baliCollections";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -11,11 +12,14 @@ import { nextCarouselIndex, safeDestinationHref } from "@/lib/destination-carous
 import styles from "./DestinationRail.module.css";
 
 const SWIPE_THRESHOLD = 48;
+const formatLocation = (value: string) => value.replace(/\s+-\s+/g, " – ");
 
 export default function DestinationRail({ collections }: { collections: BaliCollectionItem[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const indexRail = useRef<HTMLElement>(null);
+  const indexItems = useRef<Array<HTMLButtonElement | null>>([]);
   const reducedMotion = usePrefersReducedMotion();
   const index = Math.min(activeIndex, Math.max(0, collections.length - 1));
   const active = collections[index];
@@ -31,6 +35,18 @@ export default function DestinationRail({ collections }: { collections: BaliColl
     setDirection(nextIndex > index ? 1 : -1);
     setActiveIndex(nextIndex);
   }, [index]);
+
+  useEffect(() => {
+    const rail = indexRail.current;
+    const item = indexItems.current[index];
+    if (!rail || !item || rail.scrollWidth <= rail.clientWidth + 1) return;
+
+    const target = item.offsetLeft - Math.max(0, (rail.clientWidth - item.clientWidth) / 2);
+    rail.scrollTo({
+      left: target,
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  }, [index, reducedMotion]);
 
   if (!active) return null;
 
@@ -65,7 +81,12 @@ export default function DestinationRail({ collections }: { collections: BaliColl
         }
       }}
     >
-      <nav className={styles.index} role="tablist" aria-label="Choose a Bali neighbourhood">
+      <nav
+        ref={indexRail}
+        className={styles.index}
+        role="tablist"
+        aria-label="Choose a Bali neighbourhood"
+      >
         {collections.map((collection, collectionIndex) => {
           const selected = collectionIndex === index;
           return (
@@ -78,13 +99,16 @@ export default function DestinationRail({ collections }: { collections: BaliColl
               aria-controls="destination-panel"
               className={styles.indexItem}
               data-active={selected ? "true" : "false"}
+              ref={(node) => {
+                indexItems.current[collectionIndex] = node;
+              }}
               onClick={() => select(collectionIndex)}
             >
               <span className={styles.indexNumber}>
                 {String(collectionIndex + 1).padStart(2, "0")}
               </span>
               <span className={styles.indexCopy}>
-                <strong>{collection.location}</strong>
+                <strong>{formatLocation(collection.location)}</strong>
                 <small>{collection.category}</small>
               </span>
             </button>
@@ -122,14 +146,38 @@ export default function DestinationRail({ collections }: { collections: BaliColl
               />
             </motion.div>
           </AnimatePresence>
+
+          {collections.length > 1 && (
+            <div className={styles.imageNavigation} aria-label="Destination image navigation">
+              <button type="button" onClick={() => move(-1)} aria-label="Previous destination">
+                <FiChevronLeft aria-hidden="true" />
+              </button>
+              <button type="button" onClick={() => move(1)} aria-label="Next destination">
+                <FiChevronRight aria-hidden="true" />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className={styles.details}>
-          <div className={styles.progress} aria-label={`Destination ${index + 1} of ${collections.length}`}>
-            <span>{String(index + 1).padStart(2, "0")} / {String(collections.length).padStart(2, "0")}</span>
-            <span className={styles.progressTrack} aria-hidden="true">
-              <span style={{ width: `${((index + 1) / collections.length) * 100}%` }} />
-            </span>
+          <div className={styles.detailsMeta}>
+            <div className={styles.progress} aria-label={`Destination ${index + 1} of ${collections.length}`}>
+              <span>{String(index + 1).padStart(2, "0")} / {String(collections.length).padStart(2, "0")}</span>
+              <span className={styles.progressTrack} aria-hidden="true">
+                <span style={{ width: `${((index + 1) / collections.length) * 100}%` }} />
+              </span>
+            </div>
+
+            {collections.length > 1 && (
+              <div className={styles.detailNavigation} aria-label="Destination navigation">
+                <button type="button" onClick={() => move(-1)} aria-label="Previous destination">
+                  <FiArrowLeft aria-hidden="true" />
+                </button>
+                <button type="button" onClick={() => move(1)} aria-label="Next destination">
+                  <FiArrowRight aria-hidden="true" />
+                </button>
+              </div>
+            )}
           </div>
 
           <AnimatePresence mode="wait" initial={false}>
@@ -141,7 +189,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
               exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
               transition={{ duration: reducedMotion ? 0 : 0.2 }}
             >
-              <h3>{active.location}</h3>
+              <h3>{formatLocation(active.location)}</h3>
               <p>{active.description}</p>
             </motion.div>
           </AnimatePresence>
