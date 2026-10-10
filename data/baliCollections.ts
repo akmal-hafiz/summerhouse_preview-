@@ -48,7 +48,7 @@ export const baliCollections: BaliCollectionItem[] = [
     price: "From Rp 700.000 / night",
     cta: "Explore Villas in Canggu - Berawa",
     href: "/villas?location=Canggu%20-%20Berawa&match=exact",
-    image: "/homepage_villa/curated-3-corner.webp",
+    image: "/homepage_villa/rumahmimosa.webp",
     imageAlt: "SummerHouse villa collection in Canggu Berawa",
     galleryImages: [
       "/homepage_villa/curated-3-corner.webp",
@@ -81,7 +81,7 @@ export const baliCollections: BaliCollectionItem[] = [
     price: "From Rp 1.100.000 / night",
     cta: "Explore Villas in Pererenan",
     href: "/villas?location=Pererenan&match=exact",
-    image: "/homepage_villa/curated-6-exterior.webp",
+    image: "/homepage_villa/CactusEstate.webp",
     imageAlt: "SummerHouse villa collection in Pererenan",
     galleryImages: [
       "/homepage_villa/curated-6-exterior.webp",

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Carbon;
 
 class Article extends Model
 {
@@ -16,6 +17,16 @@ class Article extends Model
         };
 
         static::saving(function (Article $row) {
+            if ($row->is_published && ! $row->published_at) {
+                $row->published_at = now();
+            }
+
+            // Editorial dates follow Bali local time, while the publication timestamp
+            // remains the immutable first-publication instant for existing stories.
+            if ($row->is_published && ! $row->date && $row->published_at) {
+                $row->date = Carbon::parse($row->published_at)->setTimezone('Asia/Makassar')->toDateString();
+            }
+
             if (empty($row->read_time)) {
                 $words = 0;
                 foreach ((array) $row->content as $block) {
@@ -67,6 +78,9 @@ class Article extends Model
 
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderByDesc('date');
+        return $query
+            ->orderByDesc('date')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id');
     }
 }

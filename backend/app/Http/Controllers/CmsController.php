@@ -17,6 +17,8 @@ use App\Services\Reviews\ReviewMapper;
 use App\Services\Reviews\ReviewRepository;
 use App\Support\AssetUrl;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class CmsController extends Controller
@@ -44,9 +46,9 @@ class CmsController extends Controller
                 ->onPage($page)
                 ->ordered()
                 ->get()
-                ->mapWithKeys(fn ($row) => [$row->section => $row->content]);
+                ->mapWithKeys(fn ($row) => [$row->section => $row->content])->all();
         });
-        $sectionData = $sections instanceof \Illuminate\Support\Collection
+        $sectionData = $sections instanceof Collection
             ? $sections->toArray()
             : $sections;
 
@@ -135,7 +137,7 @@ class CmsController extends Controller
                 ->published()
                 ->ordered()
                 ->get()
-                ->map(fn (BaliCollection $collection) => $this->serializeDestination($collection, false));
+                ->map(fn (BaliCollection $collection) => $this->serializeDestination($collection, false))->all();
         });
 
         return response()->json([
@@ -264,9 +266,11 @@ class CmsController extends Controller
 
     public function articles(): JsonResponse
     {
-        $articles = Cache::remember('cms.articles', self::CACHE_TTL, function () {
-            return Article::published()->ordered()->get()->map(fn ($a) => $this->serializeArticle($a, false));
-        });
+        $articles = Article::published()
+            ->ordered()
+            ->get()
+            ->map(fn (Article $article) => $this->serializeArticle($article, false))
+            ->all();
 
         return response()->json([
             'success' => true,
@@ -276,11 +280,8 @@ class CmsController extends Controller
 
     public function article(string $slug): JsonResponse
     {
-        $article = Cache::remember("cms.article.{$slug}", self::CACHE_TTL, function () use ($slug) {
-            $a = Article::published()->where('slug', $slug)->first();
-
-            return $a ? $this->serializeArticle($a, true) : null;
-        });
+        $record = Article::published()->where('slug', $slug)->first();
+        $article = $record ? $this->serializeArticle($record, true) : null;
 
         if (! $article) {
             return response()->json(['success' => false, 'error' => 'Article not found'], 404);
@@ -297,12 +298,12 @@ class CmsController extends Controller
         $testimonials = Cache::remember("cms.testimonials.{$page}", self::CACHE_TTL, function () use ($page, $repo) {
             if ($page === 'services') {
                 return $repo->servicesTestimonials(limit: 6)
-                    ->map(fn (Testimonial $t) => $this->publicOwnerTestimonialCard($t));
+                    ->map(fn (Testimonial $t) => $this->publicOwnerTestimonialCard($t))->all();
             }
 
             $featured = $repo->featuredTestimonials(limit: $page === 'home' ? 6 : 12, page: $page);
 
-            return $featured->map(fn (Testimonial $t) => $this->publicTestimonialCard($t));
+            return $featured->map(fn (Testimonial $t) => $this->publicTestimonialCard($t))->all();
         });
 
         return response()->json([
@@ -343,7 +344,7 @@ class CmsController extends Controller
             'quote' => $t->text,
             'metrics' => collect($t->metrics ?? [])
                 ->filter(fn ($m) => is_array($m) && ! empty($m['label']) && ! empty($m['value']))
-                ->values(),
+                ->values()->all(),
             'avatar' => AssetUrl::resolve($t->avatar),
             'villaImage' => $t->villa?->thumbnail_url,
             'isVerified' => (bool) $t->is_verified,
@@ -374,7 +375,7 @@ class CmsController extends Controller
     public function faqs(string $page): JsonResponse
     {
         $faqs = Cache::remember("cms.faqs.{$page}", self::CACHE_TTL, function () use ($page) {
-            return Faq::active()->onPage($page)->ordered()->get(['question', 'answer']);
+            return Faq::active()->onPage($page)->ordered()->get(['question', 'answer'])->toArray();
         });
 
         return response()->json([
@@ -387,7 +388,7 @@ class CmsController extends Controller
     public function serviceCards(string $category): JsonResponse
     {
         $cards = Cache::remember("cms.service-cards.{$category}", self::CACHE_TTL, function () use ($category) {
-            return ServiceCard::active()->forCategory($category)->ordered()->get(['slug', 'title', 'text', 'image', 'alt_text', 'featured_on_about']);
+            return ServiceCard::active()->forCategory($category)->ordered()->get(['slug', 'title', 'text', 'image', 'alt_text', 'featured_on_about'])->toArray();
         });
 
         return response()->json([
@@ -400,10 +401,14 @@ class CmsController extends Controller
     public function gallery(): JsonResponse
     {
         $items = Cache::remember('cms.gallery', self::CACHE_TTL, function () {
-            $rows = GalleryItem::active()->ordered()->get([
-                'type', 'src', 'alt', 'label', 'category', 'title', 'text',
-                'video_url', 'video_poster', 'lodgify_property_id', 'created_at',
-            ]);
+            $rows = GalleryItem::active()
+                ->whereIn('type', ['image', 'video'])
+                ->ordered()
+                ->get([
+                    'id', 'type', 'src', 'alt', 'label', 'category', 'layout_variant',
+                    'focal_point', 'title', 'text', 'video_url', 'video_poster',
+                    'lodgify_property_id', 'created_at',
+                ]);
 
             $villas = VillaCache::query()
                 ->publiclyEligible()
@@ -421,7 +426,7 @@ class CmsController extends Controller
                     'property_name' => $villa?->name,
                     'property_location' => $villa?->location,
                 ]);
-            });
+            })->all();
         });
 
         return response()->json([
@@ -443,7 +448,7 @@ class CmsController extends Controller
         ]);
     }
 
-    public function settingsBulk(\Illuminate\Http\Request $request): JsonResponse
+    public function settingsBulk(Request $request): JsonResponse
     {
         $keys = explode(',', (string) $request->query('keys', ''));
         $keys = array_filter(array_map('trim', $keys));

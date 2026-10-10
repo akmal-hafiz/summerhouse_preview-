@@ -37,7 +37,8 @@ class PageFaqManagementTest extends TestCase
             ->assertCanSeeTableRecords([$contact])
             ->assertCanNotSeeTableRecords([$about, $services]);
 
-        Livewire::test(AboutPageManager::class)
+        Livewire::withQueryParams(['section' => 'faq_intro'])
+            ->test(AboutPageManager::class)
             ->assertCanSeeTableRecords([$about])
             ->assertCanNotSeeTableRecords([$contact, $services]);
 
@@ -95,7 +96,8 @@ class PageFaqManagementTest extends TestCase
             ])
             ->assertHasTableActionErrors(['question' => 'unique']);
 
-        Livewire::test(AboutPageManager::class)
+        Livewire::withQueryParams(['section' => 'faq_intro'])
+            ->test(AboutPageManager::class)
             ->callTableAction('create', data: [
                 'question' => 'Can I request airport pickup?',
                 'answer' => 'Yes, the concierge team can arrange it.',

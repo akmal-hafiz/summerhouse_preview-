@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import type { ArticleListItem } from "@/lib/journal";
@@ -15,6 +15,7 @@ type JournalPreviewSectionProps = {
 };
 
 export default function JournalPreviewSection({ articles, content }: JournalPreviewSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
   const sorted = [...articles].sort((a, b) => {
     const dateA = a.date ? new Date(a.date).getTime() : 0;
     const dateB = b.date ? new Date(b.date).getTime() : 0;
@@ -28,12 +29,12 @@ export default function JournalPreviewSection({ articles, content }: JournalPrev
   }
 
   return (
-    <section className={styles.section}>
+    <section id="journal" className={styles.section}>
       <div className={styles.inner}>
         <motion.header
           className={styles.header}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
@@ -41,13 +42,13 @@ export default function JournalPreviewSection({ articles, content }: JournalPrev
           <h2 className={styles.title}>{content?.title || "The Journal."}</h2>
         </motion.header>
 
-        <div className={styles.grid}>
+        <div className={styles.grid} aria-label="Latest Journal stories">
           {cards.map((article, index) => (
             <motion.article
               key={article.slug}
               className={styles.card}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.65, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
@@ -70,7 +71,15 @@ export default function JournalPreviewSection({ articles, content }: JournalPrev
                 </div>
                 <div className={styles.copy}>
                   <h3 className={styles.cardTitle}>{article.title}</h3>
-                  <p className={styles.source}>{article.category}</p>
+                  <p className={styles.source}>
+                    <span className={styles.category}>{article.category}</span>
+                    {/^\d{4}-\d{2}-\d{2}$/.test(article.date) && (
+                      <time dateTime={article.date}>
+                        {new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" })
+                          .format(new Date(`${article.date}T00:00:00Z`))}
+                      </time>
+                    )}
+                  </p>
                 </div>
               </Link>
             </motion.article>

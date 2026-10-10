@@ -1,18 +1,60 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { FiCheckCircle, FiAlertCircle, FiCalendar } from "react-icons/fi";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import { useAuth } from "@/components/providers/AuthProvider";
 import PasswordInput from "@/components/auth/PasswordInput";
-
-function formatDateID(date: Date): string {
-  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(date);
-}
+import DashboardAvatar from "./DashboardAvatar";
 
 type Feedback = { variant: "success" | "error"; message: string } | null;
 
 export default function DashboardSettings() {
-  const { user, updateProfile, changePassword } = useAuth();
+  const { user, updateProfile, changePassword, uploadAvatar, removeAvatar, logout } = useAuth();
+  const router = useRouter();
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarFeedback, setAvatarFeedback] = useState<Feedback>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  useEffect(() => () => { if (avatarPreview) URL.revokeObjectURL(avatarPreview); }, [avatarPreview]);
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    setAvatarFeedback(null);
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 3 * 1024 * 1024) {
+      setAvatarFeedback({ variant: "error", message: "Choose a JPEG, PNG or WebP image under 3 MB." });
+      input.value = "";
+      return;
+    }
+    setAvatarBusy(true);
+    setAvatarPreview(URL.createObjectURL(file));
+    try {
+      await uploadAvatar(file);
+      setAvatarFeedback({ variant: "success", message: "Profile photo updated." });
+    } catch (error) {
+      setAvatarFeedback({ variant: "error", message: error instanceof Error ? error.message : "Could not upload photo." });
+    } finally {
+      setAvatarPreview(null);
+      setAvatarBusy(false);
+      input.value = "";
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    setAvatarBusy(true);
+    setAvatarFeedback(null);
+    try {
+      await removeAvatar();
+      setAvatarFeedback({ variant: "success", message: "Profile photo removed." });
+    } catch (error) {
+      setAvatarFeedback({ variant: "error", message: error instanceof Error ? error.message : "Could not remove photo." });
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
 
   // Profile form
   const [name, setName] = useState("");
@@ -81,24 +123,32 @@ export default function DashboardSettings() {
 
   return (
     <>
-      <section className="dash-hero">
-        <div className="dash-hero-copy">
-          <h1 className="dash-hero-title">Pengaturan akun</h1>
-          <p>Ubah nama atau password. Untuk pindah email, hubungi concierge Summerhouse.</p>
-        </div>
-        <span className="dash-date-pill">
-          {formatDateID(new Date())}
-          <span className="dash-date-pill-icon"><FiCalendar aria-hidden="true" /></span>
-        </span>
-      </section>
+      <header className="dash-page-intro dash-page-intro--inner">
+        <h1>Account settings</h1>
+        <p>Manage the details you use with Summerhouses.</p>
+      </header>
 
       <div className="dash-settings-grid">
         <form className="dash-settings-card" onSubmit={handleProfileSubmit}>
-          <h3>Profil</h3>
-          <p className="dash-settings-copy">Nama yang muncul di dashboard dan balasan concierge.</p>
+          <h3>Profile</h3>
+          <p className="dash-settings-copy">The name shown in your Summerhouses account.</p>
+
+          <div className="dash-avatar-setting">
+            <DashboardAvatar name={user?.name || "Guest"} src={avatarPreview || user?.avatarUrl} />
+            <div>
+              <span className="dash-avatar-setting-title">Profile photo</span>
+              <p>Optional. We crop your photo to a square.</p>
+              <div className="dash-avatar-actions">
+                <label className="dash-avatar-upload" htmlFor="settings-avatar">{avatarBusy ? "Saving..." : user?.avatarUrl ? "Change photo" : "Add photo"}</label>
+                <input id="settings-avatar" type="file" accept="image/jpeg,image/png,image/webp" onChange={handleAvatarChange} disabled={avatarBusy} />
+                {user?.avatarUrl && <button type="button" onClick={handleAvatarRemove} disabled={avatarBusy}>Remove</button>}
+              </div>
+            </div>
+          </div>
+          {avatarFeedback && <p className={`dash-feedback dash-feedback--${avatarFeedback.variant}`} role={avatarFeedback.variant === "error" ? "alert" : "status"}>{avatarFeedback.message}</p>}
 
           <div className="dash-field">
-            <label htmlFor="settings-name">Nama lengkap</label>
+            <label htmlFor="settings-name">Full name</label>
             <input
               id="settings-name"
               type="text"
@@ -120,7 +170,7 @@ export default function DashboardSettings() {
               readOnly
               autoComplete="email"
             />
-            <p className="dash-field-hint">Pindah email butuh verifikasi concierge.</p>
+            <p className="dash-field-hint">To change your email address, please contact our team.</p>
           </div>
 
           {profileFeedback && (
@@ -137,17 +187,17 @@ export default function DashboardSettings() {
               disabled={profileSubmitting}
               data-loading={profileSubmitting ? "true" : undefined}
             >
-              Simpan perubahan
+              Save changes
             </button>
           </div>
         </form>
 
         <form className="dash-settings-card" onSubmit={handlePasswordSubmit}>
           <h3>Password</h3>
-          <p className="dash-settings-copy">Minimal 8 karakter. Perangkat lain akan keluar otomatis setelah diubah.</p>
+          <p className="dash-settings-copy">Use at least eight characters. Other sessions will be signed out after a change.</p>
 
           <div className="dash-field">
-            <label htmlFor="settings-current-password">Password sekarang</label>
+            <label htmlFor="settings-current-password">Current password</label>
             <PasswordInput
               id="settings-current-password"
               value={currentPassword}
@@ -158,7 +208,7 @@ export default function DashboardSettings() {
           </div>
 
           <div className="dash-field">
-            <label htmlFor="settings-new-password">Password baru</label>
+            <label htmlFor="settings-new-password">New password</label>
             <PasswordInput
               id="settings-new-password"
               value={newPassword}
@@ -170,7 +220,7 @@ export default function DashboardSettings() {
           </div>
 
           <div className="dash-field">
-            <label htmlFor="settings-confirm-password">Konfirmasi password baru</label>
+            <label htmlFor="settings-confirm-password">Confirm new password</label>
             <PasswordInput
               id="settings-confirm-password"
               value={confirmPassword}
@@ -195,10 +245,14 @@ export default function DashboardSettings() {
               disabled={passwordSubmitting}
               data-loading={passwordSubmitting ? "true" : undefined}
             >
-              Perbarui password
+              Update password
             </button>
           </div>
         </form>
+      </div>
+      <div className="dash-mobile-account-actions">
+        <Link href="/">Back to site</Link>
+        <button type="button" onClick={async () => { await logout(); router.push("/"); router.refresh(); }}>Sign out</button>
       </div>
     </>
   );

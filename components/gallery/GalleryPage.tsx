@@ -58,19 +58,21 @@ export default function GalleryPage({ items: itemsProp, content }: GalleryPagePr
   const tabs = [{ key: ALL, label: "All" }, ...categories.map((c) => ({ key: c, label: c }))];
   const heading = typeof content?.heading === "string" && content.heading.trim()
     ? content.heading
-    : "Selected Projects.";
-  const sectionLabel = typeof content?.section_label === "string" ? content.section_label.trim() : "";
-  const subheading = typeof content?.subheading === "string" ? content.subheading.trim() : "";
+    : "A closer look at Summerhouse.";
+  const descriptionValue = content?.description ?? content?.subheading;
+  const description = typeof descriptionValue === "string" && descriptionValue.trim()
+    ? descriptionValue.trim()
+    : "Villas, quiet interiors, island light, and the moments that make a stay feel personal.";
+  const showFilters = content?.show_filters !== false;
 
   return (
     <div className={styles.galleryPage}>
       {content?.is_visible !== false ? <header className={styles.pageHeader}>
-        {sectionLabel ? <span className={styles.sectionLabel}>{sectionLabel}</span> : null}
         <h1 className={styles.headline}>{heading}</h1>
-        {subheading ? <p className={styles.subheading}>{subheading}</p> : null}
+        <p className={styles.subheading}>{description}</p>
       </header> : null}
 
-      {tabs.length > 1 && (
+      {showFilters && tabs.length > 1 && (
         <div className={styles.tabStrip}>
           <div className={styles.tabRow} role="tablist" aria-label="Filter gallery by category">
             {tabs.map((tab) => {

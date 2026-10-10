@@ -10,8 +10,17 @@ class JournalPageManager extends Page
     use IsEmptyPagePlaceholder;
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
+
     protected static ?string $navigationLabel = 'Journal';
+
     protected static ?string $title = 'Journal Page';
+
     protected static ?string $slug = 'pages/journal';
+
     protected static ?int $navigationSort = 70;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

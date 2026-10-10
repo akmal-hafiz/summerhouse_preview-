@@ -3,8 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Forms\Components\ManagedImageUpload;
-use App\Filament\Resources\BaliCollectionResource;
-use App\Filament\Resources\TestimonialResource;
 use App\Forms\Components\VillaPicker;
 use App\Models\BaliCollection;
 use App\Models\HomepageVillaSelection;
@@ -38,32 +36,14 @@ class HomepageManager extends Page implements HasForms
     public function mount(): void
     {
         $whyStay = $this->normalizeWhyStayContent(PageSection::getSection('home', 'why_stay') ?? []);
-        $testimonials = PageSection::getSection('home', 'testimonials') ?? [];
-        $testimonials['title'] = $testimonials['title'] ?? 'Guest Reviews';
-
         $this->form->fill([
             'hero' => PageSection::getSection('home', 'hero') ?? [],
             'stay_styles' => PageSection::getSection('home', 'stay_styles') ?? [],
             'signature_villa' => PageSection::getSection('home', 'signature_villa') ?? [],
             'why_stay' => $whyStay,
-            'testimonials' => $testimonials,
             'explore_bali' => PageSection::getSection('home', 'explore_bali') ?? [],
             'destinations' => BaliCollection::ordered()
-                ->get([
-                    'id',
-                    'collection_id',
-                    'location',
-                    'category',
-                    'description',
-                    'media_type',
-                    'image',
-                    'video',
-                    'video_poster',
-                    'mobile_poster',
-                    'image_alt',
-                    'status',
-                    'is_active',
-                ])
+                ->get()
                 ->map(fn (BaliCollection $row): array => $row->toArray())
                 ->toArray(),
             'slots' => [
@@ -254,44 +234,18 @@ class HomepageManager extends Page implements HasForms
                                 ->maxLength(220),
                             Forms\Components\Hidden::make('why_stay.recognition.is_visible')->default(true),
                         ]),
-                    Forms\Components\Section::make('Guest Reviews')
-                        ->description('Choose which approved reviews appear on the homepage. The carousel is updated immediately.')
-                        ->schema([
-                            Forms\Components\TextInput::make('testimonials.title')
-                                ->label('Section title')
-                                ->default('Guest Reviews')
-                                ->required(),
-                            Forms\Components\Textarea::make('testimonials.supporting_copy')
-                                ->label('Supporting copy, optional')
-                                ->rows(2)
-                                ->maxLength(240),
-                            Forms\Components\Toggle::make('testimonials.is_visible')
-                                ->label('Show Guest Reviews')
-                                ->default(true),
-                            Forms\Components\Placeholder::make('testimonial_editor_link')
-                                ->label('')
-                                ->content(fn () => new \Illuminate\Support\HtmlString(
-                                    '<a class="fi-link" href="'.e(TestimonialResource::getUrl('index')).'">Manage reviews and Homepage placement</a>'
-                                )),
-                        ]),
                 ]),
 
-                Forms\Components\Tabs\Tab::make('Explore Bali')->icon('heroicon-o-map')->schema([
-                    Forms\Components\TextInput::make('explore_bali.kicker')->hidden(),
-                    Forms\Components\TextInput::make('explore_bali.title')->label('Section Title'),
-                    Forms\Components\Textarea::make('explore_bali.description')->label('Section Description')->rows(2),
+                Forms\Components\Tabs\Tab::make('Bali Destinations')->icon('heroicon-o-map')->schema([
+                    Forms\Components\TextInput::make('explore_bali.title')->label('Section heading')->default('Bali, by Neighbourhood'),
+                    Forms\Components\Textarea::make('explore_bali.description')->label('Short introduction')->rows(2),
                     Forms\Components\Toggle::make('explore_bali.is_visible')
                         ->label('Show this section')
                         ->default(true),
-                    Forms\Components\Section::make('Destination cards')
-                        ->description('Choose a Lodgify location, then add, reorder, hide, or replace its image or video. Each card opens Villas with that exact location filter.')
+                    Forms\Components\Section::make('Destination Guides')
+                        ->description('Manage the homepage panorama and each destination page here. Reorder the destinations to change their display order. Each Explore villas link uses the selected location.')
                         ->schema([
                             $this->destinationRepeater(),
-                            Forms\Components\Placeholder::make('destination_editor_link')
-                                ->label('')
-                                ->content(fn () => new \Illuminate\Support\HtmlString(
-                                    '<a class="fi-link" href="'.e(BaliCollectionResource::getUrl('index')).'">Open advanced destination media editor</a>'
-                                )),
                         ]),
                 ]),
             ])->persistTabInQueryString(),
@@ -401,6 +355,7 @@ class HomepageManager extends Page implements HasForms
                 Forms\Components\Select::make('location')
                     ->label('Destination')
                     ->required()
+                    ->distinct()
                     ->searchable()
                     ->native(false)
                     ->options(fn (): array => VillaCache::query()
@@ -425,55 +380,78 @@ class HomepageManager extends Page implements HasForms
                         $set('collection_id', \Illuminate\Support\Str::slug($state));
                         $set('image_alt', "Summerhouse destination guide to {$state}");
                     })
-                    ->helperText('Locations come from active villas synchronized from Lodgify.'),
+                    ->helperText('Only locations with an active villa are offered.'),
                 Forms\Components\TextInput::make('category')
+                    ->label('Short category label')
                     ->required()
                     ->placeholder('Quiet Coast'),
                 Forms\Components\Textarea::make('description')
+                    ->label('Description below the panorama')
                     ->required()
                     ->rows(2)
                     ->columnSpanFull(),
-                Forms\Components\Select::make('media_type')
-                    ->options(['image' => 'Image', 'video' => 'Video'])
-                    ->default('image')
-                    ->live()
-                    ->required(),
                 ManagedImageUpload::make('image')
-                    ->label('Card image')
+                    ->label('Homepage panorama image')
                     ->image()
                     ->imageEditor()
                     ->disk('public')
                     ->directory('uploads/collections/cards')
                     ->visibility('public')
                     ->maxSize(8192)
-                    ->required(fn (Forms\Get $get): bool => $get('media_type') === 'image'),
-                Forms\Components\FileUpload::make('video')
-                    ->label('Card video')
-                    ->acceptedFileTypes(['video/mp4', 'video/webm'])
-                    ->disk('public')
-                    ->directory('uploads/collections/videos')
-                    ->visibility('public')
-                    ->maxSize(102400)
-                    ->visible(fn (Forms\Get $get): bool => $get('media_type') === 'video')
-                    ->required(fn (Forms\Get $get): bool => $get('media_type') === 'video'),
-                ManagedImageUpload::make('video_poster')
-                    ->label('Video poster')
-                    ->image()
-                    ->imageEditor()
-                    ->disk('public')
-                    ->directory('uploads/collections/posters')
-                    ->visibility('public')
-                    ->maxSize(8192)
-                    ->visible(fn (Forms\Get $get): bool => $get('media_type') === 'video')
-                    ->required(fn (Forms\Get $get): bool => $get('media_type') === 'video'),
-                ManagedImageUpload::make('mobile_poster')
-                    ->label('Mobile poster, optional')
-                    ->image()
-                    ->disk('public')
-                    ->directory('uploads/collections/posters')
-                    ->visibility('public'),
+                    ->helperText('Use a wide villa photo. Existing images in public remain available until you replace them.'),
                 Forms\Components\TextInput::make('image_alt')
-                    ->label('Alternative text'),
+                    ->label('Describe the image for accessibility'),
+                Forms\Components\Section::make('Destination page content')
+                    ->description('Optional detail page content. Open only when editing the destination story.')
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\TextInput::make('eyebrow')->label('Story label'),
+                        Forms\Components\TextInput::make('hero_title')->label('Page title'),
+                        Forms\Components\Textarea::make('introduction')->label('Page introduction')->rows(3),
+                        ManagedImageUpload::make('hero_image')
+                            ->label('Page hero image')
+                            ->image()->imageEditor()->disk('public')
+                            ->directory('uploads/collections/heroes')->visibility('public')->maxSize(12288),
+                        Forms\Components\TagsInput::make('moods')->label('Destination themes'),
+                        Forms\Components\TagsInput::make('highlights'),
+                        Forms\Components\TagsInput::make('best_for')->label('Best for'),
+                        Forms\Components\Repeater::make('editorial_chapters')
+                            ->label('Story chapters')->collapsed()->reorderable()
+                            ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'New chapter')
+                            ->schema([
+                                Forms\Components\TextInput::make('eyebrow')->label('Chapter label'),
+                                Forms\Components\TextInput::make('title')->required(),
+                                Forms\Components\Textarea::make('description')->required()->rows(3),
+                                ManagedImageUpload::make('image')->image()->imageEditor()->disk('public')
+                                    ->directory('uploads/collections/chapters')->visibility('public')->maxSize(8192),
+                                Forms\Components\TextInput::make('image_alt')->label('Image description'),
+                            ])->columnSpanFull(),
+                        Forms\Components\Repeater::make('facts')
+                            ->label('Quick facts')->collapsed()
+                            ->schema([
+                                Forms\Components\TextInput::make('label')->required(),
+                                Forms\Components\TextInput::make('value')->required(),
+                            ])->columns(2)->columnSpanFull(),
+                        Forms\Components\TagsInput::make('related_journal_tags')
+                            ->label('Related journal tags')->columnSpanFull(),
+                    ])->columns(2)->columnSpanFull(),
+                Forms\Components\Section::make('Related villas on the destination page')
+                    ->description('Villas are matched automatically. Adjust the match only if the destination name differs from the villa location.')
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\Toggle::make('show_related_villas')->label('Show matching villas')->default(true),
+                        Forms\Components\TextInput::make('related_villas_heading')->label('Section heading'),
+                        Forms\Components\TextInput::make('lodgify_location')->label('Villa location match'),
+                    ])->columns(2)->columnSpanFull(),
+                Forms\Components\Section::make('Search preview')
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\TextInput::make('seo_title')->label('Search title')->maxLength(70),
+                        Forms\Components\Textarea::make('seo_description')->label('Search description')->rows(2)->maxLength(180),
+                        ManagedImageUpload::make('social_image')->label('Social sharing image')
+                            ->image()->imageEditor()->disk('public')->directory('uploads/collections/social')
+                            ->visibility('public')->maxSize(8192),
+                    ])->columns(2)->columnSpanFull(),
                 Forms\Components\Select::make('status')
                     ->options(['draft' => 'Draft', 'published' => 'Published'])
                     ->default('published')
@@ -555,9 +533,9 @@ class HomepageManager extends Page implements HasForms
     {
         $data = $this->form->getState();
 
-        foreach (['hero', 'stay_styles', 'signature_villa', 'why_stay', 'testimonials', 'explore_bali'] as $section) {
+        foreach (['hero', 'stay_styles', 'signature_villa', 'why_stay', 'explore_bali'] as $section) {
             $content = $data[$section] ?? [];
-            if (in_array($section, ['why_stay', 'testimonials'], true)) {
+            if ($section === 'why_stay') {
                 $legacy = PageSection::getSection('home', $section) ?? [];
                 $content = array_replace_recursive($legacy, $content);
             }
@@ -597,22 +575,37 @@ class HomepageManager extends Page implements HasForms
             }
 
             $slug = $destination['collection_id'] ?: \Illuminate\Support\Str::slug($location);
+            $identity = ! empty($destination['id'])
+                ? ['id' => $destination['id']]
+                : ['collection_id' => $slug];
             $row = BaliCollection::updateOrCreate(
-                ['id' => $destination['id'] ?? null],
+                $identity,
                 [
                     'collection_id' => $slug,
                     'location' => $location,
                     'location_key' => \Illuminate\Support\Str::slug($location),
-                    'lodgify_location' => $location,
+                    'lodgify_location' => ($destination['lodgify_location'] ?? null) ?: $location,
                     'category' => $destination['category'] ?: 'Bali Guide',
                     'tag' => $destination['category'] ?: 'Bali Guide',
                     'description' => $destination['description'],
-                    'media_type' => $destination['media_type'] ?? 'image',
-                    'image' => $destination['image'] ?: ($destination['video_poster'] ?? '/homepage_villa/curated-1-main.webp'),
-                    'video' => $destination['video'] ?? null,
-                    'video_poster' => $destination['video_poster'] ?? null,
-                    'mobile_poster' => $destination['mobile_poster'] ?? null,
+                    'moods' => $destination['moods'] ?? [],
+                    'media_type' => 'image',
+                    'image' => $destination['image'] ?: '/homepage_villa/curated-1-main.webp',
                     'image_alt' => $destination['image_alt'] ?: "Summerhouse destination guide to {$location}",
+                    'hero_title' => ($destination['hero_title'] ?? null) ?: $location,
+                    'eyebrow' => ($destination['eyebrow'] ?? null) ?: 'Bali Destination Guide',
+                    'introduction' => ($destination['introduction'] ?? null) ?: $destination['description'],
+                    'hero_image' => ($destination['hero_image'] ?? null) ?: ($destination['image'] ?: '/homepage_villa/curated-1-main.webp'),
+                    'highlights' => $destination['highlights'] ?? [],
+                    'best_for' => $destination['best_for'] ?? [],
+                    'facts' => $destination['facts'] ?? [],
+                    'editorial_chapters' => $destination['editorial_chapters'] ?? [],
+                    'related_journal_tags' => $destination['related_journal_tags'] ?? [],
+                    'show_related_villas' => (bool) ($destination['show_related_villas'] ?? true),
+                    'related_villas_heading' => ($destination['related_villas_heading'] ?? null) ?: "Stay in {$location}",
+                    'seo_title' => ($destination['seo_title'] ?? null) ?: "{$location} Guide",
+                    'seo_description' => ($destination['seo_description'] ?? null) ?: $destination['description'],
+                    'social_image' => $destination['social_image'] ?? null,
                     'media_accessibility_label' => "View Summerhouse villas in {$location}",
                     'status' => $destination['status'] ?? 'published',
                     'is_active' => (bool) ($destination['is_active'] ?? true),
@@ -645,7 +638,7 @@ class HomepageManager extends Page implements HasForms
     {
         Cache::forget('cms.page.home');
         Cache::forget('cms.homepage.villa-selections');
-        foreach (['hero', 'stay_styles', 'signature_villa', 'why_stay', 'testimonials', 'explore_bali'] as $s) {
+        foreach (['hero', 'stay_styles', 'signature_villa', 'why_stay', 'explore_bali'] as $s) {
             Cache::forget("cms.page.home.{$s}");
         }
         Cache::forget('cms.bali-collections');

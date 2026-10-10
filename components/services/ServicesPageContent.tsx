@@ -16,6 +16,7 @@ import {
 import styles from "./ServicesPageContent.module.css";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import OwnerTestimonialForm from "./OwnerTestimonialForm";
+import ScrollDrivenAccordion from "./ScrollDrivenAccordion";
 
 
 
@@ -35,43 +36,31 @@ const OWNER_BG_FALLBACK = "/homepage_villa/curated-1-main.webp";
 
 // ── SUB-SERVICES DATA FOR SECTION 1 (Operational) ──
 const defaultOperationalServices = [
-  { title: "Scheduling & Managing Cleaning", text: "Upholding the highest standards with Summerhouse housekeepers, gardeners, and maintenance support." },
-  { title: "HR Management", text: "Streamlining hiring, training, workplace morale, payroll, and performance supervision." },
-  { title: "Staff Training & Supervising", text: "Supervisor-led training programs aimed at boosting productivity and guest satisfaction." },
-  { title: "Guest Relations", text: "Exceptional customer service dedicated to providing an enjoyable and memorable stay." },
-  { title: "Check-in & Check-out", text: "Delivering a seamless arrival and departure experience to build immediate trust." },
-  { title: "Property Care & Inspection", text: "Thorough regular inspections to identify and resolve maintenance issues promptly." },
-  { title: "Cost Management", text: "Established partnerships with distributors to minimize costs without sacrificing quality." },
-  { title: "Monitoring Villa Supplies", text: "Ensuring sheets, shower amenities, and essentials are fully stocked at all times." },
-  { title: "Inventories", text: "Comprehensive tracking of all assets to record and maintain your property investments." },
-  { title: "Arranging Extra Services", text: "Airport transfers, private tours, chef services, and massages via trusted providers." }
+  { title: "Housekeeping & Property Care", text: "Cleaning schedules, inspections, pool and garden care, and responsive maintenance coordinated to one consistent standard." },
+  { title: "People, Training & Staff Management", text: "Hiring, payroll, workplace support, training, scheduling, and performance supervision for the villa team." },
+  { title: "Guest Relations, Check-in & Check-out", text: "Thoughtful pre-arrival coordination, welcoming check-ins, in-stay support, and smooth departures." },
+  { title: "Supplies & Inventory Management", text: "Linen, amenities, utilities, and property assets tracked and replenished before they become operational issues." },
+  { title: "Cost, Vendor & Additional Services", text: "Trusted local vendors, transparent cost control, security coordination, and optional guest services managed through one team." },
 ];
 
 // ── SUB-SERVICES DATA FOR SECTION 2 (Sales & Marketing) ──
 const defaultMarketingServices = [
-  { title: "Financial Forecasting", text: "Detailing potential revenue and profit projections to help you make informed decisions." },
-  { title: "Revenue Strategy", text: "Deploying data-driven strategies to set realistic goals and maximize villa performance." },
-  { title: "Property Profile Copywriting", text: "Producing engaging villa descriptions to build trust with potential guests." },
-  { title: "Extensive Distribution", text: "Reaching wide demographics across 10+ channels, including direct bookings, OTAs, and agents." },
-  { title: "Dedicated Direct Booking Website", text: "Providing a dedicated online platform for your villa to minimize OTA fees and boost revenue." },
-  { title: "Data-Driven Online Advertising", text: "Targeted campaigns to expand villa outreach and maximize occupancy rates." },
-  { title: "Dynamic Pricing Strategy", text: "Utilizing in-depth market research to optimize nightly rates and meet revenue goals." },
-  { title: "SEO Optimization", text: "Maximizing visibility on search algorithms, ensuring your villa attracts maximum traffic." },
-  { title: "Prompt Reservation Team", text: "The Summerhouse reservations team guides guests throughout the booking process 24/7." },
-  { title: "Comprehensive Reports", text: "Delivering monthly financial reports highlighting revenue, expenditures, and bookings." }
+  { title: "Forecasting & Revenue Strategy", text: "Market-informed projections and commercial goals turn seasonality into a practical plan for occupancy and returns." },
+  { title: "Property Positioning & Copywriting", text: "Distinctive photography, storytelling, and listing copy present each villa with a clear point of view." },
+  { title: "Distribution & Direct Booking", text: "Coordinated OTA, agent, and direct channels extend reach while reducing avoidable commission costs." },
+  { title: "Advertising & Search Visibility", text: "Targeted campaigns, social content, and search optimization help qualified guests discover the property." },
+  { title: "Dynamic Pricing & Reservations", text: "Live market signals guide nightly pricing while the reservation team supports guests throughout the booking journey." },
+  { title: "Reporting & Financial Transparency", text: "Monthly reporting connects bookings, revenue, operating expenditure, and owner payouts in one understandable view." },
 ];
 
 // ── SUB-SERVICES DATA FOR SECTION 3 (Project Management) ──
 const defaultProjectServices = [
-  { title: "Finding the Right Properties", text: "Meticulously inspecting properties for location, rental demand, and profitability." },
-  { title: "Notary & Legal Counsel", text: "Ensuring full compliance with local regulations, permits, and short-term rental laws." },
-  { title: "Project Assessment & Consultation", text: "Pinpointing necessary renovations to transform properties into high-yield rentals." },
-  { title: "Design & Planning Coordination", text: "Integrating innovative design elements that align with your vision and market trends." },
-  { title: "Contractor & Vendor Selection", text: "Sourcing and managing trusted contractors to ensure efficiency and reliability." },
-  { title: "Material Procurement & Logistics", text: "Efficient logistics to ensure the steady flow of quality, cost-effective materials." },
-  { title: "Construction Management & QC", text: "Strict quality control to turn your villa into a premium rental destination." },
-  { title: "Furniture, Fixture & Decor Procurement", text: "Transforming the spaces from concept to reality with peak efficiency." },
-  { title: "Project Reporting", text: "Tracking timelines, resource allocation, and budget updates for total transparency." }
+  { title: "Property Finding & Feasibility", text: "Potential sites and existing villas are assessed for location, rental demand, condition, and commercial viability." },
+  { title: "Legal Counsel & Project Assessment", text: "Local specialists coordinate ownership structures, permits, compliance, scope, and renovation priorities." },
+  { title: "Design & Planning Coordination", text: "Architecture, interiors, landscape, and guest experience are aligned before construction decisions are locked." },
+  { title: "Contractor & Vendor Management", text: "Trusted teams are selected, briefed, scheduled, and held to agreed quality and delivery standards." },
+  { title: "Procurement & Logistics", text: "Materials, furniture, fixtures, technology, and site logistics are coordinated against budget and programme." },
+  { title: "Construction Quality & Project Reporting", text: "Progress, workmanship, cost, risks, and pre-launch preparation remain visible from build through handover." },
 ];
 
 // ── FAQS DATA ──
@@ -183,9 +172,24 @@ export default function ServicesPageContent({
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const partnership = content?.partnership;
+  const hero = content?.hero;
   const management = content?.management;
   const ownerSection = content?.owner_testimonials;
+  const ownerForm = content?.owner_form;
+  const operationalSection = content?.operational_services;
+  const marketingSection = content?.marketing_services;
+  const projectSection = content?.project_services;
+  const faqIntro = content?.faq_intro;
   const finalCta = content?.final_cta;
+  const heroHeading = typeof hero?.heading === "string" && hero.heading.trim()
+    ? hero.heading
+    : "Bespoke villa\nmanagement in heart\nof the Bali";
+  const heroDescription = typeof hero?.description === "string" && hero.description.trim()
+    ? hero.description
+    : "Discover a new standard of villa management, from bespoke Canggu estates to premium cliffside residences across Bali.";
+  const heroButtonLabel = typeof hero?.button_label === "string" && hero.button_label.trim() ? hero.button_label : "Partner With Us";
+  const heroVideoTitle = typeof hero?.video_title === "string" && hero.video_title.trim() ? hero.video_title : "Watch Video";
+  const heroVideoDescription = typeof hero?.video_description === "string" && hero.video_description.trim() ? hero.video_description : "Experience summerhouse management.";
   const partnershipTitle = typeof partnership?.title === "string" && partnership.title.trim()
     ? partnership.title
     : "The value of a closer partnership.";
@@ -202,9 +206,38 @@ export default function ServicesPageContent({
   const managementHeading = typeof management?.heading === "string" && management.heading.trim()
     ? management.heading
     : "What we manage.";
+  const defaultManagementItems = [
+    { title: "Villa Operation", description: "Impeccable daily operations, housekeeping, supplies management, and direct hospitality care.", linkLabel: "Explore Details", href: "#operational-management" },
+    { title: "Villa Sales & Marketing", description: "Dynamic pricing, global distribution, SEO, direct booking systems, and revenue strategy.", linkLabel: "Explore Details", href: "#sales-marketing" },
+    { title: "Villa Project & Renovation", description: "Meticulous contractor sourcing, design planning, legal counsel, and logistics oversight.", linkLabel: "Explore Details", href: "#project-management" },
+  ];
+  const cmsManagementItems = Array.isArray(management?.items) ? management.items : [];
+  const managementItems = cmsManagementItems.length === 3
+    ? cmsManagementItems.map((item, index) => {
+        const row = item && typeof item === "object" ? item as Record<string, unknown> : {};
+        const fallback = defaultManagementItems[index];
+        return {
+          title: typeof row.title === "string" && row.title.trim() ? row.title : fallback.title,
+          description: typeof row.description === "string" && row.description.trim() ? row.description : fallback.description,
+          linkLabel: typeof row.link_label === "string" && row.link_label.trim() ? row.link_label : fallback.linkLabel,
+          href: fallback.href,
+        };
+      })
+    : defaultManagementItems;
   const ownerHeading = typeof ownerSection?.heading === "string" && ownerSection.heading.trim()
     ? ownerSection.heading
     : "What thoughtful management feels like.";
+  const ownerDescription = typeof ownerSection?.description === "string" && ownerSection.description.trim()
+    ? ownerSection.description
+    : "Direct notes from owners whose homes are cared for by the Summerhouse team.";
+  const ownerFormTitle = typeof ownerForm?.title === "string" && ownerForm.title.trim() ? ownerForm.title : "Is your villa managed by Summerhouse?";
+  const ownerFormDescription = typeof ownerForm?.description === "string" && ownerForm.description.trim() ? ownerForm.description : "Share your honest experience as an owner, published after a quick review. Your email stays private.";
+  const ownerFormButton = typeof ownerForm?.button_label === "string" && ownerForm.button_label.trim() ? ownerForm.button_label : "Share your experience";
+  const ownerFormClose = typeof ownerForm?.close_label === "string" && ownerForm.close_label.trim() ? ownerForm.close_label : "Close";
+  const sectionCopy = (section: Record<string, unknown> | null | undefined, key: "heading" | "description" | "button_label", fallback: string) =>
+    typeof section?.[key] === "string" && section[key].trim() ? section[key] as string : fallback;
+  const resolvedFaqTitle = typeof faqIntro?.title === "string" && faqIntro.title.trim() ? faqIntro.title : "Frequently Asked Questions";
+  const faqDescription = typeof faqIntro?.description === "string" && faqIntro.description.trim() ? faqIntro.description : "Can't find what you are looking for? Reach out to the Summerhouse support team directly.";
   const ctaTitle = typeof finalCta?.title === "string" && finalCta.title.trim()
     ? finalCta.title
     : "Good care goes a long way.";
@@ -244,7 +277,7 @@ export default function ServicesPageContent({
   return (
     <div className={styles.container}>
       {/* ── 0. HERO SECTION ── */}
-      <section className={styles.heroSection}>
+      {hero?.is_visible !== false ? <section id="services-hero" className={styles.heroSection}>
         <video
           src="/video/herosection_summerhouse.mp4"
           autoPlay
@@ -261,20 +294,20 @@ export default function ServicesPageContent({
               <FiPlay fill="var(--color-text)" />
             </div>
             <div className={styles.heroCardText}>
-              <h3>Watch Video</h3>
-              <p>Experience summerhouse management.</p>
+              <h3>{heroVideoTitle}</h3>
+              <p>{heroVideoDescription}</p>
             </div>
           </div>
 
           {/* Left Title */}
           <div className={styles.heroLeftContainer}>
             <h1 className={styles.heroTitle}>
-              Bespoke villa<br />
-              management in heart<br />
-              of the Bali
+              {heroHeading.split("\n").map((line, index, lines) => (
+                <span key={`${line}-${index}`}>{line}{index < lines.length - 1 ? <br /> : null}</span>
+              ))}
             </h1>
             <Link href="/contact" className={styles.heroBtnPill}>
-              <span>Partner With Us</span>
+              <span>{heroButtonLabel}</span>
               <span className={styles.heroBtnArrow}>
                 <FiArrowRight />
               </span>
@@ -283,13 +316,14 @@ export default function ServicesPageContent({
 
           {/* Bottom Right Description */}
           <p className={styles.heroDesc}>
-            Discover a new standard of villa management, from bespoke Canggu estates to premium cliffside residences across Bali.
+            {heroDescription}
           </p>
         </div>
-      </section>
+      </section> : null}
 
       {/* ── 2. PARTNERSHIP PERKS SECTION ── */}
       {partnership?.is_visible !== false ? <motion.section
+        id="partnership"
         className={styles.perks}
         initial="hidden"
         whileInView="visible"
@@ -297,7 +331,6 @@ export default function ServicesPageContent({
         variants={staggerContainer}
       >
         <motion.div className={styles.sectionHeader} variants={fadeUpVariants}>
-          <span className={styles.eyebrow}>Why Partner With Us</span>
           <h2 className={styles.sectionTitle}>{partnershipTitle}</h2>
         </motion.div>
         <motion.div className={styles.perksGrid} variants={staggerContainer}>
@@ -313,6 +346,7 @@ export default function ServicesPageContent({
 
       {/* ── 3. SPECIALTIES SPLIT ── */}
       {management?.is_visible !== false ? <motion.section
+        id="what-we-manage"
         className={styles.specialties}
         initial="hidden"
         whileInView="visible"
@@ -323,30 +357,21 @@ export default function ServicesPageContent({
           <h2>{managementHeading}</h2>
         </motion.div>
         <motion.div className={styles.specialtiesGrid} variants={staggerContainer}>
-          <motion.div className={styles.specialtyCard} variants={fadeUpVariants}>
-            <span className={styles.cardNum}>01</span>
-            <h3>Villa Operation</h3>
-            <p>Impeccable daily operations, housekeeping, supplies management, and direct hospitality care.</p>
-            <a href="#operational-management" className={styles.cardLink}>Explore Details <FiArrowRight /></a>
-          </motion.div>
-          <motion.div className={styles.specialtyCard} variants={fadeUpVariants}>
-            <span className={styles.cardNum}>02</span>
-            <h3>Villa Sales & Marketing</h3>
-            <p>Dynamic pricing, global distribution, SEO, direct booking systems, and revenue strategy.</p>
-            <a href="#sales-marketing" className={styles.cardLink}>Explore Details <FiArrowRight /></a>
-          </motion.div>
-          <motion.div className={styles.specialtyCard} variants={fadeUpVariants}>
-            <span className={styles.cardNum}>03</span>
-            <h3>Villa Project & Renovation</h3>
-            <p>Meticulous contractor sourcing, design planning, legal counsel, and logistics oversight.</p>
-            <a href="#project-management" className={styles.cardLink}>Explore Details <FiArrowRight /></a>
-          </motion.div>
+          {managementItems.map((item, index) => (
+            <motion.div className={styles.specialtyCard} variants={fadeUpVariants} key={item.href}>
+              <span className={styles.cardNum}>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+              <a href={item.href} className={styles.cardLink}>{item.linkLabel} <FiArrowRight /></a>
+            </motion.div>
+          ))}
         </motion.div>
       </motion.section> : null}
 
       {/* ── 4. INTERACTIVE SCROLL-LINKED TESTIMONIAL SECTION (real owner testimonials from the CMS; hidden until one is approved) ── */}
       {ownerSection?.is_visible !== false && hasOwnerTestimonials && activeOwner ? (
         <motion.section
+          id="owner-stories"
           className={styles.ownerTestimonialSection}
           initial="hidden"
           whileInView="visible"
@@ -355,7 +380,7 @@ export default function ServicesPageContent({
         >
           <div className={styles.ownerTestimonialHeader}>
             <h2>{ownerHeading}</h2>
-            <p>Direct notes from owners whose homes are cared for by the Summerhouse team.</p>
+            <p>{ownerDescription}</p>
           </div>
           <div className={styles.ownerTestimonialGrid}>
             <div className={styles.ownerTestimonialMedia}>
@@ -408,14 +433,14 @@ export default function ServicesPageContent({
       ) : null}
 
       {/* Owner testimonial submission stays available so the first real story can arrive. */}
-      <section className={styles.ownerFormSection}>
-        <OwnerTestimonialForm />
-      </section>
+      {ownerForm?.is_visible !== false ? <section id="owner-submission" className={styles.ownerFormSection}>
+        <OwnerTestimonialForm title={ownerFormTitle} description={ownerFormDescription} buttonLabel={ownerFormButton} closeLabel={ownerFormClose} />
+      </section> : null}
 
       {/* ── 5. DETAILED SERVICES Deep-Dive ── */}
       
       {/* SECTION 1: Operational Management */}
-      <motion.section 
+      {operationalSection?.is_visible !== false ? <motion.section
         id="operational-management" 
         className={styles.deepDiveSection}
         initial="hidden"
@@ -425,35 +450,24 @@ export default function ServicesPageContent({
       >
         <div className={styles.deepDiveHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.pillLabel}>Operations</span>
-            <h2>Operational Management</h2>
+            <h2>{sectionCopy(operationalSection, "heading", "Operational Management")}</h2>
             <p className={styles.specialtyDescription}>
-              “Our operational management services are designed to alleviate the stress and hassle of day-to-day operations of rental property, allowing you to focus on other aspects of your daily life. Our attention to detail and commitment to excellent service will give you peace of mind, knowing that your investment is being well taken care of with efficiency and professionalism.”
+              {sectionCopy(operationalSection, "description", "A Bali-based team coordinates the people, property standards, and everyday details that keep each stay running calmly and consistently.")}
             </p>
             <Link href="/contact" className={styles.btnOutline}>
-              Contact us for inquiry
+              {sectionCopy(operationalSection, "button_label", "Contact us for inquiry")}
             </Link>
           </div>
           <div className={styles.headerRight}>
-            <div className={styles.subServicesGrid}>
-              {operationalServices.map((service, index) => (
-                <div key={index} className={styles.subServiceCard}>
-                  <div className={styles.subCardHeader}>
-                    <span className={styles.subCardNum}>{String(index + 1).padStart(2, "0")}</span>
-                    <h3>{service.title}</h3>
-                  </div>
-                  <p>{service.text}</p>
-                </div>
-              ))}
-            </div>
+            <ScrollDrivenAccordion items={operationalServices} label="Operational management services" />
           </div>
         </div>
-      </motion.section>
+      </motion.section> : null}
 
-      <hr className={styles.divider} />
+      {operationalSection?.is_visible !== false && marketingSection?.is_visible !== false ? <hr className={styles.divider} /> : null}
 
       {/* SECTION 2: Sales & Marketing and Financial Management */}
-      <motion.section 
+      {marketingSection?.is_visible !== false ? <motion.section
         id="sales-marketing" 
         className={styles.deepDiveSection}
         initial="hidden"
@@ -463,35 +477,24 @@ export default function ServicesPageContent({
       >
         <div className={styles.deepDiveHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.pillLabel}>Revenue & guest demand</span>
-            <h2>Sales, Marketing & Financial Management</h2>
+            <h2>{sectionCopy(marketingSection, "heading", "Sales, Marketing & Financial Management")}</h2>
             <p className={styles.specialtyDescription}>
-              “Leaving your rental property with vacant dates can be stressful, and marketing it to the right guests at the right time with the right price may take a lot of effort and time. We can help maximize occupancy and ensure a steady income for your rental property through effective sales and marketing strategies. We also offer financial management services for complete transparency on your property’s financial status.”
+              {sectionCopy(marketingSection, "description", "Pricing, positioning, distribution, and reporting work as one system to build qualified demand and give owners a transparent view of performance.")}
             </p>
             <Link href="/contact" className={styles.btnOutline}>
-              Contact us for inquiry
+              {sectionCopy(marketingSection, "button_label", "Contact us for inquiry")}
             </Link>
           </div>
           <div className={styles.headerRight}>
-            <div className={styles.subServicesGrid}>
-              {marketingServices.map((service, index) => (
-                <div key={index} className={styles.subServiceCard}>
-                  <div className={styles.subCardHeader}>
-                    <span className={styles.subCardNum}>{String(index + 1).padStart(2, "0")}</span>
-                    <h3>{service.title}</h3>
-                  </div>
-                  <p>{service.text}</p>
-                </div>
-              ))}
-            </div>
+            <ScrollDrivenAccordion items={marketingServices} label="Sales, marketing and financial management services" />
           </div>
         </div>
-      </motion.section>
+      </motion.section> : null}
 
-      <hr className={styles.divider} />
+      {marketingSection?.is_visible !== false && projectSection?.is_visible !== false ? <hr className={styles.divider} /> : null}
 
       {/* SECTION 3: Villa Project Management */}
-      <motion.section 
+      {projectSection?.is_visible !== false ? <motion.section
         id="project-management" 
         className={styles.deepDiveSection}
         initial="hidden"
@@ -501,33 +504,23 @@ export default function ServicesPageContent({
       >
         <div className={styles.deepDiveHeader}>
           <div className={styles.headerLeft}>
-            <span className={styles.pillLabel}>Project delivery</span>
-            <h2>Villa Project Management</h2>
+            <h2>{sectionCopy(projectSection, "heading", "Villa Project Management")}</h2>
             <p className={styles.specialtyDescription}>
-              “Building or renovating a property can be a challenging and time-consuming process. Our project management services will ensure that your project runs smoothly from start to finish. We will oversee all aspects of the project, from sourcing materials and vendors to coordinating construction timelines and managing the budget.”
+              {sectionCopy(projectSection, "description", "From feasibility and legal coordination to design, construction, procurement, and handover, every project stage remains connected and visible.")}
             </p>
             <Link href="/contact" className={styles.btnOutline}>
-              Contact us for inquiry
+              {sectionCopy(projectSection, "button_label", "Contact us for inquiry")}
             </Link>
           </div>
           <div className={styles.headerRight}>
-            <div className={styles.subServicesGrid}>
-              {projectServices.map((service, index) => (
-                <div key={index} className={styles.subServiceCard}>
-                  <div className={styles.subCardHeader}>
-                    <span className={styles.subCardNum}>{String(index + 1).padStart(2, "0")}</span>
-                    <h3>{service.title}</h3>
-                  </div>
-                  <p>{service.text}</p>
-                </div>
-              ))}
-            </div>
+            <ScrollDrivenAccordion items={projectServices} label="Villa project management services" />
           </div>
         </div>
-      </motion.section>
+      </motion.section> : null}
 
       {/* ── 6. FAQ SECTION ── */}
-      <motion.section 
+      {faqIntro?.is_visible !== false ? <motion.section
+        id="services-faq"
         className={styles.faq}
         initial="hidden"
         whileInView="visible"
@@ -536,9 +529,8 @@ export default function ServicesPageContent({
       >
         <div className={styles.faqGrid}>
           <div className={styles.faqLeft}>
-            <span className={styles.eyebrow}>Support</span>
-            <h2>Frequently Asked Questions</h2>
-            <p>Can't find what you are looking for? Reach out to the Summerhouse support team directly.</p>
+            <h2>{resolvedFaqTitle}</h2>
+            <p>{faqDescription}</p>
           </div>
           <div className={styles.faqRight}>
             <div className={styles.faqList}>
@@ -566,10 +558,11 @@ export default function ServicesPageContent({
             </div>
           </div>
         </div>
-      </motion.section>
+      </motion.section> : null}
 
       {/* ── 7. BOOK APPOINTMENT CTA ── */}
       {finalCta?.is_visible !== false ? <motion.section
+        id="services-contact"
         className={styles.bottomCta}
         initial="hidden"
         whileInView="visible"

@@ -95,13 +95,6 @@ class CmsContentSeeder extends Seeder
                 'description' => 'A closer look at the neighbourhoods, landscapes, and local rhythms around our homes.',
                 'is_visible' => true,
             ]],
-            ['page' => 'home', 'section' => 'testimonials', 'content' => [
-                'eyebrow' => 'Guest stories',
-                'title' => 'What guests remember',
-                'title_emphasis' => 'after the stay',
-                'trust_label' => 'Loved by Summerhouse guests',
-                'is_visible' => true,
-            ]],
             ['page' => 'about', 'section' => 'stats', 'content' => [
                 'items' => [
                     ['value' => '200+', 'label' => 'Happy guests hosted'],
@@ -256,7 +249,7 @@ class CmsContentSeeder extends Seeder
                 'price' => 'From Rp 700.000 / night',
                 'cta' => 'Explore Villas in Canggu - Berawa',
                 'href' => '/villas?location=Canggu%20-%20Berawa',
-                'image' => '/homepage_villa/curated-3-corner.webp',
+                'image' => '/homepage_villa/rumahmimosa.webp',
                 'image_alt' => 'SummerHouse villa collection in Canggu Berawa',
                 'gallery_images' => ['/homepage_villa/curated-3-corner.webp', '/homepage_villa/88east.webp', '/homepage_villa/curated-1-main.webp', '/homepage_villa/rumahmimosa.webp', '/homepage_villa/villaarta.webp'],
                 'lifestyle_pillars' => [
@@ -283,7 +276,7 @@ class CmsContentSeeder extends Seeder
                 'price' => 'From Rp 1.100.000 / night',
                 'cta' => 'Explore Villas in Pererenan',
                 'href' => '/villas?location=Pererenan',
-                'image' => '/homepage_villa/curated-6-exterior.webp',
+                'image' => '/homepage_villa/CactusEstate.webp',
                 'image_alt' => 'SummerHouse villa collection in Pererenan',
                 'gallery_images' => ['/homepage_villa/curated-6-exterior.webp', '/homepage_villa/CactusEstate.webp', '/homepage_villa/VillaZen.webp', '/homepage_villa/curated-8.webp', '/homepage_villa/curated-5-lounge.webp'],
                 'lifestyle_pillars' => [
@@ -356,7 +349,7 @@ class CmsContentSeeder extends Seeder
                 'price' => 'From Rp 1.120.000 / night',
                 'cta' => 'Explore Villas in Umalas',
                 'href' => '/villas?location=Umalas',
-                'image' => '/homepage_villa/VillaZen.webp',
+                'image' => '/homepage_villa/villaarta.webp',
                 'image_alt' => 'SummerHouse villa collection in Umalas',
                 'gallery_images' => ['/homepage_villa/VillaZen.webp', '/homepage_villa/curated-6-exterior.webp', '/homepage_villa/CactusEstate.webp', '/homepage_villa/rumahmimosa.webp', '/homepage_villa/curated-3-corner.webp'],
                 'lifestyle_pillars' => null,
@@ -379,7 +372,7 @@ class CmsContentSeeder extends Seeder
                 'price' => 'From Rp 1.240.000 / night',
                 'cta' => 'Explore Villas in Ubud',
                 'href' => '/villas?location=Ubud',
-                'image' => '/homepage_villa/curated-2-detail.webp',
+                'image' => '/homepage_villa/VillaZen.webp',
                 'image_alt' => 'SummerHouse villa collection in Ubud',
                 'gallery_images' => ['/homepage_villa/curated-2-detail.webp', '/homepage_villa/curated-5-lounge.webp', '/homepage_villa/VillaZen.webp', '/homepage_villa/CactusEstate.webp', '/homepage_villa/curated-8.webp'],
                 'lifestyle_pillars' => null,
@@ -421,40 +414,28 @@ class CmsContentSeeder extends Seeder
     private function seedServiceCards(): void
     {
         $cards = [
-            ['category' => 'operational', 'title' => 'Scheduling & Cleaning', 'text' => 'Automated booking sync with professional cleaning teams on every turnover.'],
-            ['category' => 'operational', 'title' => 'HR Management', 'text' => 'Staff hiring, training, scheduling, and payroll handled for your villa team.'],
-            ['category' => 'operational', 'title' => 'Maintenance', 'text' => 'Regular property inspections, pool care, garden upkeep, and emergency repairs.'],
-            ['category' => 'operational', 'title' => 'Guest Relations', 'text' => 'Pre-arrival coordination, check-in support, and in-stay concierge service.'],
-            ['category' => 'operational', 'title' => 'Inventory Management', 'text' => 'Linen, amenities, and supplies tracked and restocked before every guest.'],
-            ['category' => 'operational', 'title' => 'Quality Assurance', 'text' => 'Photo-verified standards after each turnover to ensure consistent quality.'],
-            ['category' => 'operational', 'title' => 'Security & Insurance', 'text' => 'Property insurance guidance, key management, and security coordination.'],
-            ['category' => 'operational', 'title' => 'Utility Management', 'text' => 'Electricity, water, internet, and gas managed and monitored monthly.'],
-            ['category' => 'operational', 'title' => 'Vendor Coordination', 'text' => 'Trusted network of local vendors for repairs, upgrades, and emergencies.'],
-            ['category' => 'operational', 'title' => 'Reporting', 'text' => 'Monthly performance reports with occupancy, revenue, and expense breakdowns.'],
-            ['category' => 'marketing', 'title' => 'Financial Forecasting', 'text' => 'Data-driven revenue projections and seasonal pricing strategy.'],
-            ['category' => 'marketing', 'title' => 'Revenue Strategy', 'text' => 'Dynamic pricing optimization across all booking channels.'],
-            ['category' => 'marketing', 'title' => 'Photography & Content', 'text' => 'Professional photography, video, and drone content for listings.'],
-            ['category' => 'marketing', 'title' => 'Platform Management', 'text' => 'Listing optimization on Airbnb, Booking.com, and direct channels.'],
-            ['category' => 'marketing', 'title' => 'Social Media', 'text' => 'Instagram and social content strategy to build brand and drive bookings.'],
-            ['category' => 'marketing', 'title' => 'SEO & Website', 'text' => 'Direct booking website with SEO optimization for organic traffic.'],
-            ['category' => 'marketing', 'title' => 'Guest Reviews', 'text' => 'Review management and response strategy across all platforms.'],
-            ['category' => 'marketing', 'title' => 'Email Marketing', 'text' => 'Automated guest communication and re-engagement campaigns.'],
-            ['category' => 'marketing', 'title' => 'Competitive Analysis', 'text' => 'Market positioning and competitor benchmarking for your area.'],
-            ['category' => 'marketing', 'title' => 'Brand Development', 'text' => 'Villa branding, naming, and story development for premium positioning.'],
-            ['category' => 'project', 'title' => 'Property Finding', 'text' => 'Sourcing and evaluating investment-grade villas across Bali.'],
-            ['category' => 'project', 'title' => 'Legal Counsel', 'text' => 'Foreign ownership structures, permits, and compliance guidance.'],
-            ['category' => 'project', 'title' => 'Architecture & Design', 'text' => 'Connecting owners with top architects for build and renovation projects.'],
-            ['category' => 'project', 'title' => 'Interior Design', 'text' => 'Curated furnishing and styling for guest-ready villa interiors.'],
-            ['category' => 'project', 'title' => 'Contractor Management', 'text' => 'Build oversight, quality checks, and timeline management.'],
-            ['category' => 'project', 'title' => 'Permit & Licensing', 'text' => 'Tourism license (Pondok Wisata) and operational permit handling.'],
-            ['category' => 'project', 'title' => 'Landscaping', 'text' => 'Tropical garden design, pool installation, and outdoor living spaces.'],
-            ['category' => 'project', 'title' => 'Smart Home Setup', 'text' => 'WiFi, security cameras, smart locks, and automation systems.'],
-            ['category' => 'project', 'title' => 'Pre-Launch Preparation', 'text' => 'Final staging, photography, listing creation, and soft-launch bookings.'],
+            ['category' => 'operational', 'slug' => 'operations-housekeeping-property-care', 'title' => 'Housekeeping & Property Care', 'text' => 'Cleaning schedules, inspections, pool and garden care, and responsive maintenance coordinated to one consistent standard.'],
+            ['category' => 'operational', 'slug' => 'operations-people-staff-management', 'title' => 'People, Training & Staff Management', 'text' => 'Hiring, payroll, workplace support, training, scheduling, and performance supervision for the villa team.'],
+            ['category' => 'operational', 'slug' => 'operations-guest-journey', 'title' => 'Guest Relations, Check-in & Check-out', 'text' => 'Thoughtful pre-arrival coordination, welcoming check-ins, in-stay support, and smooth departures.'],
+            ['category' => 'operational', 'slug' => 'operations-supplies-inventory', 'title' => 'Supplies & Inventory Management', 'text' => 'Linen, amenities, utilities, and property assets tracked and replenished before they become operational issues.'],
+            ['category' => 'operational', 'slug' => 'operations-cost-vendor-services', 'title' => 'Cost, Vendor & Additional Services', 'text' => 'Trusted local vendors, transparent cost control, security coordination, and optional guest services managed through one team.'],
+            ['category' => 'marketing', 'slug' => 'revenue-forecasting-strategy', 'title' => 'Forecasting & Revenue Strategy', 'text' => 'Market-informed projections and commercial goals turn seasonality into a practical plan for occupancy and returns.'],
+            ['category' => 'marketing', 'slug' => 'revenue-positioning-copywriting', 'title' => 'Property Positioning & Copywriting', 'text' => 'Distinctive photography, storytelling, and listing copy present each villa with a clear point of view.'],
+            ['category' => 'marketing', 'slug' => 'revenue-distribution-direct-booking', 'title' => 'Distribution & Direct Booking', 'text' => 'Coordinated OTA, agent, and direct channels extend reach while reducing avoidable commission costs.'],
+            ['category' => 'marketing', 'slug' => 'revenue-advertising-search', 'title' => 'Advertising & Search Visibility', 'text' => 'Targeted campaigns, social content, and search optimization help qualified guests discover the property.'],
+            ['category' => 'marketing', 'slug' => 'revenue-pricing-reservations', 'title' => 'Dynamic Pricing & Reservations', 'text' => 'Live market signals guide nightly pricing while the reservation team supports guests throughout the booking journey.'],
+            ['category' => 'marketing', 'slug' => 'revenue-reporting-transparency', 'title' => 'Reporting & Financial Transparency', 'text' => 'Monthly reporting connects bookings, revenue, operating expenditure, and owner payouts in one understandable view.'],
+            ['category' => 'project', 'slug' => 'project-property-feasibility', 'title' => 'Property Finding & Feasibility', 'text' => 'Potential sites and existing villas are assessed for location, rental demand, condition, and commercial viability.'],
+            ['category' => 'project', 'slug' => 'project-legal-assessment', 'title' => 'Legal Counsel & Project Assessment', 'text' => 'Local specialists coordinate ownership structures, permits, compliance, scope, and renovation priorities.'],
+            ['category' => 'project', 'slug' => 'project-design-planning', 'title' => 'Design & Planning Coordination', 'text' => 'Architecture, interiors, landscape, and guest experience are aligned before construction decisions are locked.'],
+            ['category' => 'project', 'slug' => 'project-contractors-vendors', 'title' => 'Contractor & Vendor Management', 'text' => 'Trusted teams are selected, briefed, scheduled, and held to agreed quality and delivery standards.'],
+            ['category' => 'project', 'slug' => 'project-procurement-logistics', 'title' => 'Procurement & Logistics', 'text' => 'Materials, furniture, fixtures, technology, and site logistics are coordinated against budget and programme.'],
+            ['category' => 'project', 'slug' => 'project-quality-reporting', 'title' => 'Construction Quality & Project Reporting', 'text' => 'Progress, workmanship, cost, risks, and pre-launch preparation remain visible from build through handover.'],
         ];
 
         foreach ($cards as $i => $data) {
             ServiceCard::updateOrCreate(
-                ['category' => $data['category'], 'title' => $data['title']],
+                ['slug' => $data['slug']],
                 array_merge($data, ['sort_order' => $i, 'is_active' => true])
             );
         }

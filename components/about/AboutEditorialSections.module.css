@@ -101,8 +101,8 @@
 }
 
 .heroSection {
-  padding-top: clamp(6.5rem, 9vw, 8.5rem);
-  padding-bottom: clamp(4rem, 8vw, 7.5rem);
+  padding-top: clamp(6rem, 7.8vw, 7rem);
+  padding-bottom: clamp(3rem, 4.5vw, 4rem);
 }
 
 .heroInner {
@@ -684,8 +684,8 @@
 .highlightsSection,
 .reviewsSection,
 .faqSection {
-  padding-top: clamp(5.5rem, 9vw, 8rem);
-  padding-bottom: clamp(5.5rem, 9vw, 8rem);
+  padding-top: clamp(4rem, 5.6vw, 5rem);
+  padding-bottom: clamp(4rem, 5.6vw, 5rem);
 }
 
 .darkScrollChapter,
@@ -1783,6 +1783,12 @@
   border-top: 1px solid var(--about-line);
 }
 
+@media (max-width: 640px) {
+  .faqSection {
+    padding-block: 4rem;
+  }
+}
+
 .faqIntro {
   align-self: start;
   position: sticky;
@@ -1932,6 +1938,9 @@
 .mapCanvas {
   position: absolute;
   inset: 0;
+}
+
+.mapCanvas :global(.maplibregl-canvas) {
   filter: saturate(0.72) contrast(1.05) brightness(0.72);
 }
 
@@ -1996,37 +2005,128 @@
   mask-image: radial-gradient(circle at center, black, transparent 72%);
 }
 
-.mapMarker {
-  position: absolute;
-  top: var(--y);
-  left: var(--x);
-  display: inline-flex;
-  transform: translate(-50%, -50%);
-  align-items: center;
-  gap: 0.5rem;
+.destinationMapMarker {
+  --marker-offset-y: -20px;
+  position: relative;
+  width: 0.9rem;
+  height: 0.9rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--color-text-on-dark);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.78rem;
-  font-weight: 800;
+  cursor: pointer;
 }
 
-.mapMarker::before {
-  content: "";
+.destinationMapMarkerDot {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 0.8rem;
-  height: 0.8rem;
-  border: 3px solid var(--color-surface);
+  border: 2px solid #fffefa;
   border-radius: 999px;
-  background: var(--about-green);
-  box-shadow: 0 0 0 0.55rem rgba(139, 180, 147, 0.16);
+  background: #c7a58a;
+  box-shadow: 0 0 0 0.42rem rgba(199, 165, 138, 0.18);
+  transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
-.mapMarker span {
-  padding: 0.45rem 0.7rem;
-  border: 1px solid rgba(255, 254, 250, 0.16);
-  border-radius: 999px;
-  background: rgba(10, 12, 9, 0.58);
-  backdrop-filter: blur(12px);
+.destinationMapMarkerLabel {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 0.8rem);
+  display: grid;
+  gap: 0.1rem;
+  width: max-content;
+  max-width: 13.5rem;
+  padding: 0.55rem 0.7rem 0.58rem;
+  transform: translateY(calc(-50% + var(--marker-offset-y)));
+  border: 1px solid rgba(255, 254, 250, 0.2);
+  border-radius: 0.45rem;
+  background: rgba(29, 33, 27, 0.94);
+  color: #fffefa;
+  font-family: var(--font-outfit), var(--font-dm-sans), system-ui, sans-serif;
+  text-align: left;
+  box-shadow: 0 0.7rem 1.8rem rgba(0, 0, 0, 0.24);
+  pointer-events: none;
+}
+
+.destinationMapMarker[data-side="right"] .destinationMapMarkerLabel {
+  right: calc(100% + 0.8rem);
+  left: auto;
+  text-align: right;
+}
+
+.destinationMapMarkerLabel strong {
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.destinationMapMarkerLabel small {
+  color: rgba(255, 254, 250, 0.7);
+  font-size: 0.65rem;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.destinationMapMarker:hover .destinationMapMarkerDot,
+.destinationMapMarker:focus-visible .destinationMapMarkerDot {
+  transform: scale(1.18);
+  box-shadow: 0 0 0 0.55rem rgba(199, 165, 138, 0.25);
+}
+
+.destinationMapMarker:focus-visible {
+  outline: 2px solid #fffefa;
+  outline-offset: 0.45rem;
+}
+
+.destinationRateList {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 1rem 0 0;
+  padding: 0;
+  border-top: 1px solid rgba(255, 254, 250, 0.16);
+  border-left: 1px solid rgba(255, 254, 250, 0.16);
+  list-style: none;
+}
+
+.destinationRateList li {
+  display: grid;
+  align-content: space-between;
+  min-height: 7.4rem;
+  padding: 1.15rem 1.2rem;
+  border-right: 1px solid rgba(255, 254, 250, 0.16);
+  border-bottom: 1px solid rgba(255, 254, 250, 0.16);
+}
+
+.destinationRateList div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.destinationRateList strong {
+  color: #fffefa;
+  font-family: var(--font-outfit), var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.destinationRateList span {
+  color: rgba(255, 254, 250, 0.46);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.destinationRateList p {
+  margin: 1.35rem 0 0;
+  color: rgba(255, 254, 250, 0.72);
+  font-family: var(--font-outfit), var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.76rem;
+  line-height: 1.35;
 }
 
 .locationMarquee {
@@ -2151,6 +2251,18 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(255, 254, 250, 0.78);
+}
+
+.locationCardContent .locationCardRate {
+  display: block;
+  margin-top: 0.4rem;
+  color: rgba(255, 254, 250, 0.88);
+  font-family: var(--font-outfit), var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
 }
 
 @media (max-width: 1120px) {
@@ -2782,4 +2894,53 @@
   color: var(--about-muted);
   font-size: 1.05rem;
   line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .destinationRateList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .destinationMapMarkerLabel {
+    max-width: 10rem;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .destinationMapMarkerLabel small {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .destinationRateList {
+    grid-template-columns: 1fr;
+  }
+
+  .destinationRateList li {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .destinationRateList p {
+    margin-top: 0.65rem;
+  }
+
+  .destinationMapMarkerLabel {
+    max-width: 7.5rem;
+    padding: 0.38rem 0.48rem;
+  }
+
+  .destinationMapMarkerLabel strong {
+    font-size: 0.68rem;
+  }
+
+  .destinationMapMarkerLabel small {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .destinationMapMarkerDot {
+    transition: none;
+  }
 }

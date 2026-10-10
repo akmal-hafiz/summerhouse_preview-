@@ -2,273 +2,155 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  type KeyboardEvent,
-  type MouseEvent,
-  type PointerEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useRef, useState } from "react";
+
 import type { BaliCollectionItem } from "@/data/baliCollections";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { nextCarouselIndex, safeDestinationHref } from "@/lib/destination-carousel";
 import styles from "./DestinationRail.module.css";
 
-type DestinationRailProps = {
-  collections: BaliCollectionItem[];
-};
+const SWIPE_THRESHOLD = 48;
 
-type PointerState = {
-  index: number;
-  pointerType: string;
-  startX: number;
-  startY: number;
-  moved: boolean;
-};
+export default function DestinationRail({ collections }: { collections: BaliCollectionItem[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const index = Math.min(activeIndex, Math.max(0, collections.length - 1));
+  const active = collections[index];
 
-const MOVE_THRESHOLD = 9;
+  const move = useCallback((step: 1 | -1) => {
+    if (collections.length < 2) return;
+    setDirection(step);
+    setActiveIndex((current) => nextCarouselIndex(current, step, collections.length));
+  }, [collections.length]);
 
-export default function DestinationRail({ collections }: DestinationRailProps) {
-  const count = collections.length;
-  const [activeIndex, setActiveIndex] = useState(() => Math.max(0, Math.floor(count / 2)));
-  const [railVisible, setRailVisible] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const railRef = useRef<HTMLDivElement>(null);
-  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const pointerState = useRef<PointerState | null>(null);
-  const blockNextClick = useRef<number | null>(null);
-  const scrollFrame = useRef<number | null>(null);
+  const select = useCallback((nextIndex: number) => {
+    if (nextIndex === index) return;
+    setDirection(nextIndex > index ? 1 : -1);
+    setActiveIndex(nextIndex);
+  }, [index]);
 
-  const safeActiveIndex = Math.min(Math.max(activeIndex, 0), Math.max(count - 1, 0));
+  if (!active) return null;
 
-  const centerCard = useCallback(
-    (index: number, behavior: ScrollBehavior = prefersReducedMotion ? "auto" : "smooth") => {
-      const card = linkRefs.current[index];
-      const rail = railRef.current;
-      if (!card || !rail || rail.scrollWidth <= rail.clientWidth + 4) return;
-
-      const left = card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2;
-      rail.scrollTo({ left: Math.max(0, left), behavior });
-    },
-    [prefersReducedMotion],
-  );
-
-  const activate = useCallback(
-    (index: number, shouldCenter = false) => {
-      setActiveIndex(index);
-      if (shouldCenter) {
-        requestAnimationFrame(() => centerCard(index));
-      }
-    },
-    [centerCard],
-  );
-
-  useEffect(() => {
-    setActiveIndex((current) => Math.min(current, Math.max(count - 1, 0)));
-  }, [count]);
-
-  useEffect(() => {
-    if (count === 0) return;
-    const initialIndex = Math.floor(count / 2);
-    const frame = requestAnimationFrame(() => centerCard(initialIndex, "auto"));
-    return () => cancelAnimationFrame(frame);
-  }, [centerCard, count]);
-
-  useEffect(() => {
-    const rail = railRef.current;
-    if (!rail) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setRailVisible(entry.isIntersecting && entry.intersectionRatio > 0.2),
-      { threshold: [0, 0.2, 0.6] },
-    );
-    observer.observe(rail);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    videoRefs.current.forEach((video, index) => {
-      if (!video) return;
-      const shouldPlay =
-        railVisible &&
-        !prefersReducedMotion &&
-        index === safeActiveIndex &&
-        collections[index]?.mediaType === "video";
-
-      if (shouldPlay) {
-        void video.play().catch(() => undefined);
-      } else {
-        video.pause();
-      }
-    });
-  }, [collections, prefersReducedMotion, railVisible, safeActiveIndex]);
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLAnchorElement>, index: number) => {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    event.preventDefault();
-    const direction = event.key === "ArrowRight" ? 1 : -1;
-    const nextIndex = Math.min(Math.max(index + direction, 0), count - 1);
-    activate(nextIndex, true);
-    linkRefs.current[nextIndex]?.focus();
-  };
-
-  const handlePointerDown = (event: PointerEvent<HTMLAnchorElement>, index: number) => {
-    pointerState.current = {
-      index,
-      pointerType: event.pointerType,
-      startX: event.clientX,
-      startY: event.clientY,
-      moved: false,
-    };
-  };
-
-  const handlePointerMove = (event: PointerEvent<HTMLAnchorElement>) => {
-    const pointer = pointerState.current;
-    if (!pointer) return;
-    const moved =
-      Math.abs(event.clientX - pointer.startX) > MOVE_THRESHOLD ||
-      Math.abs(event.clientY - pointer.startY) > MOVE_THRESHOLD;
-    if (moved) pointer.moved = true;
-  };
-
-  const handlePointerUp = (event: PointerEvent<HTMLAnchorElement>, index: number) => {
-    const pointer = pointerState.current;
-    pointerState.current = null;
-    if (!pointer || pointer.index !== index) return;
-
-    if (pointer.moved) {
-      blockNextClick.current = index;
-      return;
-    }
-
-    if (pointer.pointerType !== "mouse" && index !== safeActiveIndex) {
-      blockNextClick.current = index;
-      activate(index, true);
-    }
-  };
-
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>, index: number) => {
-    if (blockNextClick.current === index) {
-      event.preventDefault();
-      blockNextClick.current = null;
-      return;
-    }
-
-    if (index !== safeActiveIndex) {
-      event.preventDefault();
-      activate(index, true);
-    }
-  };
-
-  const handleRailScroll = () => {
-    if (scrollFrame.current !== null) cancelAnimationFrame(scrollFrame.current);
-    scrollFrame.current = requestAnimationFrame(() => {
-      const rail = railRef.current;
-      if (!rail || rail.scrollWidth <= rail.clientWidth + 4) return;
-      const railCenter = rail.scrollLeft + rail.clientWidth / 2;
-      let closest = safeActiveIndex;
-      let distance = Number.POSITIVE_INFINITY;
-
-      linkRefs.current.forEach((card, index) => {
-        if (!card) return;
-        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-        const nextDistance = Math.abs(cardCenter - railCenter);
-        if (nextDistance < distance) {
-          closest = index;
-          distance = nextDistance;
-        }
-      });
-
-      if (closest !== safeActiveIndex) setActiveIndex(closest);
-    });
-  };
-
-  useEffect(
-    () => () => {
-      if (scrollFrame.current !== null) cancelAnimationFrame(scrollFrame.current);
-    },
-    [],
-  );
-
-  if (count === 0) return null;
+  const image = active.image || active.videoPoster || active.mobilePoster || "/homepage_villa/curated-1-main.webp";
+  const duration = reducedMotion ? 0 : 0.48;
+  const activeTabId = `destination-tab-${active.id}`;
 
   return (
-    <nav className={styles.stage} aria-label="Bali destination guides">
-      <div ref={railRef} className={styles.rail} onScroll={handleRailScroll}>
-        {collections.map((item, index) => {
-          const isActive = index === safeActiveIndex;
-          const poster = item.videoPoster || item.mobilePoster || item.image;
-          const label =
-            item.mediaAccessibilityLabel || `Open the Summerhouse guide to ${item.location}`;
-
+    <div
+      className={styles.story}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Bali neighbourhood destinations"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          event.preventDefault();
+          move(event.key === "ArrowRight" ? 1 : -1);
+        }
+      }}
+      onTouchStart={(event) => {
+        touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      }}
+      onTouchEnd={(event) => {
+        const start = touchStart.current;
+        touchStart.current = null;
+        if (!start) return;
+        const deltaX = event.changedTouches[0].clientX - start.x;
+        const deltaY = event.changedTouches[0].clientY - start.y;
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+          move(deltaX < 0 ? 1 : -1);
+        }
+      }}
+    >
+      <nav className={styles.index} role="tablist" aria-label="Choose a Bali neighbourhood">
+        {collections.map((collection, collectionIndex) => {
+          const selected = collectionIndex === index;
           return (
-            <Link
-              key={item.id}
-              ref={(node) => {
-                linkRefs.current[index] = node;
-              }}
-              href={
-                item.href ||
-                `/villas?location=${encodeURIComponent(item.location)}&match=exact`
-              }
-              className={styles.card}
-              data-active={isActive ? "true" : "false"}
-              aria-label={label}
-              onMouseEnter={() => activate(index)}
-              onFocus={() => activate(index, true)}
-              onKeyDown={(event) => handleKeyDown(event, index)}
-              onPointerDown={(event) => handlePointerDown(event, index)}
-              onPointerMove={handlePointerMove}
-              onPointerUp={(event) => handlePointerUp(event, index)}
-              onPointerCancel={() => {
-                pointerState.current = null;
-              }}
-              onClick={(event) => handleClick(event, index)}
-              draggable={false}
+            <button
+              key={collection.id}
+              id={`destination-tab-${collection.id}`}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-controls="destination-panel"
+              className={styles.indexItem}
+              data-active={selected ? "true" : "false"}
+              onClick={() => select(collectionIndex)}
             >
-              <span className={styles.media}>
-                {item.mediaType === "video" && item.video && !prefersReducedMotion ? (
-                  <video
-                    ref={(node) => {
-                      videoRefs.current[index] = node;
-                    }}
-                    className={styles.photo}
-                    poster={poster || undefined}
-                    muted
-                    loop
-                    playsInline
-                    preload={isActive ? "metadata" : "none"}
-                    aria-hidden="true"
-                  >
-                    <source src={item.video} />
-                  </video>
-                ) : (
-                  <Image
-                    src={poster || item.image}
-                    alt={item.imageAlt}
-                    fill
-                    sizes="(min-width: 1200px) 28vw, (min-width: 720px) 42vw, 76vw"
-                    loading={isActive && railVisible ? "eager" : "lazy"}
-                    fetchPriority={isActive && railVisible ? "high" : "auto"}
-                    className={styles.photo}
-                    draggable={false}
-                  />
-                )}
+              <span className={styles.indexNumber}>
+                {String(collectionIndex + 1).padStart(2, "0")}
               </span>
-
-              <span className={styles.caption}>
-                <span className={styles.category}>{item.category}</span>
-                <strong>{item.location}</strong>
-                <span className={styles.description}>{item.description}</span>
+              <span className={styles.indexCopy}>
+                <strong>{collection.location}</strong>
+                <small>{collection.category}</small>
               </span>
-            </Link>
+            </button>
           );
         })}
-      </div>
+      </nav>
 
-      <p className={styles.mobileHint}>Swipe to explore</p>
-    </nav>
+      <div
+        id="destination-panel"
+        className={styles.stage}
+        role="tabpanel"
+        aria-labelledby={activeTabId}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div className={styles.imageFrame}>
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.div
+              key={active.id}
+              className={styles.imageLayer}
+              custom={direction}
+              initial={reducedMotion ? false : { opacity: 0, x: direction * 24, scale: 1.018 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, x: direction * -18, scale: 1.008 }}
+              transition={{ duration, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Image
+                src={image}
+                alt={active.imageAlt || `A villa in ${active.location}`}
+                fill
+                sizes="(min-width: 1024px) 66vw, 100vw"
+                quality={78}
+                priority={index === 0}
+                className={styles.image}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className={styles.details}>
+          <div className={styles.progress} aria-label={`Destination ${index + 1} of ${collections.length}`}>
+            <span>{String(index + 1).padStart(2, "0")} / {String(collections.length).padStart(2, "0")}</span>
+            <span className={styles.progressTrack} aria-hidden="true">
+              <span style={{ width: `${((index + 1) / collections.length) * 100}%` }} />
+            </span>
+          </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={`${active.id}-copy`}
+              className={styles.copy}
+              initial={reducedMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
+              transition={{ duration: reducedMotion ? 0 : 0.2 }}
+            >
+              <h3>{active.location}</h3>
+              <p>{active.description}</p>
+            </motion.div>
+          </AnimatePresence>
+
+          <Link href={safeDestinationHref(active.href, active.location)} className={styles.explore}>
+            Explore villas <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

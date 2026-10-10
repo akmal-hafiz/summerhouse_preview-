@@ -120,7 +120,7 @@ class LodgifyAuditService
     private function sanitize(mixed $value): mixed
     {
         if (! is_array($value)) {
-            return is_string($value) ? Str::limit($value, 2000, '') : $value;
+            return \App\Support\LodgifyLog::sanitize($value);
         }
 
         $clean = [];

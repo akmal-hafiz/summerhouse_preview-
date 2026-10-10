@@ -18,7 +18,7 @@ type OurStoryHeroProps = {
 
 export default function OurStoryHero({ content }: OurStoryHeroProps) {
   return (
-    <section className={styles.hero} aria-label="Our story">
+    <section id="our-story" className={styles.hero} aria-label="Our story">
       <div className={styles.inner}>
         <h1 className={styles.heading}>{content?.heading || "Our Story."}</h1>
 
@@ -34,7 +34,7 @@ export default function OurStoryHero({ content }: OurStoryHeroProps) {
         </div>
       </div>
 
-      <a className={styles.scrollCue} href="#trust" aria-label="Scroll to why travelers trust Summerhouses">
+      <a className={styles.scrollCue} href="#trust-recognition" aria-label="Scroll to why travelers trust Summerhouses">
         <span>{content?.scroll_label || "Trusted by travelers worldwide"}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 4v14" />

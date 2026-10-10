@@ -2,10 +2,10 @@
 
 import "./navbar-user.css";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { FiGrid, FiHeart, FiLogOut, FiMenu, FiSearch, FiShield, FiUser, FiX } from "react-icons/fi";
+import { FiGrid, FiHeart, FiLogOut, FiMenu, FiShield, FiUser, FiX } from "react-icons/fi";
 import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
@@ -16,11 +16,12 @@ import { safeHttpHref } from "@/lib/safe-url";
 
 const navbarNavItems = [
   { label: { en: "Stays", id: "Menginap" }, href: "/villas" },
-  { label: { en: "Gallery", id: "Galeri" }, href: "/gallery" },
   { label: { en: "Services", id: "Layanan" }, href: "/services" },
+  { label: { en: "Gallery", id: "Galeri" }, href: "/gallery" },
   { label: { en: "About", id: "Tentang" }, href: "/about" },
   { label: { en: "Contact", id: "Kontak" }, href: "/contact" },
 ];
+const desktopNavItems = navbarNavItems.filter((item) => item.href !== "/contact");
 
 interface NavbarProps {
   alwaysSolid?: boolean;
@@ -39,6 +40,10 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const portalRef = useRef<HTMLDivElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { openAuth } = useAuthModal();
+  const pathname = usePathname();
+  const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin", "/dashboard");
 
   useEffect(() => setMounted(true), []);
 
@@ -85,9 +90,8 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
         return;
       }
 
-      const panel = document.getElementById("global-mobile-navigation-panel");
       const focusable = Array.from(
-        panel?.querySelectorAll<HTMLElement>(
+        portalRef.current?.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
         ) ?? [],
       ).filter((element) => !element.hasAttribute("disabled") && element.offsetParent !== null);
@@ -156,37 +160,66 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
                 tabIndex={-1}
                 onClick={() => closeMenu()}
               />
+              <button
+                type="button"
+                className="global-mobile-menu__close"
+                aria-label="Close navigation menu"
+                onClick={() => closeMenu()}
+              >
+                <FiX aria-hidden="true" />
+              </button>
               <LiquidDropdownSurface
                 id="global-mobile-navigation-panel"
-                className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel"
+                className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel global-mobile-menu__panel--refined"
                 variant="drawer"
                 role="dialog"
                 aria-modal="true"
                 aria-label="Site navigation"
               >
-                {navbarNavItems.map((item) => (
-                  <Link
-                    href={item.href}
-                    key={`standalone-mobile-${item.href}`}
-                    onClick={() => closeMenu(false)}
-                  >
-                    {item.label[language]}
-                  </Link>
-                ))}
                 <InteractiveHoverButton
-                  href="/villas"
+                  href="/#home-hero-search"
                   className="global-mobile-menu__cta"
                   arrow={null}
                   onClick={() => closeMenu(false)}
                 >
                   {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
                 </InteractiveHoverButton>
+                {navbarNavItems.map((item) => (
+                  <Link
+                    href={item.href}
+                    key={`standalone-mobile-${item.href}`}
+                    aria-current={pathname === item.href ? "page" : undefined}
+                    onClick={() => closeMenu(false)}
+                  >
+                    {item.label[language]}
+                  </Link>
+                ))}
+                <div className="global-mobile-menu__utilities">
+                  <Link className="global-mobile-menu__saved-link" href="/saved-villas" onClick={() => closeMenu(false)}>
+                    {language === "id" ? "Villa tersimpan" : "Saved villas"}
+                  </Link>
+                  {isAuthenticated && user ? (
+                    <>
+                      <Link href="/dashboard" onClick={() => closeMenu(false)}>
+                        {language === "id" ? "Akun saya" : "My account"}
+                      </Link>
+                      {isAdmin && <a href={adminUrl} onClick={() => closeMenu(false)}>{language === "id" ? "Dashboard admin" : "Admin dashboard"}</a>}
+                      <button type="button" onClick={() => { closeMenu(false); void logout(); }}>
+                        {language === "id" ? "Keluar" : "Sign out"}
+                      </button>
+                    </>
+                  ) : (
+                    <button type="button" onClick={() => { closeMenu(false); openAuth("login"); }}>
+                      {language === "id" ? "Masuk / Daftar" : "Sign in / Register"}
+                    </button>
+                  )}
+                </div>
                 <button
                   type="button"
-                  className="summerhouse-liquid-glass summerhouse-liquid-glass--language global-language-toggle global-language-toggle--mobile"
+                  className="global-language-toggle global-language-toggle--mobile"
                   onClick={toggleLanguage}
                 >
-                  {language === "id" ? "Bahasa Indonesia" : "English"}
+                  {language === "id" ? "English" : "Bahasa Indonesia"}
                 </button>
               </LiquidDropdownSurface>
             </div>,
@@ -203,10 +236,10 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   const [isSavedCountReady, setIsSavedCountReady] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { openAuth } = useAuthModal();
   const { language, toggleLanguage } = useLanguage();
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -216,8 +249,18 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
         setUserMenuOpen(false);
       }
     };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setUserMenuOpen(false);
+      window.requestAnimationFrame(() => userMenuTriggerRef.current?.focus());
+    };
     document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [userMenuOpen]);
 
   const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin", "/dashboard");
@@ -225,20 +268,6 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   const handleLogout = async () => {
     setUserMenuOpen(false);
     await logout();
-  };
-
-  const handleSearchClick = () => {
-    const target = document.getElementById("home-hero-search");
-
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
-      window.setTimeout(() => {
-        target.querySelector<HTMLButtonElement>(".villa-search-form__group--location button")?.focus();
-      }, 420);
-      return;
-    }
-
-    router.push(pathname === "/" ? "#home-hero-search" : "/#home-hero-search");
   };
 
   useEffect(() => {
@@ -261,7 +290,7 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   }, []);
 
   return (
-    <header className={`global-mini-header ${isScrolled || alwaysSolid ? "is-scrolled" : ""}`}>
+    <header className={`global-mini-header global-mini-header--refined ${isScrolled || alwaysSolid ? "is-scrolled" : ""}`}>
       <div className="global-mini-header__brand">
         <Link href="/" className="global-mini-logo" aria-label="Summerhouse Bali">
           <i className="global-mini-logo-mark" aria-hidden="true" />
@@ -271,8 +300,8 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
       <MobileNavigationMenu language={language} toggleLanguage={toggleLanguage} />
 
       <nav className="global-mini-nav" aria-label="Global navigation">
-        {navbarNavItems.map((item) => (
-          <Link href={item.href} key={item.href}>{item.label[language]}</Link>
+        {desktopNavItems.map((item) => (
+          <Link href={item.href} key={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label[language]}</Link>
         ))}
       </nav>
 
@@ -280,11 +309,8 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
         <InteractiveHoverButton href="/#home-hero-search" className="global-mini-link" arrow={null}>
           {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
         </InteractiveHoverButton>
-        <button type="button" className="global-language-toggle" aria-label="Switch language" onClick={toggleLanguage}>
+        <button type="button" className="global-language-toggle" aria-label={language === "id" ? "Switch to English" : "Ganti ke Bahasa Indonesia"} onClick={toggleLanguage}>
           {language === "id" ? "ID" : "EN"}
-        </button>
-        <button type="button" className="global-icon-button global-icon-button--search" aria-label="Search villas" onClick={handleSearchClick}>
-          <FiSearch aria-hidden="true" />
         </button>
         <Link
           href="/saved-villas"
@@ -299,9 +325,13 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
         <div className="global-user-dropdown" ref={userMenuRef}>
           {isAuthenticated && user ? (
             <button
+              ref={userMenuTriggerRef}
               type="button"
               className="global-icon-button is-authenticated"
               aria-label={`Account: ${user.name}`}
+              aria-haspopup="menu"
+              aria-expanded={userMenuOpen}
+              aria-controls="global-user-account-menu"
               onClick={() => setUserMenuOpen((v) => !v)}
             >
               <span className="global-user-initial" aria-hidden="true">
@@ -320,7 +350,7 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
           )}
 
           {isAuthenticated && userMenuOpen && user && (
-            <LiquidDropdownSurface className="global-user-menu" variant="navigation" role="menu">
+            <LiquidDropdownSurface id="global-user-account-menu" className="global-user-menu global-user-menu--solid" variant="navigation" role="menu">
               <div className="global-user-menu__header">
                 <strong>{user.name}</strong>
                 <span>{user.email}</span>

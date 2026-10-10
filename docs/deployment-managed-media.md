@@ -43,7 +43,7 @@ php artisan schedule:run
 
 ## Release checks
 
-- Treat the remaining Laravel framework security advisories reported by `composer audit` as a release blocker. Resolving them requires a planned framework and Filament compatibility upgrade, not a silent patch inside this feature.
+- Run `composer audit --no-dev --locked` for every release candidate and block deployment on any advisory. The 2026-09-22 locked production audit reported no known advisories.
 - Upload one JPEG, PNG, and WebP in the CMS.
 - Upload a 4K image and confirm the published result has a maximum edge of 2560 pixels.
 - Upload the same image twice and confirm only one processed file is retained.

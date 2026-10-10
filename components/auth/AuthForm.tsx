@@ -139,15 +139,10 @@ export default function AuthForm({ mode, onSuccess, onSwitchMode }: AuthFormProp
     setIsSubmitting(true);
     setPendingAction("looking-up");
     try {
-      const res = await lookupIdentifier(email);
-      if (res.exists) {
-        setWelcomeName(res.name || null);
-        setMaskedEmail(res.masked_email || email);
-        setStep("welcome-back");
-      } else {
-        // Register page or unknown email → collect signup details.
-        setStep("new-account");
-      }
+      await lookupIdentifier(email);
+      setWelcomeName(null);
+      setMaskedEmail(email);
+      setStep(mode === "login" ? "welcome-back" : "new-account");
     } catch (err: unknown) {
       const data = (err as { data?: { errors?: Record<string, string[]>; message?: string } }).data;
       const firstError = data?.errors ? Object.values(data.errors).flat()[0] : null;
@@ -330,7 +325,7 @@ export default function AuthForm({ mode, onSuccess, onSwitchMode }: AuthFormProp
       <div className="auth-form">
         <div className="auth-avatar" aria-hidden="true">{initial}</div>
         <h1 className="auth-heading-airbnb">
-          Welcome back{welcomeName ? `, ${welcomeName}` : ""}
+          {welcomeName ? `Welcome back, ${welcomeName}` : "Log in to Summerhouse"}
         </h1>
         <div className="auth-masked-email">
           <FiMail aria-hidden="true" />

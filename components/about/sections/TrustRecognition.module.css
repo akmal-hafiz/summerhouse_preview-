@@ -92,10 +92,6 @@
 }
 
 .rowBodyInner {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 40px;
   padding: 0 20px 28px 80px;
 }
 
@@ -105,19 +101,6 @@
   font-size: clamp(14px, 1.2vw, 16px);
   line-height: 1.65;
   color: #6f6f6f;
-}
-
-.rowImage {
-  position: relative;
-  width: clamp(150px, 16vw, 200px);
-  aspect-ratio: 16 / 10;
-  flex-shrink: 0;
-  overflow: hidden;
-  background: #f2f2f2;
-}
-
-.rowImageImg {
-  object-fit: cover;
 }
 
 /* ---------- Stats ---------- */
@@ -162,15 +145,7 @@
   }
 
   .rowBodyInner {
-    grid-template-columns: 1fr;
-    gap: 18px;
     padding: 0 4px 24px 46px;
-  }
-
-  .rowImage {
-    width: 100%;
-    max-width: 280px;
-    aspect-ratio: 16 / 9;
   }
 
   .stats {

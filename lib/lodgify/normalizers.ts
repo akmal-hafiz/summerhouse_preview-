@@ -39,12 +39,18 @@ export function ensureProtocol(url?: string | null) {
 export function formatPrice(price: unknown, currencyCode = "IDR") {
   const numericPrice = Number(price);
   if (!Number.isFinite(numericPrice) || numericPrice <= 0) return null;
+  const currency = currencyCode.trim().toUpperCase();
+  if (!/^[A-Z]{3}$/.test(currency)) return null;
 
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: currencyCode || "IDR",
-    maximumFractionDigits: 0,
-  }).format(numericPrice);
+  try {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(numericPrice);
+  } catch {
+    return null;
+  }
 }
 
 export function normalizeProperty(value: Record<string, unknown>): LodgifyProperty {
@@ -231,13 +237,18 @@ export function getAmenityPreview(rooms: LodgifyRoom[] = [], limit = 4) {
 }
 
 export function getRealPriceLabel(property: LodgifyProperty) {
-  return formatPrice(property.original_min_price, property.currency_code || "IDR")
-    || formatPrice(property.min_price, property.currency_code || "IDR");
+  // The live catalog can report min_price in a different scale from original_min_price
+  // while currency_code remains IDR. Never label that converted field as IDR.
+  if (property.original_max_price && property.original_min_price
+    && property.original_max_price < property.original_min_price) return null;
+  return formatPrice(property.original_min_price, property.currency_code || "IDR");
 }
 
 export function getComparablePrice(property: LodgifyProperty) {
-  const price = Number(property.original_min_price || property.min_price || 0);
-  return Number.isFinite(price) ? price : 0;
+  if (property.original_max_price && property.original_min_price
+    && property.original_max_price < property.original_min_price) return 0;
+  const price = Number(property.original_min_price);
+  return Number.isFinite(price) && price > 0 ? price : 0;
 }
 
 export function getRoomFacts(rooms: LodgifyRoom[] = [], property: LodgifyProperty = {}) {

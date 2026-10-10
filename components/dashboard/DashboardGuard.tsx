@@ -10,14 +10,14 @@ type DashboardGuardProps = {
 };
 
 export default function DashboardGuard({ children }: DashboardGuardProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, authError } = useAuth();
   const { openAuth } = useAuthModal();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated && !authError) {
       openAuth("login");
     }
-  }, [isAuthenticated, isLoading, openAuth]);
+  }, [isAuthenticated, isLoading, authError, openAuth]);
 
   if (isLoading) {
     return (
@@ -33,6 +33,14 @@ export default function DashboardGuard({ children }: DashboardGuardProps) {
   }
 
   if (!isAuthenticated) {
+    if (authError) {
+      return (
+        <div className="dash-loading-shell" role="alert">
+          <p>Kami belum bisa memeriksa sesi akun Anda. Coba lagi sebentar.</p>
+          <button type="button" onClick={() => window.location.reload()}>Coba lagi</button>
+        </div>
+      );
+    }
     return (
       <div className="dash-loading-shell" role="status" aria-live="polite">
         <p>Masuk untuk membuka dashboard.</p>

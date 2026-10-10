@@ -37,10 +37,6 @@ type AvailabilityCalendarProps = {
 
 type RateQuote = {
   success: boolean;
-  totalLabel?: string | null;
-  averageNightlyLabel?: string | null;
-  nightlySubtotal?: number;
-  additionalGuestSubtotal?: number;
   minStay?: number | null;
   maxStay?: number | null;
   isMinimumStayValid?: boolean;
@@ -326,9 +322,9 @@ export default function AvailabilityCalendar({
               data-booking-check-in={checkIn}
               data-booking-check-out={checkOut}
               data-booking-guests={guests}
-              data-booking-quote-status={rateQuote?.totalLabel ? "quoted" : quoteError ? "quote-fallback" : "available"}
+              data-booking-quote-status={rateQuote?.success ? "quoted" : quoteError ? "quote-fallback" : "available"}
             >
-              {rateQuote?.totalLabel ? `Book for ${rateQuote.totalLabel}` : "Book Now"}
+              See your full stay price
             </a>
           )}
         </div>
@@ -387,12 +383,7 @@ export default function AvailabilityCalendar({
           </button>
         </div>
       )}
-      {quoteError && isRangeValid && (
-        <p className="villa-calendar__error" role="status" aria-live="polite">
-          Rates are unavailable right now. The final price will still be confirmed in secure checkout.
-        </p>
-      )}
-      <p className="villa-calendar__note">Final rates, minimum stay, taxes, and payment are confirmed at booking.</p>
+      <p className="villa-calendar__note">See the current rate and any applicable fees before you confirm your stay.</p>
 
       <StickyBookingBar
         villaName={villaName}
@@ -404,13 +395,12 @@ export default function AvailabilityCalendar({
         maxGuests={maxGuests}
         nights={nights}
         isValid={isBookingValid}
-        error={isQuoteLoading ? "Checking rates..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "") || quoteError}
-        rateQuote={rateQuote}
+        error={isQuoteLoading ? "Preparing your stay..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "")}
         isQuoteLoading={isQuoteLoading}
         checkoutUrl={checkoutUrl}
         whatsAppFallbackUrl={whatsAppFallbackUrl}
         propertyId={propertyId}
-        quoteStatus={rateQuote?.totalLabel ? "quoted" : quoteError ? "quote-fallback" : "available"}
+        quoteStatus={rateQuote?.success ? "quoted" : quoteError ? "quote-fallback" : "available"}
         onBookNow={handleBookNow}
         onGuestChange={(value) => {
           setIsQuoteLoading(true);

@@ -1,9 +1,10 @@
-import { getStoredAuthToken } from "@/lib/auth-client";
+import { getStoredAuthToken, sessionFetch } from "@/lib/auth-client";
 
 export const SAVED_VILLAS_STORAGE_KEY = "summerhouses:saved-villas";
 export const SAVED_VILLAS_CHANGED_EVENT = "summerhouses:saved-villas-changed";
-
-const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
+export const SAVED_VILLAS_ERROR_EVENT = "summerhouses:saved-villas-error";
+const SAVED_VILLAS_OWNER_KEY = "summerhouses:saved-villas-owner";
+let wishlistGeneration = 0;
 
 export type SavedVillasChange = {
   ids: string[];
@@ -35,6 +36,13 @@ export function writeSavedVillaIds(ids: string[]) {
   }));
 }
 
+export function clearSavedVillaIds() {
+  if (typeof window === "undefined") return;
+  wishlistGeneration += 1;
+  window.localStorage.removeItem(SAVED_VILLAS_OWNER_KEY);
+  writeSavedVillaIds([]);
+}
+
 export function getSavedVillasCount() {
   return readSavedVillaIds().length;
 }
@@ -44,12 +52,11 @@ async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T | nu
   if (!token) return null;
 
   try {
-    const response = await fetch(`${CMS_BASE_URL}${path}`, {
+    const response = await sessionFetch(path, {
       ...init,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${token}`,
         ...(init.headers || {}),
       },
     });
@@ -101,11 +108,24 @@ export function toggleSavedVillaId(villaId: string | number) {
   writeSavedVillaIds(nextIds);
 
   if (isAuthenticated()) {
-    if (isSaved) {
-      pushWishlistRemove(id).catch(() => undefined);
-    } else {
-      pushWishlistAdd(id).catch(() => undefined);
-    }
+    const generation = wishlistGeneration;
+    const request = isSaved ? pushWishlistRemove(id) : pushWishlistAdd(id);
+    request.then((success) => {
+      if (generation !== wishlistGeneration || !isAuthenticated()) return;
+      if (success) return;
+      // Roll back only when no newer interaction has changed this villa.
+      const current = readSavedVillaIds();
+      if (current.includes(id) === !isSaved) {
+        writeSavedVillaIds(isSaved ? [...current, id] : current.filter((item) => item !== id));
+      }
+      window.dispatchEvent(new Event(SAVED_VILLAS_ERROR_EVENT));
+    }).catch(() => {
+      if (generation === wishlistGeneration && isAuthenticated()) {
+        window.dispatchEvent(new Event(SAVED_VILLAS_ERROR_EVENT));
+      }
+    });
+  } else {
+    window.localStorage.setItem(SAVED_VILLAS_OWNER_KEY, "guest");
   }
 
   return {
@@ -115,17 +135,38 @@ export function toggleSavedVillaId(villaId: string | number) {
   };
 }
 
-export async function hydrateWishlistFromRemote(): Promise<void> {
-  if (!isAuthenticated()) return;
+export async function hydrateWishlistFromRemote(userId: number): Promise<boolean> {
+  if (!isAuthenticated() || typeof window === "undefined") return false;
+  const generation = ++wishlistGeneration;
 
   const localIds = readSavedVillaIds();
-  const merged = localIds.length
+  const owner = window.localStorage.getItem(SAVED_VILLAS_OWNER_KEY);
+  if (owner !== "guest" && owner !== `user:${userId}` && localIds.length) {
+    writeSavedVillaIds([]);
+  }
+  // Only explicitly guest-owned selections may be imported into an account.
+  // A legacy or different account's browser cache is never merged.
+  const merged = owner === "guest" && localIds.length
     ? await syncWishlistMerge(localIds)
     : await fetchRemoteWishlist();
 
+  if (generation !== wishlistGeneration || !isAuthenticated()) return false;
   if (merged) {
     writeSavedVillaIds(merged);
+    window.localStorage.setItem(SAVED_VILLAS_OWNER_KEY, `user:${userId}`);
+    return true;
   }
+
+  return false;
+}
+
+export async function removeSavedVillaId(id: string): Promise<boolean> {
+  if (!isAuthenticated()) return false;
+  const generation = wishlistGeneration;
+  const success = await pushWishlistRemove(id);
+  if (generation !== wishlistGeneration || !isAuthenticated()) return false;
+  if (success) writeSavedVillaIds(readSavedVillaIds().filter((item) => item !== id));
+  return success;
 }
 
 export function subscribeSavedVillas(callback: (change: SavedVillasChange) => void) {

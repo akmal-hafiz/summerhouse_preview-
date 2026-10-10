@@ -1,4 +1,6 @@
 import { logServerWarning } from "@/lib/security/logger";
+import { unstable_cache } from "next/cache";
+import { readValidatedCmsResponse } from "@/lib/security/cms-response";
 import type { BaliCollectionItem } from "@/data/baliCollections";
 
 const CMS_BASE_URL = process.env.CMS_API_URL || "http://localhost:8000/api";
@@ -35,22 +37,21 @@ function isNetworkError(error: unknown): boolean {
 
 async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): Promise<T | null> {
   const url = `${CMS_BASE_URL}${path}`;
-  const cacheOptions =
-    typeof options.revalidate === "number"
-      ? { next: { revalidate: options.revalidate } }
-      : { cache: "no-store" as const };
-
   try {
-    const response = await fetch(url, {
-      headers: { Accept: "application/json" },
-      ...cacheOptions,
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return (await response.json()) as T;
+    const load = async (): Promise<T> => {
+      const response = await fetch(url, {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+        signal: AbortSignal.timeout(15_000),
+      });
+      const value = await readValidatedCmsResponse(response, path);
+      return value as T;
+    };
+    // Cache validated results, never HTML error pages or failed response bodies.
+    // Editorial requests remain uncached and reflect saves immediately.
+    return typeof options.revalidate === "number"
+      ? await unstable_cache(load, ["cms-validated-v1", url], { revalidate: Math.min(300, options.revalidate) })()
+      : await load();
   } catch (error) {
     if (isNetworkError(error)) {
       if (!cmsOfflineWarned && !SUPPRESS_CMS_LOGS) {
@@ -216,12 +217,15 @@ export type CmsServiceCard = {
 };
 
 export type CmsGalleryItem = {
+  id?: number | string;
   type: "image" | "text" | "video";
   src?: string | null;
   alt?: string | null;
   label?: string | null;
   /** Editorial filter tab this item belongs to (admin-defined, optional). */
   category?: string | null;
+  layout_variant?: "landscape" | "portrait" | "square" | "tall" | "wide" | null;
+  focal_point?: "center" | "top" | "bottom" | "left" | "right" | null;
   title?: string | null;
   text?: string | null;
   video_url?: string | null;

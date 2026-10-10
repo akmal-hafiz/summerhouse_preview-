@@ -3,7 +3,7 @@
         <h2>Pengaturan situs</h2>
         <p>
             Atur kontak concierge yang tampil di dashboard member. Perubahan langsung aktif di frontend
-            (atau dalam ~5 menit kalau ada cache).
+            Konten editorial langsung diperbarui setelah disimpan.
         </p>
     </div>
 

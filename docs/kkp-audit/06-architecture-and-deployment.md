@@ -1,44 +1,66 @@
-# 06 — Arsitektur dan Deployment Aktual
+# 06 - Arsitektur dan Deployment Aktual
 
-## Arsitektur aktual berdasarkan source
+Updated: 2026-09-22
 
-| Komponen | Implementasi dan komunikasi | Status bukti |
+## Arsitektur aplikasi
+
+| Komponen | Implementasi aktual | Batas keamanan dan data |
 |---|---|---|
-| Browser/client | Next.js App Router merender halaman publik dan komponen client. Token Sanctum disimpan pada `localStorage`; wishlist pra-login juga pada `localStorage`. | Ditemukan di `app/`, `lib/auth-client.ts`, `components/villas/savedVillas.ts`. |
-| Next.js frontend | Next.js 16 dengan React. Server components memanggil Lodgify dan CMS; route handlers melindungi availability/rate quote/search options dengan validasi/rate limit. | Ditemukan di root project, `app/api/`, `lib/lodgify/`, `lib/cms.ts`. |
-| Laravel REST API | Laravel 10 menyajikan CMS read API, auth/OTP/password, wishlist, kontak, review dan testimoni. CORS saat ini `allowed_origins=['*']`, credentials false. | `backend/routes/api.php`, controller, `config/cors.php`. |
-| Filament admin panel | Filament v3 pada path `/admin`, memakai session Laravel dan `User::canAccessPanel()` (role admin). Write CMS dilakukan melalui Livewire/Filament, bukan REST write API. | `AdminPanelProvider`, resources/pages Filament. |
-| MySQL | Backend environment lokal menetapkan `DB_CONNECTION=mysql`; konfigurasi default MySQL menggunakan PDO `utf8mb4`. | `backend/.env` (nilai nonsecret diaudit), `config/database.php`. |
-| Lodgify REST API v2 | Next.js memanggil Lodgify dengan API key server-only untuk villa/availability/rate; Laravel memiliki `LodgifyService` terpisah untuk mengisi `villa_caches` ketika Homepage Manager dimount. Checkout berada di Lodgify. | `lib/lodgify/client.ts`, `app/api/lodgify/*`, `backend/app/Services/LodgifyService.php`. |
-| Autentikasi | Laravel Sanctum personal access token bearer; register dan reset password memakai OTP email melalui Resend. Tidak ada Google OAuth. | `AuthController`, `OtpController`, `PasswordResetController`, `User`. |
-| Media | Default environment lokal `FILESYSTEM_DISK=local`; FileUpload CMS umumnya menarget disk `public` dan URL `/storage`. Konfigurasi S3 tersedia sebagai opsi, tetapi penggunaan aktif tidak terbukti. | `config/filesystems.php`, `MediaResource`, `HomepageManager`. |
-| Cache | Laravel `CACHE_DRIVER=file` lokal; `CmsController` cache 300 detik dan model events menghapus key terkait. Next memakai `revalidate` umumnya 300 detik. | `backend/.env`, `CmsController`, models, `lib/cms.ts`. |
-| Queue/email | Queue lokal `sync`; mailer lokal disetel `resend`. Tidak ada worker/scheduler aplikasi yang terdaftar. | `backend/.env`, `config/queue.php`, `app/Console/Kernel.php`. |
+| Browser | Next.js App Router menampilkan halaman publik dan dashboard pelanggan. | Token Sanctum tidak diberikan ke JavaScript browser. Next.js menyimpannya dalam cookie HttpOnly dan meneruskan request melalui route session yang dibatasi allowlist method/path, origin dan CSRF. Data saved villa milik guest tetap lokal sampai pengguna login. |
+| Next.js | Next.js 16.3.5 dan React 19. Server components mengambil CMS dan Lodgify; route handlers menangani session, availability, rate quote dan search options. | Secret Lodgify dan endpoint CMS server-only tidak memakai prefix `NEXT_PUBLIC_`. Request Lodgify memakai timeout, retry terbatas, concurrency limit, circuit breaker, log redaction dan fallback last-known-good. |
+| Laravel API/CMS | Laravel 13.32.0, Sanctum 4.3.3 dan Filament 3.3.55. | Public CORS hanya untuk CMS GET yang memang publik. Endpoint customer membutuhkan autentikasi dan ownership. Filament membutuhkan role admin. OTP sekali pakai, memiliki expiry dan rate limit. |
+| Database | MySQL production direncanakan; SQLite in-memory hanya untuk test. | Menyimpan CMS, review, wishlist, cache villa, sync run, incident, property event append-only dan internal notification. Property tidak langsung dihapus ketika hilang dari Lodgify. |
+| Lodgify | Next.js memakai data live untuk pencarian booking. Laravel menjalankan reconciliation terjadwal dan menyimpan snapshot kesehatan. | Status dipisahkan menjadi active, inactive dan missing. Availability dipisahkan menjadi available, unavailable dan unknown. Anomali penurunan jumlah, partial pagination dan kegagalan rooms tidak boleh mempromosikan snapshot rusak. |
+| Queue dan scheduler | Database queue. Scheduler mendaftarkan sync dan health tiap lima menit serta pruning harian. | Shared lock mencegah sync overlap. Worker Lodgify, media dan default perlu diawasi oleh process manager pada server. |
+| Media | Upload masuk private staging, divalidasi, diproses oleh queue, dibatasi dimensi/pixel, dikonversi WebP lalu dipublikasikan. | Konten lama tetap menjadi fallback sampai seluruh batch baru siap. Storage production harus persisten dan tidak ikut ditimpa release. |
+| Observability | Structured application log, sync run, incident, property event append-only, Filament Lodgify Health dan internal database notification. | Credential dan PII disensor. Satu timeout hanya warning; auth failure, stale snapshot dan anomali berulang menaikkan severity. Tidak bergantung pada layanan monitoring berbayar. |
 
-## Aliran data yang tervalidasi
+## Aliran data
 
-1. Browser → Next.js untuk halaman dan route internal.
-2. Next.js → Laravel REST API untuk konten CMS, autentikasi, wishlist, kontak, serta review.
-3. Next.js → Lodgify REST API v2 untuk data villa, ketersediaan, dan harga; browser → Lodgify Checkout untuk booking final.
-4. Filament admin → Laravel model/MySQL/filesystem; perubahan model menginvalidasi cache Laravel, kemudian Next mengambil data pada revalidasi berikutnya.
+1. Browser mengakses Next.js melalui HTTPS.
+2. Next.js mengambil konten publik dari Laravel dan data booking dari Lodgify.
+3. Operasi akun masuk melalui route session Next.js, kemudian diteruskan ke Laravel dengan token HttpOnly server-side.
+4. Filament menulis konten langsung ke model Laravel/MySQL dan invalidasi cache editorial berlaku segera.
+5. Hanya snapshot Lodgify, Stay Styles dan Signature Villa yang boleh memakai cache lima menit.
+6. Scheduler Laravel merekonsiliasi katalog Lodgify. Snapshot publik hanya dipromosikan setelah katalog lengkap lolos validasi.
 
-Catatan: invalidasi cache Laravel tidak secara eksplisit memanggil revalidation on-demand Next.js. Jadi “konten terbaru” pada frontend tunduk pada `revalidate` Next.js (umumnya hingga 300 detik), selain cache Laravel yang dihapus.
+## Rancangan deployment Dewaweb
 
-## Environment dan deployment
+Target yang disetujui adalah Dewaweb Cloud Hosting Warrior dengan 2 CPU, 2 GB memory, 15 GB NVMe dan 10 MB/s disk I/O. Topologi satu host layak untuk traffic awal bila Dewaweb mengonfirmasi semua kemampuan berikut:
 
-| Lingkungan | Fakta yang ditemukan | Kesimpulan audit |
-|---|---|---|
-| Development saat ini | `backend/.env`: `APP_ENV=local`, `APP_DEBUG=true`, MySQL, file cache, local filesystem, queue sync, mailer Resend. `CLAUDE.md` menyebut `npm run dev` port 3000 dan `php artisan serve` port 8000; Laragon dipakai lokal. | Terbukti untuk development lokal. |
-| Production aktif | Root memiliki `.env.production` dan backend memiliki `.env.production`, tetapi tidak ditemukan konfigurasi host, `vercel.json`, Dockerfile project, docker-compose, Procfile, pipeline CI/CD, atau dokumentasi deployment aktif. README hanya template Next.js yang menyebut Vercel. | Tidak ada bukti deployment produksi aktif maupun provider produksi. Jangan menulis Vercel atau Dewaweb sebagai layanan aktif. |
-| Production direncanakan | Pemilik project menyatakan targetnya **Dewaweb Cloud Hosting**, dilaksanakan setelah sidang (sekitar 1–2 bulan). | Ini rencana pemilik, bukan fakta source code. |
+- Node.js 22 dapat berjalan sebagai proses persisten dan direstart secara terkontrol.
+- PHP 8.4 tersedia untuk FPM dan CLI.
+- Document root Laravel dapat diarahkan ke `backend/public`.
+- SSH/SFTP, symlink, cron satu menit dan proses queue persisten tersedia.
+- MySQL, storage upload persisten dan outbound HTTPS tersedia.
+- Reverse proxy dapat mengarahkan traffic frontend ke Node tanpa membuka port origin ke publik.
 
-## Evaluasi rancangan Dewaweb Cloud Hosting
+Jika worker persisten atau Node runtime tidak tersedia, frontend/worker harus dipindah ke layanan yang mendukung proses persisten. Paket hosting tidak boleh dipaksakan dengan menjalankan server dari terminal manual.
 
-1. Secara logis, Next.js frontend, Laravel REST API + Filament, dan MySQL dapat berada dalam satu lingkungan Cloud Hosting **bila** paket menyediakan Node.js persistent runtime/reverse proxy, PHP 8.1+, MySQL, cron, dan akses writable untuk Laravel storage.
-2. Karena Next.js membutuhkan proses `next start` untuk SSR/route handlers, model static hosting saja tidak cukup. Jika Dewaweb package tidak mendukung Node runtime kontinu, frontend perlu dipisahkan secara logis ke Node-capable service; Laravel/MySQL tetap dapat berada pada hosting PHP.
-3. Lodgify REST API v2 harus tetap di luar node Dewaweb sebagai external service. Resend juga external service.
-4. Karena tidak ada konfigurasi Dewaweb di repository, topologi ini adalah **rekomendasi teknis untuk Tahap 2**, bukan deployment yang telah diterapkan.
+## Pipeline release
 
-## Blueprint deployment Tahap 2
+Build production dilakukan di GitHub Actions, bukan di server Dewaweb. Ini menghemat CPU/RAM hosting, menghasilkan artifact yang sama untuk setiap deploy dan memastikan hanya commit yang sudah lolos test yang dapat dirilis.
 
-[Deployment Diagram Rancangan Sistem Summerhouses](diagrams/09-deployment-planned.puml) menggunakan note **“Planned Production Environment / Rencana Lingkungan Produksi”** pada node Dewaweb. Diagram ini adalah rancangan target; tidak mengklaim situs telah live di Dewaweb.
+Pipeline dibagi menjadi:
+
+1. Regression gate pada push/pull request tanpa production secret.
+2. Manual release candidate dari `master` yang menjalankan locked install, test, audit, standalone build, packaging, provenance manifest dan checksum.
+3. Manual deploy dari run ID yang sudah disetujui. Checksum dan asal commit diperiksa sebelum protected production secrets tersedia.
+4. Server mengekstrak release ke direktori versioned, menjalankan preflight dan migration additive, mengganti symlink `current` secara atomik, restart proses dan memeriksa HTTPS health endpoint.
+5. Jika health gagal, symlink aplikasi kembali ke release sebelumnya. Migration tidak otomatis di-rollback agar audit history dan data baru tidak rusak.
+
+Environment file dan upload tidak berada di artifact. Keduanya disimpan di direktori shared pada server. Script packaging gagal bila mendeteksi `.env` di dalam artifact.
+
+## Status kesiapan
+
+Kode, automated test, dependency audit, standalone packaging, checksum, provenance check, atomic switch dan application health check sudah tersedia. Status belum boleh disebut live atau production-ready penuh sebelum bukti eksternal berikut selesai:
+
+- Konfirmasi kemampuan paket Dewaweb dan runtime version dari dalam proses aplikasi.
+- Staging dengan salinan data production yang sudah disanitasi.
+- Backup database/media dan uji restore terisolasi.
+- Scheduler benar-benar berjalan tiap menit dan worker otomatis hidup kembali.
+- SMTP, SPF/DKIM/DMARC dan inbox delivery ke alamat test yang diizinkan.
+- DNS, TLS, reverse proxy, forwarding-header overwrite, firewall dan private origin.
+- Smoke test serta observasi 30 menit dan review 24 jam setelah go-live.
+
+Rincian operasional ada di [production release runbook](../operations/production-release-runbook.md).

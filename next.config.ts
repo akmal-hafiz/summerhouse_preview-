@@ -21,8 +21,10 @@ const cmsRemotePattern = (() => {
 })();
 
 const nextConfig: NextConfig = {
+  output: "standalone",
+  agentRules: false,
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   poweredByHeader: false,
   reactStrictMode: false,
@@ -74,8 +76,14 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-XSS-Protection", value: "0" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Cross-Origin-Resource-Policy", value: "cross-origin" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+          ...(isProduction && process.env.SITE_URL?.startsWith("https://") ? [{
+            key: "Strict-Transport-Security", value: "max-age=86400",
+          }] : []),
+          ...(isProduction ? [{
+            key: "Content-Security-Policy-Report-Only",
+            value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:; worker-src 'self' blob:; frame-src https://checkout.lodgify.com",
+          }] : []),
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(self), payment=()",

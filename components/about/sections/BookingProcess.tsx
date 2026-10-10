@@ -157,7 +157,7 @@ export default function BookingProcess({ content }: { content?: BookingProcessCo
   );
 
   return (
-    <section ref={sectionRef} className={styles.section} aria-labelledby="booking-process-title">
+    <section id="booking-process" ref={sectionRef} className={styles.section} aria-labelledby="booking-process-title">
       <div className={styles.grid}>
         <div className={`${styles.cell} ${styles.blankTopLeft}`} aria-hidden="true" />
 

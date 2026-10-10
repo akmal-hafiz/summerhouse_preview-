@@ -81,9 +81,11 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
             sideContent={(
               <aside className="villa-detail-reserve-card">
                 <div className="villa-detail-reserve-price">
-                  {villa.maxPriceLabel && <del>{villa.maxPriceLabel}</del>}
-                  <strong>{villa.priceLabel || "Rate on request"}</strong>
-                  <span>/ night</span>
+                  {villa.priceLabel ? <>
+                    <small>From</small>
+                    <strong>{villa.priceLabel}</strong>
+                    <span>/ night</span>
+                  </> : <strong>Rate on request</strong>}
                 </div>
                 <div className="villa-detail-reserve-fields">
                   <a href="#availability">
@@ -103,7 +105,7 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
                   </a>
                 </div>
                 <a href="#availability" className="villa-detail-reserve-cta">Check availability</a>
-                <p>Final rates, taxes, minimum stay, and payment are confirmed at booking.</p>
+                <p>See the current rate and any applicable fees before you confirm your stay.</p>
               </aside>
             )}
           />

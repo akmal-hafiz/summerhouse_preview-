@@ -18,6 +18,10 @@ class SyncLodgifyJob implements ShouldBeUnique, ShouldQueue
 
     public int $tries = 1;
 
+    public int $timeout = 480;
+
+    public bool $failOnTimeout = true;
+
     public function uniqueId(): string
     {
         return 'lodgify-full-sync';

@@ -1,4 +1,4 @@
-import { searchAvailableVillas } from "@/lib/lodgify";
+import { getDashboardCatalog } from "@/lib/dashboard-catalog";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 
 export const metadata = {
@@ -6,6 +6,6 @@ export const metadata = {
 };
 
 export default async function DashboardPage() {
-  const villas = await searchAvailableVillas();
-  return <DashboardOverview villas={villas} />;
+  const { villas, status } = await getDashboardCatalog();
+  return <DashboardOverview villas={villas} catalogStatus={status} />;
 }

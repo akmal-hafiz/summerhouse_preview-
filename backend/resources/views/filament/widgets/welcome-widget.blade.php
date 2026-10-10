@@ -26,7 +26,7 @@
                             <span class="sh-note-link-sub">Villa selections, collections &amp; copy</span>
                         </span>
                     </a>
-                    <a href="{{ \App\Filament\Resources\ArticleResource::getUrl('index') }}" class="sh-note-link">
+                    <a href="{{ \App\Filament\Pages\AboutPageManager::getUrl(['section' => 'journal_preview']) }}" class="sh-note-link">
                         <span class="sh-glyph sh-glyph--pink">J</span>
                         <span class="sh-note-link-body">
                             <span class="sh-note-link-title">Summerhouses Journal</span>
@@ -107,7 +107,7 @@
                 </span>
             </a>
 
-            <a href="{{ \App\Filament\Resources\ArticleResource::getUrl('create') }}" class="sh-suggest">
+            <a href="{{ \App\Filament\Pages\AboutPageManager::getUrl(['section' => 'journal_preview']) }}" class="sh-suggest">
                 <span class="sh-suggest-main">
                     <span class="sh-suggest-icon sh-suggest-icon--sage">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">

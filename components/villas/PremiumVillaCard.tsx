@@ -108,7 +108,7 @@ export default function PremiumVillaCard({
           <p className="villa-catalog-card__price">
             {villa.priceLabel ? (
               <>
-                <strong>{villa.priceLabel}</strong>
+                <strong>From {villa.priceLabel}</strong>
                 <span>/ night</span>
               </>
             ) : (

@@ -13,13 +13,6 @@ type StickyBookingBarProps = {
   nights: number;
   isValid: boolean;
   error?: string;
-  rateQuote?: {
-    totalLabel?: string | null;
-    averageNightlyLabel?: string | null;
-    additionalGuestSubtotal?: number;
-    isMinimumStayValid?: boolean;
-    message?: string;
-  } | null;
   isQuoteLoading?: boolean;
   checkoutUrl: string;
   whatsAppFallbackUrl?: string;
@@ -41,7 +34,6 @@ export default function StickyBookingBar({
   nights,
   isValid,
   error,
-  rateQuote,
   isQuoteLoading = false,
   checkoutUrl,
   whatsAppFallbackUrl,
@@ -51,24 +43,18 @@ export default function StickyBookingBar({
   onGuestChange,
   onClearDates,
 }: StickyBookingBarProps) {
-  const bookingLabel = isValid && rateQuote?.totalLabel
-    ? `Book for ${rateQuote.totalLabel}`
-    : isValid
-      ? "Book Now"
-      : "Check dates";
+  const bookingLabel = isValid ? "See your full stay price" : "Check dates";
   const summaryLabel = isValid
     ? isQuoteLoading
-      ? "Checking rates..."
-      : rateQuote?.totalLabel
-        ? `${nights} ${nights === 1 ? "night" : "nights"} - ${rateQuote.totalLabel}`
-        : `${nights} ${nights === 1 ? "night" : "nights"} selected`
+      ? "Preparing your stay..."
+      : `${nights} ${nights === 1 ? "night" : "nights"} selected`
     : error || "Select available dates";
 
   return (
     <div className="villa-booking-bar" aria-live="polite">
       <div className="villa-booking-bar__identity">
         <strong>{villaName}</strong>
-        <span>{location}{priceLabel ? ` - from ${priceLabel} per night` : ""}</span>
+        <span>{location}{!checkIn && !checkOut && priceLabel ? ` - from ${priceLabel} per night` : ""}</span>
       </div>
 
       <div className="villa-booking-bar__controls">
@@ -97,9 +83,6 @@ export default function StickyBookingBar({
 
       <div className="villa-booking-bar__summary">
         <span>{summaryLabel}</span>
-        {isValid && rateQuote?.averageNightlyLabel && (
-          <small>{rateQuote.averageNightlyLabel} average per night</small>
-        )}
         <a
           href={isValid ? checkoutUrl : undefined}
           onClick={onBookNow}

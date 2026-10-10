@@ -31,6 +31,11 @@ class ArticleResource extends Resource
 
     protected static ?string $navigationLabel = 'Journal Articles';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -39,8 +44,7 @@ class ArticleResource extends Resource
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn (?string $state, Forms\Set $set, Forms\Get $get) =>
-                        $get('slug') ? null : $set('slug', Str::slug($state ?? ''))
+                    ->afterStateUpdated(fn (?string $state, Forms\Set $set, Forms\Get $get) => $get('slug') ? null : $set('slug', Str::slug($state ?? ''))
                     ),
                 Forms\Components\TextInput::make('slug')
                     ->required()
@@ -66,7 +70,6 @@ class ArticleResource extends Resource
                     ->searchable()
                     ->getSearchResultsUsing(fn (string $search) => [$search => $search])
                     ->helperText('Pick a preset or type a new one.'),
-                Forms\Components\DatePicker::make('date')->required()->native(false),
                 Forms\Components\TextInput::make('read_time')
                     ->placeholder('Auto: "8 min read"')
                     ->helperText('Leave blank to auto-calculate from content.'),
@@ -151,7 +154,12 @@ class ArticleResource extends Resource
                     ->collapsed()
                     ->itemLabel(function (array $state): ?string {
                         $type = strtoupper($state['type'] ?? '');
-                        $preview = Str::limit($state['text'] ?? $state['src'] ?? '', 60);
+                        $value = $state['text'] ?? $state['alt'] ?? $state['caption'] ?? $state['src'] ?? '';
+                        if (is_array($value)) {
+                            $value = collect($value)->flatten()->first(fn (mixed $item) => is_string($item)) ?? '';
+                        }
+                        $preview = Str::limit((string) $value, 60);
+
                         return "[$type] $preview";
                     })
                     ->reorderable()
@@ -160,8 +168,13 @@ class ArticleResource extends Resource
             ]),
 
             Forms\Components\Section::make('Publish')->columns(2)->schema([
-                Forms\Components\Toggle::make('is_published')->default(false),
-                Forms\Components\DateTimePicker::make('published_at')->native(false),
+                Forms\Components\Toggle::make('is_published')
+                    ->label('Published')
+                    ->default(false)
+                    ->helperText('The publication date is assigned automatically when this article first goes live.'),
+                Forms\Components\Placeholder::make('publication_date_preview')
+                    ->label('Date shown to readers')
+                    ->content(fn (?Article $record): string => $record?->date?->format('d M Y') ?? 'Assigned on first publication.'),
             ]),
         ]);
     }
@@ -170,7 +183,7 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('date')->date()->sortable(),
+                Tables\Columns\TextColumn::make('date')->label('Publication date')->date()->sortable()->placeholder('Draft'),
                 Tables\Columns\TextColumn::make('title')->searchable()->weight('bold')->limit(50),
                 Tables\Columns\TextColumn::make('category')->badge(),
                 Tables\Columns\TextColumn::make('read_time')->label('Read'),

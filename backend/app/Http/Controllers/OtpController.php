@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use App\Support\LodgifyLog as SafeLog;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
@@ -32,21 +32,21 @@ class OtpController extends Controller
 
         $code = (string) random_int(100000, 999999);
 
-        OtpCode::create([
+        $otp = OtpCode::create([
             'email' => $data['email'],
             'type' => OtpCode::TYPE_REGISTRATION,
-            'code' => $code,
+            'code' => '******',
+            'code_hash' => OtpCode::digest($code),
             'attempts' => 0,
             'expires_at' => now()->addMinutes(self::OTP_TTL_MINUTES),
         ]);
 
         try {
-            Mail::mailer('resend')->to($data['email'])->send(new OtpMail($code, $data['name']));
+            if (app()->environment('production') && in_array(config('mail.default'), ['array', 'log', 'failover'], true)) throw new \RuntimeException('OTP delivery transport is unavailable');
+            Mail::to($data['email'])->send(new OtpMail($code, $data['name']));
         } catch (\Throwable $e) {
-            Log::error('Failed to send OTP email', [
-                'email' => $data['email'],
-                'error' => $e->getMessage(),
-            ]);
+            $otp->update(['used_at' => now()]);
+            SafeLog::write('warning', 'auth.otp_delivery_failed', 'Verification email delivery failed.', ['type' => 'registration', 'exception_type' => get_class($e)]);
 
             return response()->json([
                 'success' => false,
@@ -70,44 +70,27 @@ class OtpController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $otp = OtpCode::forEmail($data['email'])
-            ->ofType(OtpCode::TYPE_REGISTRATION)
-            ->valid()
-            ->latest()
-            ->first();
+        $result = OtpCode::consume($data['email'], OtpCode::TYPE_REGISTRATION, $data['code'], function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'role' => 'user',
+            ]);
 
-        if (!$otp) {
+            return ['user' => $user, 'token' => $user->createToken('auth', ['*'], now()->addDays(7))->plainTextToken];
+        });
+
+        if (!$result) {
             throw ValidationException::withMessages([
                 'code' => 'Kode OTP tidak valid atau sudah kadaluarsa.',
             ]);
         }
 
-        $otp->increment('attempts');
-
-        if ($otp->code !== $data['code']) {
-            $remaining = self::MAX_ATTEMPTS - $otp->attempts;
-            throw ValidationException::withMessages([
-                'code' => $remaining > 0
-                    ? "Kode OTP salah. Sisa percobaan: {$remaining}."
-                    : 'Kode OTP salah. Silakan minta kode baru.',
-            ]);
-        }
-
-        $otp->update(['used_at' => now()]);
-
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => 'user',
-        ]);
-
-        $token = $user->createToken('auth')->plainTextToken;
-
         return response()->json([
             'success' => true,
-            'user' => AuthController::serializeUser($user),
-            'token' => $token,
+            'user' => AuthController::serializeUser($result['user']),
+            'token' => $result['token'],
         ], 201);
     }
 }

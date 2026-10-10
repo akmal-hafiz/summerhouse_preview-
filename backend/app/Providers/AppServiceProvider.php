@@ -21,6 +21,13 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureRateLimiting(): void
     {
+        RateLimiter::for('customer-login', function (Request $request) {
+            $account = hash('sha256', strtolower(trim((string) $request->input('email'))));
+            return [
+                Limit::perMinute(10)->by('login:account:' . $account),
+                Limit::perMinute(20)->by('login:ip:' . $request->ip()),
+            ];
+        });
         // OTP send: 3 per minute per email + 8 per hour per email, fallback IP for missing email
         RateLimiter::for('otp-send', function (Request $request) {
             $email = strtolower((string) $request->input('email')) ?: $request->ip();
@@ -37,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
             return [
                 Limit::perMinute(8)->by('otp-verify:min:' . $email),
                 Limit::perMinutes(10, 30)->by('otp-verify:10min:' . $email),
+                Limit::perMinute(30)->by('otp-verify:ip:' . $request->ip()),
             ];
         });
 
@@ -46,13 +54,15 @@ class AppServiceProvider extends ServiceProvider
             return [
                 Limit::perMinute(3)->by('pw-reset-send:min:' . $email),
                 Limit::perHour(6)->by('pw-reset-send:hour:' . $email),
+                Limit::perHour(30)->by('pw-reset-send:ip:' . $request->ip()),
             ];
         });
 
         // Password reset verify: 10/min per email
         RateLimiter::for('password-reset-verify', function (Request $request) {
             $email = strtolower((string) $request->input('email')) ?: $request->ip();
-            return Limit::perMinute(10)->by('pw-reset-verify:' . $email);
+            return [Limit::perMinute(10)->by('pw-reset-verify:' . $email),
+                Limit::perMinute(30)->by('pw-reset-verify:ip:' . $request->ip())];
         });
     }
 }

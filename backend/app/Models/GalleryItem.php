@@ -32,6 +32,8 @@ class GalleryItem extends Model
         'alt',
         'label',
         'category',
+        'layout_variant',
+        'focal_point',
         'title',
         'text',
         'video_url',

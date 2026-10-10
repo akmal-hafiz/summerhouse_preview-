@@ -31,11 +31,11 @@ Route::prefix('v1')->group(function () {
         Route::get('settings/{key}', [CmsController::class, 'setting']);
     });
 
-    Route::prefix('auth')->group(function () {
+    Route::prefix('auth')->middleware(\App\Http\Middleware\NormalizeAuthEmail::class)->group(function () {
         Route::post('register/send-otp', [OtpController::class, 'sendRegistrationOtp'])->middleware('throttle:otp-send');
         Route::post('register/verify-otp', [OtpController::class, 'verifyRegistrationOtp'])->middleware('throttle:otp-verify');
 
-        Route::post('login', [AuthController::class, 'login'])->middleware('throttle:20,1');
+        Route::post('login', [AuthController::class, 'login'])->middleware('throttle:customer-login');
         Route::post('lookup', [AuthController::class, 'lookup'])->middleware('throttle:30,1');
 
         // Forgot password flow
@@ -45,6 +45,8 @@ Route::prefix('v1')->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
         Route::get('user', [AuthController::class, 'user'])->middleware('auth:sanctum');
         Route::post('profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+        Route::post('avatar', [AuthController::class, 'uploadAvatar'])->middleware(['auth:sanctum', 'throttle:5,10']);
+        Route::delete('avatar', [AuthController::class, 'removeAvatar'])->middleware(['auth:sanctum', 'throttle:5,10']);
         Route::post('password', [AuthController::class, 'changePassword'])->middleware(['auth:sanctum', 'throttle:5,10']);
     });
 

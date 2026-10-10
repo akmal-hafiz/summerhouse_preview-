@@ -1,14 +1,14 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   changePasswordRequest,
   clearStoredAuth,
   fetchCurrentUser,
-  getStoredAuthToken,
-  getStoredAuthUser,
   loginRequest,
   logoutRequest,
+  uploadAvatarRequest,
+  removeAvatarRequest,
   sendRegistrationOtp,
   setAuthHint,
   updateProfileRequest,
@@ -17,7 +17,7 @@ import {
   type AuthUser,
   type SendOtpResponse,
 } from "@/lib/auth-client";
-import { hydrateWishlistFromRemote, writeSavedVillaIds } from "@/components/villas/savedVillas";
+import { clearSavedVillaIds, hydrateWishlistFromRemote } from "@/components/villas/savedVillas";
 
 type AuthContextValue = {
   user: AuthUser | null;
@@ -25,11 +25,16 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
+  authError: boolean;
+  wishlistStatus: "loading" | "ready" | "error";
+  refreshWishlist: () => Promise<void>;
   login: (email: string, password: string) => Promise<AuthUser>;
   sendOtp: (email: string, name: string) => Promise<SendOtpResponse>;
   verifyOtp: (name: string, email: string, code: string, password: string, passwordConfirmation: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
   updateProfile: (name: string) => Promise<AuthUser>;
+  uploadAvatar: (file: File) => Promise<AuthUser>;
+  removeAvatar: () => Promise<AuthUser>;
   changePassword: (currentPassword: string, password: string, passwordConfirmation: string) => Promise<{ success: boolean; message?: string }>;
 };
 
@@ -39,21 +44,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState(false);
+  const [wishlistStatus, setWishlistStatus] = useState<"loading" | "ready" | "error">("loading");
+  const wishlistRequestId = useRef(0);
+
+  const refreshWishlist = useCallback(async (userId?: number) => {
+    const id = userId ?? user?.id;
+    if (!id) return;
+    const requestId = ++wishlistRequestId.current;
+    setWishlistStatus("loading");
+    const success = await hydrateWishlistFromRemote(id).catch(() => false);
+    if (requestId === wishlistRequestId.current) {
+      setWishlistStatus(success ? "ready" : "error");
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     let isMounted = true;
-    const storedToken = getStoredAuthToken();
-    const storedUser = getStoredAuthUser();
-
-    if (!storedToken) {
-      setIsLoading(false);
-      return () => {
-        isMounted = false;
-      };
-    }
-
-    setToken(storedToken);
-    setUser(storedUser);
+    clearStoredAuth(); // Remove legacy browser credentials, validate the server cookie.
+    const storedToken = "cookie-session";
 
     fetchCurrentUser(storedToken)
       .then((freshUser) => {
@@ -61,13 +70,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (freshUser) {
           setUser(freshUser);
+          setToken(storedToken);
           setStoredAuth(storedToken, freshUser);
-          hydrateWishlistFromRemote().catch(() => undefined);
+          void refreshWishlist(freshUser.id);
         } else {
           clearStoredAuth();
           setUser(null);
           setToken(null);
         }
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setAuthError(true);
+        setWishlistStatus("error");
       })
       .finally(() => {
         if (isMounted) setIsLoading(false);
@@ -76,20 +91,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false;
     };
+  // Initial session validation runs once; refreshWishlist only needs the returned user ID.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await loginRequest(email, password);
-    if (!response.success || !response.user || !response.token) {
+    if (!response.success || !response.user) {
       throw new Error(response.message || "Login failed");
     }
-    setStoredAuth(response.token, response.user);
+    setStoredAuth("cookie-session", response.user);
     setAuthHint(response.user);
+    setAuthError(false);
     setUser(response.user);
-    setToken(response.token);
-    hydrateWishlistFromRemote().catch(() => undefined);
+    setToken("cookie-session");
+    void refreshWishlist(response.user.id);
     return response.user;
-  }, []);
+  }, [refreshWishlist]);
 
   const sendOtp = useCallback(async (email: string, name: string) => {
     return sendRegistrationOtp(email, name);
@@ -98,17 +116,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const verifyOtp = useCallback(
     async (name: string, email: string, code: string, password: string, passwordConfirmation: string) => {
       const response = await verifyRegistrationOtp(name, email, code, password, passwordConfirmation);
-      if (!response.success || !response.user || !response.token) {
+      if (!response.success || !response.user) {
         throw new Error(response.message || "OTP verification failed");
       }
-      setStoredAuth(response.token, response.user);
+      setStoredAuth("cookie-session", response.user);
       setAuthHint(response.user);
+      setAuthError(false);
       setUser(response.user);
-      setToken(response.token);
-      hydrateWishlistFromRemote().catch(() => undefined);
+      setToken("cookie-session");
+      void refreshWishlist(response.user.id);
       return response.user;
     },
-    []
+    [refreshWishlist]
   );
 
   const updateProfile = useCallback(async (nextName: string) => {
@@ -128,13 +147,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token]);
 
   const logout = useCallback(async () => {
-    if (token) {
-      await logoutRequest(token);
+    try {
+      if (token) {
+        await logoutRequest(token);
+      }
+    } catch {
+      // The session boundary records operational failures and clears the
+      // HttpOnly credential. Signing out should remain idempotent for the UI.
+    } finally {
+      // Logging out is a local security boundary too. Never leave stale UI or
+      // browser state behind when the upstream service is temporarily down.
+      wishlistRequestId.current += 1;
+      clearStoredAuth();
+      clearSavedVillaIds();
+      setUser(null);
+      setToken(null);
+      setWishlistStatus("loading");
     }
-    clearStoredAuth();
-    writeSavedVillaIds([]);
-    setUser(null);
-    setToken(null);
+  }, [token]);
+
+  const uploadAvatar = useCallback(async (file: File) => {
+    if (!token) throw new Error("Not authenticated");
+    const response = await uploadAvatarRequest(file);
+    if (!response.success || !response.user) throw new Error(response.message || "Could not upload photo");
+    setUser(response.user);
+    return response.user;
+  }, [token]);
+
+  const removeAvatar = useCallback(async () => {
+    if (!token) throw new Error("Not authenticated");
+    const response = await removeAvatarRequest();
+    if (!response.success || !response.user) throw new Error(response.message || "Could not remove photo");
+    setUser(response.user);
+    return response.user;
   }, [token]);
 
   const value = useMemo<AuthContextValue>(
@@ -144,14 +189,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: Boolean(user && token),
       isAdmin: user?.isAdmin ?? false,
       isLoading,
+      authError,
+      wishlistStatus,
+      refreshWishlist: async () => refreshWishlist(),
       login,
       sendOtp,
       verifyOtp,
       logout,
       updateProfile,
+      uploadAvatar,
+      removeAvatar,
       changePassword,
     }),
-    [user, token, isLoading, login, sendOtp, verifyOtp, logout, updateProfile, changePassword]
+    [user, token, isLoading, authError, wishlistStatus, refreshWishlist, login, sendOtp, verifyOtp, logout, updateProfile, uploadAvatar, removeAvatar, changePassword]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

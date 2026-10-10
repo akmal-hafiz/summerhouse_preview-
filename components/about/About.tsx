@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { useState, useEffect, useMemo, useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useEffect, useMemo, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -26,24 +25,19 @@ import {
 } from "react-icons/fi";
 import styles from "./AboutEditorialSections.module.css";
 import DomeGallery from "./DomeGallery";
+import DestinationAtlas from "./DestinationAtlas";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-const LibreDestinationMap = dynamic(() => import("./LibreDestinationMap"), {
-  ssr: false,
-  loading: () => (
-    <div className={styles.mapPanel} aria-label="Loading Summerhouses Bali destination map">
-      <div className={styles.mapLoading}>Loading live destination map...</div>
-    </div>
-  ),
-});
 
 export type AboutDestination = {
   name: string;
   villas: number;
   latitude?: number;
   longitude?: number;
+  startingPriceMin?: number | null;
+  startingPriceMax?: number | null;
+  currencyCode?: string | null;
 };
 
 type AboutFaq = {
@@ -97,50 +91,9 @@ type AboutCopy = {
     name?: string;
     scope?: string;
     desc?: string;
-    image?: string;
   }>;
   [key: string]: unknown;
 };
-
-const defaultDestinations: AboutDestination[] = [
-  { name: "Canggu", villas: 4, latitude: -8.6478, longitude: 115.1385 },
-  { name: "Canggu - Berawa", villas: 15, latitude: -8.6601, longitude: 115.1437 },
-  { name: "Canggu - Padonan", villas: 4, latitude: -8.6300, longitude: 115.1500 },
-  { name: "Pererenan", villas: 6, latitude: -8.6371, longitude: 115.1335 },
-  { name: "Ubud", villas: 2, latitude: -8.5243, longitude: 115.255 },
-  { name: "Umalas", villas: 4, latitude: -8.659, longitude: 115.1543 },
-  { name: "Kerobokan", villas: 1, latitude: -8.6500, longitude: 115.1700 },
-  { name: "Legian", villas: 1, latitude: -8.6980, longitude: 115.1670 },
-];
-
-const destinationImages: Record<string, string> = {
-  "Canggu": "/homepage_villa/curated-6-exterior.webp",
-  "Canggu - Berawa": "/homepage_villa/curated-1-main.webp",
-  "Canggu - Padonan": "/homepage_villa/CactusEstate.webp",
-  "Pererenan": "/homepage_villa/villaarta.webp",
-  "Ubud": "/homepage_villa/curated-8.webp",
-  "Umalas": "/homepage_villa/88east.webp",
-  "Kerobokan": "/homepage_villa/officiana17.webp",
-  "Legian": "/homepage_villa/curated-4-view.webp",
-};
-
-const getDestinationImage = (name: string, index: number) => {
-  if (destinationImages[name]) {
-    return destinationImages[name];
-  }
-  const fallbacks = [
-    "/homepage_villa/curated-6-exterior.webp",
-    "/homepage_villa/curated-1-main.webp",
-    "/homepage_villa/CactusEstate.webp",
-    "/homepage_villa/villaarta.webp",
-    "/homepage_villa/curated-8.webp",
-    "/homepage_villa/88east.webp",
-    "/homepage_villa/officiana17.webp",
-    "/homepage_villa/curated-4-view.webp",
-  ];
-  return fallbacks[index % fallbacks.length];
-};
-
 
 const storyRows = [
   {
@@ -473,61 +426,6 @@ const reviewCardVariant = {
   viewport: { once: true, amount: 0.12 },
 };
 
-const destinationFactVariant = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: (index: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.9,
-      ease: [0.16, 1, 0.3, 1] as const,
-      delay: index * 0.08,
-    },
-  }),
-  viewport: { once: true, amount: 0.15 },
-};
-
-function CountUp({ to, duration = 1.4, decimals = 0 }: { to: number; duration?: number; decimals?: number }) {
-  const [count, setCount] = useState(to);
-  const [isMounted, setIsMounted] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.4 });
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-    setCount(0);
-  }, []);
-
-  useEffect(() => {
-    if (isMounted && isInView && !hasAnimated.current) {
-      hasAnimated.current = true;
-      let start = 0;
-      const end = to;
-      const startTime = performance.now();
-
-      const animateCount = (now: number) => {
-        const elapsed = (now - startTime) / 1000;
-        const progress = Math.min(elapsed / duration, 1);
-        const easeProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-        const currentCount = start + (end - start) * easeProgress;
-
-        setCount(Number(currentCount.toFixed(decimals)));
-
-        if (progress < 1) {
-          requestAnimationFrame(animateCount);
-        } else {
-          setCount(end);
-        }
-      };
-
-      requestAnimationFrame(animateCount);
-    }
-  }, [isMounted, isInView, to, duration, decimals]);
-
-  return <span ref={ref}>{count.toFixed(decimals)}</span>;
-}
-
 export default function About({
   destinations = [],
   faqs: faqsProp,
@@ -537,6 +435,36 @@ export default function About({
   cmsContent,
 }: AboutProps) {
   const aboutRootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollToCurrentSection = () => {
+      const sectionId = decodeURIComponent(window.location.hash.slice(1));
+      if (!sectionId) return;
+
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const navbarOffset = 96;
+      const targetTop = section.getBoundingClientRect().top + window.scrollY - navbarOffset;
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "auto" });
+    };
+
+    const frame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(scrollToCurrentSection);
+    });
+    const layoutSettledTimer = window.setTimeout(scrollToCurrentSection, 350);
+
+    window.addEventListener("hashchange", scrollToCurrentSection);
+    window.addEventListener("load", scrollToCurrentSection);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(layoutSettledTimer);
+      window.removeEventListener("hashchange", scrollToCurrentSection);
+      window.removeEventListener("load", scrollToCurrentSection);
+    };
+  }, []);
+
   const domeGalleryImages = useMemo(() => {
     const source = cmsGalleryItems ?? [];
     const mapped = source
@@ -611,12 +539,8 @@ export default function About({
     { scope: aboutRootRef },
   );
 
-  const destinationItems = destinations.length ? destinations : defaultDestinations;
-  const totalVillas = destinationItems.reduce((total, destination) => total + destination.villas, 0) || 43;
-  const loopItems = [
-    ...destinationItems.map((dest, idx) => ({ ...dest, uniqueId: `${dest.name}-primary-${idx}` })),
-    ...destinationItems.map((dest, idx) => ({ ...dest, uniqueId: `${dest.name}-mirror-${idx}` })),
-  ];
+  const totalVillas = destinations.reduce((total, destination) => total + destination.villas, 0)
+    || portfolioStats?.homesCount || 0;
   const trustStats = [
     { id: "active-villas", value: String(totalVillas), label: "Premium Villas" },
     { id: "support", value: "24/7", label: "Guest Support" },
@@ -795,7 +719,7 @@ export default function About({
         </div>
       </section> */}
 
-      {isVisible("faq_intro") ? <section className={styles.faqSection}>
+      {isVisible("faq_intro") ? <section id="faq" className={styles.faqSection}>
         <div className={styles.faqIntro}>
           <p className={styles.darkEyebrow}>{String(faqIntro.eyebrow || "FAQ")}</p>
           <h2>{String(faqIntro.title || "Everything you need to know.")}</h2>
@@ -829,98 +753,17 @@ export default function About({
         <JournalPreviewSection articles={journalArticles} content={journalPreview} />
       ) : null}
 
-      {isVisible("destination_footprint") ? <section className={`${styles.destinationSection} ${styles.darkScrollChapter}`}>
-        <div className={styles.destinationInner}>
-          <motion.div {...fadeUp} className={styles.destinationHeader}>
-            <p className={styles.lightEyebrow}>{String(destinationFootprint.eyebrow || "Location")}</p>
-            <h2>{String(destinationFootprint.title || "Where Summerhouses stays unfold.")}</h2>
-            <p>
-              {String(
-                destinationFootprint.description ||
-                  "The collection is centered around Bali's most requested stay areas, with villas selected for privacy, atmosphere, and access to the island's everyday rituals.",
-              )}
-            </p>
-          </motion.div>
-
-          <div className={styles.destinationFacts}>
-            <motion.div
-              variants={destinationFactVariant}
-              custom={0}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={destinationFactVariant.viewport}
-            >
-              <span>Featured regions</span>
-              <strong><CountUp to={destinationItems.length} /></strong>
-            </motion.div>
-            <motion.div
-              variants={destinationFactVariant}
-              custom={1}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={destinationFactVariant.viewport}
-            >
-              <span>Active villa points</span>
-              <strong><CountUp to={totalVillas} /></strong>
-            </motion.div>
-            <motion.div
-              variants={destinationFactVariant}
-              custom={2}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={destinationFactVariant.viewport}
-            >
-              <span>Island focus</span>
-              <strong>Bali</strong>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.985, y: 15 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] as const }}
-          >
-            <LibreDestinationMap destinations={destinationItems} />
-          </motion.div>
-
-          <div className={styles.locationMarquee} aria-label="Summerhouses regions">
-            <div className={styles.locationMarqueeTrack}>
-              {loopItems.map((destination, idx) => {
-                const imageUrl = getDestinationImage(destination.name, idx);
-                const sizeClass = [
-                  styles.cardSizeTall,
-                  styles.cardSizeWide,
-                  styles.cardSizeSlim,
-                  styles.cardSizeSquare,
-                  styles.cardSizeTall,
-                  styles.cardSizeWide,
-                  styles.cardSizeSlim,
-                  styles.cardSizeSquare,
-                ][idx % 8];
-                return (
-                  <div key={destination.uniqueId} className={`${styles.locationCard} ${sizeClass}`}>
-                    <Image
-                      src={imageUrl}
-                      alt={`Summerhouses in ${destination.name}`}
-                      fill
-                      sizes="(min-width: 1024px) 25vw, (min-width: 680px) 45vw, 75vw"
-                      className={styles.locationCardImage}
-                    />
-                    <div className={styles.locationCardOverlay} />
-                    <div className={styles.locationCardContent}>
-                      <h3>{destination.name}</h3>
-                      <span>
-                        {destination.villas} {destination.villas === 1 ? "villa" : "villas"}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section> : null}
+      {isVisible("destination_footprint") ? (
+        <DestinationAtlas
+          destinations={destinations}
+          eyebrow={String(destinationFootprint.eyebrow || "Location")}
+          title={String(destinationFootprint.title || "Where Summerhouses stays unfold.")}
+          description={String(
+            destinationFootprint.description ||
+              "The collection is centered around Bali's most requested stay areas, with villas selected for privacy, atmosphere, and access to the island's everyday rituals.",
+          )}
+        />
+      ) : null}
 
       {isVisible("final_cta") ? (
         <section className={styles.finalCta}>

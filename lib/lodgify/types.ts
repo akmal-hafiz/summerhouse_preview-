@@ -100,6 +100,16 @@ export type LodgifyRateQuote = {
   }>;
 };
 
+export type LodgifyStayRestriction = {
+  success: true;
+  isMinimumStayValid: false;
+  minStay: number | null;
+  maxStay: number | null;
+  message: string;
+};
+
+export type LodgifyRateResult = LodgifyRateQuote | LodgifyStayRestriction;
+
 export type VillaSummary = {
   id: LodgifyId;
   name: string;
@@ -188,7 +198,6 @@ export type VillaDetail = {
   rating: number;
   priceLabel: string | null;
   originalPriceLabel: string | null;
-  maxPriceLabel: string | null;
   currencyCode: string;
   bookingUrl: string;
   contact: unknown;

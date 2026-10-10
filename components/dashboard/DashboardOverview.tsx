@@ -1,139 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { FiHeart, FiUser, FiShield, FiCalendar, FiArrowRight } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { readSavedVillaIds, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import DashboardVillaThumb from "./DashboardVillaThumb";
-import { safeHttpHref } from "@/lib/safe-url";
+import { useDashboardWishlist } from "./useDashboardWishlist";
 
-type DashboardOverviewProps = {
+type Props = {
   villas: VillaSearchResult[];
+  catalogStatus: "ready" | "unavailable";
 };
 
-function formatDateID(date: Date): string {
-  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(date);
-}
-
-export default function DashboardOverview({ villas }: DashboardOverviewProps) {
+export default function DashboardOverview({ villas, catalogStatus }: Props) {
   const { user } = useAuth();
-  const [savedIds, setSavedIds] = useState<string[]>([]);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    setSavedIds(readSavedVillaIds());
-    setIsReady(true);
-    return subscribeSavedVillas(({ ids }) => setSavedIds(ids));
-  }, []);
-
-  const savedVillas = useMemo(() => {
-    const set = new Set(savedIds);
-    return villas.filter((v) => set.has(String(v.id)));
-  }, [savedIds, villas]);
-
-  const firstName = (user?.name ?? "Guest").split(" ")[0];
-  const today = formatDateID(new Date());
-  const previewVillas = savedVillas.slice(0, 5);
-  const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "http://localhost:8000/admin", "/dashboard");
+  const { ids, status, mutationError, retry } = useDashboardWishlist();
+  const byId = new Map(villas.map((villa) => [String(villa.id), villa]));
+  const saved = ids.map((id) => byId.get(id)).filter((villa): villa is VillaSearchResult => Boolean(villa));
+  const hiddenCount = ids.length - saved.length;
+  const firstName = user?.name.trim().split(/\s+/)[0] || "Guest";
 
   return (
     <>
-      {/* Hero greeting + date pill */}
-      <section className="dash-hero">
-        <div className="dash-hero-copy">
-          <h1 className="dash-hero-title">Halo, {firstName}</h1>
-          <p>Villa yang kamu simpan, profil akun, dan kontak concierge.</p>
+      <header className="dash-page-intro">
+        <h1>Welcome back, {firstName}</h1>
+        <p>Your saved villas, ready whenever you are.</p>
+      </header>
+
+      <section className="dash-discovery" aria-label="Discover Summerhouses villas">
+        <img src="/homepage_villa/curated-1-main.webp" alt="A quiet villa lounge beside a pool" />
+        <div className="dash-discovery-content">
+          <p>YOUR NEXT STAY</p>
+          <h2>Find a place<br />to call your own.</h2>
+          <Link href="/villas">Explore villas <FiArrowRight aria-hidden="true" /></Link>
         </div>
-        <span className="dash-date-pill">
-          {today}
-          <span className="dash-date-pill-icon"><FiCalendar aria-hidden="true" /></span>
-        </span>
       </section>
 
-      {/* Stat row */}
-      <section className="dash-stats" aria-label="Account snapshot">
-        <article className="dash-stat-card">
-          <span className="dash-stat-icon-wrap"><FiHeart aria-hidden="true" /></span>
-          <div className="dash-stat-body">
-            <p className="dash-stat-label">Disimpan</p>
-            <p className="dash-stat-value">{isReady ? savedVillas.length : "—"}</p>
-            {isReady && savedVillas.length > 0 && (
-              <p className="dash-stat-meta">villa di shortlist</p>
-            )}
-          </div>
-        </article>
-
-        <article className="dash-stat-card">
-          <span className="dash-stat-icon-wrap"><FiUser aria-hidden="true" /></span>
-          <div className="dash-stat-body">
-            <p className="dash-stat-label">Akun</p>
-            <p className="dash-stat-value" style={{ fontSize: "1rem" }}>{user?.email ?? "—"}</p>
-          </div>
-        </article>
-
-        <article className="dash-stat-card">
-          <span className="dash-stat-icon-wrap"><FiShield aria-hidden="true" /></span>
-          <div className="dash-stat-body">
-            <p className="dash-stat-label">Status</p>
-            <p className="dash-stat-value">{user?.isAdmin ? "Admin" : "Member"}</p>
-            <p className="dash-stat-meta">{user?.isAdmin ? "akses CMS aktif" : "akses standar"}</p>
-            {user?.isAdmin && (
-              <a className="dash-stat-link" href={adminUrl}>
-                Buka CMS <FiArrowRight aria-hidden="true" />
-              </a>
-            )}
-          </div>
-        </article>
-      </section>
-
-      {/* Saved villas list block */}
-      <section className="dash-block" aria-labelledby="saved-list-heading">
-        <header className="dash-block-head">
+      <section className="dash-saved-section" aria-labelledby="dash-saved-title">
+        <div className="dash-section-head">
           <div>
-            <h2 id="saved-list-heading">Villa di shortlist</h2>
+            <h2 id="dash-saved-title">Saved villas</h2>
+            <p>Homes you would like to return to.</p>
           </div>
-          {savedVillas.length > 0 && (
-            <Link href="/dashboard/saved" className="dash-block-head-link">
-              Lihat semua <FiArrowRight aria-hidden="true" />
-            </Link>
+          {status === "ready" && ids.length > 0 && (
+            <Link href="/dashboard/saved">View all <FiArrowRight aria-hidden="true" /></Link>
           )}
-        </header>
+        </div>
 
-        {!isReady ? (
-          <div className="dash-empty"><p>Memuat shortlist...</p></div>
-        ) : previewVillas.length === 0 ? (
-          <div className="dash-empty">
-            <p>Belum ada villa tersimpan. Klik ikon hati di halaman villa untuk menambahkan.</p>
-            <Link href="/villas">Jelajah villa</Link>
+        {status === "loading" ? (
+          <div className="dash-inline-state" role="status">Loading your saved villas...</div>
+        ) : status === "error" ? (
+          <div className="dash-inline-state dash-inline-state--alert" role="alert">
+            <p>We could not load your saved villas. Your shortlist has not been changed.</p>
+            <button type="button" onClick={retry}>Try again</button>
+          </div>
+        ) : catalogStatus === "unavailable" ? (
+          <div className="dash-inline-state dash-inline-state--alert" role="status">
+            <p>Villa details are temporarily unavailable. Your saved choices are still in your account.</p>
+            <button type="button" onClick={() => window.location.reload()}>Refresh page</button>
+          </div>
+        ) : ids.length === 0 ? (
+          <div className="dash-empty-state">
+            <p className="dash-empty-state-title">Your shortlist starts here.</p>
+            <p>Save the villas that feel right for your Bali stay. They will appear here when you return.</p>
+            <Link href="/villas">Browse villas <FiArrowRight aria-hidden="true" /></Link>
           </div>
         ) : (
-          <div className="dash-saved-list">
-            {previewVillas.map((villa) => (
-              <Link key={villa.id} href={`/villas/${villa.id}`} className="dash-saved-row">
-                <div className="dash-saved-thumb">
-                  <DashboardVillaThumb src={villa.imageUrl} alt={villa.name ?? ""} />
-                </div>
-                <div>
-                  <p className="dash-saved-name">{villa.name ?? "Untitled"}</p>
-                  {villa.location && <p className="dash-saved-name-sub">{villa.location}</p>}
-                </div>
-                {villa.bedrooms != null && (
-                  <span className="dash-saved-pill">
-                    <span className="dash-saved-pill-dot" />
-                    {villa.bedrooms} kamar
-                  </span>
-                )}
-                {villa.priceLabel && (
-                  <span className="dash-saved-duration">{villa.priceLabel}</span>
-                )}
-                <span className="dash-saved-action" aria-hidden="true">
-                  <FiArrowRight />
-                </span>
-              </Link>
-            ))}
-          </div>
+          <>
+            {saved.length > 0 && (
+              <div className="dash-villa-grid">
+                {saved.slice(0, 3).map((villa) => (
+                  <Link href={`/villas/${villa.id}`} className="dash-villa-card" key={villa.id}>
+                    <span className="dash-villa-image"><DashboardVillaThumb src={villa.imageUrl} alt={villa.name} /></span>
+                    <span className="dash-villa-name">{villa.name}</span>
+                    <span className="dash-villa-location">{villa.location || "Bali"}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+            {hiddenCount > 0 && (
+              <p className="dash-collection-note">
+                {hiddenCount} saved {hiddenCount === 1 ? "villa is" : "villas are"} not in the current collection.
+                <Link href="/dashboard/saved"> Review your shortlist</Link>
+              </p>
+            )}
+          </>
+        )}
+
+        {mutationError && status === "ready" && (
+          <p className="dash-action-error" role="alert">A shortlist change could not be saved. Please try again.</p>
         )}
       </section>
     </>

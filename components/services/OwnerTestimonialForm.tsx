@@ -11,7 +11,19 @@ type Status =
   | { kind: "success"; message: string }
   | { kind: "error"; message: string; fieldErrors?: FieldErrors };
 
-export default function OwnerTestimonialForm() {
+type OwnerTestimonialFormProps = {
+  title?: string;
+  description?: string;
+  buttonLabel?: string;
+  closeLabel?: string;
+};
+
+export default function OwnerTestimonialForm({
+  title = "Is your villa managed by Summerhouse?",
+  description = "Share your honest experience as an owner, published after a quick review. Your email stays private.",
+  buttonLabel = "Share your experience",
+  closeLabel = "Close",
+}: OwnerTestimonialFormProps) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [pending, startTransition] = useTransition();
@@ -53,10 +65,8 @@ export default function OwnerTestimonialForm() {
     <>
       <div className={styles.formToggleRow}>
         <div className={styles.formToggleCopy}>
-          <span className={styles.formToggleTitle}>Is your villa managed by Summerhouse?</span>
-          <span className={styles.formToggleLead}>
-            Share your honest experience as an owner — published after a quick review. Your email stays private.
-          </span>
+          <span className={styles.formToggleTitle}>{title}</span>
+          <span className={styles.formToggleLead}>{description}</span>
         </div>
         <button
           type="button"
@@ -65,7 +75,7 @@ export default function OwnerTestimonialForm() {
           aria-controls="owner-testimonial-form"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? "Close" : "Share your experience"}
+          {open ? closeLabel : buttonLabel}
         </button>
       </div>
 

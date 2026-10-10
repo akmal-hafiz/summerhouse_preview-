@@ -16,6 +16,8 @@ return [
     */
 
     'default' => env('CACHE_DRIVER', 'file'),
+    // CMS cache payloads are arrays/scalars, not arbitrary PHP objects.
+    'serializable_classes' => false,
 
     /*
     |--------------------------------------------------------------------------

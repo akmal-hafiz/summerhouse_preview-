@@ -7,6 +7,7 @@ use App\Models\HomepageVillaSelection;
 use App\Models\LodgifyIncident;
 use App\Models\LodgifyPropertyEvent;
 use App\Models\LodgifySyncRun;
+use App\Models\VillaCache;
 use App\Services\LodgifyHealthService;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -36,9 +37,9 @@ class LodgifyHealth extends Page
                 ->action(function (): void {
                     SyncLodgifyJob::dispatch()->onQueue('lodgify');
                     Notification::make()
-                        ->title('Lodgify sync queued')
-                        ->body('The background sync will update this page automatically.')
-                        ->success()
+                        ->title('Villa update added to the queue')
+                        ->body('This is not a completed update. Check Recent sync runs for the result.')
+                        ->info()
                         ->send();
                 }),
         ];
@@ -54,6 +55,14 @@ class LodgifyHealth extends Page
     public function getViewData(): array
     {
         $health = app(LodgifyHealthService::class)->snapshot();
+        $incidents = LodgifyIncident::unresolved()
+            ->orderByRaw("case severity when 'critical' then 1 when 'warning' then 2 else 3 end")
+            ->latest('last_seen_at')->limit(20)->get();
+        $events = LodgifyPropertyEvent::with('villa:id,lodgify_id,name')
+            ->latest('occurred_at')->limit(20)->get();
+        $villaNamesById = VillaCache::query()
+            ->whereIn('lodgify_id', $incidents->pluck('lodgify_id')->filter()->merge($events->pluck('lodgify_id'))->unique())
+            ->pluck('name', 'lodgify_id');
         $invalidReferences = HomepageVillaSelection::query()
             ->leftJoin('villa_caches', 'homepage_villa_selections.lodgify_property_id', '=', 'villa_caches.lodgify_id')
             ->where(function ($query) {
@@ -71,8 +80,9 @@ class LodgifyHealth extends Page
 
         return [
             'health' => $health,
-            'incidents' => LodgifyIncident::unresolved()->orderByRaw("case severity when 'critical' then 1 when 'warning' then 2 else 3 end")->latest('last_seen_at')->limit(20)->get(),
-            'events' => LodgifyPropertyEvent::latest('occurred_at')->limit(20)->get(),
+            'incidents' => $incidents,
+            'events' => $events,
+            'villaNamesById' => $villaNamesById,
             'runs' => LodgifySyncRun::latest('started_at')->limit(20)->get(),
             'invalidReferences' => $invalidReferences,
         ];

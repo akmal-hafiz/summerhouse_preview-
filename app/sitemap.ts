@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getAllSlugs } from "@/data/articles";
 import { getSiteUrl } from "@/lib/site";
 import { getVillaSummaries } from "@/lib/lodgify";
+import { listArticles } from "@/lib/journal";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getSiteUrl();
-  const villas = await getVillaSummaries();
+  const [villas, articles] = await Promise.all([getVillaSummaries(), listArticles()]);
   const now = new Date();
 
   return [
@@ -16,7 +16,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/gallery",
     "/services",
     "/villas",
-    ...getAllSlugs().map((slug) => `/journal/${slug}`),
+    "/journal",
+    ...articles.map((article) => `/journal/${article.slug}`),
     ...villas.map((villa) => `/villas/${villa.id}`),
   ].map((path) => ({
     url: `${siteUrl}${path}`,

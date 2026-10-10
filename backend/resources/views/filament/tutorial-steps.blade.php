@@ -70,7 +70,7 @@
         selector: '.sh-page-intro',
         position: 'bottom',
         title: 'Homepage Manager',
-        body: 'One place to control every section of the public homepage. Changes go live within five minutes of saving.',
+        body: 'One place to control every section of the public homepage. Editorial changes publish immediately; villa selections follow the short Lodgify refresh cycle.',
       },
       {
         selector: '.fi-tabs',

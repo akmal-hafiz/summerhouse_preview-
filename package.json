@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "preflight": "node scripts/production-preflight.mjs",
+    "package:release": "node scripts/package-production-release.mjs",
+    "verify": "npm run typecheck && npm test && npm run build && npm audit --omit=dev"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -26,9 +30,9 @@
     "heic-convert": "^2.1.0",
     "jotai": "^2.19.1",
     "maath": "^0.10.8",
-    "maplibre-gl": "^5.24.0",
+    "maplibre-gl": "^6.10.0",
     "motion": "^12.42.2",
-    "next": "^16.2.7",
+    "next": "^16.3.8",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-icons": "^5.5.0",
@@ -37,7 +41,7 @@
     "three": "^0.184.0"
   },
   "overrides": {
-    "postcss": "8.5.10"
+    "postcss": "^8.5.23"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -45,6 +49,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
+    "tsx": "4.23.13",
     "typescript": "^5"
   }
 }

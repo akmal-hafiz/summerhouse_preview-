@@ -10,7 +10,7 @@
 }
 
 .desktopSection {
-  padding-block: clamp(4.8rem, 6vw, 7.2rem) clamp(5.5rem, 7vw, 8rem);
+  padding-block: clamp(4.5rem, 5.6vw, 5rem) clamp(4.5rem, 6.1vw, 5.5rem);
 }
 
 .desktopContainer {
@@ -55,7 +55,7 @@
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 0.86fr) minmax(0, 0.82fr);
   gap: clamp(2.6rem, 3.8vw, 4.75rem);
   align-items: start;
-  margin-top: clamp(3.1rem, 4.5vw, 5rem);
+  margin-top: clamp(2.5rem, 3.9vw, 3.5rem);
 }
 
 .primaryRail,
@@ -172,7 +172,7 @@
 }
 
 .mobileSection {
-  padding-block: 4.75rem 5.25rem;
+  padding-block: 4rem 4.5rem;
 }
 
 .mobileContainer {

@@ -1,6 +1,6 @@
 .section {
   overflow: hidden;
-  padding: clamp(7rem, 11vw, 12rem) 0;
+  padding: clamp(5rem, 6.7vw, 6rem) 0 clamp(4.5rem, 5.6vw, 5rem);
   border-block: 1px solid rgb(68 107 74 / 0.12);
   background: #fafaf9;
   color: #292927;
@@ -16,7 +16,7 @@
   grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.72fr);
   align-items: end;
   gap: clamp(3rem, 8vw, 9rem);
-  padding-bottom: clamp(3rem, 5.5vw, 5.5rem);
+  padding-bottom: clamp(2rem, 3.9vw, 3.5rem);
 }
 
 .header h2 {
@@ -134,7 +134,7 @@ a.panel:focus-visible {
 
 @media (max-width: 600px) {
   .section {
-    padding-block: 5rem;
+    padding-block: 4rem;
   }
 
   .shell {
@@ -144,7 +144,7 @@ a.panel:focus-visible {
   .header {
     grid-template-columns: 1fr;
     gap: 1.4rem;
-    padding-bottom: 2.75rem;
+    padding-bottom: 2rem;
   }
 
   .header h2 {

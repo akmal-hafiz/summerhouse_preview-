@@ -1,0 +1,98 @@
+name: Deploy approved production release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_run_id:
+        description: GitHub Actions run ID from the approved release-candidate workflow
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: summerhouses-production
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      release_sha: ${{ steps.manifest.outputs.release_sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Validate run identifier
+        env:
+          RELEASE_RUN_ID: ${{ inputs.release_run_id }}
+        run: '[[ "$RELEASE_RUN_ID" =~ ^[0-9]+$ ]]'
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: summerhouses-release
+          path: artifact
+          run-id: ${{ inputs.release_run_id }}
+          github-token: ${{ github.token }}
+      - name: Verify checksum and release provenance
+        id: manifest
+        run: |
+          cd artifact
+          sha256sum --check summerhouses-release.tar.gz.sha256
+          tar -xOf summerhouses-release.tar.gz ./release-manifest.json > release-manifest.json
+          RELEASE_SHA="$(node -e "const m=require('./release-manifest.json'); if(m.repository!==process.env.GITHUB_REPOSITORY||m.ref!=='refs/heads/master'||!/^[0-9a-f]{40}$/.test(m.commit)) process.exit(1); process.stdout.write(m.commit)")"
+          git merge-base --is-ancestor "$RELEASE_SHA" origin/master
+          echo "release_sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: master
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: summerhouses-release
+          path: artifact
+          run-id: ${{ inputs.release_run_id }}
+          github-token: ${{ github.token }}
+      - name: Re-verify release checksum
+        working-directory: artifact
+        run: |
+          sha256sum --check summerhouses-release.tar.gz.sha256
+          tar -xOf summerhouses-release.tar.gz ./deployment/deploy-production-release.sh > deploy-production-release.sh
+          chmod 700 deploy-production-release.sh
+      - name: Deploy through restricted SSH account
+        env:
+          SSH_HOST: ${{ secrets.DEWAWEB_SSH_HOST }}
+          SSH_PORT: ${{ secrets.DEWAWEB_SSH_PORT }}
+          SSH_USER: ${{ secrets.DEWAWEB_SSH_USER }}
+          SSH_KEY: ${{ secrets.DEWAWEB_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEWAWEB_SSH_KNOWN_HOSTS }}
+          APP_ROOT: ${{ secrets.DEWAWEB_APP_ROOT }}
+          PHP_BIN: ${{ secrets.DEWAWEB_PHP84_BIN }}
+          HEALTH_URL: ${{ secrets.DEWAWEB_HEALTH_URL }}
+          RELEASE_SHA: ${{ needs.verify.outputs.release_sha }}
+        run: |
+          set -Eeuo pipefail
+          [[ "$SSH_PORT" =~ ^[0-9]+$ ]]
+          (( SSH_PORT >= 1 && SSH_PORT <= 65535 ))
+          [[ "$SSH_HOST" =~ ^[A-Za-z0-9][A-Za-z0-9.-]*$ ]]
+          [[ "$SSH_USER" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]
+          [[ "$APP_ROOT" =~ ^/home/[A-Za-z0-9._/-]+$ ]]
+          [[ "$PHP_BIN" =~ ^/[A-Za-z0-9._/-]+$ ]]
+          [[ "$HEALTH_URL" =~ ^https://[A-Za-z0-9.-]+(:[0-9]+)?(/[A-Za-z0-9._~:/?#%+=-]*)?$ ]]
+          key_dir="$(mktemp -d)"
+          trap 'rm -rf "$key_dir"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$key_dir/deploy_key"
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > "$key_dir/known_hosts"
+          chmod 600 "$key_dir/deploy_key" "$key_dir/known_hosts"
+          ssh_opts=(-i "$key_dir/deploy_key" -o IdentitiesOnly=yes -o UserKnownHostsFile="$key_dir/known_hosts" -o StrictHostKeyChecking=yes -p "$SSH_PORT")
+          incoming="$APP_ROOT/incoming/$GITHUB_RUN_ID"
+          ssh "${ssh_opts[@]}" "$SSH_USER@$SSH_HOST" "mkdir -p '$incoming'"
+          scp -i "$key_dir/deploy_key" -o IdentitiesOnly=yes -o UserKnownHostsFile="$key_dir/known_hosts" -o StrictHostKeyChecking=yes -P "$SSH_PORT" artifact/summerhouses-release.tar.gz artifact/summerhouses-release.tar.gz.sha256 artifact/deploy-production-release.sh "$SSH_USER@$SSH_HOST:$incoming/"
+          ssh "${ssh_opts[@]}" "$SSH_USER@$SSH_HOST" "bash '$incoming/deploy-production-release.sh' '$incoming/summerhouses-release.tar.gz' '$incoming/summerhouses-release.tar.gz.sha256' '$APP_ROOT' '$RELEASE_SHA' '$PHP_BIN' '$HEALTH_URL' 'frontend/tmp/restart.txt'"

@@ -1,0 +1,63 @@
+name: Build production release candidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
+        with:
+          php-version: '8.4'
+          extensions: curl, gd, intl, mbstring, pdo_sqlite, zip
+          coverage: none
+      - name: Validate public production build variables
+        env:
+          SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
+          CMS_PUBLIC_URL: ${{ vars.PRODUCTION_CMS_API_URL }}
+          CMS_ADMIN_URL: ${{ vars.PRODUCTION_CMS_ADMIN_URL }}
+        run: |
+          node -e "for (const [name,value] of Object.entries(process.env)) { if (!['SITE_URL','CMS_PUBLIC_URL','CMS_ADMIN_URL'].includes(name)) continue; const url=new URL(value); if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash) throw new Error(name+' must be a clean HTTPS URL'); }"
+      - run: npm ci
+      - run: npm run verify
+        env:
+          CMS_SUPPRESS_LOGS: '1'
+          SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
+          NEXT_PUBLIC_CMS_API_URL: ${{ vars.PRODUCTION_CMS_API_URL }}
+          NEXT_PUBLIC_CMS_ADMIN_URL: ${{ vars.PRODUCTION_CMS_ADMIN_URL }}
+      - run: composer install --prefer-dist --no-interaction
+        working-directory: backend
+      - run: vendor/bin/phpunit
+        working-directory: backend
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      - run: composer audit --no-dev --locked
+        working-directory: backend
+      - run: composer install --no-dev --prefer-dist --no-interaction --classmap-authoritative
+        working-directory: backend
+      - run: npm run package:release
+      - name: Archive and checksum release
+        run: |
+          tar -C output/production-release -czf output/summerhouses-release.tar.gz .
+          cd output
+          sha256sum summerhouses-release.tar.gz > summerhouses-release.tar.gz.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: summerhouses-release
+          path: |
+            output/summerhouses-release.tar.gz
+            output/summerhouses-release.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 14

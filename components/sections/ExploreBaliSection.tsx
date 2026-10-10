@@ -5,10 +5,7 @@ import { motion } from "framer-motion";
 import DestinationRail from "@/components/sections/DestinationRail";
 import { baliCollections as fallbackCollections, type BaliCollectionItem } from "@/data/baliCollections";
 
-type ExploreBaliBookSectionProps = {
-  /** Kept for API compatibility with existing homepage callers; the rail is
-      responsive on its own and no longer needs a static variant. */
-  staticFallback?: boolean;
+type ExploreBaliSectionProps = {
   collections?: BaliCollectionItem[];
   content?: {
     kicker?: string;
@@ -18,17 +15,13 @@ type ExploreBaliBookSectionProps = {
   };
 };
 
-export default function ExploreBaliBookSection({
+export default function ExploreBaliSection({
   collections = fallbackCollections,
   content,
-}: ExploreBaliBookSectionProps) {
+}: ExploreBaliSectionProps) {
   if (content?.is_visible === false) return null;
 
   const sectionTitle = content?.title || "Bali, by Neighbourhood";
-  const titleLines = sectionTitle.includes(",")
-    ? sectionTitle.split(/(?<=,)/).map((line) => line.trim()).filter(Boolean)
-    : [sectionTitle];
-
   return (
     <section className="bali-collection-section">
       <div className="bali-collection-shell">
@@ -40,9 +33,7 @@ export default function ExploreBaliBookSection({
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="bali-collection-title-group">
-            <h2 className="bali-collection-stacked-title">
-              {titleLines.map((line) => <span key={line}>{line}</span>)}
-            </h2>
+            <h2 className="bali-collection-stacked-title">{sectionTitle}</h2>
           </div>
           <p className="bali-collection-desc">
             {content?.description ||

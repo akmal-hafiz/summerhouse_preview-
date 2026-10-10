@@ -1,7 +1,7 @@
 # Production security audit and proposed hardening
 
 Date: 2026-09-17
-Decision: NO-GO for production. This is a preliminary code/dependency audit, not a penetration-test certificate. New security behavior below is proposed, not implemented or approved.
+Historical baseline: NO-GO for production. This is a preliminary code/dependency audit, not a penetration-test certificate. The client approved this design on 2026-09-18. Findings below describe the original baseline. See [implementation evidence](2026-09-18-hardening-implementation.md) for changes and remaining release gates.
 
 ## Scope and boundaries
 

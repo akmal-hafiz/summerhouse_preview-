@@ -585,7 +585,7 @@
     gap: 1rem !important;
   }
   .fi-form-actions::before {
-    content: 'Changes go live within ~5 minutes';
+    content: 'Editorial changes publish immediately';
     font-family: var(--sh-sans);
     font-weight: 500;
     color: var(--sh-ink-soft);

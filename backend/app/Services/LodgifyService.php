@@ -8,12 +8,14 @@ use App\Models\VillaCache;
 use App\Support\LodgifyLog;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Throwable;
 
 class LodgifyService
 {
+    protected float $deadline = 0;
     protected LodgifyAuditService $audit;
 
     protected LodgifyIncidentService $incidents;
@@ -41,6 +43,20 @@ class LodgifyService
 
     public function syncAll(): LodgifySyncRun
     {
+        $lock = Cache::lock('lodgify:reconciliation', 600);
+        if (!$lock->get()) {
+            throw new \RuntimeException('Lodgify synchronization is already running.');
+        }
+        try {
+            return $this->syncLocked();
+        } finally {
+            $lock->release();
+        }
+    }
+
+    protected function syncLocked(): LodgifySyncRun
+    {
+        $this->deadline = microtime(true) + min(420, max(30, (int) config('services.lodgify.sync_budget_seconds', 420)));
         $run = LodgifySyncRun::create(['run_uuid' => (string) Str::uuid(), 'status' => 'running', 'started_at' => now()]);
         if ($this->apiKey === '') {
             $run = $this->fail($run, 'authentication', 'Lodgify API key is missing');
@@ -60,7 +76,12 @@ class LodgifyService
             }
             $snapshot = (string) Str::uuid();
             [$roomsById, $warnings] = $this->fetchRoomsForProperties($properties);
-            $counts = DB::transaction(fn () => $this->reconcile($properties, $roomsById, $snapshot, $run));
+            $this->checkBudget();
+            $counts = DB::transaction(function () use ($properties, $roomsById, $snapshot, $run) {
+                $counts = $this->reconcile($properties, $roomsById, $snapshot, $run);
+                $this->checkBudget();
+                return $counts;
+            });
             $run = $this->finish($run, $warnings ? 'completed_with_warnings' : 'completed', array_merge($counts, ['snapshot_version' => $snapshot, 'warning_count' => $warnings]));
             $this->afterSuccessfulSync($run, $previousRun, $warnings);
 
@@ -74,7 +95,7 @@ class LodgifyService
             ]);
 
             if ($category === 'partial_sync') {
-                $run = $this->finish($run, 'partial', ['error_count' => 1, 'error_category' => $category, 'error_message' => Str::limit($error->getMessage(), 1000)]);
+                $run = $this->finish($run, 'partial', ['error_count' => 1, 'error_category' => $category, 'error_message' => Str::limit(LodgifyLog::sanitize($error->getMessage()), 1000)]);
             } else {
                 $run = $this->fail($run, $category, $error->getMessage());
             }
@@ -154,7 +175,15 @@ class LodgifyService
         $rooms = [];
         $warnings = 0;
         foreach (array_chunk($properties, $this->options['concurrency']) as $chunk) {
-            $responses = Http::pool(fn ($pool) => array_map(fn ($property) => $pool->withHeaders($this->headers())->timeout($this->options['timeout'])->get($this->baseUrl.'/properties/'.rawurlencode((string) $property['id']).'/rooms'), $chunk));
+            $this->checkBudget();
+            $responses = Http::pool(fn ($pool) => array_map(fn ($property) => $pool->withHeaders($this->headers())
+                ->timeout(min(30, max(1, $this->options['timeout'])))
+                ->connectTimeout(min(10, max(1, $this->options['timeout'])))
+                ->retry(1 + min(1, max(0, $this->options['retries'])), fn () => random_int(200, 500), function ($error) {
+                    return $error instanceof \Illuminate\Http\Client\ConnectionException ||
+                        ($error instanceof \Illuminate\Http\Client\RequestException && in_array($error->response->status(), [429, 500, 502, 503, 504], true));
+                }, false)
+                ->get($this->baseUrl.'/properties/'.rawurlencode((string) $property['id']).'/rooms'), $chunk), $this->options['concurrency']);
             foreach ($chunk as $index => $property) {
                 $id = (string) $property['id'];
                 $response = $responses[$index] ?? null;
@@ -175,6 +204,7 @@ class LodgifyService
         $seen = [];
         $active = $inactive = $new = $changed = 0;
         foreach ($properties as $property) {
+            $this->checkBudget();
             $id = (string) $property['id'];
             $seen[] = $id;
             $status = ($property['is_active'] ?? true) === false ? VillaCache::STATUS_INACTIVE : VillaCache::STATUS_ACTIVE;
@@ -238,8 +268,9 @@ class LodgifyService
     {
         $attempt = 0;
         do {
+            $this->checkBudget();
             try {
-                $response = Http::withHeaders($this->headers())->timeout($this->options['timeout'])->get($this->baseUrl.$path);
+                $response = Http::withHeaders($this->headers())->timeout(min(30, max(1, $this->options['timeout'])))->connectTimeout(min(10, max(1, $this->options['timeout'])))->get($this->baseUrl.$path);
             } catch (Throwable $error) {
                 if ($attempt++ < $this->options['retries']) {
                     usleep(300000);
@@ -262,6 +293,23 @@ class LodgifyService
         return ['X-ApiKey' => $this->apiKey, 'Accept' => 'application/json'];
     }
 
+    protected function checkBudget(): void
+    {
+        if ($this->deadline > 0 && microtime(true) >= $this->deadline) {
+            throw new \RuntimeException('timeout: synchronization duration budget exceeded');
+        }
+    }
+
+    /** Read-only portfolio inspection. Does not promote snapshots or open incidents. */
+    public function inspect(): array
+    {
+        if ($this->apiKey === '') throw new \RuntimeException('Lodgify credentials are unavailable');
+        $this->deadline = microtime(true) + 420;
+        $properties = $this->fetchAllProperties();
+        return ['total' => count($properties), 'active' => count(array_filter($properties, fn ($p) => ($p['is_active'] ?? true) !== false)),
+            'ids' => array_map(fn ($p) => (string) $p['id'], $properties)];
+    }
+
     protected function finish(LodgifySyncRun $run, string $status, array $values = []): LodgifySyncRun
     {
         $run->update(array_merge($values, ['status' => $status, 'finished_at' => now()]));
@@ -271,7 +319,7 @@ class LodgifyService
 
     protected function fail(LodgifySyncRun $run, string $category, string $message): LodgifySyncRun
     {
-        return $this->finish($run, 'failed', ['error_count' => 1, 'error_category' => $category, 'error_message' => Str::limit($message, 1000)]);
+        return $this->finish($run, 'failed', ['error_count' => 1, 'error_category' => $category, 'error_message' => Str::limit(LodgifyLog::sanitize($message), 1000)]);
     }
 
     protected function category(Throwable $error): string

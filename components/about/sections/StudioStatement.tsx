@@ -67,7 +67,7 @@ export default function StudioStatement({
   const rightImages = buildRailImages(content?.right_images, RIGHT_IMAGES);
 
   return (
-    <section ref={sectionRef} className={styles.section} aria-label="About Summerhouses">
+    <section id="editorial-gallery" ref={sectionRef} className={styles.section} aria-label="About Summerhouses">
       <div className={styles.col} aria-hidden="true">
         <motion.div className={styles.track} style={{ y: leftY }}>
           {leftImages.map((src, index) => (

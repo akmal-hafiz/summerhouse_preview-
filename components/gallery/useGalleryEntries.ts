@@ -16,6 +16,9 @@ export type GalleryEntry = {
   alt: string;
   /** Editorial filter tab this entry belongs to (admin-defined, optional). */
   category: string | null;
+  /** CMS-controlled editorial crop used by the masonry layout. */
+  layoutVariant?: "landscape" | "portrait" | "square" | "tall" | "wide";
+  focalPoint?: "center" | "top" | "bottom" | "left" | "right";
   /** House this post is tagged to (from the linked Lodgify property). */
   houseName: string | null;
   houseLocation: string | null;
@@ -205,7 +208,7 @@ function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
     const label = item.label?.trim() || `Summerhouse ${index + 1}`;
     const title = item.title?.trim() || label;
     const story =
-      item.text?.trim() || `A quieter frame from the Summerhouse Bali collection — ${label}.`;
+      item.text?.trim() || `A quieter frame from the Summerhouse Bali collection: ${label}.`;
     const category = item.category?.trim() || null;
     const houseName = item.property_name?.trim() || null;
     const houseLocation = item.property_location?.trim() || null;
@@ -219,7 +222,7 @@ function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
     seenSrc.add(mediaSrc);
 
     result.push({
-      id: `cms-gallery-${index}`,
+      id: `cms-gallery-${item.id ?? index}`,
       mediaSrc,
       videoUrl,
       isVideo,
@@ -227,6 +230,8 @@ function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
       story,
       alt: item.alt?.trim() || `${label} ${isVideo ? "video" : "image"} from Summerhouse Bali`,
       category,
+      layoutVariant: item.layout_variant ?? "landscape",
+      focalPoint: item.focal_point ?? "center",
       houseName,
       houseLocation,
       propertyId,
@@ -246,7 +251,7 @@ export function useGalleryEntries(items: CmsGalleryItem[] | null | undefined): G
   const srcKey = useMemo(() => {
     if (!items?.length) return "__fallback__";
     return items
-      .map((item) => `${item.type}:${item.src ?? ""}:${item.video_poster ?? ""}:${item.video_url ?? ""}:${item.lodgify_property_id ?? ""}:${item.category ?? ""}`)
+      .map((item) => `${item.id ?? ""}:${item.type}:${item.src ?? ""}:${item.video_poster ?? ""}:${item.video_url ?? ""}:${item.lodgify_property_id ?? ""}:${item.category ?? ""}:${item.layout_variant ?? ""}:${item.focal_point ?? ""}:${item.title ?? ""}:${item.text ?? ""}:${item.alt ?? ""}`)
       .join("|");
   }, [items]);
 

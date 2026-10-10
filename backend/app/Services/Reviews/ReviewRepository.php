@@ -93,9 +93,9 @@ class ReviewRepository
     {
         $cacheKey = "cms.reviews.villa.{$lodgifyId}.list.{$limit}";
 
-        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($lodgifyId, $limit) {
+        $ids = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($lodgifyId, $limit) {
             $villa = VillaCache::where('lodgify_id', $lodgifyId)->first();
-            if (!$villa) return collect();
+            if (!$villa) return [];
 
             return Testimonial::query()
                 ->published()
@@ -110,8 +110,10 @@ class ReviewRepository
                 ->orderByDesc('review_date')
                 ->orderByDesc('published_at')
                 ->limit($limit)
-                ->get();
+                ->pluck('id')->all();
         });
+        return Testimonial::whereIn('id', $ids)->published()->placedOn(Testimonial::PLACEMENT_VILLA)->get()
+            ->sortBy(fn ($review) => array_search($review->id, $ids, true))->values();
     }
 
     public function villaSummary(string $lodgifyId): array

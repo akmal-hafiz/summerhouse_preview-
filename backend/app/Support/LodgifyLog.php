@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class LodgifyLog
 {
-    private const SENSITIVE_PATTERN = '/key|token|secret|password|authorization|cookie/i';
+    private const SENSITIVE_PATTERN = '/key|token|secret|password|authorization|cookie|email|^code$/i';
 
     public static function write(string $severity, string $event, string $message, array $context = []): void
     {
@@ -15,7 +15,7 @@ class LodgifyLog
             ? $severity
             : 'info';
 
-        Log::log($severity, $message, array_merge([
+        Log::log($severity, self::sanitize($message), array_merge([
             'service' => 'laravel',
             'environment' => app()->environment(),
             'event' => $event,
@@ -27,7 +27,17 @@ class LodgifyLog
     public static function sanitize(mixed $value): mixed
     {
         if (! is_array($value)) {
-            return is_string($value) ? Str::limit($value, 2000, '') : $value;
+            if (!is_string($value)) return $value;
+            foreach (['app.key', 'services.lodgify.key', 'mail.mailers.smtp.password', 'services.resend.key'] as $path) {
+                $secret = config($path);
+                if (is_string($secret) && strlen($secret) >= 6) $value = str_replace($secret, '[REDACTED]', $value);
+            }
+            $value = preg_replace('/[\x00-\x1F\x7F]/', ' ', $value);
+            $value = preg_replace('~(https?://)[^\s/@]+:[^\s/@]+@~i', '$1[REDACTED]@', $value);
+            $value = preg_replace('/([?&](?:api[_-]?key|token|secret|password|code)=)[^&\s]*/i', '$1[REDACTED]', $value);
+            $value = preg_replace('/Bearer\s+[^\s,;]+/i', 'Bearer [REDACTED]', $value);
+            $value = preg_replace('/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i', '[EMAIL]', $value);
+            return Str::limit($value, 2000, '');
         }
 
         $clean = [];

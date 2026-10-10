@@ -224,19 +224,13 @@ class TestimonialResource extends Resource
                 ]),
 
             Forms\Components\Section::make('Placement')
-                ->description('Where this review appears once approved. One review can live in several places without duplication.')
+                ->description('Approved guest reviews appear on their villa page. Approved owner testimonials appear on Services. Public Homepage and Concierge quotes are curated separately.')
                 ->icon('heroicon-o-map')
                 ->columns(4)
                 ->schema([
                     Forms\Components\Toggle::make('show_on_villa')
                         ->label('Villa detail')
                         ->helperText('Needs a linked villa.')
-                        ->visible(fn (?Testimonial $record) => !$isOwner($record)),
-                    Forms\Components\Toggle::make('show_on_home')
-                        ->label('Homepage')
-                        ->visible(fn (?Testimonial $record) => !$isOwner($record)),
-                    Forms\Components\Toggle::make('show_on_concierge')
-                        ->label('Concierge page')
                         ->visible(fn (?Testimonial $record) => !$isOwner($record)),
                     Forms\Components\Toggle::make('show_on_services')
                         ->label('Services page')
@@ -287,19 +281,6 @@ class TestimonialResource extends Resource
                         ->helperText('Lower values appear first.')
                         ->columnSpan(6),
 
-                    Forms\Components\Select::make('page')
-                        ->label('Primary page context')
-                        ->options([
-                            'about' => 'About',
-                            'services' => 'Services',
-                            'home' => 'Homepage',
-                            'concierge' => 'Concierge',
-                            'villa' => 'Villa detail',
-                        ])
-                        ->default('villa')
-                        ->required()
-                        ->native(false)
-                        ->columnSpan(6),
                 ]),
 
             Forms\Components\Section::make('Audit trail')
@@ -401,8 +382,8 @@ class TestimonialResource extends Resource
                     ->state(function (Testimonial $r): string {
                         $spots = array_filter([
                             $r->show_on_villa ? 'Villa' : null,
-                            $r->show_on_home ? 'Home' : null,
-                            $r->show_on_concierge ? 'Concierge' : null,
+                            $r->show_on_home ? 'Home (legacy)' : null,
+                            $r->show_on_concierge ? 'Concierge (legacy)' : null,
                             $r->show_on_services ? 'Services' : null,
                         ]);
 

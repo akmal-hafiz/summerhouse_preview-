@@ -30,21 +30,23 @@ export default function ConciergeHorizontalStory({
     const track = trackRef.current;
     if (!section || !track) return;
     const mm = gsap.matchMedia();
-    // The Concierge story is intentionally scroll-led on desktop. Keep the
-    // horizontal journey active even when the operating system reduces motion.
-    mm.add("(min-width: 1024px)", () => {
+    // Vertical page scrolling advances the same horizontal story on every
+    // screen size. Reduced-motion users get direct, unsmoothed scroll progress.
+    const setupHorizontalStory = () => {
       const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
       const tween = gsap.to(track, {
         x: () => -distance(), ease: "none",
-        scrollTrigger: { trigger: section, start: "top top", end: () => `+=${distance()}`, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1 },
+        scrollTrigger: { trigger: section, start: "top top", end: () => `+=${distance()}`, pin: true, scrub: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? true : 0.8, invalidateOnRefresh: true, anticipatePin: 1 },
       });
       return () => tween.kill();
-    });
+    };
+    mm.add("(min-width: 1024px)", setupHorizontalStory);
+    mm.add("(max-width: 1023px)", setupHorizontalStory);
     return () => mm.revert();
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className={styles.section} aria-labelledby="about-concierge-title">
+    <section id="concierge" ref={sectionRef} className={styles.section} aria-labelledby="about-concierge-title">
       <div ref={trackRef} className={styles.track}>
         <header className={styles.intro}>
           <h2 id="about-concierge-title">
@@ -56,12 +58,12 @@ export default function ConciergeHorizontalStory({
           </p>
         </header>
         {featuredConciergeServices.map((service, index) => (
-          <article className={styles.card} key={service.id}>
+          <article className={styles.card} key={service.id} style={{ zIndex: index + 1 }}>
             <div className={styles.media}><Image src={service.image} alt={service.alt} fill sizes="(min-width:1024px) 48vw, 86vw" /></div>
             <div className={styles.copy}><span>{String(index + 1).padStart(2, "0")} /</span><div><h3>{service.title}</h3><p>{service.summary}</p></div></div>
           </article>
         ))}
-        <aside className={styles.closing}>
+        <aside className={styles.closing} style={{ zIndex: featuredConciergeServices.length + 1 }}>
           <div className={styles.team}><span className={styles.teamMark}>SH</span><p><strong>Summerhouse Guest Experience</strong><small>Concierge Team, Bali</small></p></div>
           <blockquote>
             &ldquo;{content?.quote || "The best stays feel effortless because the right help is already close."}&rdquo;

@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use App\Support\LodgifyLog as SafeLog;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
@@ -43,21 +43,21 @@ class PasswordResetController extends Controller
 
         $code = (string) random_int(100000, 999999);
 
-        OtpCode::create([
+        $otp = OtpCode::create([
             'email' => $data['email'],
             'type' => OtpCode::TYPE_PASSWORD_RESET,
-            'code' => $code,
+            'code' => '******',
+            'code_hash' => OtpCode::digest($code),
             'attempts' => 0,
             'expires_at' => now()->addMinutes(self::OTP_TTL_MINUTES),
         ]);
 
         try {
-            Mail::mailer('resend')->to($data['email'])->send(new OtpMail($code, $user->name, 'password_reset'));
+            if (app()->environment('production') && in_array(config('mail.default'), ['array', 'log', 'failover'], true)) throw new \RuntimeException('OTP delivery transport is unavailable');
+            Mail::to($data['email'])->send(new OtpMail($code, $user->name, 'password_reset'));
         } catch (\Throwable $e) {
-            Log::error('Failed to send password reset OTP', [
-                'email' => $data['email'],
-                'error' => $e->getMessage(),
-            ]);
+            $otp->update(['used_at' => now()]);
+            SafeLog::write('warning', 'auth.otp_delivery_failed', 'Verification email delivery failed.', ['type' => 'password_reset', 'exception_type' => get_class($e)]);
 
             return response()->json([
                 'success' => false,
@@ -84,37 +84,17 @@ class PasswordResetController extends Controller
             ]);
         }
 
-        $otp = OtpCode::forEmail($data['email'])
-            ->ofType(OtpCode::TYPE_PASSWORD_RESET)
-            ->valid()
-            ->latest()
-            ->first();
+        $result = OtpCode::consume($data['email'], OtpCode::TYPE_PASSWORD_RESET, $data['code'], function () use ($data, $user) {
+            $user->update(['password' => Hash::make($data['password'])]);
+            $user->tokens()->delete();
+            return true;
+        });
 
-        if (!$otp) {
+        if (!$result) {
             throw ValidationException::withMessages([
                 'code' => 'Kode reset tidak valid atau sudah kadaluarsa.',
             ]);
         }
-
-        $otp->increment('attempts');
-
-        if ($otp->code !== $data['code']) {
-            $remaining = self::MAX_ATTEMPTS - $otp->attempts;
-            throw ValidationException::withMessages([
-                'code' => $remaining > 0
-                    ? "Kode reset salah. Sisa percobaan: {$remaining}."
-                    : 'Kode reset salah. Silakan minta kode baru.',
-            ]);
-        }
-
-        $otp->update(['used_at' => now()]);
-
-        $user->update([
-            'password' => Hash::make($data['password']),
-        ]);
-
-        // Revoke all Sanctum tokens to force re-login on every device
-        $user->tokens()->delete();
 
         return response()->json([
             'success' => true,

@@ -1,105 +1,99 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { FiX, FiArrowRight, FiCalendar } from "react-icons/fi";
+import { useState } from "react";
+import { FiArrowRight, FiX } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
-import { readSavedVillaIds, subscribeSavedVillas, toggleSavedVillaId } from "@/components/villas/savedVillas";
+import { removeSavedVillaId } from "@/components/villas/savedVillas";
 import DashboardVillaThumb from "./DashboardVillaThumb";
+import { useDashboardWishlist } from "./useDashboardWishlist";
 
-type DashboardSavedProps = {
+type Props = {
   villas: VillaSearchResult[];
+  catalogStatus: "ready" | "unavailable";
 };
 
-function formatDateID(date: Date): string {
-  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" }).format(date);
-}
+export default function DashboardSaved({ villas, catalogStatus }: Props) {
+  const { ids, status, retry } = useDashboardWishlist();
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [removeError, setRemoveError] = useState(false);
+  const byId = new Map(villas.map((villa) => [String(villa.id), villa]));
 
-export default function DashboardSaved({ villas }: DashboardSavedProps) {
-  const [savedIds, setSavedIds] = useState<string[]>([]);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    setSavedIds(readSavedVillaIds());
-    setIsReady(true);
-    return subscribeSavedVillas(({ ids }) => setSavedIds(ids));
-  }, []);
-
-  const savedVillas = useMemo(() => {
-    const set = new Set(savedIds);
-    return villas.filter((v) => set.has(String(v.id)));
-  }, [savedIds, villas]);
-
-  const today = formatDateID(new Date());
-
-  const handleRemove = (e: React.MouseEvent, id: string | number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleSavedVillaId(id);
+  const remove = async (id: string) => {
+    setRemoveError(false);
+    setRemovingId(id);
+    const success = await removeSavedVillaId(id).catch(() => false);
+    setRemovingId(null);
+    if (!success) setRemoveError(true);
   };
 
   return (
     <>
-      <section className="dash-hero">
-        <div className="dash-hero-copy">
-          <h1 className="dash-hero-title">Villa di shortlist</h1>
-          <p>Daftar villa yang kamu simpan. Klik untuk lihat detail atau hapus dari daftar.</p>
+      <header className="dash-page-intro dash-page-intro--inner">
+        <Link href="/dashboard" className="dash-back-link">Account overview</Link>
+        <h1>Saved villas</h1>
+        <p>A quiet place for the homes you would like to revisit.</p>
+      </header>
+
+      {status === "loading" ? (
+        <div className="dash-inline-state" role="status">Loading your saved villas...</div>
+      ) : status === "error" ? (
+        <div className="dash-inline-state dash-inline-state--alert" role="alert">
+          <p>We could not load your saved villas. Your shortlist has not been changed.</p>
+          <button type="button" onClick={retry}>Try again</button>
         </div>
-        <span className="dash-date-pill">
-          {today}
-          <span className="dash-date-pill-icon"><FiCalendar aria-hidden="true" /></span>
-        </span>
-      </section>
-
-      <section className="dash-block">
-        <header className="dash-block-head">
-          <div>
-            <h2>{isReady ? `${savedVillas.length} villa` : "—"}</h2>
+      ) : catalogStatus === "unavailable" ? (
+        <div className="dash-inline-state dash-inline-state--alert" role="status">
+          <p>Villa details are temporarily unavailable. Your saved choices are still in your account.</p>
+          <button type="button" onClick={() => window.location.reload()}>Refresh page</button>
+        </div>
+      ) : ids.length === 0 ? (
+        <div className="dash-empty-state dash-empty-state--wide">
+          <p className="dash-empty-state-title">No villas saved yet.</p>
+          <p>Explore the collection and save the places you would like to return to.</p>
+          <Link href="/villas">Explore villas <FiArrowRight aria-hidden="true" /></Link>
+        </div>
+      ) : (
+        <section aria-label="Your saved villas">
+          <div className="dash-section-head dash-section-head--list">
+            <h2>{ids.length} {ids.length === 1 ? "villa" : "villas"} in your shortlist</h2>
+            <Link href="/villas">Explore more <FiArrowRight aria-hidden="true" /></Link>
           </div>
-          <span className="dash-block-head-meta">terurut dari penambahan terbaru</span>
-        </header>
-
-        {!isReady ? (
-          <div className="dash-empty"><p>Memuat shortlist...</p></div>
-        ) : savedVillas.length === 0 ? (
-          <div className="dash-empty">
-            <p>Belum ada villa tersimpan. Klik ikon hati di halaman villa untuk menambahkan.</p>
-            <Link href="/villas">Jelajah villa</Link>
+          {removeError && <p className="dash-action-error" role="alert">The villa could not be removed. Please try again.</p>}
+          <div className="dash-villa-grid dash-villa-grid--all">
+            {ids.map((id) => {
+              const villa = byId.get(id);
+              return (
+                <article className={`dash-villa-card${villa ? "" : " dash-villa-card--unavailable"}`} key={id}>
+                  {villa ? (
+                    <Link href={`/villas/${villa.id}`} className="dash-villa-card-link">
+                      <span className="dash-villa-image"><DashboardVillaThumb src={villa.imageUrl} alt={villa.name} /></span>
+                      <span className="dash-villa-name">{villa.name}</span>
+                      <span className="dash-villa-location">{villa.location || "Bali"}</span>
+                    </Link>
+                  ) : (
+                    <div className="dash-villa-card-link">
+                      <span className="dash-villa-image dash-villa-image--unavailable" aria-hidden="true" />
+                      <span className="dash-villa-name">No longer in our current collection</span>
+                      <span className="dash-villa-location">Saved villa reference #{id}</span>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    className="dash-villa-remove"
+                    aria-label={`Remove ${villa?.name || `villa ${id}`} from saved villas`}
+                    onClick={() => void remove(id)}
+                    disabled={removingId !== null}
+                  >
+                    <FiX aria-hidden="true" />
+                    <span>{removingId === id ? "Removing..." : "Remove"}</span>
+                  </button>
+                </article>
+              );
+            })}
           </div>
-        ) : (
-          <div className="dash-saved-list">
-            {savedVillas.map((villa) => (
-              <Link key={villa.id} href={`/villas/${villa.id}`} className="dash-saved-row">
-                <div className="dash-saved-thumb">
-                  <DashboardVillaThumb src={villa.imageUrl} alt={villa.name ?? ""} />
-                </div>
-                <div>
-                  <p className="dash-saved-name">{villa.name ?? "Untitled"}</p>
-                  {villa.location && <p className="dash-saved-name-sub">{villa.location}</p>}
-                </div>
-                {villa.bedrooms != null && (
-                  <span className="dash-saved-pill">
-                    <span className="dash-saved-pill-dot" />
-                    {villa.bedrooms} kamar
-                  </span>
-                )}
-                {villa.priceLabel && (
-                  <span className="dash-saved-duration">{villa.priceLabel}</span>
-                )}
-                <button
-                  type="button"
-                  onClick={(e) => handleRemove(e, villa.id)}
-                  className="dash-saved-action dash-saved-action--danger"
-                  aria-label={`Hapus ${villa.name ?? "villa"} dari shortlist`}
-                  title="Hapus dari shortlist"
-                >
-                  <FiX aria-hidden="true" />
-                </button>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
+        </section>
+      )}
     </>
   );
 }

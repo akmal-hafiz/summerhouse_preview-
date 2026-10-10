@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ArticleResource\Pages;
 
+use App\Filament\Pages\AboutPageManager;
 use App\Filament\Resources\ArticleResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -12,6 +13,14 @@ class EditArticle extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [Actions\DeleteAction::make()];
+        return [
+            Actions\DeleteAction::make()
+                ->successRedirectUrl(AboutPageManager::getUrl(['section' => 'journal_preview'])),
+        ];
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return AboutPageManager::getUrl(['section' => 'journal_preview']);
     }
 }

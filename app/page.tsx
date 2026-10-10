@@ -4,7 +4,7 @@ import Hero from "@/components/home/Hero";
 
 type HeroProps = NonNullable<ComponentProps<typeof Hero>>;
 import Footer from "@/components/common/Footer";
-import ExploreBaliBookSection from "@/components/sections/ExploreBaliBookSection";
+import ExploreBaliSection from "@/components/sections/ExploreBaliSection";
 import SignatureVillaSpotlight from "@/components/home/SignatureVillaSpotlight";
 import StayStylesShowcase from "@/components/home/StayStylesShowcase";
 import WhyStaySection, { type WhyStayContent } from "@/components/home/WhyStaySection";
@@ -12,7 +12,6 @@ import GuestStoriesSection from "@/components/testimonials/GuestStoriesSection";
 import {
   CMS_LODGIFY_REVALIDATE,
   getCmsSection,
-  getCmsTestimonials,
 } from "@/lib/cms";
 import {
   getHomepageBaliCollections,
@@ -28,9 +27,7 @@ export default async function Home() {
     heroCms,
     stayStylesCms,
     whyStayCms,
-    testimonialCms,
     exploreBaliCms,
-    testimonials,
   ] = await Promise.all([
     getHomepageStayGroups(),
     getHomepageSignatureVilla(),
@@ -42,20 +39,11 @@ export default async function Home() {
     }>("home", "stay_styles", { revalidate: CMS_LODGIFY_REVALIDATE }),
     getCmsSection<WhyStayContent>("home", "why_stay"),
     getCmsSection<{
-      eyebrow?: string;
-      title?: string;
-      title_emphasis?: string;
-      trust_label?: string;
-      supporting_copy?: string;
-      is_visible?: boolean;
-    }>("home", "testimonials"),
-    getCmsSection<{
       kicker?: string;
       title?: string;
       description?: string;
       is_visible?: boolean;
     }>("home", "explore_bali"),
-    getCmsTestimonials("home"),
   ]);
 
   return (
@@ -71,12 +59,8 @@ export default async function Home() {
           <SignatureVillaSpotlight villa={signatureVilla} variant="mobile" />
         </div>
         <WhyStaySection content={whyStayCms || undefined} />
-        <GuestStoriesSection
-          testimonials={testimonials}
-          placement="homepage"
-          content={testimonialCms || undefined}
-        />
-        <ExploreBaliBookSection
+        <GuestStoriesSection placement="homepage" />
+        <ExploreBaliSection
           collections={baliCollections}
           content={exploreBaliCms || undefined}
         />

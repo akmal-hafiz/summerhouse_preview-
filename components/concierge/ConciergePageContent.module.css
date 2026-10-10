@@ -2,13 +2,13 @@
   --ink: var(--color-text, #2E2E2C);
   --accent: var(--brand-primary, #446B4A);
   overflow-x: hidden;
-  padding-top: 7rem;
-  background: #f1f3f9;
+  padding-top: 5.5rem;
+  background: var(--color-page, #FAFAF9);
   color: var(--ink);
 }
 
 .catalogue {
-  padding: 7rem clamp(1rem, 4vw, 4rem) 9rem;
+  padding: 3rem clamp(1rem, 4vw, 4rem) 6rem;
 }
 
 .header {
@@ -17,7 +17,7 @@
   align-items: end;
   gap: 3rem;
   max-width: 92rem;
-  margin: 0 auto 4rem;
+  margin: 0 auto 3rem;
 }
 
 .header h1 {
@@ -55,7 +55,7 @@
 .service {
   min-width: 0;
   padding: 0.55rem;
-  background: #fff;
+  background: var(--color-surface-raised, #FFFFFF);
 }
 
 .serviceMedia {
@@ -151,11 +151,11 @@
 
 @media (max-width: 720px) {
   .page {
-    padding-top: 5rem;
+    padding-top: 4rem;
   }
 
   .catalogue {
-    padding: 5rem 1rem;
+    padding: 2.5rem 1rem 4rem;
   }
 
   .header h1 {

@@ -29,6 +29,7 @@ async function lodgifyFetch(path: string, options: FetchOptions = {}) {
         method: "GET",
         headers: { "X-ApiKey": LODGIFY_API_KEY || "", Accept: "application/json" },
         next: options.revalidate ? { revalidate: options.revalidate } : undefined,
+        cache: options.revalidate ? undefined : "no-store",
         signal: controller.signal,
       });
       if (!response.ok) {
@@ -131,7 +132,7 @@ export async function fetchAvailabilityItems(startDate: string, endDate: string)
 
 export async function fetchRateCalendar(params: URLSearchParams) {
   try {
-    return await lodgifyFetch(`/rates/calendar?${params.toString()}`, { revalidate: 60 });
+    return await lodgifyFetch(`/rates/calendar?${params.toString()}`);
   } catch (error) {
     logServerError("[lodgify:rates-calendar]", error);
     return null;

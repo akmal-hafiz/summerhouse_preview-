@@ -33,6 +33,7 @@ class LodgifyHealthService
         }
 
         $counts = VillaCache::query()
+            ->where('management_status', VillaCache::MANAGEMENT_MANAGED)
             ->selectRaw('lodgify_status, count(*) as aggregate')
             ->groupBy('lodgify_status')
             ->pluck('aggregate', 'lodgify_status');

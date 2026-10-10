@@ -1,11 +1,22 @@
 <x-filament-panels::page>
     <div class="sh-page-intro">
-        <h2>Gallery page introduction</h2>
-        <p>Keep the copy short so the gallery images remain the strongest part of the page.</p>
+        <h2>Gallery Page</h2>
+        <p>Manage the public introduction and every gallery image from one place. Changes publish immediately.</p>
+        <a href="{{ $this->getPublicGalleryUrl() }}" target="_blank" rel="noopener noreferrer">
+            Preview public Gallery
+        </a>
     </div>
 
     <form wire:submit="save">
         {{ $this->form }}
-        <div class="sh-form-actions-row">{{ $this->getFormActions()[0] }}</div>
+        <div class="sh-form-actions-row">
+            @foreach ($this->getFormActions() as $action)
+                {{ $action }}
+            @endforeach
+        </div>
     </form>
+
+    <div>
+        {{ $this->table }}
+    </div>
 </x-filament-panels::page>

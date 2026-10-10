@@ -23,6 +23,9 @@ class BaliCollectionResource extends Resource
 
     protected static ?string $navigationLabel = 'Destination Guides';
 
+    // Destination editing now lives with the homepage section that displays it.
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?int $navigationSort = 20;
 
     protected static ?string $recordTitleAttribute = 'location';

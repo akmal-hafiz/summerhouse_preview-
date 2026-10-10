@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { isIP } from "node:net";
 
 type Bucket = {
   count: number;
@@ -7,11 +8,15 @@ type Bucket = {
 };
 
 const buckets = new Map<string, Bucket>();
+const MAX_BUCKETS = 10_000;
 
-function getClientIp(request: NextRequest) {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0]?.trim() || "unknown";
-  return request.headers.get("x-real-ip") || "unknown";
+export function getTrustedClientIp(request: NextRequest): string | null {
+  // Only enable when ingress strips and overwrites this header and origin is private.
+  const header = process.env.TRUSTED_CLIENT_IP_HEADER;
+  if (!header || !/^[a-z0-9-]+$/i.test(header)) return null;
+  const value = request.headers.get(header)?.trim();
+  if (!value || value.length > 64 || !isIP(value)) return null;
+  return value;
 }
 
 export function rateLimitRequest(
@@ -27,10 +32,20 @@ export function rateLimitRequest(
   }
 ) {
   const now = Date.now();
-  const bucketKey = `${key}:${getClientIp(request)}`;
+  if (buckets.size >= MAX_BUCKETS) {
+    for (const [id, bucket] of buckets) {
+      if (bucket.resetAt <= now) buckets.delete(id);
+    }
+  }
+  const bucketKey = `${key}:${getTrustedClientIp(request) || "shared"}`;
   const current = buckets.get(bucketKey);
 
   if (!current || current.resetAt <= now) {
+    if (!current && buckets.size >= MAX_BUCKETS) {
+      return NextResponse.json({ success: false, error: "Please try again shortly." }, {
+        status: 429, headers: { "Retry-After": "60" },
+      });
+    }
     buckets.set(bucketKey, { count: 1, resetAt: now + windowMs });
     return null;
   }

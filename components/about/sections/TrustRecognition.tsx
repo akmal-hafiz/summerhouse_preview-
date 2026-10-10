@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { FiPlus, FiX } from "react-icons/fi";
@@ -11,7 +10,6 @@ type Pillar = {
   name: string;
   scope: string;
   desc: string;
-  image: string;
 };
 
 const PILLARS: Pillar[] = [
@@ -20,35 +18,30 @@ const PILLARS: Pillar[] = [
     name: "Verified Villas",
     scope: "Every home",
     desc: "Each villa is personally inspected for comfort, cleanliness, and safety before a guest arrives — so the space feels ready the moment you walk in.",
-    image: "/homepage_villa/curated-1-main.webp",
   },
   {
     id: "support",
     name: "24/7 Guest Support",
     scope: "Any time",
     desc: "A real person stays reachable around the clock — for arrivals, late questions, or anything that shifts once you land.",
-    image: "/homepage_villa/curated-5-lounge.webp",
   },
   {
     id: "concierge",
     name: "Local Concierge",
     scope: "On the island",
     desc: "Drivers, dining, beach days, and trusted recommendations, arranged by a team that actually lives here.",
-    image: "/homepage_villa/88east.webp",
   },
   {
     id: "booking",
     name: "Secure Booking",
     scope: "Every trip",
     desc: "Clear terms, protected payments, and confirmed details before you travel — no guesswork, no grey areas.",
-    image: "/homepage_villa/curated-8.webp",
   },
   {
     id: "pricing",
     name: "Transparent Pricing",
     scope: "No surprises",
     desc: "The price you see is the price you pay, with every fee explained up front and nothing added on arrival.",
-    image: "/homepage_villa/villaarta.webp",
   },
 ];
 
@@ -109,7 +102,6 @@ export default function TrustRecognition({
           name: pillar.name || fallback.name,
           scope: pillar.scope || fallback.scope,
           desc: pillar.desc || fallback.desc,
-          image: pillar.image || fallback.image,
         };
       })
       .filter((pillar) => pillar.id && pillar.name);
@@ -130,7 +122,7 @@ export default function TrustRecognition({
   ];
 
   return (
-    <section className={styles.section} id="trust" aria-label="Why travelers trust Summerhouses">
+    <section className={styles.section} id="trust-recognition" aria-label="Why travelers trust Summerhouses">
       <div className={styles.inner}>
         <motion.h2
           className={styles.heading}
@@ -171,9 +163,6 @@ export default function TrustRecognition({
                     >
                       <div className={styles.rowBodyInner}>
                         <p className={styles.rowDesc}>{pillar.desc}</p>
-                        <div className={styles.rowImage}>
-                          <Image src={pillar.image} alt="" fill sizes="220px" className={styles.rowImageImg} />
-                        </div>
                       </div>
                     </motion.div>
                   )}

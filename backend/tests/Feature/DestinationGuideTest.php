@@ -30,6 +30,7 @@ class DestinationGuideTest extends TestCase
             ->assertJsonCount(1, 'collections')
             ->assertJsonPath('collections.0.id', 'pererenan')
             ->assertJsonPath('collections.0.href', '/villas?location=Pererenan&match=exact')
+            ->assertJsonPath('collections.0.image', '/homepage_villa/curated-1-main.webp')
             ->assertJsonPath('collections.0.mediaType', 'image');
 
         $this->assertSame('/villas?location=Pererenan&match=exact', $published->fresh()->href);

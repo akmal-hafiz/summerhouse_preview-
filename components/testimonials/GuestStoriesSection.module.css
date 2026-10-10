@@ -1,469 +1,623 @@
 .section {
-  --stories-ink: var(--color-text, #2E2E2C);
-  --stories-accent: var(--brand-primary, #446B4A);
-  display: grid;
-  grid-template-columns: 36% 64%;
-  min-height: 58rem;
-  max-width: 100%;
+  --reviews-ink: #223229;
+  --reviews-muted: #706d66;
+  --reviews-accent: #446b4a;
+  --reviews-line: #cdc7bc;
   overflow: hidden;
-  border-block: 1px dashed #c3c9d4;
-  background: #fafaf9;
-  color: var(--stories-ink);
+  background: #f8f6f0;
+  color: var(--reviews-ink);
 }
 
 .homepage {
-  margin-top: 0;
+  background: #eee9e1;
 }
 
-.homeReviews {
-  overflow: hidden;
-  padding: clamp(6rem, 9vw, 9.5rem) 0;
-  border-bottom: 1px solid rgb(68 107 74 / 0.16);
-  background: #fafaf9;
-  color: #292927;
-}
-
-.homeReviewsShell {
-  width: min(100%, 100rem);
+.shell {
+  width: min(100% - clamp(2rem, 8vw, 9rem), 100rem);
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 4.6vw, 4.75rem);
+  padding-block: clamp(7rem, 11vw, 11.5rem);
 }
 
-.homeReviewsHeader {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
-  margin-bottom: clamp(2.75rem, 4.5vw, 4.5rem);
+.heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.62fr);
+  gap: clamp(3rem, 8vw, 10rem);
+  align-items: end;
+  margin-bottom: clamp(4rem, 7vw, 6.75rem);
 }
 
-.homeReviewsHeader h2 {
-  max-width: 11ch;
+.heading h2 {
+  max-width: 9ch;
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(3.2rem, 5.4vw, 5.75rem);
-  font-weight: 400;
-  letter-spacing: -0.052em;
-  line-height: 0.94;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(3.5rem, 6.25vw, 6.8rem);
+  font-weight: 520;
+  letter-spacing: -0.065em;
+  line-height: 0.91;
   text-wrap: balance;
 }
 
-.homeReviewsHeader p {
-  max-width: 33rem;
-  margin: 1.25rem 0 0;
-  color: #66625d;
+.heading p {
+  max-width: 34rem;
+  margin: 0 0 0.45rem;
+  color: var(--reviews-muted);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.94rem;
-  line-height: 1.6;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.58;
+  text-wrap: pretty;
 }
 
-.railControls {
+.editorialStage {
+  border-block: 1px solid var(--reviews-line);
+}
+
+.proofLayout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 4fr) minmax(0, 8fr);
+  min-height: clamp(34rem, 49vw, 45rem);
+}
+
+.credibility {
   display: flex;
-  gap: 0.65rem;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3.25rem, 6vw, 6.25rem) clamp(2.5rem, 5.2vw, 5.75rem) clamp(3.25rem, 6vw, 6.25rem) 0;
+  border-right: 1px solid var(--reviews-line);
 }
 
-.railControls button {
+.rating {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(7rem, 10vw, 11.5rem);
+  font-weight: 400;
+  letter-spacing: -0.085em;
+  line-height: 0.76;
+}
+
+.summaryStars,
+.stars {
+  color: var(--reviews-accent);
+  letter-spacing: 0.16em;
+}
+
+.summaryStars {
+  margin-top: 1.85rem;
+  font-size: clamp(1rem, 1.3vw, 1.22rem);
+}
+
+.credibility > p {
+  margin: 0.8rem 0 2.4rem;
+  color: var(--reviews-ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+}
+
+.credibility dl {
+  max-width: 21rem;
+  margin: 0;
+}
+
+.credibility dl > div {
   display: grid;
-  width: 3rem;
-  height: 3rem;
-  place-items: center;
-  border: 1px solid rgb(68 107 74 / 0.45);
-  border-radius: 50%;
-  background: transparent;
-  color: #446b4a;
-  cursor: pointer;
-  transition: background-color 220ms ease, color 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1), opacity 220ms ease;
+  grid-template-columns: 1fr auto;
+  gap: 1.25rem;
+  padding-block: 0.82rem;
+  border-top: 1px solid rgb(34 50 41 / 0.15);
 }
 
-.railControls button:disabled {
-  cursor: default;
-  opacity: 0.34;
+.credibility dt,
+.credibility dd {
+  margin: 0;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.86rem;
+  line-height: 1.4;
 }
 
-.railControls button:focus-visible,
-.reviewRail:focus-visible {
-  outline: 2px solid #446b4a;
-  outline-offset: 4px;
+.credibility dt {
+  color: var(--reviews-muted);
 }
 
-.reviewRail {
-  display: grid;
-  grid-auto-columns: calc((100% - 2rem) / 3);
-  grid-auto-flow: column;
-  gap: 1rem;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  padding: 0.15rem 0 0.75rem;
-  scroll-behavior: smooth;
-  scroll-snap-type: inline mandatory;
-  scrollbar-width: none;
+.credibility dd {
+  font-weight: 650;
+  text-align: right;
 }
 
-.reviewRail::-webkit-scrollbar {
-  display: none;
-}
-
-.reviewRail[data-count="1"] {
-  grid-auto-columns: 100%;
-}
-
-.reviewRail[data-count="2"] {
-  grid-auto-columns: calc((100% - 1rem) / 2);
-}
-
-.reviewCard {
+.reviewColumn {
   display: flex;
   min-width: 0;
-  min-height: clamp(24rem, 30vw, 31rem);
   flex-direction: column;
-  padding: clamp(1.65rem, 2.4vw, 2.5rem);
-  border: 1px solid #d7d7d1;
-  border-radius: 1.4rem;
-  background: #f4f3ef;
-  scroll-snap-align: start;
+  justify-content: center;
+  padding: clamp(3.25rem, 6vw, 6.25rem) 0 clamp(3.25rem, 6vw, 6.25rem) clamp(3rem, 6.5vw, 7.5rem);
 }
 
-.reviewCardTop {
-  display: flex;
+.reviewStage {
+  display: grid;
+  min-height: clamp(24rem, 31vw, 30rem);
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  overflow: hidden;
+}
+
+.review {
+  grid-area: 1 / 1;
+  will-change: transform, opacity;
 }
 
 .stars {
-  color: #446b4a;
-  font-size: 0.76rem;
-  letter-spacing: 0.1em;
+  display: inline-block;
+  font-size: 0.96rem;
 }
 
-.verified {
-  color: #716e68;
+.sourceLabel {
+  color: var(--reviews-accent);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.reviewCard blockquote {
-  margin: clamp(3rem, 5vw, 5.5rem) 0 3rem;
+.review blockquote {
+  max-width: 29ch;
+  margin: clamp(2rem, 3.2vw, 3.15rem) 0 clamp(2.4rem, 4vw, 4rem);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.7rem, 2.25vw, 2.45rem);
+  font-size: clamp(2.35rem, 3.65vw, 4.25rem);
   font-weight: 400;
-  letter-spacing: -0.035em;
-  line-height: 1.12;
+  letter-spacing: -0.045em;
+  line-height: 1.035;
+  text-wrap: pretty;
 }
 
-.reviewCard footer {
+.review blockquote.compactQuote {
+  font-size: clamp(2.05rem, 3.1vw, 3.55rem);
+}
+
+.review footer {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 1.2rem;
   align-items: center;
-  gap: 0.8rem;
-  margin-top: auto;
-  padding-top: 1.25rem;
-  border-top: 1px solid #d7d7d1;
 }
 
 .avatar {
   position: relative;
   display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 4rem;
+  height: 4rem;
   overflow: hidden;
   place-items: center;
   border-radius: 50%;
-  background: #dde3dc;
+  background: #dfe4dc;
+  color: var(--reviews-accent);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.avatar::after {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(34 50 41 / 0.14);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
 }
 
 .avatar img {
   object-fit: cover;
 }
 
-.avatarFallback {
-  color: #446b4a;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.1rem;
-}
-
-.reviewer {
+.reviewerIdentity {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.45rem;
+}
+
+.review footer strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.reviewerIdentity > span {
+  color: var(--reviews-muted);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-}
-
-.reviewer strong {
-  overflow: hidden;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reviewer small,
-.source {
-  color: #716e68;
   font-size: 0.68rem;
-  line-height: 1.35;
+  font-weight: 650;
+  letter-spacing: 0.105em;
+  line-height: 1.55;
+  text-transform: uppercase;
 }
 
-.source {
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  text-align: right;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .railControls button:not(:disabled):hover {
-    background: #446b4a;
-    color: #fff;
-    transform: translateY(-2px);
-  }
-}
-
-.storyIntro {
-  padding: 6rem clamp(1.5rem, 5vw, 6rem);
-  border-right: 1px dashed #c3c9d4;
-}
-
-.storyIntro h2 {
-  margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(3rem, 4.4vw, 5.2rem);
-  font-weight: 400;
-  line-height: 0.9;
-  letter-spacing: -0.05em;
-}
-
-.storyIntro h2 em {
-  display: block;
-  font-weight: 400;
-}
-
-.portrait {
-  position: relative;
-  display: grid;
+.progressTrack {
+  height: 2px;
+  margin-top: clamp(2.5rem, 4vw, 4rem);
   overflow: hidden;
-  aspect-ratio: 1;
-  margin-top: 3rem;
-  place-items: center;
-  background: #efeee9;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 4rem;
+  background: rgb(34 50 41 / 0.16);
 }
 
-.portrait img {
-  object-fit: cover;
+.progressTrack span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: var(--reviews-accent);
 }
 
-.quotePanel {
-  display: flex;
-  flex-direction: column;
-  padding: 7rem clamp(2rem, 8vw, 9rem) 4rem;
-}
-
-.trust {
-  display: flex;
+.airbnbLink {
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 1rem;
-  color: var(--color-text-muted, #74716B);
+  gap: 0.75rem;
+  margin-block: 2.75rem;
+  color: var(--reviews-ink);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.35;
+  font-size: 0.94rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
 }
 
-.trust > div {
-  display: flex;
+.airbnbLink span {
+  position: relative;
 }
 
-.trust i {
-  width: 2.2rem;
-  height: 2.2rem;
-  margin-left: -0.45rem;
-  border: 3px solid #fff;
-  background: url("/homepage_villa/curated-2-detail.webp") center / cover;
-  transform: rotate(-4deg);
+.airbnbLink span::after {
+  position: absolute;
+  right: 0;
+  bottom: -0.32rem;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  content: "";
+  transform: scaleX(1);
+  transform-origin: right center;
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.quoteStage {
-  display: grid;
-  min-height: 36rem;
-  flex: 1;
+.airbnbLink svg {
+  font-size: 1.08rem;
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.quoteBody {
-  display: flex;
-  grid-area: 1 / 1;
-  min-width: 0;
-  flex-direction: column;
-}
-
-.quoteBody blockquote {
-  max-width: 50rem;
-  margin: 5rem 0 2.5rem;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.8rem, 4vw, 5.2rem);
-  font-weight: 400;
-  line-height: 1.04;
-  letter-spacing: -0.04em;
-}
-
-.quoteBody p {
-  margin-top: auto;
-  color: var(--color-text-muted, #74716B);
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.9rem;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 1.4rem;
-  border-top: 1px dashed #c3c9d4;
-}
-
-.controls button {
-  width: 2.8rem;
-  height: 2.8rem;
-  margin-right: 0.6rem;
-  border: 1px dashed #9ba6b7;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--stories-ink);
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease-out, color 0.2s ease-out;
-}
-
-.controls button:focus-visible {
-  outline: 2px solid var(--stories-ink);
-  outline-offset: 3px;
-}
-
-.controls button:active {
-  border-color: #446b4a;
-  background: #446b4a;
-  color: #fff;
-  transform: scale(0.97);
-}
-
-.controls span {
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
+.airbnbLink:focus-visible {
+  outline: 2px solid var(--reviews-accent);
+  outline-offset: 7px;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .controls button:hover {
-    transform: translateY(-2px);
-    border-color: #446b4a;
-    background: #446b4a;
-    color: #fff;
+  .airbnbLink:hover span::after {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  .airbnbLink:hover svg {
+    transform: translate(0.24rem, -0.24rem);
   }
 }
 
-@media (max-width: 1023px) {
-  .reviewRail,
-  .reviewRail[data-count="2"] {
-    grid-auto-columns: calc((100% - 1rem) / 2);
+@media (max-width: 980px) {
+  .heading {
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.7fr);
+    gap: 3rem;
   }
 
-  .reviewRail[data-count="1"] {
-    grid-auto-columns: 100%;
+  .proofLayout {
+    grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
   }
 
-  .section {
+  .credibility {
+    padding-right: 2.5rem;
+  }
+
+  .reviewColumn {
+    padding-left: 3rem;
+  }
+
+  .review blockquote {
+    font-size: clamp(2.2rem, 4.2vw, 3.25rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .shell {
+    width: min(100% - 2.2rem, 42rem);
+    padding-block: 6rem;
+  }
+
+  .heading {
     grid-template-columns: 1fr;
+    gap: 1.8rem;
+    margin-bottom: 4rem;
   }
 
-  .storyIntro {
-    border-right: 0;
-    border-bottom: 1px dashed #c3c9d4;
+  .heading h2 {
+    max-width: 8ch;
+    font-size: clamp(3.65rem, 15vw, 5.5rem);
   }
 
-  .portrait {
-    max-width: 32rem;
+  .heading p {
+    max-width: 30rem;
   }
 
-  .quotePanel {
-    min-height: 44rem;
-  }
-}
-
-@media (max-width: 720px) {
-  .homeReviews {
-    padding-block: 5rem;
-  }
-
-  .homeReviewsShell {
-    padding-inline: 1rem;
-  }
-
-  .homeReviewsHeader {
-    align-items: flex-end;
-    margin-bottom: 2.5rem;
-  }
-
-  .homeReviewsHeader h2 {
-    font-size: clamp(3rem, 14vw, 4.15rem);
-  }
-
-  .railControls button {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  .reviewRail,
-  .reviewRail[data-count="1"],
-  .reviewRail[data-count="2"] {
-    grid-auto-columns: min(87%, 24rem);
-  }
-
-  .reviewCard {
-    min-height: 25rem;
-    padding: 1.5rem;
-  }
-
-  .reviewCard blockquote {
-    margin-top: 3.5rem;
-    font-size: 1.9rem;
-  }
-
-  .section {
+  .proofLayout {
+    grid-template-columns: 1fr;
     min-height: 0;
   }
 
-  .storyIntro {
-    padding: 5rem 1rem;
+  .credibility {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 1.5rem;
+    align-items: end;
+    padding: 3.25rem 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--reviews-line);
   }
 
-  .storyIntro h2 {
-    font-size: 3.5rem;
+  .rating {
+    grid-row: 1 / span 2;
+    font-size: clamp(5.75rem, 24vw, 8rem);
   }
 
-  .quotePanel {
-    min-height: 38rem;
-    padding: 4rem 1.25rem;
+  .summaryStars {
+    align-self: end;
+    margin: 0 0 0.25rem;
   }
 
-  .quoteStage {
-    min-height: 28rem;
+  .credibility > p {
+    align-self: start;
+    margin: 0;
   }
 
-  .quoteBody blockquote {
-    margin-top: 4rem;
-    font-size: 2.65rem;
+  .credibility dl {
+    display: none;
+  }
+
+  .reviewColumn {
+    padding: 3.5rem 0;
+  }
+
+  .reviewStage {
+    min-height: 25rem;
+    align-items: start;
+  }
+
+  .review blockquote,
+  .review blockquote.compactQuote {
+    max-width: 24ch;
+    margin-block: 2rem 2.75rem;
+    font-size: clamp(2rem, 8.2vw, 2.9rem);
+    line-height: 1.08;
+  }
+
+  .airbnbLink {
+    margin-block: 2.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .shell {
+    width: min(100% - 1.8rem, 42rem);
+  }
+
+  .heading h2 {
+    font-size: clamp(3.35rem, 16vw, 4.35rem);
+  }
+
+  .reviewStage {
+    min-height: 27rem;
+  }
+
+  .review footer {
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .reviewerIdentity > span {
+    font-size: 0.62rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reviewRail {
-    scroll-behavior: auto;
+  .progressTrack {
+    display: none;
   }
 
-  .railControls button {
+  .airbnbLink span::after,
+  .airbnbLink svg {
     transition: none;
   }
+}
 
-  .controls button {
-    transition-duration: 0.01ms;
+/* Homepage compact variant.
+   Concierge intentionally keeps the more expansive editorial composition. */
+.homepage {
+  border-top: 1px solid rgb(68 107 74 / 0.12);
+  background: #fafaf9;
+}
+
+.homepage .shell {
+  padding-block: clamp(4rem, 5.6vw, 5rem) clamp(3rem, 3.4vw, 3rem);
+}
+
+.homepage .editorialStage {
+  border-color: #d8d8d1;
+}
+
+.homepage .proofLayout {
+  grid-template-columns: minmax(18rem, 0.78fr) minmax(0, 1.42fr);
+  min-height: clamp(26rem, 35vw, 33rem);
+}
+
+.homepage .credibility {
+  justify-content: center;
+  padding: clamp(2.75rem, 4.5vw, 4.5rem) clamp(2.5rem, 4.8vw, 5rem) clamp(2.75rem, 4.5vw, 4.5rem) 0;
+}
+
+.eyebrow,
+.reviewLabel {
+  color: var(--reviews-accent);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.homepage .credibility h2 {
+  max-width: 11ch;
+  margin: 0.75rem 0 0;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(2.55rem, 4vw, 4.35rem);
+  font-weight: 570;
+  letter-spacing: -0.058em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+.ratingSummary {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  margin-top: clamp(2rem, 3.4vw, 3rem);
+}
+
+.homepage .rating {
+  font-size: clamp(4.75rem, 6.6vw, 7rem);
+  line-height: 0.74;
+}
+
+.ratingDetail {
+  display: flex;
+  padding-bottom: 0.15rem;
+  flex-direction: column;
+  gap: 0.52rem;
+  color: var(--reviews-muted);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.homepage .summaryStars {
+  margin-top: 0;
+  font-size: 0.8rem;
+}
+
+.homepage .credibility dl {
+  margin-top: clamp(1.8rem, 2.6vw, 2.5rem);
+}
+
+.homepage .reviewColumn {
+  padding: clamp(2.75rem, 4.5vw, 4.5rem) 0 clamp(2.75rem, 4.5vw, 4.5rem) clamp(3rem, 6vw, 6.5rem);
+}
+
+.homepage .reviewStage {
+  min-height: clamp(17.5rem, 23vw, 21rem);
+}
+
+.homepage .stars {
+  display: none;
+}
+
+.homepage .review blockquote,
+.homepage .review blockquote.compactQuote {
+  max-width: 30ch;
+  margin: clamp(1.5rem, 2.5vw, 2.25rem) 0 clamp(1.8rem, 3vw, 2.8rem);
+  font-size: clamp(2rem, 2.9vw, 3.25rem);
+  line-height: 1.055;
+}
+
+.homepage .review footer {
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.homepage .avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+.homepage .progressTrack {
+  margin-top: clamp(1.8rem, 2.8vw, 2.7rem);
+}
+
+.homepage .airbnbLink {
+  margin-block: 1.85rem;
+}
+
+@media (max-width: 900px) {
+  .homepage .proofLayout {
+    grid-template-columns: minmax(15rem, 0.78fr) minmax(0, 1.22fr);
+  }
+
+  .homepage .credibility {
+    padding-right: 2.5rem;
+  }
+
+  .homepage .reviewColumn {
+    padding-left: 3rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .homepage .shell {
+    width: min(100% - 2rem, 42rem);
+    padding-block: 3.5rem 2.5rem;
+  }
+
+  .homepage .proofLayout {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .homepage .credibility {
+    display: block;
+    padding: 0 0 2.6rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--reviews-line);
+  }
+
+  .homepage .credibility h2 {
+    max-width: 9ch;
+    font-size: clamp(2.75rem, 12vw, 3.8rem);
+  }
+
+  .homepage .ratingSummary {
+    margin-top: 2rem;
+  }
+
+  .homepage .rating {
+    font-size: clamp(4.5rem, 20vw, 6.25rem);
+  }
+
+  .homepage .credibility dl {
+    display: none;
+  }
+
+  .homepage .reviewColumn {
+    padding: 2.75rem 0;
+  }
+
+  .homepage .reviewStage {
+    min-height: 21rem;
+    align-items: start;
+  }
+
+  .homepage .review blockquote,
+  .homepage .review blockquote.compactQuote {
+    max-width: 24ch;
+    margin-block: 1.65rem 2.35rem;
+    font-size: clamp(1.85rem, 7.8vw, 2.55rem);
+    line-height: 1.08;
+  }
+
+  .homepage .airbnbLink {
+    margin-block: 1.65rem;
   }
 }

@@ -11,6 +11,7 @@ use App\Models\LodgifySyncRun;
 use App\Models\User;
 use App\Models\VillaCache;
 use App\Services\LodgifyHealthService;
+use App\Services\LodgifyAuditService;
 use App\Services\LodgifyHomepageValidator;
 use App\Services\LodgifyIncidentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -95,6 +96,34 @@ class LodgifyOperationsTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
 
         $this->actingAs($admin)->get('/admin/lodgify-health')->assertOk();
+    }
+
+    public function test_health_page_prioritizes_villa_names_and_counts_removed_villas_once(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        VillaCache::create([
+            'lodgify_id' => '101', 'name' => 'Casa Verde',
+            'lodgify_status' => VillaCache::STATUS_ACTIVE,
+            'management_status' => VillaCache::MANAGEMENT_MANAGED,
+        ]);
+        $removed = VillaCache::create([
+            'lodgify_id' => '796460', 'name' => 'Bawa House',
+            'lodgify_status' => VillaCache::STATUS_MISSING,
+            'management_status' => VillaCache::MANAGEMENT_REMOVED,
+        ]);
+        HomepageVillaSelection::create(['slot' => 'featured_homes', 'lodgify_property_id' => '796460', 'sort_order' => 0]);
+        app(LodgifyAuditService::class)->append($removed, 'property_missing_confirmed', null, [], ['name' => 'Bawa House']);
+
+        $counts = app(LodgifyHealthService::class)->snapshot()['counts'];
+        $this->assertSame(1, $counts['active']);
+        $this->assertSame(0, $counts['missing']);
+        $this->assertSame(1, $counts['removed']);
+
+        $this->actingAs($admin)->get('/admin/lodgify-health')
+            ->assertOk()
+            ->assertSee('Bawa House')
+            ->assertSee('Villa ID 796460')
+            ->assertSee('Left our portfolio');
     }
 
     public function test_sync_job_has_a_stable_unique_lock(): void

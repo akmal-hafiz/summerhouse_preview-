@@ -1,23 +1,40 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import maplibregl, { type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { Map as MapLibreMap, Marker } from "maplibre-gl";
 import type { AboutDestination } from "./About";
-import styles from "./AboutEditorialSections.module.css";
+import styles from "./DestinationAtlas.module.css";
 
 type LibreDestinationMapProps = {
   destinations: AboutDestination[];
+  selectedName: string | null;
+  onSelect: (name: string) => void;
 };
 
 const BALI_CENTER: [number, number] = [115.1889, -8.4095];
 
-export default function LibreDestinationMap({ destinations }: LibreDestinationMapProps) {
+function hasCoordinates(destination: AboutDestination) {
+  return typeof destination.latitude === "number"
+    && Number.isFinite(destination.latitude)
+    && destination.latitude >= -90
+    && destination.latitude <= 90
+    && typeof destination.longitude === "number"
+    && Number.isFinite(destination.longitude)
+    && destination.longitude >= -180
+    && destination.longitude <= 180;
+}
+
+export default function LibreDestinationMap({ destinations, selectedName, onSelect }: LibreDestinationMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const validDestinations = useMemo(
-    () => destinations.filter((destination) => typeof destination.latitude === "number" && typeof destination.longitude === "number"),
-    [destinations],
-  );
+  const markersRef = useRef<Marker[]>([]);
+  const fittedRef = useRef(false);
+  const onSelectRef = useRef(onSelect);
+  const selectedNameRef = useRef(selectedName);
+  onSelectRef.current = onSelect;
+  selectedNameRef.current = selectedName;
+  const plotted = useMemo(() => destinations.filter(hasCoordinates), [destinations]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -34,13 +51,7 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
             attribution: "&copy; OpenStreetMap contributors",
           },
         },
-        layers: [
-          {
-            id: "osm",
-            type: "raster",
-            source: "osm",
-          },
-        ],
+        layers: [{ id: "osm", type: "raster", source: "osm" }],
       },
       center: BALI_CENTER,
       zoom: 9,
@@ -51,173 +62,81 @@ export default function LibreDestinationMap({ destinations }: LibreDestinationMa
     });
 
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     mapRef.current = map;
 
-    map.on("load", () => {
-      map.addSource("summerhouses-destinations", {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [],
-        },
-        cluster: true,
-        clusterMaxZoom: 11,
-        clusterRadius: 54,
-      });
-
-      map.addLayer({
-        id: "destination-clusters",
-        type: "circle",
-        source: "summerhouses-destinations",
-        filter: ["has", "point_count"],
-        paint: {
-          "circle-color": "#446B4A",
-          "circle-radius": ["step", ["get", "point_count"], 22, 4, 28, 8, 34],
-          "circle-stroke-color": "#FAFAF9",
-          "circle-stroke-width": 2,
-          "circle-opacity": 0.92,
-        },
-      });
-
-      map.addLayer({
-        id: "destination-cluster-count",
-        type: "symbol",
-        source: "summerhouses-destinations",
-        filter: ["has", "point_count"],
-        layout: {
-          "text-field": ["get", "point_count_abbreviated"],
-          "text-font": ["Open Sans Bold"],
-          "text-size": 13,
-        },
-        paint: {
-          "text-color": "#FAFAF9",
-        },
-      });
-
-      map.addLayer({
-        id: "destination-points",
-        type: "circle",
-        source: "summerhouses-destinations",
-        filter: ["!", ["has", "point_count"]],
-        paint: {
-          "circle-color": "#C7A58A",
-          "circle-radius": 10,
-          "circle-stroke-color": "#FAFAF9",
-          "circle-stroke-width": 2,
-        },
-      });
-
-      map.addLayer({
-        id: "destination-labels",
-        type: "symbol",
-        source: "summerhouses-destinations",
-        filter: ["!", ["has", "point_count"]],
-        layout: {
-          "text-field": ["concat", ["get", "name"], " · ", ["to-string", ["get", "villas"]], " villas"],
-          "text-font": ["Open Sans Semibold"],
-          "text-size": 12,
-          "text-offset": [0, 1.55],
-          "text-anchor": "top",
-        },
-        paint: {
-          "text-color": "#FAFAF9",
-          "text-halo-color": "#2E2E2C",
-          "text-halo-width": 1.2,
-        },
-      });
-
-      map.on("click", "destination-clusters", async (event) => {
-        const features = map.queryRenderedFeatures(event.point, { layers: ["destination-clusters"] });
-        const clusterId = features[0]?.properties?.cluster_id;
-        const source = map.getSource("summerhouses-destinations") as GeoJSONSource | undefined;
-        if (!source || clusterId === undefined) return;
-
-        const zoom = await source.getClusterExpansionZoom(clusterId);
-        map.easeTo({ center: (features[0].geometry as GeoJSON.Point).coordinates as [number, number], zoom });
-      });
-
-      map.on("click", "destination-points", (event) => {
-        const feature = event.features?.[0];
-        const coordinates = (feature?.geometry as GeoJSON.Point | undefined)?.coordinates?.slice() as [number, number] | undefined;
-        if (!feature?.properties || !coordinates) return;
-
-        new maplibregl.Popup({ closeButton: false, className: "summerhouses-map-popup" })
-          .setLngLat(coordinates)
-          .setHTML(`<strong>${feature.properties.name}</strong><span>${feature.properties.villas} villas</span>`)
-          .addTo(map);
-      });
-
-      map.on("mouseenter", "destination-clusters", () => {
-        map.getCanvas().style.cursor = "pointer";
-      });
-      map.on("mouseenter", "destination-points", () => {
-        map.getCanvas().style.cursor = "pointer";
-      });
-      map.on("mouseleave", "destination-clusters", () => {
-        map.getCanvas().style.cursor = "";
-      });
-      map.on("mouseleave", "destination-points", () => {
-        map.getCanvas().style.cursor = "";
-      });
-    });
-
     return () => {
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
       map.remove();
       mapRef.current = null;
+      fittedRef.current = false;
     };
   }, []);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || validDestinations.length === 0) return;
+    if (!map) return;
 
-    const updateSource = () => {
-      const source = map.getSource("summerhouses-destinations") as GeoJSONSource | undefined;
-      if (!source) return;
-
-      source.setData({
-        type: "FeatureCollection",
-        features: validDestinations.map((destination) => ({
-          type: "Feature",
-          properties: {
-            name: destination.name,
-            villas: destination.villas,
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [destination.longitude as number, destination.latitude as number],
-          },
-        })),
-      });
-
+    const drawMarkers = () => {
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
       const bounds = new maplibregl.LngLatBounds();
-      validDestinations.forEach((destination) => {
-        bounds.extend([destination.longitude as number, destination.latitude as number]);
+
+      plotted.forEach((destination) => {
+        const button = document.createElement("button");
+        const label = document.createElement("span");
+        const point: [number, number] = [destination.longitude as number, destination.latitude as number];
+
+        button.type = "button";
+        button.className = styles.marker;
+        button.dataset.name = destination.name;
+        button.dataset.selected = String(destination.name === selectedNameRef.current);
+        button.dataset.side = point[0] > BALI_CENTER[0] ? "left" : "right";
+        button.setAttribute("aria-label", `Show ${destination.name}, ${destination.villas} ${destination.villas === 1 ? "villa" : "villas"}`);
+        button.setAttribute("aria-pressed", String(destination.name === selectedNameRef.current));
+        label.className = styles.markerLabel;
+        label.textContent = destination.name;
+        button.append(label);
+        button.addEventListener("click", () => onSelectRef.current(destination.name));
+
+        markersRef.current.push(new maplibregl.Marker({ element: button, anchor: "center" }).setLngLat(point).addTo(map));
+        bounds.extend(point);
       });
 
-      if (!bounds.isEmpty()) {
-        map.fitBounds(bounds, { padding: 70, maxZoom: 11, duration: 900 });
+      if (!fittedRef.current && !bounds.isEmpty()) {
+        fittedRef.current = true;
+        const compact = window.matchMedia("(max-width: 850px)").matches;
+        map.fitBounds(bounds, {
+          padding: compact ? { top: 54, right: 54, bottom: 54, left: 54 } : { top: 90, right: 120, bottom: 90, left: 120 },
+          maxZoom: 10.3,
+          duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 650,
+        });
       }
     };
 
-    if (map.isStyleLoaded()) {
-      updateSource();
-      return;
-    }
+    if (map.loaded()) drawMarkers();
+    else map.once("load", drawMarkers);
 
-    map.once("load", updateSource);
-  }, [validDestinations]);
+    return () => { map.off("load", drawMarkers); };
+  }, [plotted]);
+
+  useEffect(() => {
+    markersRef.current.forEach((marker) => {
+      const button = marker.getElement();
+      const isSelected = button.dataset.name === selectedName;
+      button.dataset.selected = String(isSelected);
+      button.setAttribute("aria-pressed", String(isSelected));
+    });
+  }, [selectedName]);
 
   return (
-    <div className={styles.mapPanel} aria-label="Interactive Summerhouses Bali destination map">
+    <div className={styles.mapPanel} aria-label="Map of Summerhouses Bali regions">
       <div ref={containerRef} className={styles.mapCanvas} />
-      {validDestinations.length === 0 && (
+      {plotted.length === 0 ? (
         <div className={styles.mapFallback}>
-          <strong>Bali destination map</strong>
-          <span>Live property coordinates will appear here when available.</span>
+          <div><strong>Bali destinations</strong><span>Map locations are temporarily unavailable.</span></div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

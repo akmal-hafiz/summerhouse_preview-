@@ -75,12 +75,15 @@ export async function getArticleForSlug(slug: string): Promise<Article | null> {
   const fromCms = cmsArticleToArticle(cms);
   if (fromCms && fromCms.content.length) return fromCms;
 
+  // A live CMS response (including an empty list) is authoritative. Do not
+  // resurrect an unpublished article from the development fallback dataset.
+  if (await getCmsArticles() !== null) return null;
   return getLocalArticleBySlug(slug) ?? null;
 }
 
 export async function listArticles(): Promise<ArticleListItem[]> {
   const cms = await getCmsArticles();
-  if (cms && cms.length) {
+  if (cms !== null) {
     return cms.map((a) => ({
       slug: a.slug,
       title: a.title,

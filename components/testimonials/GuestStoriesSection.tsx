@@ -1,207 +1,239 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
-import type { CmsTestimonial } from "@/lib/cms";
+import { FiArrowUpRight } from "react-icons/fi";
+import { airbnbHostProof, publicGuestReviews } from "@/data/publicGuestReviews";
 import styles from "./GuestStoriesSection.module.css";
 
-const fallbackReviews: CmsTestimonial[] = [
-  {
-    author: "Maya",
-    location: "Singapore",
-    stars: 5,
-    text: "From arrival details to local recommendations, every question was handled with calm and care.",
-    avatar: "/homepage_villa/owner_sarah_mark.png",
-    isVerified: true,
-  },
-];
-
-type GuestStoriesContent = {
-  eyebrow?: string;
-  title?: string;
-  title_emphasis?: string;
-  trust_label?: string;
-  supporting_copy?: string;
-  is_visible?: boolean;
-};
-
 type GuestStoriesSectionProps = {
-  testimonials?: CmsTestimonial[] | null;
   placement?: "homepage" | "concierge";
-  content?: GuestStoriesContent;
 };
 
-function ReviewStars({ value }: { value: number }) {
-  const rating = Math.max(1, Math.min(5, Math.round(value || 5)));
-  return <span className={styles.stars} aria-label={`${rating} out of 5 stars`}>{"★".repeat(rating)}</span>;
-}
+const AUTO_ADVANCE_MS = 6500;
 
-function HomepageGuestReviews({ reviews, content }: { reviews: CmsTestimonial[]; content?: GuestStoriesContent }) {
-  const railRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const [active, setActive] = useState(0);
+function ReviewStars({ value }: { value: number | null }) {
+  if (value === null) return <span className={styles.sourceLabel}>Verified guest review</span>;
 
-  const updateActive = () => {
-    const rail = railRef.current;
-    if (!rail) return;
-    const cards = Array.from(rail.querySelectorAll<HTMLElement>("[data-review-card]"));
-    if (!cards.length) return;
-    const nearest = cards.reduce(
-      (best, card, index) => {
-        const distance = Math.abs(card.offsetLeft - rail.scrollLeft);
-        return distance < best.distance ? { index, distance } : best;
-      },
-      { index: 0, distance: Number.POSITIVE_INFINITY },
-    );
-    setActive(nearest.index);
-  };
-
-  const move = (delta: number) => {
-    const rail = railRef.current;
-    if (!rail) return;
-    const cards = Array.from(rail.querySelectorAll<HTMLElement>("[data-review-card]"));
-    if (!cards.length) return;
-    const next = Math.max(0, Math.min(cards.length - 1, active + delta));
-    cards[next]?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      inline: "start",
-      block: "nearest",
-    });
-    setActive(next);
-  };
+  const rating = Math.max(1, Math.min(5, Math.round(value)));
 
   return (
-    <section className={styles.homeReviews} aria-labelledby="homepage-guest-reviews-title">
-      <div className={styles.homeReviewsShell}>
-        <header className={styles.homeReviewsHeader}>
-          <div>
-            <h2 id="homepage-guest-reviews-title">{content?.title || "Guest Reviews"}</h2>
-            {content?.supporting_copy ? <p>{content.supporting_copy}</p> : null}
-          </div>
-          {reviews.length > 1 ? (
-            <div className={styles.railControls}>
-              <button type="button" onClick={() => move(-1)} disabled={active === 0} aria-label="Previous guest reviews">
-                <FiArrowLeft aria-hidden="true" />
-              </button>
-              <button type="button" onClick={() => move(1)} disabled={active === reviews.length - 1} aria-label="Next guest reviews">
-                <FiArrowRight aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
-        </header>
-
-        <div
-          ref={railRef}
-          className={styles.reviewRail}
-          data-count={Math.min(reviews.length, 3)}
-          tabIndex={reviews.length > 1 ? 0 : -1}
-          role="region"
-          aria-label="Guest review carousel"
-          onScroll={updateActive}
-          onKeyDown={(event) => {
-            if (event.key === "ArrowLeft") {
-              event.preventDefault();
-              move(-1);
-            }
-            if (event.key === "ArrowRight") {
-              event.preventDefault();
-              move(1);
-            }
-          }}
-        >
-          {reviews.map((review, index) => (
-            <article className={styles.reviewCard} data-review-card key={`${review.author}-${review.text}-${index}`}>
-              <div className={styles.reviewCardTop}>
-                <ReviewStars value={review.stars} />
-                {review.isVerified ? <span className={styles.verified}>Verified stay</span> : null}
-              </div>
-              <blockquote>&ldquo;{review.text}&rdquo;</blockquote>
-              <footer>
-                {review.avatar ? (
-                  <span className={styles.avatar}>
-                    <Image src={review.avatar} alt="" fill sizes="44px" />
-                  </span>
-                ) : (
-                  <span className={`${styles.avatar} ${styles.avatarFallback}`} aria-hidden="true">{review.author.charAt(0)}</span>
-                )}
-                <span className={styles.reviewer}>
-                  <strong>{review.author}</strong>
-                  <small>{[review.villaName, review.location].filter(Boolean).join(" · ")}</small>
-                </span>
-                {review.sourceLabel ? <span className={styles.source}>{review.sourceLabel}</span> : null}
-              </footer>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
+    <span className={styles.stars} aria-label={`${rating} out of 5 stars`}>
+      {"★".repeat(rating)}
+    </span>
   );
 }
 
-function ConciergeGuestStory({ reviews, content }: { reviews: CmsTestimonial[]; content?: GuestStoriesContent }) {
-  const [active, setActive] = useState(0);
-  const reduceMotion = useReducedMotion();
-  const review = reviews[active] || fallbackReviews[0];
+function reviewerInitials(author: string) {
+  return author
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0))
+    .join("")
+    .toLocaleUpperCase();
+}
 
-  useEffect(() => {
-    if (active >= reviews.length) setActive(0);
-  }, [active, reviews.length]);
+type ActiveReview = (typeof publicGuestReviews)[number];
 
-  useEffect(() => {
-    if (reviews.length < 2 || reduceMotion) return;
-    const timer = window.setInterval(() => setActive((value) => (value + 1) % reviews.length), 7000);
-    return () => window.clearInterval(timer);
-  }, [reduceMotion, reviews.length]);
-
-  const move = (delta: number) => setActive((value) => (value + delta + reviews.length) % reviews.length);
-
+function RotatingReview({
+  review,
+  autoplayEnabled,
+  reduceMotion,
+  compact = false,
+}: {
+  review: ActiveReview;
+  autoplayEnabled: boolean;
+  reduceMotion: boolean;
+  compact?: boolean;
+}) {
   return (
-    <section className={`${styles.section} ${styles.concierge}`} aria-labelledby="concierge-guest-stories-title">
-      <div className={styles.storyIntro}>
-        <h2 id="concierge-guest-stories-title">
-          {content?.title || "Stays made easier"}
-          <em>{content?.title_emphasis || "by thoughtful care"}</em>
-        </h2>
-        <div className={styles.portrait}>
-          {review.avatar ? <Image src={review.avatar} alt={review.author} fill sizes="(min-width: 1024px) 34vw, 32rem" /> : <span>{review.author.charAt(0)}</span>}
-        </div>
-      </div>
-
-      <div className={styles.quotePanel}>
-        <div className={styles.trust}><div aria-hidden="true"><i /><i /><i /></div><span>{content?.trust_label || "Loved by Summerhouse guests"}</span></div>
-        <div className={styles.quoteStage}>
-          <AnimatePresence initial={false} mode="sync">
-            <motion.div
-              className={styles.quoteBody}
-              key={`${review.author}-${active}`}
+    <div className={styles.reviewColumn}>
+      {compact ? <span className={styles.reviewLabel}>Verified guest review</span> : null}
+      <div
+        className={styles.reviewStage}
+        aria-live={autoplayEnabled ? "off" : "polite"}
+        aria-atomic="true"
+      >
+        <AnimatePresence initial={false} mode="sync">
+          <motion.article
+            className={styles.review}
+            key={review.id}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 36 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduceMotion ? 0 : -36 }}
+            transition={{
+              duration: reduceMotion ? 0.01 : 0.48,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <ReviewStars value={review.rating} />
+            <blockquote className={review.quote.length > 165 ? styles.compactQuote : undefined}>
+              &ldquo;{review.quote}&rdquo;
+            </blockquote>
+            <motion.footer
               initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
-              transition={{ duration: reduceMotion ? 0.1 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                delay: reduceMotion ? 0 : 0.08,
+                duration: reduceMotion ? 0.01 : 0.36,
+                ease: [0.22, 1, 0.36, 1],
+              }}
             >
-              <blockquote>&ldquo;{review.text}&rdquo;</blockquote>
-              <p>{review.author}{review.location ? `, ${review.location}` : ""}</p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-        <div className={styles.controls}>
-          <div>
-            <button type="button" onClick={() => move(-1)} aria-label="Previous testimonial"><FiArrowLeft /></button>
-            <button type="button" onClick={() => move(1)} aria-label="Next testimonial"><FiArrowRight /></button>
-          </div>
-          <span>{active + 1} / {reviews.length}</span>
-        </div>
+              <span className={styles.avatar} aria-hidden="true">
+                {review.avatarSrc ? (
+                  <Image src={review.avatarSrc} alt="" fill sizes="64px" />
+                ) : reviewerInitials(review.author)}
+              </span>
+              <span className={styles.reviewerIdentity}>
+                <strong>{review.author}</strong>
+                <span>
+                  {review.villaName} · {review.dateLabel} · {review.sourceLabel}
+                </span>
+              </span>
+            </motion.footer>
+          </motion.article>
+        </AnimatePresence>
       </div>
-    </section>
+
+      <div className={styles.progressTrack} aria-hidden="true">
+        <motion.span
+          key={`${review.id}-progress`}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: autoplayEnabled ? 1 : 0 }}
+          transition={{ duration: AUTO_ADVANCE_MS / 1000, ease: "linear" }}
+        />
+      </div>
+    </div>
   );
 }
 
-export default function GuestStoriesSection({ testimonials, placement = "concierge", content }: GuestStoriesSectionProps) {
-  const reviews = testimonials?.length ? testimonials : fallbackReviews;
-  if (content?.is_visible === false) return null;
-  return placement === "homepage"
-    ? <HomepageGuestReviews reviews={reviews} content={content} />
-    : <ConciergeGuestStory reviews={reviews} content={content} />;
+function AirbnbLink() {
+  return (
+    <a
+      className={styles.airbnbLink}
+      href={airbnbHostProof.profileUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Read guest stories on Airbnb, opens in a new tab"
+    >
+      <span>Read guest stories on Airbnb</span>
+      <FiArrowUpRight aria-hidden="true" />
+    </a>
+  );
+}
+
+export default function GuestStoriesSection({
+  placement = "concierge",
+}: GuestStoriesSectionProps) {
+  const [active, setActive] = useState(0);
+  const [isPageVisible, setIsPageVisible] = useState(true);
+  const reduceMotion = Boolean(useReducedMotion());
+  const review = publicGuestReviews[active];
+  const autoplayEnabled = !reduceMotion && isPageVisible;
+
+  useEffect(() => {
+    const updateVisibility = () => setIsPageVisible(document.visibilityState === "visible");
+
+    updateVisibility();
+    document.addEventListener("visibilitychange", updateVisibility);
+    return () => document.removeEventListener("visibilitychange", updateVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (!autoplayEnabled || publicGuestReviews.length < 2) return;
+
+    const timer = window.setTimeout(() => {
+      setActive((current) => (current + 1) % publicGuestReviews.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [active, autoplayEnabled]);
+
+  return (
+    <section
+      className={`${styles.section} ${styles[placement]}`}
+      aria-labelledby={`${placement}-guest-stories-title`}
+    >
+      <div className={styles.shell}>
+        {placement === "homepage" ? (
+          <div className={`${styles.editorialStage} ${styles.compactStage}`}>
+            <div className={styles.proofLayout}>
+              <aside className={styles.credibility} aria-label="Airbnb host rating summary">
+                <span className={styles.eyebrow}>Guest stories</span>
+                <h2 id="homepage-guest-stories-title">What our guests say</h2>
+                <div className={styles.ratingSummary}>
+                  <strong className={styles.rating}>{airbnbHostProof.displayRating}</strong>
+                  <span className={styles.ratingDetail}>
+                    <span className={styles.summaryStars} aria-label="4.7 out of 5 average rating">
+                      ★★★★★
+                    </span>
+                    <span>{airbnbHostProof.reviewsLabel}</span>
+                  </span>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Host status</dt>
+                    <dd>{airbnbHostProof.hostStatus}</dd>
+                  </div>
+                  <div>
+                    <dt>Experience</dt>
+                    <dd>{airbnbHostProof.hostingTenure}</dd>
+                  </div>
+                </dl>
+              </aside>
+
+              <RotatingReview
+                review={review}
+                autoplayEnabled={autoplayEnabled}
+                reduceMotion={reduceMotion}
+                compact
+              />
+            </div>
+            <AirbnbLink />
+          </div>
+        ) : (
+          <>
+            <header className={styles.heading}>
+              <h2 id="concierge-guest-stories-title">What our guests say</h2>
+              <p>
+                Thoughtful stays, meaningful experiences. A few words from guests
+                who have made Summerhouse part of their time in Bali.
+              </p>
+            </header>
+
+            <div className={styles.editorialStage}>
+              <div className={styles.proofLayout}>
+                <aside className={styles.credibility} aria-label="Airbnb host rating summary">
+                  <strong className={styles.rating}>{airbnbHostProof.displayRating}</strong>
+                  <span className={styles.summaryStars} aria-label="4.7 out of 5 average rating">
+                    ★★★★★
+                  </span>
+                  <p>{airbnbHostProof.reviewsLabel}</p>
+                  <dl>
+                    <div>
+                      <dt>Host status</dt>
+                      <dd>{airbnbHostProof.hostStatus}</dd>
+                    </div>
+                    <div>
+                      <dt>Experience</dt>
+                      <dd>{airbnbHostProof.hostingTenure}</dd>
+                    </div>
+                  </dl>
+                </aside>
+
+                <RotatingReview
+                  review={review}
+                  autoplayEnabled={autoplayEnabled}
+                  reduceMotion={reduceMotion}
+                />
+              </div>
+              <AirbnbLink />
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  );
 }

@@ -34,7 +34,7 @@
 
 .sectionHeader {
   max-width: 700px;
-  margin-bottom: clamp(3rem, 5vw, 4.5rem);
+  margin-bottom: clamp(2rem, 3.4vw, 3rem);
 }
 
 .sectionTitle {
@@ -49,7 +49,7 @@
   border: 0;
   height: 1px;
   background-color: var(--color-line-soft);
-  margin: clamp(5.5rem, 9vw, 9.5rem) 0;
+  margin: 0;
 }
 
 /* ─── BUTTONS ─── */
@@ -205,7 +205,7 @@
 
 /* ─── 2. PERKS SECTION ─── */
 .perks {
-  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(4rem, 6.7vw, 6rem) clamp(1rem, 4vw, 4rem) clamp(4rem, 5.6vw, 5rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -257,7 +257,7 @@
 
 /* ─── 3. SPECIALTIES SECTION ─── */
 .specialties {
-  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(4rem, 5.6vw, 5rem) clamp(1rem, 4vw, 4rem) clamp(4rem, 6.7vw, 6rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -730,29 +730,22 @@
 
 /* ─── 5. DETAILED SERVICES DEEP DIVE ─── */
 .deepDiveSection {
-  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(2rem, 3.4vw, 3rem) clamp(1rem, 4vw, 4rem);
   max-width: 1440px;
   margin: 0 auto;
 }
 
 .deepDiveHeader {
   display: grid;
-  grid-template-columns: 1fr 1.8fr;
+  grid-template-columns: minmax(17rem, 0.85fr) minmax(0, 1.6fr);
   gap: clamp(3rem, 6vw, 6rem);
   align-items: start;
 }
 
-.pillLabel {
-  display: inline-block;
-  background-color: rgba(68, 107, 74, 0.1);
-  color: var(--color-green-dark);
-  padding: 0.35rem 0.85rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: none;
-  letter-spacing: 0.01em;
-  margin-bottom: 1.5rem;
+.headerLeft {
+  position: sticky;
+  top: clamp(6.5rem, 10vh, 8.5rem);
+  max-width: 30rem;
 }
 
 .deepDiveHeader h2 {
@@ -764,58 +757,11 @@
 }
 
 .specialtyDescription {
-  font-size: 1.05rem;
-  line-height: 1.5;
+  max-width: 29rem;
+  font-size: 1rem;
+  line-height: 1.62;
   color: var(--color-muted-grey);
   margin-bottom: 2.2rem;
-  font-style: italic;
-}
-
-.subServicesGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.8rem;
-}
-
-.subServiceCard {
-  background: var(--color-card-bg);
-  border: 1px solid var(--color-line-soft);
-  border-radius: 1rem;
-  padding: 1.8rem;
-  transition: all 0.3s ease;
-}
-
-.subServiceCard:hover {
-  border-color: rgba(49, 95, 69, 0.2);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-}
-
-.subCardHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 0.75rem;
-}
-
-.subCardNum {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--color-green-accent);
-  opacity: 0.6;
-}
-
-.subServiceCard h3 {
-  font-size: 1.1rem;
-  font-weight: 650;
-  color: var(--color-ink-dark);
-  margin: 0;
-}
-
-.subServiceCard p {
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: var(--color-muted-grey);
-  margin: 0;
 }
 
 /* ─── 6. STATS SECTION ─── */
@@ -895,7 +841,7 @@
 
 /* ─── 7. FAQ SECTION ─── */
 .faq {
-  padding: clamp(5.5rem, 9vw, 9.5rem) clamp(1rem, 4vw, 4rem);
+  padding: clamp(4rem, 5.6vw, 5rem) clamp(1rem, 4vw, 4rem);
   max-width: 1440px;
   margin: 0 auto;
 }
@@ -982,7 +928,7 @@
   margin: 0 4vw 6rem;
   border-radius: 2rem;
   overflow: hidden;
-  padding: clamp(6rem, 12vw, 12rem) clamp(1.5rem, 5vw, 5rem);
+  padding: clamp(4.5rem, 7.8vw, 7rem) clamp(1.5rem, 5vw, 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1087,7 +1033,7 @@
 /* ─── 0. HERO SECTION ─── */
 .heroSection {
   position: relative;
-  margin: 7rem 4vw clamp(5.5rem, 9vw, 9.5rem);
+  margin: 6rem 4vw 0;
   border-radius: 2.5rem;
   overflow: hidden;
   height: 80vh;
@@ -1317,6 +1263,10 @@
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+  .headerLeft {
+    position: static;
+    max-width: 42rem;
+  }
   .faqGrid {
     grid-template-columns: 1fr;
     gap: 3rem;
@@ -1354,9 +1304,6 @@
     border-radius: clamp(14px, 3vw, 24px);
   }
 
-  .subServicesGrid {
-    grid-template-columns: 1fr;
-  }
   .statsCountersGrid {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -1430,7 +1377,7 @@
   }
 
   .heroSection {
-    margin: 5.5rem 2vw 2.5rem;
+    margin: 5rem 2vw 0;
     border-radius: 1.5rem;
     height: 75vh;
   }

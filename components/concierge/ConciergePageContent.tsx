@@ -3,15 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import GuestStoriesSection from "@/components/testimonials/GuestStoriesSection";
-import type { CmsServiceCard, CmsTestimonial } from "@/lib/cms";
+import type { CmsServiceCard } from "@/lib/cms";
 import { conciergeServices } from "@/lib/concierge";
 import styles from "./ConciergePageContent.module.css";
 
 export default function ConciergePageContent({
-  testimonials,
   cmsServices,
 }: {
-  testimonials?: CmsTestimonial[] | null;
   cmsServices?: CmsServiceCard[] | null;
 }) {
   const services = cmsServices?.length
@@ -54,7 +52,7 @@ export default function ConciergePageContent({
         </div>
       </section>
 
-      <GuestStoriesSection testimonials={testimonials} placement="concierge" />
+      <GuestStoriesSection placement="concierge" />
 
       <div className={styles.booking}><Link href="/villas">Book Now</Link></div>
     </main>
