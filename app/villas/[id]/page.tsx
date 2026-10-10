@@ -9,6 +9,7 @@ import VillaReviews from "@/components/villas/VillaReviews";
 import { getVillaDetail, getVillaSummaries } from "@/lib/lodgify";
 import { getCmsVillaReviews } from "@/lib/cms";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 interface VillaDetailPageProps {
   params: Promise<{
@@ -149,14 +150,24 @@ export default async function VillaDetailPage({ params }: VillaDetailPageProps) 
             </article>
           </div>
 
-            <AvailabilityCalendar
+            {isShowcasePreview ? (
+              <section className="villa-calendar-section" id="availability" aria-label="Availability preview notice">
+                <div className="villa-calendar-section__header">
+                  <div>
+                    <p className="villa-detail-section-label">Availability</p>
+                    <h2>Live dates and rates are not available in this visual preview.</h2>
+                    <p>Contact our team for current availability and a confirmed quote.</p>
+                  </div>
+                </div>
+              </section>
+            ) : <AvailabilityCalendar
               propertyId={villa.id}
               roomTypeId={villa.roomTypeId}
               villaName={villa.name}
               location={villa.address || `${villa.city}, ${villa.country}`}
               priceLabel={villa.originalPriceLabel || villa.priceLabel}
               maxGuests={villa.guests}
-            />
+            />}
 
             {related.length > 0 && (
               <section className="villa-detail-section">

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { formatDestinationStartingRates } from "@/lib/lodgify/destinations";
 import type { AboutDestination } from "./About";
 import styles from "./DestinationAtlas.module.css";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const LibreDestinationMap = dynamic(() => import("./LibreDestinationMap"), {
   ssr: false,
@@ -23,6 +24,7 @@ function villaCount(destination: AboutDestination) {
 }
 
 export default function DestinationAtlas({ destinations, eyebrow, title, description }: DestinationAtlasProps) {
+  const fallbackRate = isShowcasePreview ? "Rates available on request" : "View live rates";
   const [requestedName, setRequestedName] = useState<string | null>(null);
   const selected = destinations.find((destination) => destination.name === requestedName) ?? destinations[0];
 
@@ -51,7 +53,7 @@ export default function DestinationAtlas({ destinations, eyebrow, title, descrip
                     <strong>{destination.name}</strong>
                     <small>{villaCount(destination)}</small>
                   </span>
-                  <span className={styles.regionRate}>{formatDestinationStartingRates(destination) || "View live rates"}</span>
+                  <span className={styles.regionRate}>{formatDestinationStartingRates(destination) || fallbackRate}</span>
                 </button>
               ))}
             </div>
@@ -87,7 +89,7 @@ export default function DestinationAtlas({ destinations, eyebrow, title, descrip
               <strong>{selected.name}</strong>
               <span>{villaCount(selected)}</span>
             </div>
-            <p>{formatDestinationStartingRates(selected) || "View live rates"}</p>
+            <p>{formatDestinationStartingRates(selected) || fallbackRate}</p>
           </div>
         ) : null}
       </div>

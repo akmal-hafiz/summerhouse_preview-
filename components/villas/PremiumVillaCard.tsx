@@ -7,6 +7,7 @@ import type { IconType } from "react-icons";
 import { FiDroplet, FiHeart, FiHome, FiMapPin, FiUsers } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import { readSavedVillaIds, subscribeSavedVillas, toggleSavedVillaId } from "./savedVillas";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 type PremiumVillaCardProps = {
   villa: VillaSearchResult;
@@ -115,8 +116,8 @@ export default function PremiumVillaCard({
               <strong>Rate on request</strong>
             )}
           </p>
-          <Link href={`/villas/${villa.id}#availability`} className="villa-catalog-card__book">
-            Book Now
+          <Link href={isShowcasePreview ? `/villas/${villa.id}` : `/villas/${villa.id}#availability`} className="villa-catalog-card__book">
+            {isShowcasePreview ? "View villa" : "Book Now"}
           </Link>
         </div>
       </div>

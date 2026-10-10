@@ -9,6 +9,7 @@ import { FiChevronDown } from "react-icons/fi";
 import { useToast } from "@/components/providers/ToastProvider";
 import { LiquidDropdownSurface } from "@/components/ui/liquid-dropdown-surface";
 import styles from "./Contact.module.css";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const SUBJECT_OPTIONS = [
   "Villa inquiry",
@@ -288,6 +289,12 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isShowcasePreview) {
+      const message = "This visual preview cannot receive messages. Please use the email or WhatsApp contact details instead.";
+      setSubmitError(message);
+      toast.error({ title: "Preview only", message });
+      return;
+    }
     setSubmitError(null);
     setSubmittedOk(false);
     setSubmitting(true);

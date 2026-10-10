@@ -1,0 +1,3190 @@
+{
+  "snapshotDate": "2026-10-10",
+  "purpose": "Frontend-only visual preview. Live prices, availability, accounts and checkout are not included.",
+  "responses": {
+    "/v1/cms/page/home": {
+      "success": true,
+      "page": "home",
+      "sections": {
+        "hero": {
+          "video_url": null,
+          "badge_text": "Villas / Jungle Stays / Private Pools",
+          "show_badge": false,
+          "description": "Curated homes in Bali\nFor a slower rhythm.",
+          "heading_text": "Own Your World,\nOne Property at a Time.",
+          "poster_image": "/homepage_villa/curated-1-main.webp",
+          "show_heading": false
+        },
+        "why_stay": {
+          "title": "A considered way to stay in Bali.",
+          "eyebrow": "Why Summerhouse",
+          "is_visible": true,
+          "recognition": {
+            "url": null,
+            "name": "Honeycombers",
+            "type": "award",
+            "year": "2024",
+            "title": "Best Villa in Bali 2024",
+            "issuer": "Gold Winner",
+            "is_visible": true,
+            "villa_name": "Ubud Zen River House",
+            "lodgify_property_id": null
+          },
+          "introduction": "Carefully chosen homes, local care you can count on, and clear guidance for a stay that feels right.",
+          "recognitions": [
+            {
+              "url": null,
+              "name": "Honeycombers",
+              "type": "award",
+              "year": "2024",
+              "title": "Best Villa in Bali 2024",
+              "issuer": "Gold Winner",
+              "is_visible": true,
+              "villa_name": "Ubud Zen River House",
+              "lodgify_property_id": null
+            }
+          ],
+          "trust_points": [
+            {
+              "title": "Curated homes",
+              "is_visible": true,
+              "description": "A smaller collection chosen for design, setting, and guest comfort."
+            },
+            {
+              "title": "Local care",
+              "is_visible": true,
+              "description": "Practical support from people who know Bali and its neighbourhoods."
+            },
+            {
+              "title": "Clear guidance",
+              "is_visible": true,
+              "description": "Useful details and straightforward booking guidance from the start."
+            }
+          ]
+        },
+        "stay_styles": {
+          "heading": "A home, not a hotel",
+          "is_visible": true
+        },
+        "signature_villa": {
+          "why_this_home": "Our most exclusive estate in the current SummerHouse collection in Ubud. Chosen for tropical architecture, privacy, and full villa comfort."
+        },
+        "featured_collection": {
+          "title": "FEATURED COLLECTION",
+          "description": "A curated selection of SummerHouse villas, personally chosen for exceptional design, location, comfort, and guest experience."
+        },
+        "explore_bali": {
+          "title": "Bali, by Neighbourhood",
+          "is_visible": true,
+          "description": "A closer look at the neighbourhoods, landscapes, and local rhythms around our homes."
+        },
+        "testimonials": {
+          "title": "Guest Reviews",
+          "eyebrow": "Guest stories",
+          "is_visible": true,
+          "trust_label": "Loved by Summerhouse guests",
+          "title_emphasis": "after the stay",
+          "supporting_copy": null
+        }
+      }
+    },
+    "/v1/cms/page/about": {
+      "success": true,
+      "page": "about",
+      "sections": {
+        "stats": {
+          "items": [
+            {
+              "label": "Happy guests hosted",
+              "value": "200+"
+            },
+            {
+              "label": "Repeat visitors",
+              "value": "26%"
+            },
+            {
+              "label": "Guest support",
+              "value": "24/7"
+            }
+          ]
+        },
+        "features": {
+          "items": [
+            "Trusted Hospitality",
+            "Premium Locations",
+            "Full-Service Management",
+            "Personal Concierge",
+            "Transparent Ownership"
+          ]
+        },
+        "studio_statement": {
+          "title": "A closer look at the spaces you will actually live in.",
+          "eyebrow": "The gallery",
+          "is_visible": true,
+          "description": "The light through the morning kitchen, the pool at dusk, the quiet corners between rooms. Every villa is photographed the way you will remember it, so what you see is what you arrive to.",
+          "left_images": [
+            "/preview-media/ddf1e1dde625ffad4c76777b567a9c6cf359eabfd23ed47b00ed92428a0ed992.webp",
+            null,
+            "/preview-media/743afc60fdaea6886382d77e39da9f90ab5d86cb07f6233038793b0adec225b8.webp",
+            "/preview-media/743afc60fdaea6886382d77e39da9f90ab5d86cb07f6233038793b0adec225b8.webp",
+            "/preview-media/1eee5a9e7fc66ca7906ea503702fa02f7297b4f9382c778e0ee972c08dd7e7b0.webp",
+            "/preview-media/1eee5a9e7fc66ca7906ea503702fa02f7297b4f9382c778e0ee972c08dd7e7b0.webp",
+            "/preview-media/0465a08787620f0571f3ad00178e8cb2714aac2ff22d8e6eed9b5b4ba01a5d47.webp"
+          ],
+          "button_label": "View the full gallery",
+          "right_images": [
+            "/preview-media/411dc7ba035ef1ea1726966ea438bc0d17981ae4330d4ece7fa83832eee05e80.webp",
+            "/preview-media/5a3d5efed02ada0cf792cb7aa287b3f7de5de8546d63007af7434877bbc98ed7.webp",
+            "/preview-media/300432131ee8e94dccfb1bc2d5c74fecdca9d07b1f4003c8adedc2ea8f0b1d65.webp"
+          ]
+        },
+        "our_story": {
+          "body": "Years later, that still shapes every home we curate across Canggu, Ubud, Pererenan, and the quiet corners of the island in between.",
+          "lead": "Summerhouses began as a small collection of villas in Canggu, Bali, built on one belief: a great stay should feel personal before it looks impressive.",
+          "heading": "Our Story.",
+          "is_visible": true,
+          "scroll_label": "Trusted by travelers worldwide"
+        },
+        "trust_recognition": {
+          "heading": "A decade of stays, thoughtfully hosted.",
+          "pillars": [
+            {
+              "id": "verified",
+              "desc": "Each villa is personally inspected for comfort, cleanliness, and safety before a guest arrives, so the space feels ready the moment you walk in.",
+              "name": "Verified Villas",
+              "image": null,
+              "scope": "Every home"
+            },
+            {
+              "id": "support",
+              "desc": "A real person stays reachable around the clock for arrivals, late questions, or anything that shifts once you land.",
+              "name": "24/7 Guest Support",
+              "image": "/homepage_villa/curated-5-lounge.webp",
+              "scope": "Any time"
+            },
+            {
+              "id": "concierge",
+              "desc": "Drivers, dining, beach days, and trusted recommendations, arranged by a team that actually lives here.",
+              "name": "Local Concierge",
+              "image": "/homepage_villa/88east.webp",
+              "scope": "On the island"
+            },
+            {
+              "id": "booking",
+              "desc": "Clear terms, protected payments, and confirmed details before you travel, with no guesswork.",
+              "name": "Secure Booking",
+              "image": "/homepage_villa/curated-8.webp",
+              "scope": "Every trip"
+            },
+            {
+              "id": "pricing",
+              "desc": "The price you see is the price you pay, with every fee explained up front and nothing added on arrival.",
+              "name": "Transparent Pricing",
+              "image": "/homepage_villa/villaarta.webp",
+              "scope": "No surprises"
+            }
+          ],
+          "is_visible": true
+        },
+        "booking_process": {
+          "steps": [
+            {
+              "title": "Discover your villa",
+              "images": [
+                "/homepage_villa/curated-1-main.webp",
+                "/homepage_villa/curated-2-detail.webp"
+              ],
+              "description": "Browse our collection and find a home that fits the way you want to stay."
+            },
+            {
+              "title": "Choose your dates",
+              "images": [
+                "/homepage_villa/curated-4-pool.webp",
+                "/homepage_villa/curated-5-lounge.webp"
+              ],
+              "description": "Select your travel dates and see live availability for your chosen villa."
+            },
+            {
+              "title": "Confirm your stay",
+              "images": [
+                "/homepage_villa/rumahmimosa.webp",
+                "/homepage_villa/villaarta.webp"
+              ],
+              "description": "Review your details, live rate, and complete a secure Lodgify checkout."
+            },
+            {
+              "title": "Arrive with ease",
+              "images": [
+                "/homepage_villa/curated-3-corner.webp",
+                "/homepage_villa/curated-6-exterior.webp"
+              ],
+              "description": "Your Bali stay is confirmed, with our local team close by whenever needed."
+            }
+          ],
+          "title": "Secure your stay",
+          "eyebrow": "Booking process",
+          "is_visible": true,
+          "link_label": "Explore villas",
+          "closing_copy": "Your Bali stay, thoughtfully arranged.",
+          "title_emphasis": "with ease"
+        },
+        "concierge": {
+          "quote": "The best stays feel effortless because the right help is already close.",
+          "title": "More than a villa",
+          "eyebrow": "Concierge",
+          "is_visible": true,
+          "link_label": "View all Concierge",
+          "description": "Thoughtful support before arrival and throughout your stay.",
+          "title_emphasis": "your Bali stay, considered."
+        },
+        "faq_intro": {
+          "title": "Everything you need to know.",
+          "eyebrow": "FAQ",
+          "is_visible": true,
+          "button_label": "Ask Us"
+        },
+        "journal_preview": {
+          "title": "The Journal.",
+          "eyebrow": "Featured Stories",
+          "is_visible": true
+        },
+        "destination_footprint": {
+          "title": "Where Summerhouses stays unfold.",
+          "eyebrow": "Location",
+          "is_visible": true,
+          "description": "The collection is centered around Bali's most requested stay areas, with villas selected for privacy, atmosphere, and access to the island's everyday rituals."
+        },
+        "final_cta": {
+          "title": "Find the home that feels right.",
+          "eyebrow": "Your Bali stay",
+          "is_visible": true,
+          "button_label": "Book now"
+        }
+      }
+    },
+    "/v1/cms/page/services": {
+      "success": true,
+      "page": "services",
+      "sections": {
+        "hero": {
+          "video_url": "/video/herosection_summerhouse.mp4"
+        }
+      }
+    },
+    "/v1/cms/homepage/villa-selections": {
+      "success": true,
+      "slots": {
+        "extended_stays": [
+          {
+            "lodgify_property_id": "760838",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "796460",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "761507",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "762712",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          }
+        ],
+        "featured_collection": [
+          {
+            "lodgify_property_id": "475365",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "475366",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "759821",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "475372",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "703452",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          }
+        ],
+        "featured_homes": [
+          {
+            "lodgify_property_id": "796460",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "475365",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "475372",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          }
+        ],
+        "short_stays": [
+          {
+            "lodgify_property_id": "707108",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "703452",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "475366",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "759820",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          },
+          {
+            "lodgify_property_id": "751982",
+            "override_title": null,
+            "override_description": null,
+            "award_name": null,
+            "award_issuer": null,
+            "award_year": null,
+            "award_url": null,
+            "award_logo": null,
+            "show_award": false
+          }
+        ],
+        "signature": [
+          {
+            "lodgify_property_id": "475365",
+            "override_title": null,
+            "override_description": null,
+            "award_name": "Best Villa in Bali Gold Winner",
+            "award_issuer": "Honeycombers",
+            "award_year": "2024",
+            "award_url": null,
+            "award_logo": null,
+            "show_award": true
+          }
+        ]
+      }
+    },
+    "/v1/cms/bali-collections": {
+      "success": true,
+      "collections": [
+        {
+          "id": "canggu-berawa",
+          "location": "Canggu - Berawa",
+          "locationKey": "canggu-berawa",
+          "category": "Cafe Coastline",
+          "tag": "Cafe Coastline",
+          "moods": [
+            "Beach",
+            "Cafes",
+            "Design",
+            "Social"
+          ],
+          "description": "Stylish homes close to cafes, beach clubs, and the polished rhythm of Berawa.",
+          "highlights": [
+            "Beach Clubs",
+            "Cafe Culture",
+            "Design Villas",
+            "Easy Dining"
+          ],
+          "bestFor": [
+            "Friends",
+            "Couples",
+            "Lifestyle Stays"
+          ],
+          "facts": [
+            {
+              "label": "Mood",
+              "value": "Social coastal living"
+            },
+            {
+              "label": "Pace",
+              "value": "Easy and connected"
+            },
+            {
+              "label": "Stay style",
+              "value": "Design villas"
+            }
+          ],
+          "villaCount": "0 villas",
+          "price": "Price confirmed at booking",
+          "href": "/villas?location=Canggu%20-%20Berawa&match=exact",
+          "mediaType": "image",
+          "image": "/homepage_villa/rumahmimosa.webp",
+          "video": null,
+          "videoPoster": "/homepage_villa/rumahmimosa.webp",
+          "mobilePoster": "/preview-media/1eee5a9e7fc66ca7906ea503702fa02f7297b4f9382c778e0ee972c08dd7e7b0.webp",
+          "imageAlt": "SummerHouse villa collection in Canggu Berawa",
+          "mediaAccessibilityLabel": "View Summerhouse villas in Canggu - Berawa",
+          "galleryImages": [
+            "/homepage_villa/curated-3-corner.webp",
+            "/homepage_villa/88east.webp",
+            "/homepage_villa/curated-1-main.webp",
+            "/homepage_villa/rumahmimosa.webp",
+            "/homepage_villa/villaarta.webp"
+          ],
+          "lifestylePillars": [
+            {
+              "title": "Beach Clubs",
+              "description": "World-class venues for golden hour sunset sessions."
+            },
+            {
+              "title": "Bespoke Cafes",
+              "description": "Artisan coffee roasters and high-end brunch spots."
+            },
+            {
+              "title": "Surf Culture",
+              "description": "Warm waters perfect for longboards and beach breaks."
+            }
+          ]
+        },
+        {
+          "id": "pererenan",
+          "location": "Pererenan",
+          "locationKey": "pererenan",
+          "category": "Quiet Coast",
+          "tag": "Quiet Coast",
+          "moods": [
+            "Surf",
+            "Village",
+            "Privacy",
+            "Slow Living"
+          ],
+          "description": "A quieter coastal pocket for surf mornings, private villas, and slower evenings.",
+          "highlights": [
+            "Surf Mornings",
+            "Village Calm",
+            "Private Pools",
+            "Dining Nearby"
+          ],
+          "bestFor": [
+            "Longer Stays",
+            "Couples",
+            "Families"
+          ],
+          "facts": [
+            {
+              "label": "Mood",
+              "value": "Quiet coastal calm"
+            },
+            {
+              "label": "Pace",
+              "value": "Slow and spacious"
+            },
+            {
+              "label": "Stay style",
+              "value": "Private estates"
+            }
+          ],
+          "villaCount": "0 villas",
+          "price": "Price confirmed at booking",
+          "href": "/villas?location=Pererenan&match=exact",
+          "mediaType": "image",
+          "image": "/homepage_villa/CactusEstate.webp",
+          "video": null,
+          "videoPoster": "/homepage_villa/CactusEstate.webp",
+          "mobilePoster": "/homepage_villa/CactusEstate.webp",
+          "imageAlt": "SummerHouse villa collection in Pererenan",
+          "mediaAccessibilityLabel": "View Summerhouse villas in Pererenan",
+          "galleryImages": [
+            "/homepage_villa/curated-6-exterior.webp",
+            "/homepage_villa/CactusEstate.webp",
+            "/homepage_villa/VillaZen.webp",
+            "/homepage_villa/curated-8.webp",
+            "/homepage_villa/curated-5-lounge.webp"
+          ],
+          "lifestylePillars": [
+            {
+              "title": "Surf Breaks",
+              "description": "Easy walks to uncrowded surf spots and sandy bays."
+            },
+            {
+              "title": "Village Life",
+              "description": "Local warungs, quiet lanes, and a slower coastal rhythm."
+            },
+            {
+              "title": "Private Estates",
+              "description": "Spacious grounds with pools, gardens, and full privacy."
+            }
+          ]
+        },
+        {
+          "id": "canggu",
+          "location": "Canggu",
+          "locationKey": "canggu",
+          "category": "Creative Coast",
+          "tag": "Creative Coast",
+          "moods": [
+            "Surf",
+            "Social",
+            "Modern",
+            "Active"
+          ],
+          "description": "Modern villa living close to surf, cafes, and sunset scenes.",
+          "highlights": [
+            "Surf Spots",
+            "Modern Villas",
+            "Sunset Views",
+            "Social Scene"
+          ],
+          "bestFor": [
+            "Friends",
+            "Couples",
+            "Active Stays"
+          ],
+          "facts": [
+            {
+              "label": "Mood",
+              "value": "Creative coastal energy"
+            },
+            {
+              "label": "Pace",
+              "value": "Active and social"
+            },
+            {
+              "label": "Stay style",
+              "value": "Modern homes"
+            }
+          ],
+          "villaCount": "0 villas",
+          "price": "Price confirmed at booking",
+          "href": "/villas?location=Canggu&match=exact",
+          "mediaType": "image",
+          "image": "/homepage_villa/curated-1-main.webp",
+          "video": null,
+          "videoPoster": "/homepage_villa/curated-1-main.webp",
+          "mobilePoster": "/homepage_villa/curated-1-main.webp",
+          "imageAlt": "SummerHouse villa collection in Canggu",
+          "mediaAccessibilityLabel": "View Summerhouse villas in Canggu",
+          "galleryImages": [
+            "/homepage_villa/curated-1-main.webp",
+            "/homepage_villa/curated-2-detail.webp",
+            "/homepage_villa/curated-3-corner.webp",
+            "/homepage_villa/curated-4-pool.webp",
+            "/homepage_villa/curated-5-lounge.webp"
+          ],
+          "lifestylePillars": []
+        },
+        {
+          "id": "canggu-padonan",
+          "location": "Canggu - Padonan",
+          "locationKey": "canggu-padonan",
+          "category": "Calm Canggu",
+          "tag": "Calm Canggu",
+          "moods": [
+            "Local",
+            "Quiet",
+            "Modern",
+            "Practical"
+          ],
+          "description": "Design-led homes in a calmer Canggu neighborhood with easy access to the coast.",
+          "highlights": [
+            "Quiet Lanes",
+            "Modern Lofts",
+            "Local Rhythm",
+            "Canggu Access"
+          ],
+          "bestFor": [
+            "Remote Work",
+            "Couples",
+            "Slow Trips"
+          ],
+          "facts": [
+            {
+              "label": "Mood",
+              "value": "Residential calm"
+            },
+            {
+              "label": "Pace",
+              "value": "Balanced and practical"
+            },
+            {
+              "label": "Stay style",
+              "value": "Modern homes"
+            }
+          ],
+          "villaCount": "0 villas",
+          "price": "Price confirmed at booking",
+          "href": "/villas?location=Canggu%20-%20Padonan&match=exact",
+          "mediaType": "image",
+          "image": "/homepage_villa/curated-8.webp",
+          "video": null,
+          "videoPoster": "/homepage_villa/curated-8.webp",
+          "mobilePoster": "/homepage_villa/curated-8.webp",
+          "imageAlt": "SummerHouse villa collection in Canggu Padonan",
+          "mediaAccessibilityLabel": "View Summerhouse villas in Canggu - Padonan",
+          "galleryImages": [
+            "/homepage_villa/curated-8.webp",
+            "/homepage_villa/curated-1-main.webp",
+            "/homepage_villa/88east.webp",
+            "/homepage_villa/rumahmimosa.webp",
+            "/homepage_villa/VillaZen.webp"
+          ],
+          "lifestylePillars": []
+        },
+        {
+          "id": "umalas",
+          "location": "Umalas",
+          "locationKey": "umalas",
+          "category": "Leafy Privacy",
+          "tag": "Leafy Privacy",
+          "moods": [
+            "Leafy",
+            "Private",
+            "Central",
+            "Relaxed"
+          ],
+          "description": "Leafy villas with quiet privacy, central access, and a softer rhythm for private downtime.",
+          "highlights": [
+            "Leafy Streets",
+            "Private Pools",
+            "Central Access",
+            "Quiet Dining"
+          ],
+          "bestFor": [
+            "Families",
+            "Couples",
+            "Long Stays"
+          ],
+          "facts": [
+            {
+              "label": "Mood",
+              "value": "Soft privacy"
+            },
+            {
+              "label": "Pace",
+              "value": "Calm and central"
+            },
+            {
+              "label": "Stay style",
+              "value": "Private villas"
+            }
+          ],
+          "villaCount": "0 villas",
+          "price": "Price confirmed at booking",
+          "href": "/villas?location=Umalas&match=exact",
+          "mediaType": "image",
+          "image": "/homepage_villa/villaarta.webp",
+          "video": null,
+          "videoPoster": "/homepage_villa/villaarta.webp",
+          "mobilePoster": "/homepage_villa/villaarta.webp",
+          "imageAlt": "SummerHouse villa collection in Umalas",
+          "mediaAccessibilityLabel": "View Summerhouse villas in Umalas",
+          "galleryImages": [
+            "/homepage_villa/VillaZen.webp",
+            "/homepage_villa/curated-6-exterior.webp",
+            "/homepage_villa/CactusEstate.webp",
+            "/homepage_villa/rumahmimosa.webp",
+            "/homepage_villa/curated-3-corner.webp"
+          ],
+          "lifestylePillars": []
+        },
+        {
+          "id": "ubud",
+          "location": "Ubud",
+          "locationKey": "ubud",
+          "category": "Jungle Retreats",
+          "tag": "Jungle Retreats",
+          "moods": [
+            "Jungle",
+            "Wellness",
+            "River",
+            "Culture"
+          ],
+          "description": "Peaceful villas surrounded by rice fields, rivers, and tropical jungle.",
+          "highlights": [
+            "River Views",
+            "Jungle Calm",
+            "Wellness Rituals",
+            "Cultural Days"
+          ],
+          "bestFor": [
+            "Couples",
+            "Wellness",
+            "Nature Lovers"
+          ],
+          "facts": [
+            {
+              "label": "Mood",
+              "value": "Restorative nature"
+            },
+            {
+              "label": "Pace",
+              "value": "Slow and quiet"
+            },
+            {
+              "label": "Stay style",
+              "value": "Jungle villas"
+            }
+          ],
+          "villaCount": "0 villas",
+          "price": "Price confirmed at booking",
+          "href": "/villas?location=Ubud&match=exact",
+          "mediaType": "image",
+          "image": "/homepage_villa/VillaZen.webp",
+          "video": null,
+          "videoPoster": "/homepage_villa/VillaZen.webp",
+          "mobilePoster": "/homepage_villa/VillaZen.webp",
+          "imageAlt": "SummerHouse villa collection in Ubud",
+          "mediaAccessibilityLabel": "View Summerhouse villas in Ubud",
+          "galleryImages": [
+            "/homepage_villa/curated-2-detail.webp",
+            "/homepage_villa/curated-5-lounge.webp",
+            "/homepage_villa/VillaZen.webp",
+            "/homepage_villa/CactusEstate.webp",
+            "/homepage_villa/curated-8.webp"
+          ],
+          "lifestylePillars": []
+        }
+      ]
+    },
+    "/v1/cms/articles": {
+      "success": true,
+      "articles": [
+        {
+          "slug": "quiet-details-behind-a-well-hosted-stay",
+          "title": "The Quiet Details Behind a Well-Hosted Stay",
+          "subtitle": "What thoughtful guest support looks like before arrival, during the stay, and in the moments plans change.",
+          "excerpt": "Good hosting rarely asks for attention. It appears in clear arrivals, prepared spaces, and useful help at the right moment.",
+          "category": "Concierge",
+          "date": "2026-10-01",
+          "readTime": "2 min read",
+          "heroImage": "/homepage_villa/curated-6-exterior.webp",
+          "heroAlt": "A prepared Bali villa entrance ready for guest arrival.",
+          "tags": [
+            "Concierge",
+            "Guest Experience",
+            "Hospitality"
+          ],
+          "author": {
+            "name": "Summerhouses Team",
+            "role": "Guest Experience Team",
+            "bio": "The local Summerhouses team sharing the small decisions that make a Bali stay feel considered.",
+            "avatar": null
+          }
+        },
+        {
+          "slug": "choosing-the-right-bali-villa-for-your-group",
+          "title": "Choosing the Right Bali Villa for Your Group",
+          "subtitle": "A practical way to balance bedrooms, location, shared spaces, and the pace of your trip.",
+          "excerpt": "The right villa is not simply the one with enough bedrooms. It should support how your group wants to spend the day.",
+          "category": "Travel",
+          "date": "2026-10-01",
+          "readTime": "2 min read",
+          "heroImage": "/homepage_villa/curated-5-lounge.webp",
+          "heroAlt": "A spacious villa lounge arranged for a group stay in Bali.",
+          "tags": [
+            "Villa Guide",
+            "Group Travel",
+            "Bali"
+          ],
+          "author": {
+            "name": "Summerhouses Team",
+            "role": "Villa Specialists",
+            "bio": "A Bali-based team matching guests with homes that suit the way they genuinely travel.",
+            "avatar": null
+          }
+        },
+        {
+          "slug": "a-slower-morning-in-canggu",
+          "title": "A Slower Morning in Canggu",
+          "subtitle": "A gentle route through early swims, quiet coffee, and the hours before Canggu gathers pace.",
+          "excerpt": "Canggu feels different before the traffic and the lunch tables. Here is how to enjoy its quieter first hours.",
+          "category": "Lifestyle",
+          "date": "2026-10-01",
+          "readTime": "2 min read",
+          "heroImage": "/images_canggu.jpg",
+          "heroAlt": "A quiet morning view across Canggu near the coast.",
+          "tags": [
+            "Canggu",
+            "Slow Living",
+            "Bali Mornings"
+          ],
+          "author": {
+            "name": "Summerhouses Team",
+            "role": "Editorial Studio",
+            "bio": "Local notes on Bali stays, thoughtful hosting, and the neighbourhoods around our homes.",
+            "avatar": null
+          }
+        },
+        {
+          "slug": "designing-your-dream-villa-in-bali",
+          "title": "Designing Your Dream Villa in Bali",
+          "subtitle": "A practical guide to tropical modern living, from orientation and materials to the rituals that make a house feel alive.",
+          "excerpt": "Designing a Bali villa is not only about views and finishes. It is about climate, culture, light, and how people move through a day.",
+          "category": "Property Insight",
+          "date": "2026-05-06",
+          "readTime": "9 min read",
+          "heroImage": "/homepage_villa/villaarta.webp",
+          "heroAlt": "A refined Bali villa with a pool and warm architectural lighting.",
+          "tags": [
+            "Property",
+            "Design",
+            "Investment"
+          ],
+          "author": {
+            "name": "Summerhouses Team",
+            "role": "Editorial Studio",
+            "bio": "A small team of villa specialists, designers, and Bali hosts sharing notes on tropical living, thoughtful property investment, and the quieter side of island life.",
+            "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop"
+          }
+        }
+      ]
+    },
+    "/v1/cms/gallery": {
+      "success": true,
+      "items": [
+        {
+          "id": 1,
+          "type": "image",
+          "src": "/bellevoire/editorial_large.png",
+          "alt": "Editorial photograph of slow island living at Summerhouse",
+          "label": "01",
+          "category": "Editorial",
+          "layout_variant": "landscape",
+          "focal_point": "center",
+          "title": "The Long Afternoon",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 3,
+          "type": "image",
+          "src": "/bellevoire/editorial_small.png",
+          "alt": "Quiet editorial still from a Summerhouse morning",
+          "label": "03",
+          "category": "Editorial",
+          "layout_variant": "portrait",
+          "focal_point": "center",
+          "title": "Still Morning",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 4,
+          "type": "image",
+          "src": "/bellevoire/beach_stay.png",
+          "alt": "Beachside stay moment near a Summerhouse villa",
+          "label": "04",
+          "category": "Escapes",
+          "layout_variant": "square",
+          "focal_point": "center",
+          "title": "Beach Stay",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 6,
+          "type": "image",
+          "src": "/bellevoire/landscape.png",
+          "alt": "Bali landscape stretching beyond the villa grounds",
+          "label": "06",
+          "category": "Escapes",
+          "layout_variant": "tall",
+          "focal_point": "center",
+          "title": "Across the Ridge",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 7,
+          "type": "image",
+          "src": "/herosection1.jpg",
+          "alt": "Golden hour light across a Summerhouse stay",
+          "label": "07",
+          "category": "Lifestyle",
+          "layout_variant": "landscape",
+          "focal_point": "center",
+          "title": "Golden Hour",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 9,
+          "type": "image",
+          "src": "/images_canggu.jpg",
+          "alt": "Slow afternoon scene in Canggu",
+          "label": "09",
+          "category": "Lifestyle",
+          "layout_variant": "portrait",
+          "focal_point": "center",
+          "title": "Canggu, Slow",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 10,
+          "type": "image",
+          "src": "/Found_myself..jpg",
+          "alt": "A quiet found moment during a Summerhouse stay",
+          "label": "10",
+          "category": "Lifestyle",
+          "layout_variant": "landscape",
+          "focal_point": "center",
+          "title": "Found Myself Here",
+          "text": null,
+          "video_url": null,
+          "video_poster": null,
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        },
+        {
+          "id": 11,
+          "type": "video",
+          "src": null,
+          "alt": "Cinematic film of Summerhouse Bali island living",
+          "label": "11",
+          "category": "Films",
+          "layout_variant": "landscape",
+          "focal_point": "center",
+          "title": "Summerhouse, In Motion",
+          "text": null,
+          "video_url": "/video/herosection_summerhouse.mp4",
+          "video_poster": "/Hero_Section.png",
+          "lodgify_property_id": null,
+          "created_at": "2026-06-15T15:49:14.000000Z",
+          "property_name": null,
+          "property_location": null
+        }
+      ]
+    },
+    "/v1/cms/faqs/about": {
+      "success": true,
+      "page": "about",
+      "faqs": [
+        {
+          "question": "How do I book a villa?",
+          "answer": "You can browse our villa collection, check availability for your dates, and book directly through our secure checkout. Our team is also available via WhatsApp for personalized assistance."
+        },
+        {
+          "question": "What is included in the villa rate?",
+          "answer": "Each villa rate includes the accommodation, daily housekeeping, pool maintenance, and access to all in-villa amenities. Some villas also include breakfast or airport transfers."
+        },
+        {
+          "question": "Can I request special services?",
+          "answer": "Yes, our concierge team can arrange private chefs, spa treatments, excursions, airport transfers, and more. Just let us know your preferences when booking."
+        },
+        {
+          "question": "What is the cancellation policy?",
+          "answer": "Cancellation policies vary by villa and season. Full details are provided during the booking process. We recommend booking with flexibility when possible."
+        }
+      ]
+    },
+    "/v1/cms/faqs/services": {
+      "success": true,
+      "page": "services",
+      "faqs": [
+        {
+          "question": "Do you manage villas for owners?",
+          "answer": "Yes, we offer full-service villa management including scheduling, cleaning, maintenance, marketing, and revenue optimization for villa owners in Bali."
+        },
+        {
+          "question": "How does the revenue strategy work?",
+          "answer": "We analyze market data, seasonal trends, and competitor pricing to optimize your villa rates. Our dynamic pricing approach maximizes occupancy and revenue."
+        },
+        {
+          "question": "Can you help me buy a villa in Bali?",
+          "answer": "We connect owners with trusted property finders, legal advisors, and architects to guide you through the process of finding and developing your ideal villa."
+        },
+        {
+          "question": "What platforms do you list on?",
+          "answer": "We list on major platforms including Airbnb, Booking.com, and our direct booking site. We also drive direct bookings through social media and marketing."
+        }
+      ]
+    },
+    "/v1/cms/service-cards/concierge": {
+      "success": true,
+      "category": "concierge",
+      "cards": []
+    },
+    "/v1/cms/service-cards/operational": {
+      "success": true,
+      "category": "operational",
+      "cards": [
+        {
+          "slug": "operations-housekeeping-property-care",
+          "title": "Housekeeping & Property Care",
+          "text": "Cleaning schedules, inspections, pool and garden care, and responsive maintenance coordinated to one consistent standard.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "operations-people-staff-management",
+          "title": "People, Training & Staff Management",
+          "text": "Hiring, payroll, workplace support, training, scheduling, and performance supervision for the villa team.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "operations-guest-journey",
+          "title": "Guest Relations, Check-in & Check-out",
+          "text": "Thoughtful pre-arrival coordination, welcoming check-ins, in-stay support, and smooth departures.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "operations-supplies-inventory",
+          "title": "Supplies & Inventory Management",
+          "text": "Linen, amenities, utilities, and property assets tracked and replenished before they become operational issues.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "operations-cost-vendor-services",
+          "title": "Cost, Vendor & Additional Services",
+          "text": "Trusted local vendors, transparent cost control, security coordination, and optional guest services managed through one team.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        }
+      ]
+    },
+    "/v1/cms/service-cards/marketing": {
+      "success": true,
+      "category": "marketing",
+      "cards": [
+        {
+          "slug": "revenue-forecasting-strategy",
+          "title": "Forecasting & Revenue Strategy",
+          "text": "Market-informed projections and commercial goals turn seasonality into a practical plan for occupancy and returns.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "revenue-positioning-copywriting",
+          "title": "Property Positioning & Copywriting",
+          "text": "Distinctive photography, storytelling, and listing copy present each villa with a clear point of view.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "revenue-distribution-direct-booking",
+          "title": "Distribution & Direct Booking",
+          "text": "Coordinated OTA, agent, and direct channels extend reach while reducing avoidable commission costs.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "revenue-advertising-search",
+          "title": "Advertising & Search Visibility",
+          "text": "Targeted campaigns, social content, and search optimization help qualified guests discover the property.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "revenue-pricing-reservations",
+          "title": "Dynamic Pricing & Reservations",
+          "text": "Live market signals guide nightly pricing while the reservation team supports guests throughout the booking journey.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "revenue-reporting-transparency",
+          "title": "Reporting & Financial Transparency",
+          "text": "Monthly reporting connects bookings, revenue, operating expenditure, and owner payouts in one understandable view.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        }
+      ]
+    },
+    "/v1/cms/service-cards/project": {
+      "success": true,
+      "category": "project",
+      "cards": [
+        {
+          "slug": "project-property-feasibility",
+          "title": "Property Finding & Feasibility",
+          "text": "Potential sites and existing villas are assessed for location, rental demand, condition, and commercial viability.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "project-legal-assessment",
+          "title": "Legal Counsel & Project Assessment",
+          "text": "Local specialists coordinate ownership structures, permits, compliance, scope, and renovation priorities.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "project-design-planning",
+          "title": "Design & Planning Coordination",
+          "text": "Architecture, interiors, landscape, and guest experience are aligned before construction decisions are locked.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "project-contractors-vendors",
+          "title": "Contractor & Vendor Management",
+          "text": "Trusted teams are selected, briefed, scheduled, and held to agreed quality and delivery standards.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "project-procurement-logistics",
+          "title": "Procurement & Logistics",
+          "text": "Materials, furniture, fixtures, technology, and site logistics are coordinated against budget and programme.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        },
+        {
+          "slug": "project-quality-reporting",
+          "title": "Construction Quality & Project Reporting",
+          "text": "Progress, workmanship, cost, risks, and pre-launch preparation remain visible from build through handover.",
+          "image": null,
+          "alt_text": null,
+          "featured_on_about": false
+        }
+      ]
+    },
+    "/v1/cms/testimonials/services": {
+      "success": true,
+      "page": "services",
+      "testimonials": []
+    },
+    "/v1/cms/articles/quiet-details-behind-a-well-hosted-stay": {
+      "success": true,
+      "article": {
+        "slug": "quiet-details-behind-a-well-hosted-stay",
+        "title": "The Quiet Details Behind a Well-Hosted Stay",
+        "subtitle": "What thoughtful guest support looks like before arrival, during the stay, and in the moments plans change.",
+        "excerpt": "Good hosting rarely asks for attention. It appears in clear arrivals, prepared spaces, and useful help at the right moment.",
+        "category": "Concierge",
+        "date": "2026-10-01",
+        "readTime": "2 min read",
+        "heroImage": "/homepage_villa/curated-6-exterior.webp",
+        "heroAlt": "A prepared Bali villa entrance ready for guest arrival.",
+        "tags": [
+          "Concierge",
+          "Guest Experience",
+          "Hospitality"
+        ],
+        "author": {
+          "name": "Summerhouses Team",
+          "role": "Guest Experience Team",
+          "bio": "The local Summerhouses team sharing the small decisions that make a Bali stay feel considered.",
+          "avatar": null
+        },
+        "content": [
+          {
+            "text": "The most comfortable stays often feel simple because the complicated work has already happened. Arrival details are clear, the home is prepared, and help is close without becoming intrusive.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Before the Front Door Opens",
+            "type": "heading"
+          },
+          {
+            "text": "Thoughtful hosting begins before a guest lands. Transfer timing, villa access, room preferences, and the first practical questions should be resolved early so arrival feels calm rather than administrative.",
+            "type": "paragraph"
+          },
+          {
+            "alt": "A carefully prepared villa interior in Bali.",
+            "src": "/homepage_villa/88east.webp",
+            "type": "image",
+            "caption": "Preparation is most successful when guests never need to notice it."
+          },
+          {
+            "text": "The right support is present enough to be useful and quiet enough to let the stay remain yours.",
+            "type": "quote"
+          },
+          {
+            "text": "Local Knowledge at the Right Scale",
+            "type": "heading"
+          },
+          {
+            "text": "A useful recommendation considers the group, the weather, travel time, and the mood of the day. It may be a nearby dinner, a trusted driver, or a quieter beach suggested at exactly the right moment.",
+            "type": "paragraph"
+          },
+          {
+            "text": "When Plans Move",
+            "type": "subheading"
+          },
+          {
+            "text": "Bali days can change with rain, traffic, or a decision to stay by the pool. A responsive local team helps adjust the details while keeping the day relaxed. That flexibility is often the difference between service and genuine care.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Good support should also know when to step back. Once the details are handled, the villa belongs to the guests and the experience should feel natural, private, and entirely their own.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Behind that calm experience is a simple discipline: listen carefully, confirm clearly, and solve the practical issue without turning it into the centre of the stay.",
+            "type": "paragraph"
+          }
+        ]
+      }
+    },
+    "/v1/cms/articles/choosing-the-right-bali-villa-for-your-group": {
+      "success": true,
+      "article": {
+        "slug": "choosing-the-right-bali-villa-for-your-group",
+        "title": "Choosing the Right Bali Villa for Your Group",
+        "subtitle": "A practical way to balance bedrooms, location, shared spaces, and the pace of your trip.",
+        "excerpt": "The right villa is not simply the one with enough bedrooms. It should support how your group wants to spend the day.",
+        "category": "Travel",
+        "date": "2026-10-01",
+        "readTime": "2 min read",
+        "heroImage": "/homepage_villa/curated-5-lounge.webp",
+        "heroAlt": "A spacious villa lounge arranged for a group stay in Bali.",
+        "tags": [
+          "Villa Guide",
+          "Group Travel",
+          "Bali"
+        ],
+        "author": {
+          "name": "Summerhouses Team",
+          "role": "Villa Specialists",
+          "bio": "A Bali-based team matching guests with homes that suit the way they genuinely travel.",
+          "avatar": null
+        },
+        "content": [
+          {
+            "text": "A group villa has to do several jobs at once. It is a place to gather, a place to retreat, and often the setting for the moments everyone remembers most. Bedroom count matters, but the flow between private and shared space matters just as much.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Start With the Shape of the Trip",
+            "type": "heading"
+          },
+          {
+            "text": "A family with young children needs a different layout from friends planning late dinners and beach days. Think about who wakes early, who needs a quiet room, whether stairs are practical, and how often the whole group will actually be together.",
+            "type": "paragraph"
+          },
+          {
+            "alt": "A comfortable shared living space inside a Bali villa.",
+            "src": "/homepage_villa/curated-3-corner.webp",
+            "type": "image",
+            "caption": "Shared spaces work best when they invite company without removing privacy."
+          },
+          {
+            "text": "Location Changes the Daily Rhythm",
+            "type": "subheading"
+          },
+          {
+            "text": "Berawa keeps dining and beach clubs close. Pererenan offers a quieter coastal rhythm. Umalas feels private while staying central, and Ubud suits groups who want nature and wellness to lead the itinerary. The best location is the one that reduces unnecessary travel.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Choose the villa around the way your group will live, not only around the photographs.",
+            "type": "quote"
+          },
+          {
+            "text": "Confirm the Practical Details",
+            "type": "heading"
+          },
+          {
+            "text": "Before booking, confirm sleeping arrangements, child-friendly needs, workspace requirements, transport access, and any services you expect during the stay. Clear details at the beginning make the arrival feel effortless.",
+            "type": "paragraph"
+          },
+          {
+            "text": "It also helps to choose one person as the main contact for the booking. Questions, arrival details, and changes stay clear, while the rest of the group can focus on the trip instead of the logistics.",
+            "type": "paragraph"
+          }
+        ]
+      }
+    },
+    "/v1/cms/articles/a-slower-morning-in-canggu": {
+      "success": true,
+      "article": {
+        "slug": "a-slower-morning-in-canggu",
+        "title": "A Slower Morning in Canggu",
+        "subtitle": "A gentle route through early swims, quiet coffee, and the hours before Canggu gathers pace.",
+        "excerpt": "Canggu feels different before the traffic and the lunch tables. Here is how to enjoy its quieter first hours.",
+        "category": "Lifestyle",
+        "date": "2026-10-01",
+        "readTime": "2 min read",
+        "heroImage": "/images_canggu.jpg",
+        "heroAlt": "A quiet morning view across Canggu near the coast.",
+        "tags": [
+          "Canggu",
+          "Slow Living",
+          "Bali Mornings"
+        ],
+        "author": {
+          "name": "Summerhouses Team",
+          "role": "Editorial Studio",
+          "bio": "Local notes on Bali stays, thoughtful hosting, and the neighbourhoods around our homes.",
+          "avatar": null
+        },
+        "content": [
+          {
+            "text": "Canggu is often described through its energy, but its best hours can be the quiet ones. Before the roads fill and the cafés find their rhythm, the neighbourhood belongs to early surfers, market vendors, and guests taking their first unhurried swim of the day.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Begin Before the Neighbourhood Wakes",
+            "type": "heading"
+          },
+          {
+            "text": "Open the doors, let the morning air move through the villa, and leave the first hour unscheduled. A simple breakfast by the pool can feel more memorable than a packed itinerary when the light is still soft and the day has not yet asked anything from you.",
+            "type": "paragraph"
+          },
+          {
+            "alt": "A calm tropical view from a Summerhouses villa.",
+            "src": "/homepage_villa/curated-4-view.webp",
+            "type": "image",
+            "caption": "The first light in Bali rewards an early start and an open plan."
+          },
+          {
+            "text": "The quieter side of Canggu is still there. You only need to meet it a little earlier.",
+            "type": "quote"
+          },
+          {
+            "text": "Coffee, Coast, and an Open Afternoon",
+            "type": "heading"
+          },
+          {
+            "text": "Choose one café rather than trying to collect five. Walk the beach before the heat settles in, then return to the villa with the afternoon still open. A slower plan gives the neighbourhood room to feel personal rather than performed.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Our guest team can help with a driver, a breakfast recommendation, or a table for later. The rest of the morning is better left beautifully uncomplicated.",
+            "type": "paragraph"
+          },
+          {
+            "text": "If the day becomes busier, let it happen after a calm beginning. The point is not to avoid everything Canggu offers, but to experience it with enough space to notice the smaller details along the way.",
+            "type": "paragraph"
+          }
+        ]
+      }
+    },
+    "/v1/cms/articles/designing-your-dream-villa-in-bali": {
+      "success": true,
+      "article": {
+        "slug": "designing-your-dream-villa-in-bali",
+        "title": "Designing Your Dream Villa in Bali",
+        "subtitle": "A practical guide to tropical modern living, from orientation and materials to the rituals that make a house feel alive.",
+        "excerpt": "Designing a Bali villa is not only about views and finishes. It is about climate, culture, light, and how people move through a day.",
+        "category": "Property Insight",
+        "date": "2026-05-06",
+        "readTime": "9 min read",
+        "heroImage": "/homepage_villa/villaarta.webp",
+        "heroAlt": "A refined Bali villa with a pool and warm architectural lighting.",
+        "tags": [
+          "Property",
+          "Design",
+          "Investment"
+        ],
+        "author": {
+          "name": "Summerhouses Team",
+          "role": "Editorial Studio",
+          "bio": "A small team of villa specialists, designers, and Bali hosts sharing notes on tropical living, thoughtful property investment, and the quieter side of island life.",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop"
+        },
+        "content": [
+          {
+            "text": "A dream villa in Bali begins long before the first material sample is chosen. It begins with orientation: where the morning light enters, how the breeze crosses the site, what the garden should reveal first, and which view deserves silence around it.",
+            "type": "paragraph"
+          },
+          {
+            "text": "The strongest homes on the island feel effortless because their decisions are deeply practical. Rooflines manage heat. Courtyards create privacy. Overhangs soften rain. Materials are selected not only for beauty, but for how gracefully they age in a tropical climate.",
+            "type": "paragraph"
+          },
+          {
+            "text": "Start With Climate, Not Decoration",
+            "type": "heading"
+          },
+          {
+            "text": "Tropical modern design works best when architecture collaborates with the weather. Cross-ventilation, shaded thresholds, deep eaves, and planted edges can make a villa feel calm even at midday. Mechanical comfort matters, but the first layer of comfort should come from the plan itself.",
+            "type": "paragraph"
+          },
+          {
+            "alt": "A villa pool and terrace designed for tropical outdoor living.",
+            "src": "/homepage_villa/TKR03549-HDR.webp",
+            "type": "image",
+            "caption": "Outdoor rooms should feel intentional, not leftover. In Bali, they are often the heart of the home."
+          },
+          {
+            "text": "The most successful Bali villas do not copy the island. They make space for the island to enter.",
+            "type": "quote"
+          },
+          {
+            "text": "Design for the Way Guests Actually Live",
+            "type": "heading"
+          },
+          {
+            "text": "For owners, a beautiful villa is also an operational product. Bedrooms need privacy. Staff paths should be discreet. Storage must be generous. Lighting should make evening transitions feel natural. The goal is not only a photogenic first impression, but a stay that gets better each day.",
+            "type": "paragraph"
+          },
+          {
+            "text": "The Details That Create Value",
+            "type": "subheading"
+          },
+          {
+            "text": "Durable natural stone, layered planting, shaded dining, flexible lounge areas, and a strong arrival moment can all improve perceived value. The best investment is rarely the loudest feature. It is the combination of many quiet decisions that make guests feel cared for.",
+            "type": "paragraph"
+          }
+        ]
+      }
+    },
+    "/v1/cms/lodgify/snapshot": {
+      "success": true,
+      "snapshotVersion": "d3dd20a3-7422-44aa-98b9-1776f1c2615a",
+      "generatedAt": "2026-09-23T23:19:30+07:00",
+      "properties": [
+        {
+          "property": {
+            "id": 524256,
+            "name": "88 East Home Canggu",
+            "description": "<p>Kick back & relax in this stylish apartment.&nbsp;Located in the heart of Canggu, 88 East is tucked away inside a quiet pocket surrounding, between a temple and rice fields, providing a calming, serene atmosphere while boasting in the modern top-notch designer space featuring premium luxury finishings.&nbsp;This property provides all of the necessary amenities you need and a cleaning service included for an ultimate comfortable stay. Enjoy the bliss of modern living space in a tropical island environment.<br><br>[The Design] This stunning studio apartment is designed to offer a contemporary aesthetic with open spaces creating a light and airy atmosphere that flows seamlessly from one area",
+            "image_url": "//l.icdbcdn.com/oh/32e1cfd0-c1d0-4f41-bf8c-f31eb0c25660.jpg?f=32",
+            "images": [],
+            "city": "Canggu",
+            "country": "Indonesia",
+            "address": "Jalan Raya Kayutulang",
+            "latitude": -8.639827899999998,
+            "longitude": 115.1476891,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 590847,
+              "name": "88 East Home Canggu",
+              "image_url": "//l.icdbcdn.com/oh/32e1cfd0-c1d0-4f41-bf8c-f31eb0c25660.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/32e1cfd0-c1d0-4f41-bf8c-f31eb0c25660.jpg?f=32",
+                  "text": "Welcome to our ultimate holiday apartment in the central location of Canggu"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/c6df5e38-a23a-4a4f-8472-5b457214f6ac.jpg?f=32",
+                  "text": "Feel right at home. Our Airbnb complete with private kitchen, living room, and dining table."
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/d52c68c7-bf02-4212-866f-c3d48b15e56c.jpg?f=32",
+                  "text": "Beautifully designed with the elevated modern tropical interior"
+                }
+              ],
+              "max_people": 3,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 704947,
+            "name": "Berawa Factory I Canggu",
+            "description": "<p>Modern tropical comfort meets cozy mid-century decor in this bright 1-bedroom loft-style villa in the Canggu area. Comfortably situated just 2km from the Berawa Beach, within walking distance to restaurants and shops. <br><br>Enjoy an open living space with unique artwork, a fully equipped kitchen, and your own private plunge pool. <br><br>- Cleaning service included. <br>- Guest support to help you with airport pick-up, scooter rentals, floating breakfasts, and more add-ons. <br><br><br><strong>THE SPACE</strong><br>Perfect for travelers who appreciate clean, modern lines softened by mid‑century pieces and a tropical edge. This private loft-style home opens to a light‑filled great room w",
+            "image_url": "//l.icdbcdn.com/oh/de4849ee-10ec-4bc3-be30-5b0ff16205ab.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Jalan Puri Canggu 1, No.16",
+            "latitude": -8.650960086012542,
+            "longitude": 115.1458873580486,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 772033,
+              "name": "Berawa Factory I Canggu",
+              "image_url": "//l.icdbcdn.com/oh/de4849ee-10ec-4bc3-be30-5b0ff16205ab.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/de4849ee-10ec-4bc3-be30-5b0ff16205ab.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/d84a6c07-d673-412e-96e8-a2eb5ef96dcf.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/8333c730-824e-4c9b-9522-ba25c9c32411.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475372,
+            "name": "Cactus Estate Villa Pererenan",
+            "description": "<p>Escape to this luxe townhouse in a quiet part of Pererenan, just 5mins away from the heart of Canggu & the beaches.<br>This luxe townhouse explores a modernist take on Mediterranean aesthetics. The pared-back design & natural color palette emphasize on relaxed and comfortable lifestyle. Features smart-home devices, airy open-plan living, a chic patio by the pool, and comfortable stylish bedrooms.&nbsp;Enjoy the peaceful summer atmosphere that is perfect for spending quality time with your loved ones!<br><br>[The Open Plan Floor - Kitchen, Diner, and Living room]<br>The open floor concept of this designer townhouse connects the sophisticated kitchen, elegant dining, living, and outdoor to ",
+            "image_url": "//l.icdbcdn.com/oh/9f327708-372d-4351-84d4-f4db37b34b2e.jpg?f=32",
+            "images": [],
+            "city": "Pererenan",
+            "country": "Indonesia",
+            "address": "Jalan Sempol",
+            "latitude": -8.640621,
+            "longitude": 115.1317845,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541616,
+              "name": "Cactus Estate Villa Pererenan",
+              "image_url": "//l.icdbcdn.com/oh/9f327708-372d-4351-84d4-f4db37b34b2e.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/9f327708-372d-4351-84d4-f4db37b34b2e.jpg?f=32",
+                  "text": "A Mediterranean oasis at your Bali vacation home"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/3e8ae573-c4b2-4668-b736-07d28935bfd2.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/72af53f4-1e02-4ac3-996a-33fe31f9b152.jpg?f=32",
+                  "text": "This luxe townhouse explores a modernist take on Mediterranean aesthetics."
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 759820,
+            "name": "Casa Leone Canggu",
+            "description": "<p>A thoughtfully designed private pool villa in Canggu, created for slow tropical living. Warm natural textures, airy indoor–outdoor spaces, and a private courtyard define the home’s character. Located close to Canggu’s cafés, beaches, and shops, it’s ideal for couples or solo travelers seeking comfort and style.</p>\n<p>Regular cleaning is included with your stay, with optional add-on services such as airport transfer, private chef, and scooter rental available for a seamless stay.</p>\n<p>x,</p>\n<p>Summerhouse Bali.</p>\n<p><strong></strong></p>\n<p><strong>THE SPACE</strong><br>Casa Leone is defined by homey, understated details and thoughtful spatial flow. Natural textures, soft neutral ton",
+            "image_url": "//l.icdbcdn.com/oh/dea23a1e-ee53-405d-b109-429b59cd364b.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gg. Griya Kusuma Indah No.05",
+            "latitude": -8.651045603118083,
+            "longitude": 115.14694884226626,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 826950,
+              "name": "Casa Leone Canggu",
+              "image_url": "//l.icdbcdn.com/oh/dea23a1e-ee53-405d-b109-429b59cd364b.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/dea23a1e-ee53-405d-b109-429b59cd364b.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/d790289a-d501-443f-909a-18a6a6066268.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/fdeafad7-dc0c-4285-8e89-fe830ab057f6.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475366,
+            "name": "Casaluna Loft I",
+            "description": "<p>Welcome to our 2-bedroom townhouse in Canggu! This space perfectly blends modern industrial design with natural island vibes, featuring two cozy bedrooms with en-suite bathrooms and all the essential amenities to ensure your comfort throughout your stay. The open floor plan includes a modern kitchen and a lounge area. We haven't forgotten about the outside either! Enjoy a delightful outdoor space with a plunge pool and an outdoor dining area; exactly what you need to soak up that tropical feel.<br><br>--THE SPACE--<br>The apartment can accommodate up to 4 guests with spaces as follows:<br>- 2 En-Suite Bedrooms (both situated on the 2nd floor)<br>The earthy-tone bedroom is chic and spaciou",
+            "image_url": "//l.icdbcdn.com/oh/cc689faf-1665-4e34-b91f-435dfef22ff0.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Padonan",
+            "country": "Indonesia",
+            "address": "Gang Mangga II",
+            "latitude": -8.633535100000001,
+            "longitude": 115.1564061,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541610,
+              "name": "Casaluna Loft I",
+              "image_url": "//l.icdbcdn.com/oh/cc689faf-1665-4e34-b91f-435dfef22ff0.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/cc689faf-1665-4e34-b91f-435dfef22ff0.jpg?f=32",
+                  "text": "Modern Industrial Design Airbnb with Private Pool, Kitchen & Open-Plan Living"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/35d4da49-72ca-42f8-ab2a-36fb097d286a.jpg?f=32",
+                  "text": "Our apartment combines the element of modern industrial with natural island decor"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/0aa4abcb-af5e-48d7-8c50-ceceae7b879e.jpg?f=32",
+                  "text": "cute stunning outdoor space complete with a plunge pool and romantic outdoor dining."
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475374,
+            "name": "Casaluna Loft II",
+            "description": "<p>Casaluna Apartment is a private industrial-style townhouse mixed with a natural tropical element that creates a timeless look and is aesthetically pleasing.&nbsp;This beautiful modern Airbnb consists of 1 cozy bedroom complete with a stylish en-suite bathroom with a bathtub and equipped with smart TV, downstairs we have a fully equipped kitchen and dining and living room. The outdoor space is a perfect spot for enjoying a romantic dinner, a nice nap, or lounging and cooling off in the plunge pool.<br><br>This townhouse can accommodate up to 2 guests. It has a spacious parking space, a cozy living room with a guest restroom, a fully-equipped kitchen with a modish dining area, and a stunnin",
+            "image_url": "//l.icdbcdn.com/oh/94c09c54-301b-4fb0-90b2-96088ae04d64.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Padonan",
+            "country": "Indonesia",
+            "address": "Gang Mangga II",
+            "latitude": -8.633535100000001,
+            "longitude": 115.1564061,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541617,
+              "name": "Casaluna Loft II",
+              "image_url": "//l.icdbcdn.com/oh/94c09c54-301b-4fb0-90b2-96088ae04d64.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/94c09c54-301b-4fb0-90b2-96088ae04d64.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/1749ae13-5df5-40c2-84b6-79e9d6a986f5.jpg?f=32",
+                  "text": "Welcome to our modern industrial townhouse"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/871b05a7-2181-4848-a4b3-519c9d75eb25.jpg?f=32",
+                  "text": "Modern kitchen with island table"
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475367,
+            "name": "Casaluna Loft III",
+            "description": "<p>Welcome to Casaluna, your brand new modern Bali holiday home in Canggu! Our private Airbnb townhouse combines modern industrial townhouse style with natural tropical elements, creating a beautiful and aesthetically pleasing space for your vacation.&nbsp;Inside, you'll find a well-equipped kitchen, outdoor dining, and lounging space. The en-suite bedroom is airy and neat, with a pared-back design and earthy tones that evoke a sense of warmth and coziness.<br><br>This townhouse can accommodate up to 2 guests. It has a spacious parking space, a cozy living room with a guest restroom, a fully-equipped kitchen with a modish dining area, and a stunning pool area to chill and release your stress",
+            "image_url": "//l.icdbcdn.com/oh/8100e24f-61e2-4076-b3e9-b58a9b8f267a.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Padonan",
+            "country": "Indonesia",
+            "address": "Gang Mangga II",
+            "latitude": -8.633535100000001,
+            "longitude": 115.1564061,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541611,
+              "name": "Casaluna Loft III",
+              "image_url": "//l.icdbcdn.com/oh/8100e24f-61e2-4076-b3e9-b58a9b8f267a.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/8100e24f-61e2-4076-b3e9-b58a9b8f267a.jpg?f=32",
+                  "text": "Modern Canggu Apartment with Private Plunge Pool"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/c2a30830-dd3c-4519-8f24-4e2d3faa8fd0.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/77cf8944-0e1a-472e-8486-c09c3da19a18.jpg?f=32",
+                  "text": "Spacious cozy earthy tone bedroom"
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 703452,
+            "name": "Corner House Canggu",
+            "description": "<p>Step off Canggu’s buzz and into your private oasis. Centrally located, you can walk to gyms, padel courts, restaurants, & shops. <br><br>Start slow with coffee by your private plunge pool. Make it extra special with a floating breakfast or an in-house massage, both available on request. Perfect for a couple or close friends seeking an intimate stay, the house features a cozy living room with TV and air conditioning, a fully equipped kitchen and dining, and a mezzanine workspace for digital nomads.</p>\n<p><br></p>\n<p><strong>THE SPACE</strong><br>Scandi‑minimalist with industrial accents. Bright whites, warm wood, clean lines, and greenery balanced by polished concrete and black steel. Flo",
+            "image_url": "//l.icdbcdn.com/oh/1ccd9bcc-793e-4b6b-8fcc-a9e94e80a79c.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Rajawali I",
+            "latitude": -8.648855961345475,
+            "longitude": 115.14832749769992,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 770520,
+              "name": "Corner House Canggu",
+              "image_url": "//l.icdbcdn.com/oh/1ccd9bcc-793e-4b6b-8fcc-a9e94e80a79c.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/1ccd9bcc-793e-4b6b-8fcc-a9e94e80a79c.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/a0ee2d32-ddbf-4446-ad3a-321d8120bb4a.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/868e90c4-2fe4-46b5-bb6b-19520df6fba0.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 5,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 811288,
+            "name": "Fondazione Bondarev Ubud",
+            "description": "<p>Artist Loft Studio in Central Ubud</p>\n<p>Fondazione Bondarev is not a typical stay. It is an expressive loft apartment shaped by art, raw textures, open space, and the feeling of living inside a working creative world that feels bold, personal, and deeply atmospheric.</p>\n<p>The location is ideal for guests who want to walk around and explore the area easily. Cafes, restaurants, galleries, shops, and cultural spots are all within easy reach, while the home itself remains tucked away in a small alley.</p>\n<p>Next to the apartment, through the wide glass, is a family heritage temple ground, creating a rare visual and emotional contrast — the expressive world of the artist's loft beside the",
+            "image_url": "//l.icdbcdn.com/oh/d7a2df76-7c73-456a-b139-c42a942e0dd4.jpg?f=32",
+            "images": [],
+            "city": "Ubud",
+            "country": "Indonesia",
+            "address": " Gang Anila No.25",
+            "latitude": -8.51655927895938,
+            "longitude": 115.2632407,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 878412,
+              "name": "Fondazione Bondarev Ubud",
+              "image_url": "//l.icdbcdn.com/oh/d7a2df76-7c73-456a-b139-c42a942e0dd4.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/d7a2df76-7c73-456a-b139-c42a942e0dd4.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/cc879e25-15e6-4930-ae02-1ebc76acbd3a.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/b7d4ee5d-46d6-4d21-9ba9-56a3c23ed1b7.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 760838,
+            "name": "Il Riparo Villa Canggu",
+            "description": "<p>An earthy private home defined by natural finishes and an easy indoor–outdoor layout. Large windows open the living space to a private pool, creating a relaxed flow for everyday use.</p>\n<p>Within walking distance to cafés, restaurants, gyms, and a supermarket, and just a short scooter ride to the beach and Canggu’s best scenes.</p>\n<p>Cleaning is included, and our guest‑support team could arrange private transport, scooter rentals, private chef, and more add-ons for a seamless stay.</p>\n<p>x,<br>Summerhouse Bali.<strong><br></strong></p>\n<p></p>\n<p><strong>THE SPACE<br></strong>The home is shaped by a quiet, material-led approach to design. Natural textures, softened edges, and warm neut",
+            "image_url": "//l.icdbcdn.com/oh/48580ae9-a543-45d5-b477-7f3d3dba690c.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gg. Jalak 18",
+            "latitude": -8.654450361400421,
+            "longitude": 115.14304555759732,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 827969,
+              "name": "Il Riparo Villa Canggu",
+              "image_url": "//l.icdbcdn.com/oh/48580ae9-a543-45d5-b477-7f3d3dba690c.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/48580ae9-a543-45d5-b477-7f3d3dba690c.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/2192d5bd-ec06-4e11-8e86-b93f2a94ff21.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/6de640cc-8c3d-4079-84eb-e60ef2d9cc08.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 712189,
+            "name": "Loft Tres Pererenan",
+            "description": "<p>Loft-style sanctuary in Pererenan, steps from Lyma Beach. This laid-back pocket near Canggu is framed by ricefields and the best sunsets, food, and surf. <br><br>Sunlit, open-plan living flows to the private pool, with a sleek kitchen, a cozy mezzanine bedroom, and a stylish lounge <br><br>- Ideal for a couple’s escape or a digital‑nomad base <br>- Walk to restaurants and beach <br>- Cleaning service included and guest support for arranging transport, scooter rentals, in-house massages, floating breakfasts, and more <br><br><br><strong>THE SPACE</strong><br>Loft Tres pairs clean, modern lines with the warmth of tropical materials. A loft-style layout with double‑height ceilings and expans",
+            "image_url": "//l.icdbcdn.com/oh/b75f8cf5-9626-40c8-9612-68381a00707d.jpg?f=32",
+            "images": [],
+            "city": "Pererenan",
+            "country": "Indonesia",
+            "address": "Jalan Babadan, No.200",
+            "latitude": -8.6464736,
+            "longitude": 115.1195578,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 779292,
+              "name": "Loft Tres Pererenan",
+              "image_url": "//l.icdbcdn.com/oh/b75f8cf5-9626-40c8-9612-68381a00707d.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/b75f8cf5-9626-40c8-9612-68381a00707d.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/dddc4b5a-882f-4923-920e-337684a63356.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/0bcf10a9-4876-4b31-bedc-1a2d289fb87c.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 712190,
+            "name": "Loft Uno Pererenan",
+            "description": "<p>Welcome to your breezy escape to modern tropical living—perfectly set up for couples & digital nomads. The sunlit, open-plan space features large windows that open to a private pool, creating an indoor–outdoor living throughout. <br><br>Stroll to the beach, cafès, spas, and shops, or hop on a scooter to reach Canggu’s best nightlife in just minutes. <br><br>Cleaning is included, and our guest support team can arrange private transport, scooter rental, floating breakfast, and more add-ons for a seamless stay. <br><br><br><strong>THE SPACE</strong><br>Loft Uno pairs clean, modern lines with the warmth of tropical materials. A loft-style layout with double‑height ceilings and expansive slidi",
+            "image_url": "//l.icdbcdn.com/oh/3440cd9f-dedc-4722-9a91-d9c752f8905a.jpg?f=32",
+            "images": [],
+            "city": "Pererenan",
+            "country": "Indonesia",
+            "address": "Jalan Babadan, No.200",
+            "latitude": -8.6464736,
+            "longitude": 115.1195578,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 779293,
+              "name": "Loft Uno Pererenan",
+              "image_url": "//l.icdbcdn.com/oh/3440cd9f-dedc-4722-9a91-d9c752f8905a.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/3440cd9f-dedc-4722-9a91-d9c752f8905a.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/2e18d7f4-cf52-4161-9cca-7cc368bda282.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/b06efef8-b380-4305-ae0f-d1298cd2c6b6.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 706260,
+            "name": "Mari Apartment Canggu",
+            "description": "<p>Stay in the heart of Berawa, Canggu. Walk to cafes & restaurants, with the beach and club scene just a short ride away. This stylish apartment is designed for both comfort and productivity, perfect for digital nomads with reliable WiFi, a private kitchen, and air-conditioned living area.&nbsp;The ideal home base for your Bali lifestyle. <br><br>Cleaning service is included, and our dedicated guest support team can arrange transport, private chef, scooter rental, or in-house massage for a hassle-free stay. <br><br><br><strong>THE SPACE</strong><br>High ceilings, large windows, and an open layout fill the space with light and fresh tropical air, and elegant wood furniture and minimalist dec",
+            "image_url": "//l.icdbcdn.com/oh/8103ea07-1ec8-42e0-9e27-9ab84a087cb6.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Jalak 16A, No.7",
+            "latitude": -8.6248221,
+            "longitude": 115.1705382,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 773360,
+              "name": "Mari Apartment Canggu",
+              "image_url": "//l.icdbcdn.com/oh/8103ea07-1ec8-42e0-9e27-9ab84a087cb6.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/8103ea07-1ec8-42e0-9e27-9ab84a087cb6.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/8c6af3ee-ac56-43d6-ab2d-c9efd3b7f4f3.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/784a0e51-b4dc-4abe-923a-194f5ef18dee.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 706213,
+            "name": "Nara House Canggu",
+            "description": "<p>This designer home seamlessly blends industrial-modern lines with tropical warmth. Black-steel large windows fill the lounge with light, opening onto a courtyard and private pool. A seamless indoor–outdoor living throughout. <br><br>Stroll to cafés/restaurants, spas, and shops. Hop on a scooter to the beach and nightlife scenes in just minutes. <br><br>Cleaning is included, and our guest‑support team can arrange private transport, scooter rentals, floating breakfasts, and other add‑ons for a seamless stay. <br><br><br><strong>THE SPACE</strong><br>Rooted in a chic industrial palette, black steel, clean geometry, and polished concrete—the interiors are softened with warm woods, rattan pend",
+            "image_url": "//l.icdbcdn.com/oh/28350e4a-dda2-4c8c-a04d-3c5aa2bb418c.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Jalak 16A, No.7",
+            "latitude": -8.653695960838217,
+            "longitude": 115.14366816536491,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 773313,
+              "name": "Nara House Canggu",
+              "image_url": "//l.icdbcdn.com/oh/28350e4a-dda2-4c8c-a04d-3c5aa2bb418c.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/28350e4a-dda2-4c8c-a04d-3c5aa2bb418c.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/df1dd5eb-98ae-4a80-8808-a3551c929edb.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/a372f388-f612-46ec-93ce-e7c2234d0f5f.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 759821,
+            "name": "Officina 17 Canggu",
+            "description": "<p>Set in Canggu, just a five-minute drive to Berawa Beach and endless nearby cafés and shops, this loft-style home offers a cozy space with refined, industrial-warm design.</p>\n<p>Ideal for a couple or a small group of up to four, the home features a private balcony with a plunge pool and thoughtfully curated vintage details throughout. Regular cleaning is included with your stay, with optional add-on services such as airport pickup and scooter rental available for a seamless stay.</p>\n<p>x,</p>\n<p>Summerhouse Bali.<br></p>\n<p></p>\n<p><strong>THE SPACE</strong><br>Rooted in a warm industrial language, the home balances raw surfaces with softened textures and carefully chosen vintage accents",
+            "image_url": "//l.icdbcdn.com/oh/2ef54dbd-7040-484c-8a34-cba9a65ef377.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Jl. Canggu Permai Gg. Cendrawasih II No.17",
+            "latitude": -8.649739642103363,
+            "longitude": 115.14672018394774,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 826951,
+              "name": "Officina 17 Canggu",
+              "image_url": "//l.icdbcdn.com/oh/2ef54dbd-7040-484c-8a34-cba9a65ef377.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/2ef54dbd-7040-484c-8a34-cba9a65ef377.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/c3579beb-71dc-4baa-abe8-6079e4bac2ed.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/627ca830-018a-4b81-be96-60d094d9c052.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 703453,
+            "name": "Paddy Palace Canggu",
+            "description": "<p>Welcome to our stunning designer villa in Canggu. Featuring a modern-industrial aesthetic with tropical boho accents, it blends island sophistication with contemporary comfort. <br><br>- Private pool and fully enclosed living <br>- Walking distance to gyms, restaurants, cafes, and supermarkets <br>- Less than 10 minutes by scooter to the beach, clubs, and bars <br>- Housekeeping included; our team can arrange airport transfers, scooter rentals, floating breakfasts, and more <br>- \"Nook\" working space <br><br><br><strong>THE SPACE</strong><br>A homey modern hideaway with warm natural textures and a private pool. Vaulted ceilings with exposed beams, polished floors, and floor‑to‑ceiling gla",
+            "image_url": "//l.icdbcdn.com/oh/7fff0808-89b4-4269-a9ba-c490e1140f79.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Kelapa Gading",
+            "latitude": -8.653144412194605,
+            "longitude": 115.1454280297548,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 770521,
+              "name": "Paddy Palace Canggu",
+              "image_url": "//l.icdbcdn.com/oh/7fff0808-89b4-4269-a9ba-c490e1140f79.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/7fff0808-89b4-4269-a9ba-c490e1140f79.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/4c618d1e-b2a5-4016-a5eb-329a2c6fecbd.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/7d12146c-f4fe-4146-b081-5e38d037d336.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 704946,
+            "name": "Palazzo Pappagallo Canggu",
+            "description": "<p>Your private oasis in Berawa, Canggu. This modern, tropical‑boho villa offers two stylish bedrooms with en‑suite bathrooms, an airy air‑conditioned living space, and a private plunge pool in a charming outdoor area. <br><br>Stroll to cafés, restaurants, gyms, and shops, or hop on a scooter to reach the beach, clubs, and bars in just minutes. <br><br>Cleaning is included, and our guest‑support team can arrange airport pickups, scooter rentals, floating breakfasts, and other add‑ons for a seamless stay.&nbsp;<br><br><br><strong>THE SPACE</strong><br>For home design lovers, this villa is a unique blend of tropical modern and bohemian warmth. The loft‑like open living space features double‑he",
+            "image_url": "//l.icdbcdn.com/oh/b3b09dc2-c57a-49d8-a67c-d67a62696184.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Jalan Tempaekan IV",
+            "latitude": -8.648942804782632,
+            "longitude": 115.1454005371124,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 772032,
+              "name": "Palazzo Pappagallo Canggu",
+              "image_url": "//l.icdbcdn.com/oh/b3b09dc2-c57a-49d8-a67c-d67a62696184.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/b3b09dc2-c57a-49d8-a67c-d67a62696184.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/43e30035-c2fe-44e0-a70b-cd89385a5691.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/5aabc5a8-0c20-426a-bca2-bc6ebc5e8c2f.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 761507,
+            "name": "Rumah Mimosa Canggu",
+            "description": "<p>Set in Central Canggu, Rumah Mimosa blends earthy textures with subtle industrial details. Curated vintage furnishings, soft natural light, and a private pool create a homey atmosphere to settle in. Conveniently located near cafés, gyms, and other daily essentials, with Berawa Beach just a 5-minute scooter ride away.</p>\n<p>Regular cleaning is included. Optional add-ons such as transport, private chef arrangements, and scooter rental are available upon request for a seamless stay.</p>\n<p>x,<br>Summerhouse Bali</p>\n<p><strong><br></strong></p>\n<p><strong>THE SPACE</strong><br>The home has a distinctive warm-industrial character that gently evokes a vintage atmosphere. Old metal frames, cur",
+            "image_url": "//l.icdbcdn.com/oh/79a652e1-c013-4faf-a573-c63e08576439.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gg. Asri II",
+            "latitude": -8.655922034771201,
+            "longitude": 115.14372952089612,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 828638,
+              "name": "Rumah Mimosa Canggu",
+              "image_url": "//l.icdbcdn.com/oh/79a652e1-c013-4faf-a573-c63e08576439.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/79a652e1-c013-4faf-a573-c63e08576439.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/d8f6c8e1-c82a-41cb-90e8-8a859f447ae5.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/9dce7464-12b1-4721-9de7-3fb0d33d43e4.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 494863,
+            "name": "Studio Lupo Canggu",
+            "description": "<p>Our stylish 2-bedroom studio apartment, where pop art meets modernity in perfect harmony. A clean contemporary aesthetic, with meticulously chosen finishing, furniture, and decor that is stylish, intriguing, and functional. Boasts an abundance of natural light, with open space that makes every room airy and bright.&nbsp;Conveniently located in the middle of the \"action\" in Canggu. Just a 4-minute walk from Berawa Beach, with a neighborhood filled with cool cafes, restaurants, bars, and clubs.<br><br>- The Design -<br>Our apartment embraces a design style that seamlessly blends contemporary elements with bold, energetic pop art. Every piece of furniture and decor has been carefully selecte",
+            "image_url": "//l.icdbcdn.com/oh/bbe19f11-949a-4596-b980-2c1e58a608b1.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Studio Lupo",
+            "latitude": -8.661487161993561,
+            "longitude": 115.13666525290316,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 561167,
+              "name": "Studio Lupo Canggu",
+              "image_url": "//l.icdbcdn.com/oh/bbe19f11-949a-4596-b980-2c1e58a608b1.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/bbe19f11-949a-4596-b980-2c1e58a608b1.jpg?f=32",
+                  "text": "Welcome to our stunning private Airbnb apartment in Canggu."
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/1f8695ed-50a4-4871-b3ba-be5042185ef3.jpg?f=32",
+                  "text": "Terrace with outdoor dining area"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/36979597-d375-4e0f-baec-35661ffb9911.jpg?f=32",
+                  "text": "Tastefully design living room with eclectic airy atmosphere"
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475375,
+            "name": "The Atelier Home Canggu",
+            "description": "<p>Welcome to our Canggu designer townhouse. With its modern tropical style, the villa is designed to offer the perfect balance between modern sophistication and comfortable living.</p>\n<p>- Just within walking distance to gyms, restaurants, cafes, and shops.</p>\n<p>- Housekeeping included & service staff to assist with airport transfer, scooter rental, floating breakfast, etc.</p>\n<p>- Private dip pool & outdoor dining area</p>\n<p>- Fully air conditioned</p>\n<p>- Less than 10 minutes scooter ride to the beach, clubs, and bars.</p>\n<p>The Design</p>\n<p>This villa showcases expertly crafted contemporary design with a delightful tropical twist. The overall aesthetic is adorned with warm, earth",
+            "image_url": "//l.icdbcdn.com/oh/5a281b1b-e3cd-43b8-b857-2db2670408cd.jpg?f=32",
+            "images": [],
+            "city": "Canggu",
+            "country": "Indonesia",
+            "address": "Jalan Raya Uma Buluh",
+            "latitude": -8.6352215,
+            "longitude": 115.150254,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541619,
+              "name": "The Atelier Home Canggu",
+              "image_url": "//l.icdbcdn.com/oh/5a281b1b-e3cd-43b8-b857-2db2670408cd.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/5a281b1b-e3cd-43b8-b857-2db2670408cd.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/2c17f846-51be-468d-a37a-b4b066c3cf5a.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/738291e2-f354-4501-8451-3688a27d60ee.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 598366,
+            "name": "The Attic Loft",
+            "description": "<p>Welcome to this stunning loft that radiates the distinct characteristics of the modern mediterranean aesthetic. A special place for you who find beauty in the design that embrace intimacy and summer atmosphere. Every design choice is intended to fuse comfort, functionality, and style. </p>\n<p>Nestled in a laid-back neighborhood amongst the locals, away from the jam-packed tourist spot. Yet, it is only a few minutes' drive to the central part of Canggu.<br><br>We look forward to hosting you.<br><br>Love,<br>Your Host.<br><br></p>\n<p>*THE SPACE DETAIL*<br>- Located on the 3rd floor in the 3-floor building.<br>- The whole loft is fully air-conditioned<br>- Smart lock installed<br><br>- King-",
+            "image_url": "//l.icdbcdn.com/oh/f4c453bd-76ce-451a-8744-e8ed8ef84e3f.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Padonan",
+            "country": "Indonesia",
+            "address": "Jl. Pegending VIII",
+            "latitude": -8.624988799999999,
+            "longitude": 115.1557372,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 665154,
+              "name": "The Attic Loft",
+              "image_url": "//l.icdbcdn.com/oh/f4c453bd-76ce-451a-8744-e8ed8ef84e3f.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/f4c453bd-76ce-451a-8744-e8ed8ef84e3f.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/0bfddd58-9e27-4844-938d-1a6207385097.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/26694577-84ab-40ca-97eb-ef00a9b20586.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 2,
+              "bedrooms": 1,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475365,
+            "name": "Ubud zen river house",
+            "description": "<p>Welcome to Ubud Zen River House, a hidden gem nestled in the heart of a tropical jungle. This stunning Airbnb Loft-Style Home boasts a yoga deck and captivating panoramic views of the enchanting Ubud Jungle. - Immerse yourself in the tranquility of this retreat, where modern living seamlessly blends with nature's embrace. - Despite its secluded setting, our oasis offers the convenience of a central location. - Stroll through the lush surroundings and discover the best cafes and restaurants.<br><br>It's a spacious loft-style home designed with modern rustic decor and artsy interiors blended with stunning natural surroundings.<br>2 Beds overlooking the wonderful jungle view, a mezzanine, a ",
+            "image_url": "//l.icdbcdn.com/oh/34c29b15-a5d1-4f1b-9cd9-446e04b0b7ca.jpg?f=32",
+            "images": [],
+            "city": "Ubud",
+            "country": "Indonesia",
+            "address": "Gg. Nyuh Gadang, Mas",
+            "latitude": -8.524358,
+            "longitude": 115.255033,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541609,
+              "name": "Ubud zen river house",
+              "image_url": "//l.icdbcdn.com/oh/34c29b15-a5d1-4f1b-9cd9-446e04b0b7ca.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/34c29b15-a5d1-4f1b-9cd9-446e04b0b7ca.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/b3657223-46cd-4661-8341-51d754e1a077.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/dfa6523b-8981-4748-a5e5-50b43b11850a.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 0,
+              "bathrooms": 1
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 760836,
+            "name": "Undici Villa Canggu",
+            "description": "<p>An earthy, design-led courtyard home defined by natural textures, soft light, and a private pool at its center. Located in Canggu, just a 5-minute drive to Berawa Beach and within walking distance to cafés, shops, and gyms.</p>\n<p>The home is professionally cleaned and maintained by a dedicated team. Optional services such as transport and a private chef are available on request. An ideal base for exploring the island or spending quality time at home, offering comfort and ease.</p>\n<p>x,<br>Summerhouse Bal<strong><br></strong></p>\n<p></p>\n<p><strong>THE SPACE<br></strong>The home is shaped by a quiet, material-led approach to design. Natural textures, softened edges, and warm neutral tone",
+            "image_url": "//l.icdbcdn.com/oh/4e69d16e-7ffb-40d8-83e9-20f3e83e690b.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Vanili No.7",
+            "latitude": -8.652378561784996,
+            "longitude": 115.14394322453693,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 827967,
+              "name": "Undici Villa Canggu",
+              "image_url": "//l.icdbcdn.com/oh/4e69d16e-7ffb-40d8-83e9-20f3e83e690b.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/4e69d16e-7ffb-40d8-83e9-20f3e83e690b.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/ccc88896-cb5b-4e05-ab46-89b891a48f97.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/a9d9d106-e161-437d-8dcb-60f7d4f7aea5.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 635239,
+            "name": "Villa 208",
+            "description": "<p>&nbsp; &nbsp; &nbsp; &nbsp;Our newly renovated villa provides a serene retreat with a modern tropical style. It is nestled in the laid-back yet vibrant area of Umalas. With an array of excellent restaurants and cafes, Umalas offers a relaxed atmosphere only a few minutes from the bustling central area of Canggu. <br>&nbsp; &nbsp; &nbsp; &nbsp;Features two spacious bedrooms, each with an en-suite bathroom. The enclosed living area includes a kitchen and dining space. Outside, enjoy the private pool, surrounded by a stunning sun-drenched outdoor space.<br>&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;This villa beautifully merges modern luxury with classic Balinese charm. The interiors feature a harmonio",
+            "image_url": "//l.icdbcdn.com/oh/e35cc0de-3a42-458d-af3f-c2f59758fc58.jpg?f=32",
+            "images": [],
+            "city": "Umalas",
+            "country": "Indonesia",
+            "address": "Umalas, No.88",
+            "latitude": -8.653132479642913,
+            "longitude": 115.15427328453367,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 702200,
+              "name": "Villa 208",
+              "image_url": "//l.icdbcdn.com/oh/e35cc0de-3a42-458d-af3f-c2f59758fc58.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/e35cc0de-3a42-458d-af3f-c2f59758fc58.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/ba3a34db-5b7e-4fca-b0fe-4a1c73741de9.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/70a7a854-3204-48c4-96c5-395522a23c59.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 635238,
+            "name": "Villa 209",
+            "description": "<p>&nbsp; &nbsp; &nbsp; &nbsp;Welcome to your private oasis in the heart of Umalas. This newly renovated villa offers modern comfort with a harmonious tropical touch, featuring two spacious bedrooms with en-suites, a private pool, an equipped kitchen and dining area, and a chic corner garden. <br>&nbsp; &nbsp; &nbsp; &nbsp;The neighborhood is perfect for a serene stay in Bali. Umalas provides a relaxed yet vibrant atmosphere with excellent restaurants, spas, and gyms, while being just minutes drive away from the bustling hotspots in Canggu and Seminyak. <br>&nbsp; &nbsp; &nbsp; &nbsp;This villa beautifully merges modern luxury with classic Balinese charm. The interiors feature a harmonious b",
+            "image_url": "//l.icdbcdn.com/oh/18f92639-12e5-4149-8c08-ee4337535245.jpg?f=32",
+            "images": [],
+            "city": "Umalas",
+            "country": "Indonesia",
+            "address": "Umalas, No.88",
+            "latitude": -8.653148389711763,
+            "longitude": 115.1542786489517,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 702199,
+              "name": "Villa 209",
+              "image_url": "//l.icdbcdn.com/oh/18f92639-12e5-4149-8c08-ee4337535245.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/18f92639-12e5-4149-8c08-ee4337535245.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/7d45047d-5cfa-461c-ab65-b30241870704.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/10f6c16a-5383-4361-9688-1c7b38241917.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 621443,
+            "name": "Villa Ari Pererenan",
+            "description": "<p>Dreaming of a serene Bali escape? Just steps away from pristine Lyma Beach and a short scooter ride to central Canggu, this brand-new, sun-filled villa offers the best of Bali’s laid-back lifestyle in Pererenan. Enjoy dreamy rice field views and all the comforts of modern tropical luxury.</p>\n<p>- Well-equipped kitchen<br>-  In-villa massage, floating breakfast & chef options as add-ons<br>- Private pool + sun loungers & outdoor shower<br>- Reliable WiFi for remote work<br>- Include daily cleaning (6 days/week)</p>\n<p><br></p>\n<p>*THE SPACE*<br>Step through the enclosed living space with expansive glass doors that create a seamless transition to the outdoor space. The ground floor boasts ",
+            "image_url": "//l.icdbcdn.com/oh/d456a7b7-918d-4982-8e89-34581bf48cb2.jpg?f=32",
+            "images": [],
+            "city": "Pererenan",
+            "country": "Indonesia",
+            "address": "Jalan Babadan, No.200",
+            "latitude": -8.6464736,
+            "longitude": 115.1195578,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 688363,
+              "name": "Villa Ari Pererenan",
+              "image_url": "//l.icdbcdn.com/oh/d456a7b7-918d-4982-8e89-34581bf48cb2.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/d456a7b7-918d-4982-8e89-34581bf48cb2.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/4f7fa414-476c-4e04-af11-eef7df5dbc01.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/3befb564-d50e-48a7-9261-81e6a37b1a85.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 762712,
+            "name": "Villa Arta Umalas",
+            "description": "<p>Set in a calm pocket of Umalas, this spacious three-bedroom villa is designed for easy tropical living. Natural light and warm finishes create a relaxed, comfortable atmosphere throughout. The bedrooms are well spaced for privacy, ideal for family or small groups who value space, ease, and a quieter setting.<br><br>- Close to restaurants, gym, and shops<br>- 10-minute scooter ride to the beach<br>- Housekeeping included<br>- Transport, scooter rental, floating breakfast, and other add-ons available</p>\n<p><strong><br></strong></p>\n<p><strong>THE SPACE</strong><br>The villa’s design balances clean architectural lines with tropical warmth. Natural materials, soft neutral tones, and airy pro",
+            "image_url": "//l.icdbcdn.com/oh/21679670-7590-4c56-922a-10d78e8aab82.jpg?f=32",
+            "images": [],
+            "city": "Umalas",
+            "country": "Indonesia",
+            "address": "Gang P. Nias",
+            "latitude": -8.65903895238024,
+            "longitude": 115.154369627647,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 829843,
+              "name": "Villa Arta Umalas",
+              "image_url": "//l.icdbcdn.com/oh/21679670-7590-4c56-922a-10d78e8aab82.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/21679670-7590-4c56-922a-10d78e8aab82.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/695ee5cb-114b-46e1-a5db-8dd1ca35e98b.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/6097e6a6-aa9a-4e6d-ac40-d9f9b8c335f8.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 6,
+              "bedrooms": 3,
+              "bathrooms": 4
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 494977,
+            "name": "Villa Eva Canggu ",
+            "description": "<p>Spend your vacation in the idyllic locale of Canggu, Bali, and stay in our splendid cozy villa. Our villa is an eclectic blend of ethnic & bohemian styles that bring out the summer-in-the-island vibes. Boasting an open-concept floor, a private pool, & modern amenities, this is the perfect place to relax unwind, and have fun. With its vibrant beachside neighborhood, just a few minutes walk away you'll find the beach, beach clubs, cafes, restaurants, nightclubs, supermarket, & spas.<br><br>[The Design] Step into a world of summer-in-the-island vibes with our eclectic blend of ethnic & bohemian styles. Our villa is a perfect mix of modern and island interiors. The walls are hung with artsy p",
+            "image_url": "//l.icdbcdn.com/oh/70958939-6c76-41b1-94fe-77f692c4ed02.jpg?f=32",
+            "images": [],
+            "city": "Canggu",
+            "country": "Indonesia",
+            "address": "Gang Bamboo",
+            "latitude": -8.6678409,
+            "longitude": 115.1464253,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 561285,
+              "name": "Villa Eva Canggu ",
+              "image_url": "//l.icdbcdn.com/oh/70958939-6c76-41b1-94fe-77f692c4ed02.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/70958939-6c76-41b1-94fe-77f692c4ed02.jpg?f=32",
+                  "text": "Welcome to our tropical bohemian style villa"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/1ee27f5c-32f9-4807-8238-2f4c3610017f.jpg?f=32",
+                  "text": "The main floor area"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/88932607-d9f7-4d9f-948c-7b4c0315ac80.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 555335,
+            "name": "Villa Isa",
+            "description": "<p>Welcome to Villa Isa, the perfect hideaway for couples seeking a romantic escape. Tucked in a more laid-back, relaxed neighborhood of Umalas. Yet, only a short drive to the central part of Canggu. <br><br>Our Mediterranean-inspired private villa offers a romantic pool with sun loungers for two and sunset sky views ideal for special moments together. Surprise your loved one with a floating breakfast in the pool, or a couples’ massage, both available at additional request.<br><br><br><br>[THE SPACE]<br>This stunning villa captures the very essence of embracing a luxurious laid-back lifestyle on the island of Bali. Neutral color palette, beautiful arches, raw natural materials, textured surf",
+            "image_url": "//l.icdbcdn.com/oh/f4ec7afb-ba2f-4b14-b5d9-2ac44be43dc6.jpg?f=32",
+            "images": [],
+            "city": "Umalas",
+            "country": "Indonesia",
+            "address": "Umalas, No.88",
+            "latitude": -8.653169603135844,
+            "longitude": 115.1543135176689,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 622007,
+              "name": "Villa Isa",
+              "image_url": "//l.icdbcdn.com/oh/f4ec7afb-ba2f-4b14-b5d9-2ac44be43dc6.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/f4ec7afb-ba2f-4b14-b5d9-2ac44be43dc6.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/571f3f15-faa4-46a0-a059-0da8888d0948.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/e3608024-ca92-4ac0-820e-f3265e072a1c.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 494873,
+            "name": "Villa Joy Pererenan",
+            "description": "<p>Welcome to our beautiful cozy space - a place to unwind and experience the uniqueness of this villa as it reflects its charming, rustic aesthetic. Located in Pererenan, a peaceful and picturesque village near the beach with beautiful natural surroundings. This villa features 2 bedrooms, 2 en-suite bathrooms, a kitchen, balcony and lounging space. In the outdoor space, you'll find a private pool surrounded by lush greenery, a perfect setting for those looking for ultimate privacy & relaxation.<br><br>[The Design] <br>An A-shaped home that blends the charm of a rustic ambiance with an industrial touch. The combination of materials like wood, stones, glass, metal, and exposed concrete is use",
+            "image_url": "//l.icdbcdn.com/oh/c28818ba-464e-4261-b73d-badb5ab244dc.jpg?f=32",
+            "images": [],
+            "city": "Pererenan",
+            "country": "Indonesia",
+            "address": "YRL2175-Kaliki villa cucu",
+            "latitude": -8.6381061,
+            "longitude": 115.1327717,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 561177,
+              "name": "Villa Joy Pererenan",
+              "image_url": "//l.icdbcdn.com/oh/c28818ba-464e-4261-b73d-badb5ab244dc.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/c28818ba-464e-4261-b73d-badb5ab244dc.jpg?f=32",
+                  "text": "Welcome to our unique tranquil living space"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/c181ad71-1a83-4efb-b4b0-2d943f2cef1e.jpg?f=32",
+                  "text": "Our cozy master bedroom"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/4f94b716-710e-4c93-9f64-e7ddd3eb9f60.jpg?f=32",
+                  "text": "The lush tranquil atmosphere from the bedroom"
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 573606,
+            "name": "Villa Juma Legian",
+            "description": "<p>Villa Juma, - a private 3-bedroom oasis located in the central beachside street of Legian, just a 5-minute walk from the beach. This newly renovated villa offers a stylish, cozy retreat while being conveniently close to everything you need; cafes, restaurants, surfing spots, clubs, bars, spas, and shops.</p>\n<p>You'll enjoy your own private pool, 3 spacious bedrooms each with en-suite bathrooms, an equipped kitchen, and an enclosed living room with AC that consist of the dining area and TV lounge.<br><br>__THE SPACE__<br>Villa Juma is the perfect choice for those seeking convenience, privacy, comfort, and beauty. The design of the villa incorporates a timeless modern style with eclectic b",
+            "image_url": "//l.icdbcdn.com/oh/813f310f-bf71-4020-9910-9b4976d3c646.jpg?f=32",
+            "images": [],
+            "city": "Legian",
+            "country": "Indonesia",
+            "address": "Gang Abdi",
+            "latitude": -8.702324,
+            "longitude": 115.168333,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 640339,
+              "name": "Villa Juma Legian",
+              "image_url": "//l.icdbcdn.com/oh/813f310f-bf71-4020-9910-9b4976d3c646.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/813f310f-bf71-4020-9910-9b4976d3c646.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/c26e0897-cd7a-45d6-aed7-c5fbbdaabe8f.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/a4b55b39-316c-4e37-98c4-771136c3e361.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 6,
+              "bedrooms": 3,
+              "bathrooms": 3
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475371,
+            "name": "Villa Kita I Canggu",
+            "description": "<p>Welcome to your private rustic tropical villa. Our 2-bedroom villa is centrally located, just minutes away from all the action, Canggu’s hottest cafés, bars, nightlife scenes, surf, and beach sunsets. <br><br>Perfect for backpackers, adventurers, and a small group of friends, you’ll love lounging by your own private pool, speedy WiFi for remote work, and a fully-equipped kitchen for a special home dining.<br><br><br><strong>THE SPACE</strong><br>Welcome to our charming Bali summer house! Nestled in the heart of Canggu, we've crafted a comforting home away from home where you'll feel completely at ease. Our home is adorned with rustic details and furnishings, all designed to ensure you enj",
+            "image_url": "//l.icdbcdn.com/oh/eebd7266-28d7-4b56-b3de-80fb908228e5.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Griya Kusuma Indah",
+            "latitude": -8.651096316741281,
+            "longitude": 115.14705277786558,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541615,
+              "name": "Villa Kita I Canggu",
+              "image_url": "//l.icdbcdn.com/oh/eebd7266-28d7-4b56-b3de-80fb908228e5.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/eebd7266-28d7-4b56-b3de-80fb908228e5.jpg?f=32",
+                  "text": "Pool surrounded by cute garden"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/9181c78b-942c-4bfa-bb9b-319467d575f1.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/6fff239d-5411-4917-829b-ee299ac7e4a2.jpg?f=32",
+                  "text": "designed with textured natural decor that elevates the island vibes and coziness"
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 535816,
+            "name": "Villa Kita IV",
+            "description": "<p>This charming and cozy villa is the perfect retreat for your Bali getaway. Nestled in a pocket area, not far from the heart of Canggu, only a few minutes away from the beaches and entertainment. As you step inside, you'll be greeted by a warm and vibrant atmosphere. Elegantly furnished, it creates a great space to relax and unwind after a day of exploring. Complete with a private oasis with your private pool, our homey villa is the perfect spot to experience comfort and convenience.<br><br>[THE SPACE]<br>*Bedrooms:<br>- Comfortable king-sized bed <br>- En-suite bathroom with essential shower amenities<br>- Pool and sunset view<br>- Working space with desk and chair<br>- Complete with smar",
+            "image_url": "//l.icdbcdn.com/oh/5108adb9-a63f-48fa-92b2-748798cbf0fb.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Padonan",
+            "country": "Indonesia",
+            "address": "Jalan Pangkung Pulu",
+            "latitude": -8.630119699999998,
+            "longitude": 115.1582234,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 602477,
+              "name": "Villa Kita IV",
+              "image_url": "//l.icdbcdn.com/oh/5108adb9-a63f-48fa-92b2-748798cbf0fb.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/5108adb9-a63f-48fa-92b2-748798cbf0fb.jpg?f=32",
+                  "text": "Our exquisite new villa, perfectly tucked away in a serene and private corner of Padonan, Canggu."
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/6f47fd69-34e8-4ce4-bd48-8ddecdd07fb3.jpg?f=32",
+                  "text": "The sunset sky gracefully envelops our charming villa, painting a mesmerizing canvas of vibrant hues"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/a20faaf6-6a12-48e2-b4cd-4e91837b443e.jpg?f=32",
+                  "text": "A cozy lounging sofa that provides the perfect spot to indulge in a relaxing and laid-back day."
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 838709,
+            "name": "Villa Kubu Taullan II",
+            "description": "<p>Welcome to your private Balinese oasis—a stunning villa designed for relaxation and memorable gatherings. Nestled in a laid-back area between Canggu & Seminyak. Enjoy 2 elegant bedrooms, modern bathrooms, a fully equipped kitchen, dining area, and a sparkling pool.<br>- Close to a Padel court, restaurants, cafes, and gym.<br>- 15-minute scooter ride to the nearest beach.<br>- Housekeeping included<br>- Service team to assist with transport, massage, chef hire,  scooter rental, and other add-on services.</p>\n<p><strong></strong></p>\n<p><strong>THE SPACE</strong></p>\n<p>This villa combines comfortable modern living with a touch of natural warmth. Bright, open spaces and large windows fill e",
+            "image_url": "//l.icdbcdn.com/oh/bb5d7423-ae26-42a2-a05a-0df9ce7993b4.jpg?f=32",
+            "images": [],
+            "city": "Kerobokan",
+            "country": "Indonesia",
+            "address": "Villa Kubu Taullan",
+            "latitude": -8.6674285,
+            "longitude": 115.1678163,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 905865,
+              "name": "Villa Kubu Taullan II",
+              "image_url": "//l.icdbcdn.com/oh/bb5d7423-ae26-42a2-a05a-0df9ce7993b4.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/bb5d7423-ae26-42a2-a05a-0df9ce7993b4.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/ff30b1b4-915e-4e4d-b7fc-9545581c62f6.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/1d95c2fd-8075-402c-b69e-fd334ea13a5f.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 475373,
+            "name": "Villa Rindu Canggu",
+            "description": "<p>Villa Rindu Canggu is made for friends and family. To relax, connect, and celebrate in modern comfort and style! Make unforgettable moments together in your own private Bali oasis.&nbsp;Enjoy a private pool, three spacious king bedrooms with en-suites, and chic indoor/outdoor social spaces. Just minutes from the best restaurants, beaches, and clubs.<br><br>We're looking forward to hosting you!<br><br>Love,<br>Summerhouse Bali.<br><br><br><br>*THE SPACE*<br>- Bedrooms<br>Each bedroom features a hygienic en-suite bathroom and is equipped with wardrobes, a desk, and is fully air-conditioned. It has good air circulation and optimal exposure to natural light.<br>The bathrooms are provided with",
+            "image_url": "//l.icdbcdn.com/oh/10c3a4c8-1cb2-4582-8f80-6f67747740d1.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Gang Srikandi, No.3B",
+            "latitude": -8.651483132191442,
+            "longitude": 115.14962099299734,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 541618,
+              "name": "Villa Rindu Canggu",
+              "image_url": "//l.icdbcdn.com/oh/10c3a4c8-1cb2-4582-8f80-6f67747740d1.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/10c3a4c8-1cb2-4582-8f80-6f67747740d1.jpg?f=32",
+                  "text": "Sunny ambiance during the day in our beautiful modern white villa"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/c3090d95-7f52-45f7-9c50-474a943c40eb.jpg?f=32",
+                  "text": "Enjoy the coziness & aesthetic of this white modern villa "
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/aa58cb40-68e2-4a71-a271-dc631594b6c7.jpg?f=32",
+                  "text": "Sunken lounge area"
+                }
+              ],
+              "max_people": 6,
+              "bedrooms": 3,
+              "bathrooms": 3
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 494867,
+            "name": "Villa Samara Umalas",
+            "description": "<p>Experience a spacious, private getaway at Villa Samara. A tropical oasis located in Umalas, a centrally located area between Canggu and Seminyak.<br>- Private pool & outdoor seating area surrounded by tropical foliage<br>- Housekeeping included, and service staff to assist with airport-pick-up, scooter rental, floating breakfast, in-villa massage, and other add-on services<br>- Just within walking distance to restaurants, cafes, shops, and gym.<br>- Less than 10 minutes scooter ride to the beach and clubs<br><br><br><strong>THE SPACE</strong><br>*Bedrooms:<br>- Master Bedroom ---&gt; king-sized bed + semi-open en-suite bathroom + bathtub<br>- Bedroom 2 ---&gt; 2 twin-sized beds + TV + sem",
+            "image_url": "//l.icdbcdn.com/oh/a8f0a46d-3645-4c7b-ac15-22e1df28bfcd.jpg?f=32",
+            "images": [],
+            "city": "Umalas",
+            "country": "Indonesia",
+            "address": "Jalan Bumbak",
+            "latitude": -8.655609138932569,
+            "longitude": 115.1529268156082,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 561171,
+              "name": "Villa Samara Umalas",
+              "image_url": "//l.icdbcdn.com/oh/a8f0a46d-3645-4c7b-ac15-22e1df28bfcd.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/a8f0a46d-3645-4c7b-ac15-22e1df28bfcd.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/9bad2ac7-e423-4f73-823a-eb0384fc5f42.jpg?f=32",
+                  "text": "Villa Sutala Umalas"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/a1b1bcd4-be20-4280-bd5d-1947380a2513.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 4,
+              "bedrooms": 2,
+              "bathrooms": 2
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 841456,
+            "name": "Villa Sehati 1 | Central Canggu",
+            "description": "<p>Villa Sehati 1 is a spacious 4-bedroom villa in Central Canggu. The build is clean and sleek, with open spaces that work well for families or groups staying together. Its central location puts you close to restaurants, spas, padel, gyms, & shops.</p>\n<p>- 10-mins drive to the beach<br>- Enclosed living area with AC<br>- Private pool and garden<br>- Rooftop terrace<br>- Housekeeping/cleaning included<br>- Operational team available to assist with transport, scooter rental, floating breakfast, and other add-ons</p>\n<p><br></p>\n<p><strong>THE SPACE</strong></p>\n\n\n\n\n\n<p>Villa Sehati 1 is a spacious two-storey private home in Central Canggu, built around a long swimming pool and garden.</p>\n<p",
+            "image_url": "//l.icdbcdn.com/oh/46f10dc1-aa35-4884-9ebe-b5c2e21ac992.jpg?f=32",
+            "images": [],
+            "city": "Canggu",
+            "country": "Indonesia",
+            "address": "Jl. Kayu Tulang Selatan No.188",
+            "latitude": -8.6434581,
+            "longitude": 115.1438681,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 908612,
+              "name": "Villa Sehati 1 | Central Canggu",
+              "image_url": "//l.icdbcdn.com/oh/46f10dc1-aa35-4884-9ebe-b5c2e21ac992.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/46f10dc1-aa35-4884-9ebe-b5c2e21ac992.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/d331bb86-e5cd-4f1f-bb87-2fb6d305f332.jpg?f=32",
+                  "text": ""
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/b98d76e4-4288-4452-97f6-574f3e6c393f.jpg?f=32",
+                  "text": ""
+                }
+              ],
+              "max_people": 8,
+              "bedrooms": 4,
+              "bathrooms": 4
+            }
+          ]
+        },
+        {
+          "property": {
+            "id": 494870,
+            "name": "Villa Sehati Canggu",
+            "description": "<p>Located in the central area of Berawa, Canggu. This newly renovated villa is the perfect place to base your vacation. Boasts a modern minimalist concept, resulting in an elegant, bright look, and comfortable modern living spaces. The villa exudes a radiant summer vibe that will enhance your stay experience. Features a private pool, 3 en-suite bedrooms, a modern full kitchen, dining, and lounge areas. For your utmost comfort, essential amenities and cleaning services are provided.<br></p>\n<p>Villa Sehati 2, a modern, spacious two-story villa nestled in the trendy Berawa location, is the perfect option if you like being at the heart of the action.<br>--<br>This villa lauds its bright, airy ",
+            "image_url": "//l.icdbcdn.com/oh/defa717b-e3f8-4d7a-b966-9555676cd3a0.jpg?f=32",
+            "images": [],
+            "city": "Canggu - Berawa",
+            "country": "Indonesia",
+            "address": "Jalan Pantai Berawa",
+            "latitude": -8.661429489268794,
+            "longitude": 115.14517523155516,
+            "is_active": true,
+            "max_people": null,
+            "bedrooms": null,
+            "bathrooms": null
+          },
+          "rooms": [
+            {
+              "id": 561173,
+              "name": "Villa Sehati Canggu",
+              "image_url": "//l.icdbcdn.com/oh/defa717b-e3f8-4d7a-b966-9555676cd3a0.jpg?f=32",
+              "images": [
+                {
+                  "url": "//l.icdbcdn.com/oh/defa717b-e3f8-4d7a-b966-9555676cd3a0.jpg?f=32",
+                  "text": "Welcome to our beautiful modern villa. Centrally located in Canggu. Perfect for family vacation"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/d0567bdc-9bf2-4ad8-8368-70013cf2faad.jpg?f=32",
+                  "text": "TV lounge area that open onto the outdoor space as a  spot for family entertainment and lounge"
+                },
+                {
+                  "url": "//l.icdbcdn.com/oh/5d0b5f05-ffc0-49be-9e15-848058544787.jpg?f=32",
+                  "text": "Dining area with clean modern layout by the private pool. Perfect for special dining in experience "
+                }
+              ],
+              "max_people": 6,
+              "bedrooms": 3,
+              "bathrooms": 4
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -7,6 +7,7 @@ import {
   resolveGlobalContactSettings,
   type GlobalContactSettings,
 } from "@/lib/contact-settings";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 
@@ -14,6 +15,7 @@ export function useGlobalContactSettings(): GlobalContactSettings {
   const [settings, setSettings] = useState<GlobalContactSettings>(DEFAULT_GLOBAL_CONTACT);
 
   useEffect(() => {
+    if (isShowcasePreview) return;
     const controller = new AbortController();
     const keys = [...GLOBAL_CONTACT_KEYS, "contact.email"].join(",");
 

@@ -82,7 +82,7 @@ const nextConfig: NextConfig = {
           }] : []),
           ...(isProduction ? [{
             key: "Content-Security-Policy-Report-Only",
-            value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:; worker-src 'self' blob:; frame-src https://checkout.lodgify.com",
+            value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https:; worker-src 'self' blob:; frame-src https://checkout.lodgify.com https://www.google.com",
           }] : []),
           {
             key: "Permissions-Policy",

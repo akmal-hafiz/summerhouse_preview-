@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { useFooterSettings } from "@/hooks/useFooterSettings";
 import { useGlobalContactSettings } from "@/hooks/useGlobalContactSettings";
 import { buildEmailHref, buildWhatsAppHref } from "@/lib/contact-settings";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 
@@ -21,6 +22,11 @@ export default function Footer() {
 
   const subscribe = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isShowcasePreview) {
+      setNewsletterStatus("error");
+      setNewsletterMessage("Subscriptions are unavailable in this visual preview. Please contact us directly.");
+      return;
+    }
     setNewsletterStatus("loading");
     setNewsletterMessage("");
 

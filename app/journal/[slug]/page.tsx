@@ -2,13 +2,18 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ArticlePage from "@/components/journal/ArticlePage";
 import { getAllSlugs } from "@/data/articles";
-import { getArticleForSlug, getRelatedArticlesForSlug } from "@/lib/journal";
+import { getArticleForSlug, getRelatedArticlesForSlug, listArticles } from "@/lib/journal";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  if (isShowcasePreview) {
+    const articles = await listArticles();
+    return articles.map((article) => ({ slug: article.slug }));
+  }
   return getAllSlugs().map((slug) => ({ slug }));
 }
 

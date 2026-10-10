@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CmsVillaReview, CmsVillaReviewSummary } from "@/lib/cms";
 import styles from "./VillaReviews.module.css";
 import VillaReviewForm from "./VillaReviewForm";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 type VillaReviewsProps = {
   lodgifyId: string;
@@ -98,12 +99,13 @@ export default function VillaReviews({ lodgifyId, villaName, summary, reviews }:
         </div>
       ) : (
         <p className={styles.empty}>
-          No reviews yet for {villaName}. Stayed here? Share your experience below — it goes live after a quick check
-          by our team.
+          {isShowcasePreview
+            ? "Villa reviews will appear when the live review service is connected."
+            : `No reviews yet for ${villaName}. Stayed here? Share your experience below. It goes live after a quick check by our team.`}
         </p>
       )}
 
-      <VillaReviewForm lodgifyId={lodgifyId} villaName={villaName} />
+      {!isShowcasePreview ? <VillaReviewForm lodgifyId={lodgifyId} villaName={villaName} /> : null}
     </section>
   );
 }

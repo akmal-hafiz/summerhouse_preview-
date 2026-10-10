@@ -5,12 +5,13 @@ import { logServerError, logServerWarning } from "@/lib/security/logger";
 import { errorKindForStatus, isRetriableStatus, LodgifyError, normalizeLodgifyError } from "./errors";
 import { lodgifyResilienceConfig, withLodgifyResilience } from "./resilience";
 import { getCmsLodgifySnapshot } from "@/lib/cms";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const LODGIFY_API_KEY = process.env.LODGIFY_API_KEY;
 const BASE_URL = process.env.LODGIFY_API_BASE_URL || "https://api.lodgify.com/v2";
 let catalogUnavailableWarned = false;
 
-if (!LODGIFY_API_KEY) {
+if (!LODGIFY_API_KEY && !isShowcasePreview) {
   logServerWarning("[lodgify:config]", { message: "LODGIFY_API_KEY is not defined." });
 }
 
@@ -84,6 +85,11 @@ export async function fetchPropertyById(id: string | number): Promise<LodgifyPro
 
 export async function fetchPropertyRooms(id: string | number): Promise<LodgifyRoom[]> {
   if (!id) return [];
+  if (isShowcasePreview) {
+    const snapshot = await getCmsLodgifySnapshot();
+    const cached = snapshot?.properties.find((item) => String(item.property.id) === String(id));
+    return (cached?.rooms || []).map(normalizeRoom);
+  }
   const propertyId = encodeURIComponent(String(id));
 
   try {
@@ -102,6 +108,11 @@ export async function fetchPropertyRooms(id: string | number): Promise<LodgifyRo
 
 export async function fetchPropertyImages(id: string | number) {
   if (!id) return [];
+  if (isShowcasePreview) {
+    const snapshot = await getCmsLodgifySnapshot();
+    const cached = snapshot?.properties.find((item) => String(item.property.id) === String(id));
+    return Array.isArray(cached?.property.images) ? cached.property.images : [];
+  }
   const propertyId = encodeURIComponent(String(id));
 
   try {
@@ -117,6 +128,7 @@ export async function fetchPropertyImages(id: string | number) {
 }
 
 export async function fetchAvailabilityItems(startDate: string, endDate: string) {
+  if (isShowcasePreview) return null;
   try {
     const params = new URLSearchParams({ start: startDate, end: endDate });
     const data = await lodgifyFetch(`/availability?${params.toString()}`, { revalidate: 60 });
@@ -131,6 +143,7 @@ export async function fetchAvailabilityItems(startDate: string, endDate: string)
 }
 
 export async function fetchRateCalendar(params: URLSearchParams) {
+  if (isShowcasePreview) return null;
   try {
     return await lodgifyFetch(`/rates/calendar?${params.toString()}`);
   } catch (error) {

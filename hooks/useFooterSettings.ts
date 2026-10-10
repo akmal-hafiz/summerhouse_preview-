@@ -7,6 +7,7 @@ import {
   resolveFooterSettings,
   type FooterSettings,
 } from "@/lib/footer-settings";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
 
@@ -14,6 +15,7 @@ export function useFooterSettings(): FooterSettings {
   const [settings, setSettings] = useState<FooterSettings>(DEFAULT_FOOTER_SETTINGS);
 
   useEffect(() => {
+    if (isShowcasePreview) return;
     const controller = new AbortController();
     const keys = FOOTER_SETTING_KEYS.join(",");
 

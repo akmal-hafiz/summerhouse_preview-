@@ -2,6 +2,7 @@ import { logServerWarning } from "@/lib/security/logger";
 import { unstable_cache } from "next/cache";
 import { readValidatedCmsResponse } from "@/lib/security/cms-response";
 import type { BaliCollectionItem } from "@/data/baliCollections";
+import { isShowcasePreview } from "@/lib/showcase-preview";
 
 const CMS_BASE_URL = process.env.CMS_API_URL || "http://localhost:8000/api";
 export const CMS_LODGIFY_REVALIDATE = 300;
@@ -36,6 +37,25 @@ function isNetworkError(error: unknown): boolean {
 }
 
 async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): Promise<T | null> {
+  if (isShowcasePreview) {
+    const { default: previewSnapshot } = await import("@/data/previewCmsSnapshot.json");
+    const responses = previewSnapshot.responses as Record<string, unknown>;
+    const exact = responses[path];
+    if (exact) return exact as T;
+
+    const sectionMatch = /^\/v1\/cms\/page\/([^/]+)\/section\/([^/]+)$/.exec(path);
+    if (sectionMatch) {
+      const page = responses[`/v1/cms/page/${sectionMatch[1]}`] as
+        | { sections?: Record<string, unknown> }
+        | undefined;
+      const content = page?.sections?.[sectionMatch[2]];
+      return content ? ({ success: true, content } as T) : null;
+    }
+
+    // A visual preview must never silently call the developer's localhost CMS.
+    return null;
+  }
+
   const url = `${CMS_BASE_URL}${path}`;
   try {
     const load = async (): Promise<T> => {
@@ -306,6 +326,9 @@ export type OwnerTestimonialSubmission = {
 };
 
 export async function submitOwnerTestimonial(payload: OwnerTestimonialSubmission): Promise<ReviewSubmissionResult> {
+  if (isShowcasePreview) {
+    return { success: false, error: "Submissions are unavailable in this visual preview." };
+  }
   const url = `${CMS_BASE_URL}/v1/owner-testimonials`;
 
   try {
@@ -366,6 +389,9 @@ export type ReviewSubmissionResult =
   | { success: false; error: string; fieldErrors?: Record<string, string[]> };
 
 export async function submitVillaReview(payload: PublicReviewSubmission): Promise<ReviewSubmissionResult> {
+  if (isShowcasePreview) {
+    return { success: false, error: "Submissions are unavailable in this visual preview." };
+  }
   const url = `${CMS_BASE_URL}/v1/reviews`;
 
   try {
