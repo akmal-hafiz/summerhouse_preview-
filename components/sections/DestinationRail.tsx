@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiArrowLeft, FiArrowRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type FocusEvent } from "react";
 
 import type { BaliCollectionItem } from "@/data/baliCollections";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -12,11 +12,16 @@ import { nextCarouselIndex, safeDestinationHref } from "@/lib/destination-carous
 import styles from "./DestinationRail.module.css";
 
 const SWIPE_THRESHOLD = 48;
+const AUTO_ADVANCE_MS = 6500;
 const formatLocation = (value: string) => value.replace(/\s+-\s+/g, " – ");
 
 export default function DestinationRail({ collections }: { collections: BaliCollectionItem[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [pointerPaused, setPointerPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
+  const [touchPaused, setTouchPaused] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const indexRail = useRef<HTMLElement>(null);
   const indexItems = useRef<Array<HTMLButtonElement | null>>([]);
@@ -48,6 +53,29 @@ export default function DestinationRail({ collections }: { collections: BaliColl
     });
   }, [index, reducedMotion]);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => setPageVisible(document.visibilityState === "visible");
+    handleVisibilityChange();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  const interactionPaused = pointerPaused || focusPaused || touchPaused;
+  const autoplayPaused = interactionPaused || !pageVisible || reducedMotion;
+
+  useEffect(() => {
+    if (autoplayPaused || collections.length < 2) return;
+
+    const timer = window.setTimeout(() => move(1), AUTO_ADVANCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [autoplayPaused, collections.length, index, move]);
+
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+      setFocusPaused(false);
+    }
+  };
+
   if (!active) return null;
 
   const image = active.image || active.videoPoster || active.mobilePoster || "/homepage_villa/curated-1-main.webp";
@@ -57,10 +85,20 @@ export default function DestinationRail({ collections }: { collections: BaliColl
   return (
     <div
       className={styles.story}
+      data-autoplay-paused={autoplayPaused ? "true" : "false"}
+      style={{ "--destination-autoplay-duration": `${AUTO_ADVANCE_MS}ms` } as CSSProperties}
       role="region"
       aria-roledescription="carousel"
       aria-label="Bali neighbourhood destinations"
       tabIndex={0}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setPointerPaused(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === "mouse") setPointerPaused(false);
+      }}
+      onFocusCapture={() => setFocusPaused(true)}
+      onBlurCapture={handleBlur}
       onKeyDown={(event) => {
         if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
           event.preventDefault();
@@ -68,11 +106,13 @@ export default function DestinationRail({ collections }: { collections: BaliColl
         }
       }}
       onTouchStart={(event) => {
+        setTouchPaused(true);
         touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
       }}
       onTouchEnd={(event) => {
         const start = touchStart.current;
         touchStart.current = null;
+        setTouchPaused(false);
         if (!start) return;
         const deltaX = event.changedTouches[0].clientX - start.x;
         const deltaY = event.changedTouches[0].clientY - start.y;
@@ -89,6 +129,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
       >
         {collections.map((collection, collectionIndex) => {
           const selected = collectionIndex === index;
+          const thumbnail = collection.galleryImages[0] || collection.image;
           return (
             <button
               key={collection.id}
@@ -107,9 +148,15 @@ export default function DestinationRail({ collections }: { collections: BaliColl
               <span className={styles.indexNumber}>
                 {String(collectionIndex + 1).padStart(2, "0")}
               </span>
+              <span className={styles.indexThumb} aria-hidden="true">
+                <Image src={thumbnail} alt="" fill sizes="80px" className={styles.indexThumbImage} />
+              </span>
               <span className={styles.indexCopy}>
                 <strong>{formatLocation(collection.location)}</strong>
                 <small>{collection.category}</small>
+              </span>
+              <span className={styles.indexArrow} aria-hidden="true">
+                <FiArrowRight />
               </span>
             </button>
           );
@@ -121,7 +168,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
         className={styles.stage}
         role="tabpanel"
         aria-labelledby={activeTabId}
-        aria-live="polite"
+        aria-live={interactionPaused ? "polite" : "off"}
         aria-atomic="true"
       >
         <div className={styles.imageFrame}>
@@ -189,13 +236,16 @@ export default function DestinationRail({ collections }: { collections: BaliColl
               exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
               transition={{ duration: reducedMotion ? 0 : 0.2 }}
             >
-              <h3>{formatLocation(active.location)}</h3>
+              <div className={styles.locationBlock}>
+                <h3>{formatLocation(active.location)}</h3>
+                <span>{active.category}</span>
+              </div>
               <p>{active.description}</p>
             </motion.div>
           </AnimatePresence>
 
           <Link href={safeDestinationHref(active.href, active.location)} className={styles.explore}>
-            Explore villas <span aria-hidden="true">↗</span>
+            Explore villas <FiArrowRight aria-hidden="true" />
           </Link>
         </div>
       </div>

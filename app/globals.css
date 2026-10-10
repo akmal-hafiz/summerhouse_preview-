@@ -10996,17 +10996,57 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .bali-collection-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1.32fr) minmax(26rem, 0.68fr);
+  align-items: end;
   margin-bottom: 0;
-  gap: clamp(1.5rem, 4vw, 4.5rem) !important;
+  gap: clamp(2rem, 3.5vw, 4rem) !important;
 }
 
 .bali-collection-title-group {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: flex-end;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+  min-width: 0;
+}
+
+.bali-collection-title-rule,
+.bali-collection-intro-rule {
+  display: block;
+  height: 1px;
+  background: #c9cac3;
+}
+
+.bali-collection-title-rule {
+  min-width: 4rem;
+  flex: 1;
+  margin-bottom: 0.75rem;
+}
+
+.bali-collection-intro-group {
+  display: grid;
+  grid-template-columns: minmax(17rem, 1fr) 3rem 3.5rem;
+  align-items: center;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  min-width: 0;
+}
+
+.bali-collection-intro-rule {
+  width: 100%;
+}
+
+.bali-collection-monogram {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border: 1px solid #6d8d72;
+  border-radius: 50%;
+  color: #446b4a;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1;
 }
 
 .bali-collection-kicker {
@@ -11028,7 +11068,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .bali-collection-stacked-title {
-  max-width: 11ch;
+  max-width: 8.8ch;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(2.9rem, 4.8vw, 5.3rem);
   font-weight: 400;
@@ -11040,7 +11080,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
 }
 
 .bali-collection-desc {
-  max-width: 420px;
+  max-width: 26rem;
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: clamp(0.86rem, 1vw, 1rem);
   line-height: 1.65;
@@ -11604,6 +11644,20 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     align-items: flex-start;
     gap: 18px;
     margin-bottom: 0;
+  }
+
+  .bali-collection-title-group {
+    display: block;
+  }
+
+  .bali-collection-title-rule,
+  .bali-collection-intro-rule,
+  .bali-collection-monogram {
+    display: none;
+  }
+
+  .bali-collection-intro-group {
+    display: block;
   }
 
   .bali-collection-stacked-title {

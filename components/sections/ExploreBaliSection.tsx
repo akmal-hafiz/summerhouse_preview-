@@ -34,11 +34,16 @@ export default function ExploreBaliSection({
         >
           <div className="bali-collection-title-group">
             <h2 className="bali-collection-stacked-title">{sectionTitle}</h2>
+            <span className="bali-collection-title-rule" aria-hidden="true" />
           </div>
-          <p className="bali-collection-desc">
-            {content?.description ||
-              "A closer look at the neighbourhoods, landscapes, and local rhythms around our homes."}
-          </p>
+          <div className="bali-collection-intro-group">
+            <p className="bali-collection-desc">
+              {content?.description ||
+                "A closer look at the neighbourhoods, landscapes, and local rhythms around our homes."}
+            </p>
+            <span className="bali-collection-intro-rule" aria-hidden="true" />
+            <span className="bali-collection-monogram" aria-hidden="true">O</span>
+          </div>
         </motion.div>
 
         <div>
