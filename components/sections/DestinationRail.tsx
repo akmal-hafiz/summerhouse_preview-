@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiArrowLeft, FiArrowRight, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type FocusEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
 import type { BaliCollectionItem } from "@/data/baliCollections";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -12,13 +12,12 @@ import { nextCarouselIndex, safeDestinationHref } from "@/lib/destination-carous
 import styles from "./DestinationRail.module.css";
 
 const SWIPE_THRESHOLD = 48;
-const AUTO_ADVANCE_MS = 4000;
+const AUTO_ADVANCE_MS = 6000;
 const formatLocation = (value: string) => value.replace(/\s+-\s+/g, " – ");
 
 export default function DestinationRail({ collections }: { collections: BaliCollectionItem[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const [focusPaused, setFocusPaused] = useState(false);
   const [touchPaused, setTouchPaused] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [sectionVisible, setSectionVisible] = useState(false);
@@ -78,8 +77,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
     return () => observer.disconnect();
   }, []);
 
-  const interactionPaused = focusPaused || touchPaused;
-  const autoNextPaused = interactionPaused || !pageVisible || !sectionVisible || reducedMotion;
+  const autoNextPaused = touchPaused || !pageVisible || !sectionVisible;
 
   useEffect(() => {
     remainingTime.current = AUTO_ADVANCE_MS;
@@ -108,12 +106,6 @@ export default function DestinationRail({ collections }: { collections: BaliColl
     };
   }, [autoNextPaused, collections.length, index, move]);
 
-  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-      setFocusPaused(false);
-    }
-  };
-
   if (!active) return null;
 
   const image = active.image || active.videoPoster || active.mobilePoster || "/homepage_villa/curated-1-main.webp";
@@ -130,8 +122,6 @@ export default function DestinationRail({ collections }: { collections: BaliColl
       aria-roledescription="carousel"
       aria-label="Bali neighbourhood destinations"
       tabIndex={0}
-      onFocusCapture={() => setFocusPaused(true)}
-      onBlurCapture={handleBlur}
       onKeyDown={(event) => {
         if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
           event.preventDefault();
@@ -205,7 +195,7 @@ export default function DestinationRail({ collections }: { collections: BaliColl
         className={styles.stage}
         role="tabpanel"
         aria-labelledby={activeTabId}
-        aria-live={interactionPaused ? "polite" : "off"}
+        aria-live="off"
         aria-atomic="true"
       >
         <div className={styles.imageFrame}>

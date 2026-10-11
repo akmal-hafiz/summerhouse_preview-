@@ -68,7 +68,7 @@ export default function ConciergeHorizontalStory({
           <blockquote>
             &ldquo;{content?.quote || "The best stays feel effortless because the right help is already close."}&rdquo;
           </blockquote>
-          <Link href="/concierge">{content?.link_label || "View all Concierge"}</Link>
+          <Link href="/contact">Contact concierge</Link>
         </aside>
       </div>
     </section>

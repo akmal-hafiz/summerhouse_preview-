@@ -586,16 +586,6 @@
   .detailNavigation button {
     scroll-behavior: auto;
   }
-
-  .indexItem[data-active="true"]::before {
-    animation: none;
-    transform: scaleY(1);
-  }
-
-  .progressTrack span {
-    animation: none;
-    transform: scaleX(1);
-  }
 }
 
 @keyframes destinationAutoProgress {

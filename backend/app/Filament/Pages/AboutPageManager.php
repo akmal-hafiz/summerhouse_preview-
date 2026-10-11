@@ -356,7 +356,7 @@ class AboutPageManager extends Page implements HasForms, HasTable
                 'title_emphasis' => 'your Bali stay, considered.',
                 'description' => 'Thoughtful support before arrival and throughout your stay.',
                 'quote' => 'The best stays feel effortless because the right help is already close.',
-                'link_label' => 'View all Concierge',
+                'link_label' => 'Contact concierge',
                 'is_visible' => true,
             ],
             'faq_intro' => [

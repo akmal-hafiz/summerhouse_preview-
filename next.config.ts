@@ -66,6 +66,15 @@ const nextConfig: NextConfig = {
       cmsRemotePattern,
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/concierge",
+        destination: "/contact",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

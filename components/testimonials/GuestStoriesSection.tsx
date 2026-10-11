@@ -11,7 +11,7 @@ type GuestStoriesSectionProps = {
   placement?: "homepage" | "concierge";
 };
 
-const AUTO_ADVANCE_MS = 6500;
+const AUTO_ADVANCE_MS = 6000;
 
 function ReviewStars({ value }: { value: number | null }) {
   if (value === null) return <span className={styles.sourceLabel}>Verified guest review</span>;
@@ -131,7 +131,7 @@ export default function GuestStoriesSection({
   const [isPageVisible, setIsPageVisible] = useState(true);
   const reduceMotion = Boolean(useReducedMotion());
   const review = publicGuestReviews[active];
-  const autoplayEnabled = !reduceMotion && isPageVisible;
+  const autoplayEnabled = isPageVisible;
 
   useEffect(() => {
     const updateVisibility = () => setIsPageVisible(document.visibilityState === "visible");
