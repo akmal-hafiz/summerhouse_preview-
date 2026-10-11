@@ -17,7 +17,6 @@
         },
         "why_stay": {
           "title": "A considered way to stay in Bali.",
-          "eyebrow": "Why Summerhouse",
           "is_visible": true,
           "recognition": {
             "url": null,
@@ -80,7 +79,6 @@
         },
         "testimonials": {
           "title": "Guest Reviews",
-          "eyebrow": "Guest stories",
           "is_visible": true,
           "trust_label": "Loved by Summerhouse guests",
           "title_emphasis": "after the stay",
@@ -119,7 +117,6 @@
         },
         "studio_statement": {
           "title": "A closer look at the spaces you will actually live in.",
-          "eyebrow": "The gallery",
           "is_visible": true,
           "description": "The light through the morning kitchen, the pool at dusk, the quiet corners between rooms. Every villa is photographed the way you will remember it, so what you see is what you arrive to.",
           "left_images": [
@@ -142,8 +139,7 @@
           "body": "Years later, that still shapes every home we curate across Canggu, Ubud, Pererenan, and the quiet corners of the island in between.",
           "lead": "Summerhouses began as a small collection of villas in Canggu, Bali, built on one belief: a great stay should feel personal before it looks impressive.",
           "heading": "Our Story.",
-          "is_visible": true,
-          "scroll_label": "Trusted by travelers worldwide"
+          "is_visible": true
         },
         "trust_recognition": {
           "heading": "A decade of stays, thoughtfully hosted.",
@@ -222,7 +218,6 @@
             }
           ],
           "title": "Secure your stay",
-          "eyebrow": "Booking process",
           "is_visible": true,
           "link_label": "Explore villas",
           "closing_copy": "Your Bali stay, thoughtfully arranged.",
@@ -231,7 +226,6 @@
         "concierge": {
           "quote": "The best stays feel effortless because the right help is already close.",
           "title": "More than a villa",
-          "eyebrow": "Concierge",
           "is_visible": true,
           "link_label": "Contact concierge",
           "description": "Thoughtful support before arrival and throughout your stay.",
@@ -239,24 +233,20 @@
         },
         "faq_intro": {
           "title": "Everything you need to know.",
-          "eyebrow": "FAQ",
           "is_visible": true,
           "button_label": "Ask Us"
         },
         "journal_preview": {
           "title": "The Journal.",
-          "eyebrow": "Featured Stories",
           "is_visible": true
         },
         "destination_footprint": {
           "title": "Where Summerhouses stays unfold.",
-          "eyebrow": "Location",
           "is_visible": true,
           "description": "The collection is centered around Bali's most requested stay areas, with villas selected for privacy, atmosphere, and access to the island's everyday rituals."
         },
         "final_cta": {
           "title": "Find the home that feels right.",
-          "eyebrow": "Your Bali stay",
           "is_visible": true,
           "button_label": "Book now"
         }

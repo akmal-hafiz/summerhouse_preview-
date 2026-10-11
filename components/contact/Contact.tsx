@@ -331,7 +331,6 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
       <section className={styles.contactHero} aria-labelledby="contact-title">
         <div className={styles.contactHeading}>
           <div>
-            <p className={`${styles.eyebrow} ${styles.heroReveal}`}><span />Contact us<span /></p>
             <h1 id="contact-title" className={styles.heroReveal}>Share your Bali<br /><em>vision with us</em></h1>
           </div>
           <p className={styles.heroReveal}>Tell us about your dates, preferred area, and the kind of stay you have in mind. Our Bali team will make the next step feel simple.</p>
@@ -384,7 +383,6 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
 
       <section className={styles.connected} aria-labelledby="connected-title">
         <div className={`${styles.connectedIntro} ${styles.scrollReveal}`}>
-          <p className={styles.eyebrow}><span />Connect<span /></p>
           <h2 id="connected-title">Stay <em>Connected</em></h2>
           <dl>
             <div><dt>General inquiries</dt><dd><a href={contactEmailHref}>{contact.generalEmail}</a></dd></div>
@@ -414,7 +412,6 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
 
       <section className={styles.faqSection} aria-labelledby="faq-title">
         <div className={`${styles.faqIntro} ${styles.scrollReveal}`}>
-          <p className={styles.eyebrow}><span />FAQ<span /></p>
           <h2 id="faq-title">Frequently asked questions</h2>
           <p>Everything you need to know before planning a stay with Summerhouse.</p>
         </div>

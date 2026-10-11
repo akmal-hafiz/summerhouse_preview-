@@ -14,7 +14,6 @@ const LibreDestinationMap = dynamic(() => import("./LibreDestinationMap"), {
 
 type DestinationAtlasProps = {
   destinations: AboutDestination[];
-  eyebrow: string;
   title: string;
   description: string;
 };
@@ -23,7 +22,7 @@ function villaCount(destination: AboutDestination) {
   return `${destination.villas} ${destination.villas === 1 ? "villa" : "villas"}`;
 }
 
-export default function DestinationAtlas({ destinations, eyebrow, title, description }: DestinationAtlasProps) {
+export default function DestinationAtlas({ destinations, title, description }: DestinationAtlasProps) {
   const fallbackRate = isShowcasePreview ? "Rates available on request" : "View live rates";
   const [requestedName, setRequestedName] = useState<string | null>(null);
   const selected = destinations.find((destination) => destination.name === requestedName) ?? destinations[0];
@@ -32,7 +31,6 @@ export default function DestinationAtlas({ destinations, eyebrow, title, descrip
     <section className={styles.section} aria-labelledby="destination-atlas-title">
       <div className={styles.inner}>
         <div className={styles.intro}>
-          {eyebrow ? <p className={styles.eyebrow}>{eyebrow}</p> : null}
           <h2 id="destination-atlas-title">{title}</h2>
           <p className={styles.description}>{description}</p>
         </div>

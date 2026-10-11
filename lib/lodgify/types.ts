@@ -162,7 +162,6 @@ export type HomepageStayGroup = {
 };
 
 export type SignatureVilla = HomepageStayVilla & {
-  eyebrow: string;
   title: string;
   subtitle: string;
   /** CMS-editable "Why this home" copy. Falls back to subtitle when empty. */

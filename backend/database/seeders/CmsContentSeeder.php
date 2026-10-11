@@ -51,7 +51,6 @@ class CmsContentSeeder extends Seeder
                 'why_this_home' => '',
             ]],
             ['page' => 'home', 'section' => 'why_stay', 'content' => [
-                'eyebrow' => 'Why Summerhouse',
                 'title' => 'A considered way to stay in Bali.',
                 'introduction' => 'Carefully chosen homes, local care you can count on, and clear guidance for a stay that feels right.',
                 'trust_points' => [
@@ -90,7 +89,6 @@ class CmsContentSeeder extends Seeder
                 'description' => 'A curated selection of SummerHouse villas, personally chosen for exceptional design, location, comfort, and guest experience.',
             ]],
             ['page' => 'home', 'section' => 'explore_bali', 'content' => [
-                'kicker' => '',
                 'title' => 'Bali, by Neighbourhood',
                 'description' => 'A closer look at the neighbourhoods, landscapes, and local rhythms around our homes.',
                 'is_visible' => true,
@@ -109,7 +107,6 @@ class CmsContentSeeder extends Seeder
                 'heading' => 'Our Story.',
                 'lead' => 'Summerhouses began as a small collection of villas in Canggu, Bali, built on one belief: a great stay should feel personal before it looks impressive.',
                 'body' => 'Years later, that still shapes every home we curate across Canggu, Ubud, Pererenan, and the quiet corners of the island in between.',
-                'scroll_label' => 'Trusted by travelers worldwide',
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'trust_recognition', 'content' => [
@@ -117,14 +114,12 @@ class CmsContentSeeder extends Seeder
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'studio_statement', 'content' => [
-                'eyebrow' => 'The gallery',
                 'title' => 'A closer look at the spaces you will actually live in.',
                 'description' => 'The light through the morning kitchen, the pool at dusk, the quiet corners between rooms. Every villa is photographed the way you will remember it, so what you see is what you arrive to.',
                 'button_label' => 'View the full gallery',
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'booking_process', 'content' => [
-                'eyebrow' => 'Booking process',
                 'title' => 'Secure your stay',
                 'title_emphasis' => 'with ease',
                 'steps' => [
@@ -154,7 +149,6 @@ class CmsContentSeeder extends Seeder
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'concierge', 'content' => [
-                'eyebrow' => 'Concierge',
                 'title' => 'More than a villa',
                 'title_emphasis' => 'your Bali stay, considered.',
                 'description' => 'Thoughtful support before arrival and throughout your stay.',
@@ -163,24 +157,20 @@ class CmsContentSeeder extends Seeder
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'faq_intro', 'content' => [
-                'eyebrow' => 'FAQ',
                 'title' => 'Everything you need to know.',
                 'button_label' => 'Ask Us',
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'journal_preview', 'content' => [
-                'eyebrow' => 'Featured Stories',
                 'title' => 'The Journal.',
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'destination_footprint', 'content' => [
-                'eyebrow' => 'Location',
                 'title' => 'Where Summerhouses stays unfold.',
                 'description' => 'The collection is centered around Bali\'s most requested stay areas, with villas selected for privacy, atmosphere, and access to the island\'s everyday rituals.',
                 'is_visible' => true,
             ]],
             ['page' => 'about', 'section' => 'final_cta', 'content' => [
-                'eyebrow' => 'Your Bali stay',
                 'title' => 'Find the home that feels right.',
                 'button_label' => 'Book now',
                 'is_visible' => true,

@@ -13,7 +13,6 @@ export default function ConciergeHorizontalStory({
   content,
 }: {
   content?: {
-    eyebrow?: string;
     title?: string;
     title_emphasis?: string;
     description?: string;

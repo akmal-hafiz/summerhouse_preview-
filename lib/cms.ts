@@ -113,7 +113,6 @@ export type CmsHomepageSlots = {
 export type CmsPageContent = Record<string, Record<string, unknown> | null>;
 
 export type CmsDestinationChapter = {
-  eyebrow?: string | null;
   title: string;
   description: string;
   image?: string | null;
@@ -122,7 +121,6 @@ export type CmsDestinationChapter = {
 
 export type CmsDestination = BaliCollectionItem & {
   locationKey?: string | null;
-  eyebrow?: string | null;
   heroTitle?: string | null;
   introduction?: string | null;
   heroMediaType?: "image" | "video";

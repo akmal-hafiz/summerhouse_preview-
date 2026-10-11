@@ -161,7 +161,6 @@ export default function GuestStoriesSection({
           <div className={`${styles.editorialStage} ${styles.compactStage}`}>
             <div className={styles.proofLayout}>
               <aside className={styles.credibility} aria-label="Airbnb host rating summary">
-                <span className={styles.eyebrow}>Guest stories</span>
                 <h2 id="homepage-guest-stories-title">What our guests say</h2>
                 <div className={styles.ratingSummary}>
                   <strong className={styles.rating}>{airbnbHostProof.displayRating}</strong>

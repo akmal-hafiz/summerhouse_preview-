@@ -16,7 +16,6 @@ type BookingStep = {
 };
 
 type BookingProcessContent = {
-  eyebrow?: string;
   title?: string;
   title_emphasis?: string;
   closing_copy?: string;

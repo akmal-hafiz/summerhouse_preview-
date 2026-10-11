@@ -9,7 +9,6 @@ import styles from "./JournalPreviewSection.module.css";
 type JournalPreviewSectionProps = {
   articles: ArticleListItem[];
   content?: {
-    eyebrow?: string;
     title?: string;
   };
 };
@@ -38,7 +37,6 @@ export default function JournalPreviewSection({ articles, content }: JournalPrev
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className={styles.eyebrow}>{content?.eyebrow || "Featured Stories"}</p>
           <h2 className={styles.title}>{content?.title || "The Journal."}</h2>
         </motion.header>
 

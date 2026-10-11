@@ -35,7 +35,6 @@ export default function JournalIndex({ articles }: JournalIndexProps) {
     <div className={styles.page}>
       <div className={styles.shell}>
         <header className={styles.masthead}>
-          <p className={styles.mastheadKicker}>Summerhouses Bali</p>
           <h1 className={styles.mastheadTitle}>The <em>Journal</em></h1>
           <p className={styles.mastheadMeta}>
             <span>{volume}</span>

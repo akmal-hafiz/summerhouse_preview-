@@ -472,7 +472,7 @@
 
 .homepage .credibility h2 {
   max-width: 11ch;
-  margin: 0.75rem 0 0;
+  margin: 0;
   font-family: var(--font-dm-sans), system-ui, sans-serif;
   font-size: clamp(2.55rem, 4vw, 4.35rem);
   font-weight: 570;

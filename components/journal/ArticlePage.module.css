@@ -19,7 +19,7 @@
 
 .heroGrid {
   display: grid;
-  grid-template-columns: minmax(8rem, 0.55fr) minmax(0, 4fr) minmax(8rem, 0.55fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.25rem, 3vw, 3rem);
   align-items: start;
   width: min(100%, 76rem);
@@ -73,7 +73,7 @@
 
 .title {
   max-width: 55rem;
-  margin: 1.05rem auto 0;
+  margin: 0 auto;
   color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(3.75rem, 8vw, 8.7rem);
@@ -272,7 +272,7 @@
 }
 
 .relatedTitle {
-  margin: 0.65rem 0 0;
+  margin: 0;
   color: var(--color-text);
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(2.6rem, 5vw, 5.5rem);
@@ -352,7 +352,7 @@
 
 .ctaTitle {
   max-width: 58rem;
-  margin: 1rem auto 0;
+  margin: 0 auto;
   font-family: var(--font-playfair), Georgia, serif;
   font-size: clamp(3rem, 6vw, 6.8rem);
   font-weight: 600;

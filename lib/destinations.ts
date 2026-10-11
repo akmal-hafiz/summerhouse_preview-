@@ -14,7 +14,6 @@ function fallbackChapters(destination: (typeof baliCollections)[number]): CmsDes
       }));
 
   return pillars.map((pillar, index) => ({
-    eyebrow: `${String(index + 1).padStart(2, "0")} / Field note`,
     title: pillar.title,
     description: pillar.description,
     image: destination.galleryImages[index % destination.galleryImages.length] || destination.image,
@@ -29,7 +28,6 @@ function toFallbackDestination(
     ...destination,
     mediaType: destination.mediaType || "image",
     href: `/destinations/${destination.id}`,
-    eyebrow: "Bali Destination Guide",
     heroTitle: destination.location,
     introduction: destination.description,
     heroMediaType: "image",

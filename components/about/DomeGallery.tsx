@@ -378,16 +378,13 @@ export default function DomeGallery({
       info.className = "enlarge__info";
       const infoText = document.createElement("div");
       infoText.className = "enlarge__info-text";
-      const eyebrow = document.createElement("span");
-      eyebrow.className = "enlarge__info-eyebrow";
-      eyebrow.textContent = "Selected space";
       const title = document.createElement("span");
       title.className = "enlarge__info-title";
       title.textContent = displayTitle;
       const meta = document.createElement("span");
       meta.className = "enlarge__info-meta";
       meta.textContent = displayMeta;
-      infoText.append(eyebrow, title, meta);
+      infoText.append(title, meta);
       info.appendChild(infoText);
       if (propertyHref) {
         const link = document.createElement("a");
@@ -891,14 +888,6 @@ export default function DomeGallery({
       flex-direction: column;
       gap: 2px;
       min-width: 0;
-    }
-    .enlarge__info-eyebrow {
-      font-family: var(--font-dm-sans, system-ui, sans-serif);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--about-green, var(--color-brand));
     }
     .enlarge__info-title {
       font-size: 1rem;

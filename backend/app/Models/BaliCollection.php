@@ -52,7 +52,6 @@ class BaliCollection extends Model
                 $row->villa_count = "{$count} ".($count === 1 ? 'villa' : 'villas');
             }
             $row->price = $row->price ?: 'Price confirmed at booking';
-            $row->eyebrow = $row->eyebrow ?: 'Bali Destination Guide';
             $row->hero_title = $row->hero_title ?: $location;
             $row->introduction = $row->introduction ?: $row->description;
             $row->hero_image = $row->hero_image ?: $row->image;

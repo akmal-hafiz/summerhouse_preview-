@@ -47,7 +47,6 @@ export default function StudioStatement({
   content,
 }: {
   content?: {
-    eyebrow?: string;
     title?: string;
     description?: string;
     button_label?: string;
@@ -79,7 +78,6 @@ export default function StudioStatement({
       </div>
 
       <div className={styles.center}>
-        <p className={styles.eyebrow}>{content?.eyebrow || "The gallery"}</p>
         <p className={styles.primary}>
           {content?.title || "A closer look at the spaces you will actually live in."}
         </p>

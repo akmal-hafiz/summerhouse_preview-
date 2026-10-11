@@ -96,7 +96,6 @@ function FadingImage({
 function FeatureList({ villa }: { villa: SignatureVilla }) {
   return (
     <div className={styles.features}>
-      <p className={styles.eyebrow}>Key features</p>
       <ul className={styles.featureList}>
         {getFeatures(villa).map((feature) => <li key={feature}>{feature}</li>)}
       </ul>
@@ -111,7 +110,6 @@ function FeatureList({ villa }: { villa: SignatureVilla }) {
 function DistinctiveCopy({ villa }: { villa: SignatureVilla }) {
   return (
     <div className={styles.distinctive}>
-      <p className={styles.eyebrow}>What makes it distinct</p>
       <p className={styles.distinctiveCopy}>{villa.whyThisHome}</p>
       {villa.award ? <AwardCredential award={villa.award} /> : null}
     </div>

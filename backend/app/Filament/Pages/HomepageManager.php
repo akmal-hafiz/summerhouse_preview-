@@ -142,7 +142,6 @@ class HomepageManager extends Page implements HasForms
                 ]),
 
                 Forms\Components\Tabs\Tab::make('Signature Villa')->icon('heroicon-o-star')->schema([
-                    Forms\Components\TextInput::make('signature_villa.eyebrow')->hidden(),
                     Forms\Components\TextInput::make('signature_villa.title')->hidden(),
                     Forms\Components\Textarea::make('signature_villa.description')
                         ->hidden()
@@ -405,7 +404,6 @@ class HomepageManager extends Page implements HasForms
                     ->description('Optional detail page content. Open only when editing the destination story.')
                     ->collapsed()
                     ->schema([
-                        Forms\Components\TextInput::make('eyebrow')->label('Story label'),
                         Forms\Components\TextInput::make('hero_title')->label('Page title'),
                         Forms\Components\Textarea::make('introduction')->label('Page introduction')->rows(3),
                         ManagedImageUpload::make('hero_image')
@@ -419,7 +417,6 @@ class HomepageManager extends Page implements HasForms
                             ->label('Story chapters')->collapsed()->reorderable()
                             ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'New chapter')
                             ->schema([
-                                Forms\Components\TextInput::make('eyebrow')->label('Chapter label'),
                                 Forms\Components\TextInput::make('title')->required(),
                                 Forms\Components\Textarea::make('description')->required()->rows(3),
                                 ManagedImageUpload::make('image')->image()->imageEditor()->disk('public')
@@ -593,7 +590,6 @@ class HomepageManager extends Page implements HasForms
                     'image' => $destination['image'] ?: '/homepage_villa/curated-1-main.webp',
                     'image_alt' => $destination['image_alt'] ?: "Summerhouse destination guide to {$location}",
                     'hero_title' => ($destination['hero_title'] ?? null) ?: $location,
-                    'eyebrow' => ($destination['eyebrow'] ?? null) ?: 'Bali Destination Guide',
                     'introduction' => ($destination['introduction'] ?? null) ?: $destination['description'],
                     'hero_image' => ($destination['hero_image'] ?? null) ?: ($destination['image'] ?: '/homepage_villa/curated-1-main.webp'),
                     'highlights' => $destination['highlights'] ?? [],

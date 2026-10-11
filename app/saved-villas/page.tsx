@@ -20,7 +20,6 @@ export default async function SavedVillasPage() {
         <header className="villa-collection-hero villa-saved-hero">
           <div className="villa-collection-shell">
             <div className="villa-collection-hero-copy">
-              <p className="villa-collection-eyebrow">Saved villas</p>
               <h1>Your private shortlist for a quieter Bali stay.</h1>
               <p>
                 Keep promising homes in one calm place, then return to availability

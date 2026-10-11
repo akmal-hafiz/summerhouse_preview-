@@ -8,7 +8,6 @@ import { baliCollections as fallbackCollections, type BaliCollectionItem } from 
 type ExploreBaliSectionProps = {
   collections?: BaliCollectionItem[];
   content?: {
-    kicker?: string;
     title?: string;
     description?: string;
     is_visible?: boolean;

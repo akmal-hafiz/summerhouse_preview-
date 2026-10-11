@@ -4,15 +4,14 @@ import styles from "./OurStoryHero.module.css";
 
 /**
  * Editorial text hero — a massive "Our Story." wordmark on the left, a two-part
- * narrative on the right (muted lead + solid follow-up), and a quiet scroll cue
- * anchored to the bottom. White stage, no imagery: the type is the hero.
+ * narrative on the right (muted lead + solid follow-up). White stage, no
+ * imagery: the type is the hero.
  */
 type OurStoryHeroProps = {
   content?: {
     heading?: string;
     lead?: string;
     body?: string;
-    scroll_label?: string;
   };
 };
 
@@ -33,14 +32,6 @@ export default function OurStoryHero({ content }: OurStoryHeroProps) {
           </p>
         </div>
       </div>
-
-      <a className={styles.scrollCue} href="#trust-recognition" aria-label="Scroll to why travelers trust Summerhouses">
-        <span>{content?.scroll_label || "Trusted by travelers worldwide"}</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M12 4v14" />
-          <path d="m6 13 6 6 6-6" />
-        </svg>
-      </a>
     </section>
   );
 }

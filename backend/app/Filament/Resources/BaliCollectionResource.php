@@ -126,8 +126,6 @@ class BaliCollectionResource extends Resource
                         Forms\Components\Section::make('Editorial introduction')
                             ->columns(2)
                             ->schema([
-                                Forms\Components\TextInput::make('eyebrow')
-                                    ->default('Bali Destination Guide'),
                                 Forms\Components\TextInput::make('hero_title')
                                     ->helperText('Defaults to the location name.'),
                                 Forms\Components\Textarea::make('introduction')
@@ -143,8 +141,6 @@ class BaliCollectionResource extends Resource
                                     ->collapsed()
                                     ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'New chapter')
                                     ->schema([
-                                        Forms\Components\TextInput::make('eyebrow')
-                                            ->placeholder('01 / Morning rhythm'),
                                         Forms\Components\TextInput::make('title')->required(),
                                         Forms\Components\Textarea::make('description')
                                             ->required()

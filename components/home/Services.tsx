@@ -80,7 +80,6 @@ export default function Services() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className={styles.heroContent}
         >
-          <p className={styles.eyebrow}>Guest services</p>
           <h1>Everything around the stay, handled with quiet precision.</h1>
           <p>
             From choosing the right villa to arranging the details that make Bali feel effortless, our service
@@ -92,7 +91,6 @@ export default function Services() {
       <section className={styles.overview}>
         <motion.div {...fadeUp} className={styles.overviewIntro}>
           <div className={styles.motionContents}>
-            <p className={styles.eyebrow}>What we help with</p>
             <h2>Hospitality that begins before the booking.</h2>
           </div>
         </motion.div>
@@ -127,7 +125,6 @@ export default function Services() {
         </motion.figure>
         <motion.div {...fadeUp} className={styles.detailCopy}>
           <div className={styles.motionContents}>
-            <p className={styles.eyebrow}>Why guests love it</p>
             <h2>Less arranging. More being there.</h2>
             <p>
               A good stay should not feel like project management. We help guests move from questions to clarity,
@@ -144,7 +141,6 @@ export default function Services() {
 
       <section className={styles.journey}>
         <div className={styles.journeyHeader}>
-          <p className={styles.eyebrow}>Guest journey</p>
           <h2>What happens after you reach out.</h2>
         </div>
         <div className={styles.journeyRows}>
@@ -170,7 +166,6 @@ export default function Services() {
         />
         <div className={styles.ctaOverlay} />
         <div className={styles.ctaContent}>
-          <p className={styles.eyebrow}>Ready when you are</p>
           <h2>Tell us the stay you have in mind. We will help shape the rest.</h2>
           <Link href="/contact">Plan your stay</Link>
         </div>

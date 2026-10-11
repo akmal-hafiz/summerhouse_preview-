@@ -70,7 +70,6 @@ type AboutCopy = {
   lead?: string;
   body?: string;
   scroll_label?: string;
-  eyebrow?: string;
   title?: string;
   title_emphasis?: string;
   description?: string;
@@ -580,7 +579,6 @@ export default function About({
         <div className={styles.newReviewsContainer}>
           Legacy header
           <div className={styles.newReviewsHeader}>
-            <span className={styles.newReviewsKicker}>Reviews</span>
             <h2 className={styles.newReviewsHeading}>What our guests say about Summerhouses</h2>
             <p>
               Real notes from stays shaped by calm homes, clear support, and details handled before arrival.
@@ -721,7 +719,6 @@ export default function About({
 
       {isVisible("faq_intro") ? <section id="faq" className={styles.faqSection}>
         <div className={styles.faqIntro}>
-          <p className={styles.darkEyebrow}>{String(faqIntro.eyebrow || "FAQ")}</p>
           <h2>{String(faqIntro.title || "Everything you need to know.")}</h2>
           <InteractiveHoverButton href="/contact" className={`${styles.reserveButtonDark} ihb-fill-light`} arrow={null}>
             <span>
@@ -756,7 +753,6 @@ export default function About({
       {isVisible("destination_footprint") ? (
         <DestinationAtlas
           destinations={destinations}
-          eyebrow={String(destinationFootprint.eyebrow || "Location")}
           title={String(destinationFootprint.title || "Where Summerhouses stays unfold.")}
           description={String(
             destinationFootprint.description ||
@@ -767,7 +763,6 @@ export default function About({
 
       {isVisible("final_cta") ? (
         <section className={styles.finalCta}>
-          <p>{String(finalCta.eyebrow || "Your Bali stay")}</p>
           <h2>{String(finalCta.title || "Find the home that feels right.")}</h2>
           <Link href="/villas">{String(finalCta.button_label || "Book now")}</Link>
         </section>

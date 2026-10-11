@@ -423,7 +423,6 @@ function getSignatureSubtitle(villa: HomepageStayVilla) {
 }
 
 type SignatureVillaCms = {
-  eyebrow?: string | null;
   title?: string | null;
   description?: string | null;
   why_this_home?: string | null;
@@ -472,7 +471,6 @@ export async function getHomepageSignatureVilla(): Promise<SignatureVilla | null
 
   return {
     ...villa,
-    eyebrow: cms?.eyebrow?.trim() || "Signature Villa",
     title: cms?.title?.trim() || "Most Exclusive Stay",
     subtitle,
     whyThisHome: cms?.why_this_home?.trim() || `${subtitle} Chosen for tropical architecture, privacy, and full-villa comfort.`,

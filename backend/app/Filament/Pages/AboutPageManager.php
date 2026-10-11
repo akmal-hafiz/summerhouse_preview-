@@ -232,7 +232,6 @@ class AboutPageManager extends Page implements HasForms, HasTable
                 Forms\Components\TextInput::make('our_story.heading')->label('Heading')->required()->maxLength(120),
                 Forms\Components\Textarea::make('our_story.lead')->label('Lead paragraph')->required()->rows(3)->maxLength(500)->columnSpanFull(),
                 Forms\Components\Textarea::make('our_story.body')->label('Supporting paragraph')->required()->rows(3)->maxLength(700)->columnSpanFull(),
-                Forms\Components\TextInput::make('our_story.scroll_label')->label('Scroll cue')->maxLength(80),
             ],
             'trust_recognition' => [
                 Forms\Components\TextInput::make('trust_recognition.heading')->label('Heading')->required()->maxLength(140)->columnSpanFull(),
@@ -253,7 +252,6 @@ class AboutPageManager extends Page implements HasForms, HasTable
                     ->content('The current villa total remains automatic and cannot be overridden here.')->columnSpanFull(),
             ],
             'studio_statement' => [
-                Forms\Components\TextInput::make('studio_statement.eyebrow')->label('Small heading')->maxLength(80),
                 Forms\Components\TextInput::make('studio_statement.title')->label('Title')->required()->maxLength(160),
                 Forms\Components\Textarea::make('studio_statement.description')->label('Description')->required()->rows(4)->maxLength(800)->columnSpanFull(),
                 Forms\Components\TextInput::make('studio_statement.button_label')->label('Button label')->required()->maxLength(50),
@@ -287,12 +285,10 @@ class AboutPageManager extends Page implements HasForms, HasTable
                 Forms\Components\TextInput::make('concierge.link_label')->label('Link label')->required()->maxLength(50),
             ],
             'faq_intro' => [
-                Forms\Components\TextInput::make('faq_intro.eyebrow')->label('Small heading')->maxLength(80),
                 Forms\Components\TextInput::make('faq_intro.title')->label('Title')->required()->maxLength(140),
                 Forms\Components\TextInput::make('faq_intro.button_label')->label('Contact button label')->required()->maxLength(50),
             ],
             'journal_preview' => [
-                Forms\Components\TextInput::make('journal_preview.eyebrow')->label('Small heading')->maxLength(80),
                 Forms\Components\TextInput::make('journal_preview.title')->label('Title')->required()->maxLength(120),
                 Forms\Components\Placeholder::make('journal_dynamic_note')->label('Published stories')
                     ->content('The website automatically shows up to four latest published Journal entries by publication date.')->columnSpanFull(),
@@ -328,7 +324,6 @@ class AboutPageManager extends Page implements HasForms, HasTable
                 'heading' => 'Our Story.',
                 'lead' => 'Summerhouses began as a small collection of villas in Canggu, Bali, built on one belief: a great stay should feel personal before it looks impressive.',
                 'body' => 'Years later, that still shapes every home we curate across Canggu, Ubud, Pererenan, and the quiet corners of the island in between.',
-                'scroll_label' => 'Trusted by travelers worldwide',
                 'is_visible' => true,
             ],
             'trust_recognition' => [
@@ -337,7 +332,6 @@ class AboutPageManager extends Page implements HasForms, HasTable
                 'is_visible' => true,
             ],
             'studio_statement' => [
-                'eyebrow' => 'The gallery',
                 'title' => 'A closer look at the spaces you will actually live in.',
                 'description' => 'The light through the morning kitchen, the pool at dusk, the quiet corners between rooms. Every villa is photographed the way you will remember it, so what you see is what you arrive to.',
                 'button_label' => 'View the full gallery',
@@ -360,13 +354,11 @@ class AboutPageManager extends Page implements HasForms, HasTable
                 'is_visible' => true,
             ],
             'faq_intro' => [
-                'eyebrow' => 'FAQ',
                 'title' => 'Everything you need to know.',
                 'button_label' => 'Ask Us',
                 'is_visible' => true,
             ],
             'journal_preview' => [
-                'eyebrow' => 'Featured Stories',
                 'title' => 'The Journal.',
                 'is_visible' => true,
             ],

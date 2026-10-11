@@ -109,7 +109,6 @@ export default function ForgotPasswordForm() {
   if (completed) {
     return (
       <div className="auth-form">
-        <p className="auth-eyebrow">Done</p>
         <h1 className="auth-heading">Password diperbarui.</h1>
         <p className="auth-subheading">
           Mengalihkan ke halaman masuk. Gunakan password baru untuk masuk.
@@ -121,7 +120,6 @@ export default function ForgotPasswordForm() {
 
   return (
     <div className="auth-form">
-      <p className="auth-eyebrow">{step === "email" ? "Lupa password" : "Reset password"}</p>
       <h1 className="auth-heading">
         {step === "email" ? "Kirim ulang akses." : "Buat password baru."}
       </h1>

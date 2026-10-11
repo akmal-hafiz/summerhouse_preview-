@@ -227,7 +227,6 @@ class CmsController extends Controller
             $editorialChapters = array_values(array_map(
                 function (array $chapter, int $index) use ($gallery, $collection): array {
                     return [
-                        'eyebrow' => str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT).' / Field note',
                         'title' => $chapter['title'] ?? "Discover {$collection->location}",
                         'description' => $chapter['description'] ?? $collection->description,
                         'image' => AssetUrl::resolve($gallery[$index] ?? $collection->image),
@@ -240,7 +239,6 @@ class CmsController extends Controller
         }
 
         return array_merge($summary, [
-            'eyebrow' => $collection->eyebrow ?: 'Bali Destination Guide',
             'heroTitle' => $collection->hero_title ?: $collection->location,
             'introduction' => $collection->introduction ?: $collection->description,
             'heroMediaType' => $collection->hero_media_type ?: 'image',

@@ -39,7 +39,6 @@ export default async function Home() {
     }>("home", "stay_styles", { revalidate: CMS_LODGIFY_REVALIDATE }),
     getCmsSection<WhyStayContent>("home", "why_stay"),
     getCmsSection<{
-      kicker?: string;
       title?: string;
       description?: string;
       is_visible?: boolean;

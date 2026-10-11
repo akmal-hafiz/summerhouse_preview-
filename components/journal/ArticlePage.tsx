@@ -29,24 +29,16 @@ function ArticleHero({ article }: { article: Article }) {
   return (
     <header className={styles.hero}>
       <div className={styles.heroGrid}>
-        <div className={styles.heroKicker}>
-          <span>Summerhouses Journal</span>
-          <span>{article.category}</span>
-        </div>
-
         <div className={styles.heroText}>
-          <p className={styles.eyebrow}>{formatArticleDate(article.date)}</p>
           <h1 className={styles.title}>{article.title}</h1>
           <p className={styles.subtitle}>{article.subtitle}</p>
           <p className={styles.meta}>
+            {formatArticleDate(article.date)}
+            <span aria-hidden="true">/</span>
             By {article.author.name}
             <span aria-hidden="true">/</span>
             {article.readTime}
           </p>
-        </div>
-
-        <div className={styles.heroNote}>
-          <span>Field notes on tropical homes, thoughtful ownership, and slow island living.</span>
         </div>
       </div>
 
@@ -185,7 +177,6 @@ function RelatedArticles({ articles }: { articles: Article[] }) {
       <div className={styles.relatedInner}>
         <div className={styles.relatedHeader}>
           <div>
-            <p className={styles.eyebrow}>Read next</p>
             <h2 className={styles.relatedTitle}>More from the island</h2>
           </div>
           <Link href="/about" className={styles.textLink}>
@@ -221,7 +212,6 @@ function RelatedArticles({ articles }: { articles: Article[] }) {
 function FooterCta() {
   return (
     <section className={styles.ctaSection}>
-      <p className={styles.ctaEyebrow}>Summerhouses Bali</p>
       <h2 className={styles.ctaTitle}>Find a home that lets Bali breathe through it.</h2>
       <p className={styles.ctaText}>
         Explore private villas, owner services, and stays shaped around quiet comfort.
