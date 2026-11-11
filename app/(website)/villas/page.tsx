@@ -1,0 +1,156 @@
+import React, { Suspense } from "react";
+import Link from "next/link";
+import Navbar from "@/components/common/Navbar";
+import Footer from "@/components/common/Footer";
+import VillaGridLoading from "@/components/villas/VillaGridLoading";
+import VillaSearchForm from "@/components/booking/VillaSearchForm";
+import PremiumVillaCard from "@/components/villas/PremiumVillaCard";
+import { getVillaSearchOptions, searchAvailableVillas } from "@/lib/lodgify";
+import { isISODate, isValidDateRange } from "@/lib/date";
+import { clampInteger, safeString } from "@/lib/security/validation";
+import { logServerError } from "@/lib/security/logger";
+import { getCmsPageSections } from "@/lib/cms";
+import { collectionHref, promoCodeFromParam } from "@/lib/promo-param";
+
+export const metadata = {
+  title: "Villa Collection",
+  description: "Explore private Summerhouses Bali villas by location, dates, guests, photos, amenities, and availability.",
+};
+
+type VillasPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+const firstParam = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
+const numberParam = (value: string | string[] | undefined, min = 0, max = 40) => {
+  const numeric = Number(firstParam(value));
+  if (!Number.isFinite(numeric)) return undefined;
+  return clampInteger(numeric, min, max, min);
+};
+
+async function VillaList({ filters, promo }: { filters: Awaited<ReturnType<typeof getFilters>>; promo: string }) {
+  let villas: Awaited<ReturnType<typeof searchAvailableVillas>> = [];
+
+  try {
+    villas = await searchAvailableVillas(filters);
+  } catch (error) {
+    logServerError("[villas:list]", error);
+
+    return (
+      <div className="villa-collection-empty villa-collection-empty--error">
+        <p>We could not refresh live villa availability right now. Please try again in a moment.</p>
+        <Link href={collectionHref(promo)}>Reload villa collection</Link>
+      </div>
+    );
+  }
+
+  if (villas.length === 0) {
+    return (
+      <div className="villa-collection-empty">
+        <p>No villas match those dates yet. Try another stay window or location.</p>
+        <Link href={collectionHref(promo)}>Clear filters</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="villa-collection-grid">
+      {villas.map((villa, index) => (
+        <PremiumVillaCard key={villa.id} villa={villa} priority={index < 3} promo={promo} />
+      ))}
+    </div>
+  );
+}
+
+async function getFilters(searchParams: Promise<Record<string, string | string[] | undefined>>) {
+  const params = await searchParams;
+  const checkIn = firstParam(params.checkIn) || "";
+  const checkOut = firstParam(params.checkOut) || "";
+  const hasValidRange = isValidDateRange(checkIn, checkOut);
+
+  return {
+    location: safeString(firstParam(params.location), 80),
+    match: firstParam(params.match) === "exact" ? "exact" as const : "fuzzy" as const,
+    checkIn: hasValidRange || isISODate(checkIn) ? checkIn : "",
+    checkOut: hasValidRange ? checkOut : "",
+    adults: numberParam(params.adults, 1, 40) || 1,
+    children: numberParam(params.children, 0, 20) || 0,
+    infants: numberParam(params.infants, 0, 10) || 0,
+    pets: numberParam(params.pets, 0, 10) || 0,
+    minPrice: numberParam(params.minPrice, 0, 1_000_000_000),
+    maxPrice: numberParam(params.maxPrice, 0, 1_000_000_000),
+  };
+}
+
+export default async function VillasPage({ searchParams }: VillasPageProps) {
+  const [filters, optionsResult, pageContentResult] = await Promise.allSettled([
+    getFilters(searchParams),
+    getVillaSearchOptions(),
+    getCmsPageSections("villas"),
+  ]);
+  const promo = promoCodeFromParam((await searchParams).promo);
+  const resolvedFilters = filters.status === "fulfilled" ? filters.value : {
+    location: "",
+    match: "fuzzy" as const,
+    checkIn: "",
+    checkOut: "",
+    adults: 1,
+    children: 0,
+    infants: 0,
+    pets: 0,
+    minPrice: undefined,
+    maxPrice: undefined,
+  };
+  const options = optionsResult.status === "fulfilled" ? optionsResult.value : { locations: [], priceRange: { min: null, max: null } };
+  const pageContent = pageContentResult.status === "fulfilled" ? pageContentResult.value : null;
+  const hero = pageContent?.hero ?? {};
+  const heroHeading = typeof hero.heading === "string" && hero.heading.trim()
+    ? hero.heading
+    : "Find your place in Bali.";
+  const heroDescription = typeof hero.description === "string" && hero.description.trim()
+    ? hero.description
+    : "Private villas and apartments, selected across Bali.";
+  const savedLabel = typeof hero.saved_label === "string" && hero.saved_label.trim()
+    ? hero.saved_label
+    : "Saved Villas";
+
+  return (
+    <div className="villa-collection-page">
+      <Navbar />
+
+      <main>
+        {hero.is_visible !== false ? <header className="villa-collection-hero">
+          <div className="villa-collection-shell">
+            <div className="villa-collection-hero-copy">
+              <h1>{heroHeading}</h1>
+              <p>{heroDescription}</p>
+            </div>
+            <Link className="villa-collection-saved-link" href="/saved-villas">{savedLabel}</Link>
+          </div>
+        </header> : null}
+
+        <section className="villa-collection-search">
+          <div className="villa-collection-shell">
+            <VillaSearchForm
+              variant="listing"
+              initialValues={resolvedFilters}
+              locations={options.locations}
+              promo={promo}
+            />
+          </div>
+        </section>
+
+        <section className="villa-collection-list">
+          <div className="villa-collection-shell">
+            {promo && <p className="villa-collection-promo">Code <strong>{promo}</strong> will be filled in when you check a villa&apos;s price.</p>}
+            <Suspense fallback={<VillaGridLoading />}>
+              <VillaList filters={resolvedFilters} promo={promo} />
+            </Suspense>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

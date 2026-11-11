@@ -1,0 +1,122 @@
+/* Hallmark · component: guest reviews · genre: editorial · theme: Summerhouse existing brand · v2.0.0 */
+/* Critique: mobile uses one reading column and a compact guest attribution; desktop retains the requested reference geometry. */
+/* waive 24b: desktop reference geometry and optical spacing in stars, dots and guest metadata are retained intentionally. */
+.section {
+  padding: clamp(48px, 3.2vw, 60px) clamp(20px, 2vw, 36px) 64px;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.shell { width: 100%; max-width: 1600px; margin-inline: auto; }
+.heading {
+  margin: 0 auto 16px;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(36px, 4.1vw, 64px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.controls { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.dots { display: flex; align-items: center; }
+.dots button { display: grid; place-items: center; width: 28px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.dots button::after { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--color-text-disabled); transition: background-color 180ms ease; }
+.dots button[aria-pressed="true"]::after { background: var(--color-button-primary-bg); }
+.dots button:hover::after { background: var(--color-text-muted); }
+.arrows { display: flex; gap: 10px; }
+.arrows button { display: grid; place-items: center; width: 50px; height: 50px; padding: 0; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface-raised); color: var(--color-text); cursor: pointer; transition: background-color 180ms ease; }
+.arrows svg { width: 24px; height: 24px; }
+.arrows button:hover:not([aria-disabled="true"]) { background: var(--color-button-secondary-bg-hover); }
+.arrows button[aria-disabled="true"] { color: var(--color-text-disabled); cursor: default; }
+.dots button:focus-visible, .arrows button:focus-visible, .identity a:focus-visible, .airbnbLink:focus-visible { outline: 2px solid var(--color-button-primary-bg); outline-offset: 3px; }
+
+.stage { padding: clamp(16px, 2vw, 32px); border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-page); touch-action: pan-y; }
+.slide { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1.05fr); gap: 10px; min-height: 374px; }
+.photoPanel, .quotePanel, .identityPanel { min-width: 0; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-page); }
+.photoPanel { display: grid; place-items: center; padding: clamp(28px, 3.9vw, 60px); }
+.portrait { position: relative; display: grid; place-items: center; width: min(100%, 250px); aspect-ratio: 1; overflow: hidden; border-radius: 4px; background: var(--color-surface-sage); }
+.portrait img { object-fit: cover; }
+.initials { color: var(--color-brand); font-size: 48px; text-transform: uppercase; }
+.quotePanel { display: flex; align-items: center; padding: clamp(28px, 3.9vw, 60px); }
+.quotePanel blockquote { margin: 0; font-size: clamp(24px, 1.94vw, 30px); font-weight: 400; letter-spacing: -.02em; line-height: 1.22; overflow-wrap: break-word; }
+.identityPanel { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 30px; padding: clamp(28px, 3.9vw, 60px); text-align: right; }
+.stars { display: inline-flex; gap: 4px; color: var(--color-brand); }
+.stars svg { width: 15px; height: 15px; }
+.reviewSource { color: var(--color-text-muted); font-size: 14px; }
+.identity { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.identity strong { font-size: 20px; font-weight: 500; line-height: 1.2; }
+.identity > span { color: var(--color-text-muted); font-size: 17px; line-height: 1.3; }
+.identity > .reviewDate { font-size: 14px; }
+.identity a { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 10px; color: var(--color-button-primary-bg); font-size: 13px; line-height: 1.4; text-decoration: underline; text-underline-offset: 4px; }
+.identity a svg { flex: none; width: 16px; height: 16px; }
+.bottomRow { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; margin-top: 28px; }
+.proof { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 28px; color: var(--color-text-muted); font-size: 14px; line-height: 1.5; }
+.proof strong { margin-right: 8px; color: var(--color-text); font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.airbnbLink { display: inline-flex; min-height: 44px; align-items: center; gap: 12px; color: var(--color-button-primary-bg); font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 5px; }
+.airbnbLink svg { width: 20px; height: 20px; }
+.srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (max-width: 1100px) {
+  .slide { grid-template-columns: minmax(0, .95fr) minmax(0, 1.5fr) minmax(0, 1fr); min-height: 350px; }
+  .photoPanel, .quotePanel, .identityPanel { padding: 24px; }
+  .quotePanel blockquote { font-size: 25px; }
+  .identity strong { font-size: 18px; }
+  .identity > span { font-size: 15px; }
+}
+
+@media (max-width: 850px) {
+  .slide { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); grid-template-rows: 1fr auto; }
+  .photoPanel { grid-column: 1; grid-row: 1 / 3; }
+  .quotePanel { grid-column: 2; grid-row: 1; min-height: 240px; }
+  .identityPanel { grid-column: 2; grid-row: 2; gap: 16px; min-height: 150px; }
+  .heading { font-size: clamp(36px, 5.6vw, 48px); }
+}
+
+@media (max-width: 600px) {
+  .section { padding-block: 56px 64px; }
+  .shell { display: flex; flex-direction: column; }
+  .heading { order: 0; margin: 0 0 32px; font-size: clamp(30px, 7.7vw, 38px); text-align: left; }
+  .controls { order: 2; flex-wrap: wrap; gap: 8px; margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--color-border); }
+  .dots button { width: 24px; }
+  .dots button::after { width: 6px; height: 6px; }
+  .dots button[aria-pressed="true"]::after { width: 6px; height: 6px; }
+  .arrows { gap: 8px; margin-left: auto; }
+  .arrows button { width: 44px; height: 44px; }
+  .stage { order: 1; padding: 0; border: 0; border-radius: 0; }
+  .slide { grid-template-columns: 64px minmax(0, 1fr); grid-template-rows: auto auto; gap: 24px 16px; min-height: 0; }
+  .photoPanel, .quotePanel, .identityPanel { padding: 0; border: 0; border-radius: 0; background: var(--color-page); }
+  .photoPanel { grid-column: 1; grid-row: 2; align-self: start; }
+  .portrait { width: 64px; }
+  .initials { font-size: 24px; }
+  .quotePanel { grid-column: 1 / -1; grid-row: 1; min-height: 0; align-items: flex-start; }
+  .quotePanel blockquote { font-size: 24px; line-height: 1.4; letter-spacing: -.025em; }
+  .identityPanel { grid-column: 2; grid-row: 2; min-height: 0; align-items: flex-start; gap: 10px; text-align: left; }
+  .identity { align-items: flex-start; gap: 4px; }
+  .identity strong { font-size: 17px; }
+  .identity > span { font-size: 14px; }
+  .identity > .reviewDate { font-size: 12px; }
+  .identity a { justify-content: flex-start; min-height: 44px; margin-top: 4px; font-size: 13px; }
+  .stars { gap: 3px; }
+  .stars svg { width: 12px; height: 12px; }
+  .bottomRow { order: 3; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 24px; }
+  .proof { gap: 6px 16px; font-size: 12px; }
+  .proof strong { font-size: 20px; }
+  .proof > span:first-child { flex-basis: 100%; }
+  .airbnbLink { font-size: 14px; }
+}
+
+@media (max-width: 360px) {
+  .dots button { width: 24px; }
+  .arrows { gap: 4px; }
+  .arrows button { width: 44px; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .arrows button:hover:not([aria-disabled="true"]) { background: var(--color-page); }
+}
+.arrows button:active:not([aria-disabled="true"]), .dots button:active { transform: scale(.97); }
+
+@media (prefers-reduced-motion: reduce) { :global(html:not([data-motion="full"])) .dots button::after, :global(html:not([data-motion="full"])) .arrows button { transition: none; } }
+
+:global(html[data-motion="reduced"]) .dots button::after, :global(html[data-motion="reduced"]) .arrows button { transition: none; }

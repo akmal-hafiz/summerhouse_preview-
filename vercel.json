@@ -1,0 +1,5 @@
+{
+  "env": {
+    "NEXT_PUBLIC_SHOWCASE_PREVIEW": "1"
+  }
+}

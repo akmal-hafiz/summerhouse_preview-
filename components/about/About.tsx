@@ -1,0 +1,729 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import type { CSSProperties } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useSectionChoreography } from "@/hooks/useSectionChoreography";
+import motionStyles from "@/components/common/EditorialMotion.module.css";
+import {
+  FiArrowUpRight,
+  FiChevronDown,
+  FiCompass,
+  FiHeart,
+  FiHome,
+  FiMapPin,
+  FiShield,
+  FiSmile,
+  FiStar,
+  FiUsers,
+  FiTool,
+  FiAward,
+  FiMap,
+} from "react-icons/fi";
+import styles from "./AboutEditorialSections.module.css";
+import DomeGallery from "./DomeGallery";
+import DestinationAtlas from "./DestinationAtlas";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+
+
+
+export type AboutDestination = {
+  name: string;
+  villas: number;
+  latitude?: number;
+  longitude?: number;
+  startingPriceMin?: number | null;
+  startingPriceMax?: number | null;
+  currencyCode?: string | null;
+};
+
+type AboutFaq = {
+  question: string;
+  answer: string;
+};
+
+import JournalPreviewSection from "./JournalPreviewSection";
+import OurStoryHero from "./sections/OurStoryHero";
+import TrustRecognition from "./sections/TrustRecognition";
+import OurPurpose from "./sections/OurPurpose";
+import StudioStatement from "./sections/StudioStatement";
+import BookingProcess from "./sections/BookingProcess";
+import ConciergeHorizontalStory from "./sections/ConciergeHorizontalStory";
+import type { ArticleListItem } from "@/lib/journal";
+import type { PortfolioStats } from "@/lib/lodgify";
+import type { CmsGalleryItem, CmsPageContent } from "@/lib/cms";
+
+type AboutProps = {
+  destinations?: AboutDestination[];
+  faqs?: AboutFaq[] | null;
+  journalArticles?: ArticleListItem[];
+  portfolioStats?: PortfolioStats;
+  cmsGalleryItems?: CmsGalleryItem[] | null;
+  cmsContent?: CmsPageContent | null;
+};
+
+type AboutCopy = {
+  is_visible?: boolean;
+  heading?: string;
+  lead?: string;
+  body?: string;
+  scroll_label?: string;
+  title?: string;
+  title_emphasis?: string;
+  description?: string;
+  button_label?: string;
+  trust_label?: string;
+  closing_copy?: string;
+  link_label?: string;
+  quote?: string;
+  steps?: Array<{
+    title?: string;
+    description?: string;
+    images?: string[];
+  }>;
+  left_images?: string[];
+  right_images?: string[];
+  pillars?: Array<{
+    id?: string;
+    name?: string;
+    scope?: string;
+    desc?: string;
+  }>;
+  [key: string]: unknown;
+};
+
+const storyRows = [
+  {
+    id: "happy-guests",
+    value: "200+",
+    text: "Happy guests accommodated",
+    icon: FiSmile,
+  },
+  {
+    id: "loyal-visitors",
+    value: "26%",
+    text: "Loyal repeat visitors hosted",
+    icon: FiUsers,
+  },
+  {
+    id: "guest-support",
+    value: "24/7",
+    text: "Professional guest support",
+    icon: FiTool,
+  },
+];
+
+const featurePills = [
+  { id: "trusted-hospitality", label: "Trusted Hospitality", icon: FiShield },
+  { id: "premium-locations", label: "Premium Locations", icon: FiMapPin },
+  { id: "personalized-service", label: "Personalized Service", icon: FiHeart },
+  { id: "verified-properties", label: "Verified Properties", icon: FiHome },
+  { id: "local-expertise", label: "Local Expertise", icon: FiCompass },
+];
+
+const galleryItems = [
+  {
+    type: "image",
+    id: "gallery-dining",
+    src: "/homepage_villa/officiana17.webp",
+    alt: "Villa dining and kitchen area prepared for guests",
+    label: "Dining Room",
+    index: "01",
+    className: styles.galleryDining,
+  },
+  {
+    type: "text",
+    id: "editorial-text-1",
+    label: "Quiet space",
+    title: "Slow Spaces",
+    text: "Villas designed around the natural rhythm of the day, where light and shade form their own architecture.",
+    className: styles.galleryText1,
+  },
+  {
+    type: "image",
+    id: "gallery-bedroom",
+    src: "/homepage_villa/88east.webp",
+    alt: "Summerhouses villa bedroom with soft textures",
+    label: "Bedroom",
+    index: "03",
+    className: styles.galleryBedroom,
+  },
+  {
+    type: "image",
+    id: "gallery-workspace",
+    src: "/homepage_villa/villaarta.webp",
+    alt: "Warm villa interior detail with tropical modern styling",
+    label: "Creative Workspace",
+    index: "04",
+    className: styles.galleryWorkspace,
+  },
+  {
+    type: "image",
+    id: "gallery-kitchen",
+    src: "/homepage_villa/CactusEstate.webp",
+    alt: "Bright villa pool courtyard in Bali",
+    label: "Kitchen",
+    index: "05",
+    className: styles.galleryKitchen,
+  },
+  {
+    type: "text",
+    id: "editorial-text-2",
+    label: "Soft rest",
+    title: "Silent Corners",
+    text: "Quiet nooks created for reading, writing, or simply watching the tropical afternoon breeze.",
+    className: styles.galleryText2,
+  },
+  {
+    type: "image",
+    id: "gallery-living",
+    src: "/homepage_villa/curated-5-lounge.webp",
+    alt: "Summerhouses villa lounge with warm natural details",
+    label: "Living Room",
+    index: "07",
+    className: styles.galleryLiving,
+  },
+  {
+    type: "image",
+    id: "gallery-guest-bedroom",
+    src: "/homepage_villa/VillaZen.webp",
+    alt: "Tropical villa suite with serene island atmosphere",
+    label: "Guest Bedroom",
+    index: "08",
+    className: styles.galleryGuestBedroom,
+  },
+  {
+    type: "image",
+    id: "gallery-foyer",
+    src: "/homepage_villa/curated-3-corner.webp",
+    alt: "Quiet villa architectural corner with tropical planting",
+    label: "Decorative Foyer",
+    index: "09",
+    className: styles.galleryFoyer,
+  },
+  {
+    type: "text",
+    id: "editorial-text-3",
+    label: "Bath detail",
+    title: "Open-Air Rituals",
+    text: "Private bathrooms that let you bathe under the stars, enclosed by lush greenery and stone.",
+    className: styles.galleryText3,
+  },
+  {
+    type: "image",
+    id: "gallery-office",
+    src: "/homepage_villa/curated-2-detail.webp",
+    alt: "Summerhouses villa detail with calm work-friendly atmosphere",
+    label: "Home Office",
+    index: "11",
+    className: styles.galleryOffice,
+  },
+  {
+    type: "image",
+    id: "gallery-bathroom",
+    src: "/homepage_villa/curated-8.webp",
+    alt: "Summerhouses villa garden and pool deck",
+    label: "Bathroom",
+    index: "12",
+    className: styles.galleryBathroom,
+  },
+];
+
+const fallbackDomeGalleryImages = galleryItems
+  .filter((item) => item.type === "image")
+  .map((item) => ({
+    src: item.src ?? "",
+    alt: item.alt ?? item.label,
+  }));
+
+const homeHighlights = [
+  { id: "curated-stays", value: "43", label: "Curated stays", text: "A growing collection across Bali's most loved neighborhoods." },
+  { id: "support", value: "24/7", label: "Support", text: "The Summerhouse team nearby when plans shift, arrivals change, or questions appear." },
+  { id: "guest-sentiment", value: "4.9", label: "Guest sentiment", text: "The quiet confidence of homes that feel considered before check-in." },
+];
+
+const servicePromises = [
+  {
+    id: "villa-matching",
+    label: "Villa Matching",
+    text: "We help guests choose homes by mood, area, group size, and the kind of Bali rhythm they want.",
+    icon: FiHome,
+  },
+  {
+    id: "arrival-care",
+    label: "Arrival Care",
+    text: "From check-in details to first-day guidance, the stay starts with fewer questions and more ease.",
+    icon: FiMap,
+  },
+  {
+    id: "local-concierge",
+    label: "Local Concierge",
+    text: "Drivers, dining ideas, beach days, and trusted island recommendations stay close when needed.",
+    icon: FiCompass,
+  },
+  {
+    id: "long-stay-setup",
+    label: "Long-Stay Setup",
+    text: "For slower stays, we think through work comfort, daily routines, and practical home details.",
+    icon: FiUsers,
+  },
+  {
+    id: "home-readiness",
+    label: "Home Readiness",
+    text: "Homes are checked for comfort, cleanliness, safety, and small details before guests arrive.",
+    icon: FiShield,
+  },
+  {
+    id: "guest-support",
+    label: "Guest Support",
+    text: "If plans shift, our team stays nearby with calm help, clear answers, and practical next steps.",
+    icon: FiTool,
+  },
+];
+
+const defaultFaqs = [
+  {
+    id: "villa-selection",
+    question: "How does Summerhouses choose each villa?",
+    answer:
+      "We look for homes with atmosphere, privacy, thoughtful light, and practical comfort, then make sure the stay can be supported clearly before guests arrive.",
+  },
+  {
+    id: "arrival-support",
+    question: "Can the Summerhouse team help with arrivals and island plans?",
+    answer:
+      "Yes. Arrivals, recommendations, dining, drivers, and daily requests can be handled with care so guests can settle into the pace of the island.",
+  },
+  {
+    id: "long-stays",
+    question: "Are the homes suitable for families or longer stays?",
+    answer:
+      "Many homes are designed for couples, families, and longer stays, with kitchens, calm bedrooms, private pools, and living spaces that feel easy day after day.",
+  },
+  {
+    id: "villa-locations",
+    question: "Where are the villas located?",
+    answer:
+      "The collection is centered around Bali's most requested stay areas, including Canggu, Ubud, Pererenan, Umalas, Kerobokan, and Legian when available.",
+  },
+];
+
+const fadeUp = {
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 1.0, ease: [0.16, 1, 0.3, 1] as const },
+};
+
+const zoomInVariant = {
+  initial: { opacity: 0, scale: 0.92, y: 20 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: (index % 3) * 0.08,
+    },
+  }),
+  viewport: { once: true, amount: 0.12 },
+};
+
+const heroStaggerContainer = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const heroChildVariant = {
+  initial: { opacity: 0, y: 20 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+};
+
+const storyHeadlineVariant = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.05,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+  viewport: { once: true, amount: 0.2 },
+};
+
+const storyCardVariant = {
+  initial: { opacity: 0, x: 28, y: 28 },
+  whileInView: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 80,
+      damping: 16,
+      mass: 1,
+      delay: 0.08,
+    },
+  },
+  viewport: { once: true, amount: 0.15 },
+};
+
+const teamQuoteVariant = {
+  initial: { opacity: 0, y: 32 },
+  whileInView: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.15,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+  viewport: { once: true, amount: 0.25 },
+};
+
+const highlightsCardVariant = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 1.0,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: index * 0.08,
+    },
+  }),
+  viewport: { once: true, amount: 0.15 },
+};
+
+const reviewCardVariant = {
+  initial: { opacity: 0, y: 28 },
+  whileInView: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: (index % 3) * 0.06,
+    },
+  }),
+  viewport: { once: true, amount: 0.12 },
+};
+
+export default function About({
+  destinations = [],
+  faqs: faqsProp,
+  journalArticles = [],
+  portfolioStats,
+  cmsGalleryItems,
+  cmsContent,
+}: AboutProps) {
+  const aboutRootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollToCurrentSection = () => {
+      const sectionId = decodeURIComponent(window.location.hash.slice(1));
+      if (!sectionId) return;
+
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const navbarOffset = 96;
+      const targetTop = section.getBoundingClientRect().top + window.scrollY - navbarOffset;
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: "auto" });
+    };
+
+    const frame = window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(scrollToCurrentSection);
+    });
+    const layoutSettledTimer = window.setTimeout(scrollToCurrentSection, 350);
+
+    window.addEventListener("hashchange", scrollToCurrentSection);
+    window.addEventListener("load", scrollToCurrentSection);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(layoutSettledTimer);
+      window.removeEventListener("hashchange", scrollToCurrentSection);
+      window.removeEventListener("load", scrollToCurrentSection);
+    };
+  }, []);
+
+  const domeGalleryImages = useMemo(() => {
+    const source = cmsGalleryItems ?? [];
+    const mapped = source
+      .map((item, index) => {
+        if (item.type === "image" && item.src) {
+          return {
+            src: item.src,
+            alt: item.alt?.trim() || item.label?.trim() || `Summerhouse gallery ${index + 1}`,
+            propertyName: item.label?.trim() || undefined,
+          };
+        }
+        if (item.type === "video" && item.video_poster) {
+          return {
+            src: item.video_poster,
+            alt: item.alt?.trim() || item.label?.trim() || `Summerhouse gallery video ${index + 1}`,
+            propertyName: item.label?.trim() || undefined,
+          };
+        }
+        return null;
+      })
+      .filter((item): item is { src: string; alt: string; propertyName: string | undefined } => Boolean(item));
+    return mapped.length ? mapped : fallbackDomeGalleryImages;
+  }, [cmsGalleryItems]);
+  const homesCount = portfolioStats?.homesCount ?? null;
+  const faqs = faqsProp && faqsProp.length
+    ? faqsProp.map((f, i) => ({
+        id: `cms-faq-${i}`,
+        question: f.question,
+        answer: f.answer,
+      }))
+    : defaultFaqs;
+  useSectionChoreography(aboutRootRef, "about");
+
+  const totalVillas = destinations.reduce((total, destination) => total + destination.villas, 0)
+    || portfolioStats?.homesCount || 0;
+  const trustStats = [
+    { id: "active-villas", value: String(totalVillas), label: "Premium Villas" },
+    { id: "support", value: "24/7", label: "Guest Support" },
+    { id: "sentiment", value: "4.9", label: "Guest Sentiment" },
+  ];
+  const valuePillItems = [
+    ...featurePills.map((pill) => ({ ...pill, renderId: `${pill.id}-primary` })),
+    ...featurePills.map((pill) => ({ ...pill, renderId: `${pill.id}-mirror` })),
+  ];
+  const sectionCopy = (key: string): AboutCopy =>
+    (cmsContent?.[key] as AboutCopy | null | undefined) || {};
+  const isVisible = (key: string): boolean => sectionCopy(key).is_visible !== false;
+  const ourStory = sectionCopy("our_story");
+  const trustRecognition = sectionCopy("trust_recognition");
+  const ourPurpose = sectionCopy("our_purpose");
+  const studioStatement = sectionCopy("studio_statement");
+  const bookingProcess = sectionCopy("booking_process");
+  const concierge = sectionCopy("concierge");
+  const faqIntro = sectionCopy("faq_intro");
+  const journalPreview = sectionCopy("journal_preview");
+  const destinationFootprint = sectionCopy("destination_footprint");
+  const finalCta = sectionCopy("final_cta");
+
+  return (
+    <div className={`${styles.aboutShell} ${motionStyles.root}`} ref={aboutRootRef}>
+      {isVisible("our_story") ? <OurStoryHero content={ourStory} /> : null}
+
+      {isVisible("trust_recognition") ? (
+        <TrustRecognition content={trustRecognition} />
+      ) : null}
+
+      {isVisible("our_purpose") ? <OurPurpose content={ourPurpose} /> : null}
+
+      {isVisible("studio_statement") ? <StudioStatement content={studioStatement} /> : null}
+
+      {isVisible("booking_process") ? <BookingProcess content={bookingProcess} /> : null}
+
+      {isVisible("concierge") ? <ConciergeHorizontalStory content={concierge} /> : null}
+      {/* Legacy About testimonial markup retained temporarily for stylesheet migration.
+        <div className={styles.newReviewsContainer}>
+          Legacy header
+          <div className={styles.newReviewsHeader}>
+            <h2 className={styles.newReviewsHeading}>What our guests say about Summerhouses</h2>
+            <p>
+              Real notes from stays shaped by calm homes, clear support, and details handled before arrival.
+            </p>
+          </div>
+
+          {hasTestimonials && activeTestimonial ? (
+            <>
+              <div className={styles.newReviewsGrid}>
+                <div className={styles.ratingSummaryCard}>
+                  <motion.div
+                    key={`${activeTestimonial.id}-portrait`}
+                    className={styles.testimonialPortrait}
+                    initial={{ opacity: 0, x: -24, rotate: -1.5 }}
+                    animate={{ opacity: 1, x: 0, rotate: 0 }}
+                    transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {activeTestimonial.avatar ? (
+                      <Image
+                        src={activeTestimonial.avatar ?? ""}
+                        alt={activeTestimonial.author}
+                        fill
+                        sizes="(min-width: 960px) 22vw, 78vw"
+                        className={styles.coverImage}
+                      />
+                    ) : (
+                      <div className={styles.testimonialPortraitFallback} aria-hidden="true">
+                        <span>{activeTestimonial.initials || activeTestimonial.author.charAt(0)}</span>
+                      </div>
+                    )}
+                  </motion.div>
+                  <div className={styles.testimonialPortraitMeta}>
+                    <strong>{activeTestimonial.author}</strong>
+                    <span>{activeTestimonial.location}</span>
+                    {activeTestimonial.villaName ? (
+                      <span className={styles.testimonialVillaLabel}>Stayed at {activeTestimonial.villaName}</span>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className={styles.activeTestimonialBlock}>
+                  <div className={styles.testimonialContentArea}>
+                    <motion.div
+                      key={activeReviewIndex}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <div className={styles.testimonialStars} aria-label={`${activeTestimonial.stars} out of 5 stars`}>
+                        {Array.from({ length: 5 }).map((_, idx) => (
+                          <span
+                            key={idx}
+                            aria-hidden="true"
+                            className={idx < activeTestimonial.stars ? styles.starSolid : styles.starOutline}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+
+                      {(activeTestimonial.isVerified || activeTestimonial.sourceLabel) ? (
+                        <div className={styles.testimonialBadgeRow}>
+                          {activeTestimonial.isVerified ? (
+                            <span className={styles.testimonialVerifiedBadge}>Verified stay</span>
+                          ) : null}
+                          {activeTestimonial.sourceLabel ? (
+                            <span className={styles.testimonialSourceBadge}>{activeTestimonial.sourceLabel}</span>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      <blockquote className={styles.testimonialQuoteText}>
+                        &ldquo;{activeTestimonial.text}&rdquo;
+                      </blockquote>
+
+                      <div className={styles.testimonialAuthorRow}>
+                        <div className={styles.authorAvatarWrapper}>
+                          {activeTestimonial.avatar ? (
+                            <Image
+                              src={activeTestimonial.avatar ?? ""}
+                              alt={activeTestimonial.author}
+                              fill
+                              sizes="48px"
+                              className="object-cover rounded-full"
+                            />
+                          ) : (
+                            <div className={styles.authorAvatarFallback} aria-hidden="true">
+                              <span>{activeTestimonial.initials || activeTestimonial.author.charAt(0)}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className={styles.authorMeta}>
+                          <strong className={styles.authorName}>{activeTestimonial.author}</strong>
+                          <span className={styles.authorLocation}>{activeTestimonial.location}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  <div className={styles.testimonialNavCtrls}>
+                    <button
+                      type="button"
+                      onClick={handlePrev}
+                      className={styles.testimonialNavArrow}
+                      aria-label="Previous review"
+                    >
+                      <FiChevronLeft aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className={styles.testimonialNavArrow}
+                      aria-label="Next review"
+                    >
+                      <FiChevronRight aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.ctaButtonWrapper}>
+                <InteractiveHoverButton
+                  href="/villas"
+                  className={`${styles.airbnbCtaButton} ihb-fill-dark`}
+                  arrow={null}
+                >
+                  Read more guest stories
+                </InteractiveHoverButton>
+              </div>
+            </>
+          ) : (
+            <div className={styles.newReviewsEmpty}>
+              <p>Guest stories are on their way. Check back soon for words from our first Summerhouse stays.</p>
+            </div>
+          )}
+        </div>
+      </section> */}
+
+      {isVisible("faq_intro") ? <section id="faq" className={styles.faqSection}>
+        <div className={styles.faqIntro}>
+          <h2>{String(faqIntro.title || "Everything you need to know.")}</h2>
+          <InteractiveHoverButton href="/contact" className={`${styles.reserveButtonDark} ihb-fill-light`} arrow={null}>
+            <span>
+              <FiArrowUpRight aria-hidden="true" />
+            </span>
+            {String(faqIntro.button_label || "Ask Us")}
+          </InteractiveHoverButton>
+        </div>
+        <div className={styles.faqList}>
+          {faqs.map((faq, index) => (
+            <div key={faq.id}>
+              <details className={styles.faqItem} data-motion-rule-host>
+                <summary>
+                  <span>{faq.question}</span>
+                  <FiChevronDown aria-hidden="true" />
+                <span data-motion-rule aria-hidden="true" /></summary><p>{faq.answer}</p>
+              </details>
+            </div>
+          ))}
+        </div>
+      </section> : null}
+
+      {isVisible("journal_preview") ? (
+        <JournalPreviewSection articles={journalArticles} content={journalPreview} />
+      ) : null}
+
+      {isVisible("destination_footprint") ? (
+        <DestinationAtlas
+          destinations={destinations}
+          title={String(destinationFootprint.title || "Where Summerhouses stays unfold.")}
+          description={String(
+            destinationFootprint.description ||
+              "The collection is centered around Bali's most requested stay areas, with villas selected for privacy, atmosphere, and access to the island's everyday rituals.",
+          )}
+        />
+      ) : null}
+
+      {isVisible("final_cta") ? (
+        <section id="about-final-cta" className={styles.finalCta}>
+          <h2 data-about-reveal>{String(finalCta.title || "Find the home that feels right.")}</h2>
+          <Link href="/villas" data-motion-link>{String(finalCta.button_label || "Book now")}</Link>
+        </section>
+      ) : null}
+    </div>
+  );
+}
