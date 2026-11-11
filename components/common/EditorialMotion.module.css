@@ -1,0 +1,25 @@
+/* Hallmark · component: editorial motion details · theme: Summerhouse · v2.0.0 */
+/* Critique: structural rules, restrained fills and arrow feedback keep each scroll chapter distinct without competing with reading. */
+.root [data-motion-rule] { display: block; position: absolute; top: -1px; left: 0; width: 100%; height: 1px; background: var(--color-brand); opacity: .5; pointer-events: none; }
+.root [data-motion-rule-host] { position: relative; }
+.root [data-chapter-spine] { position: absolute; top: 0; bottom: 0; left: -16px; width: 1px; background: var(--color-brand); opacity: .45; pointer-events: none; }
+.root [data-motion-link] { text-decoration-thickness: 1px; transition: text-underline-offset 180ms var(--ease-out-strong); }
+.root [data-motion-link] svg { transition: transform 180ms var(--ease-out-strong); }
+.root [data-motion-button] { position: relative; isolation: isolate; overflow: clip; transition: transform 120ms var(--ease-out-strong), background-color 180ms var(--ease-out-strong); }
+.root [data-motion-button="solid"]::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--color-button-primary-bg-hover); transform: scaleX(0); transform-origin: left center; transition: transform 220ms var(--ease-out-strong); }
+.root :is([data-motion-button],.ihb):active:not(:disabled) { transform: scale(.97); }
+.root [data-motion-link]:active { transform: scale(.97); }
+.root :is([data-motion-button],[data-motion-link]):focus-visible { outline: 2px solid var(--color-button-primary-bg); outline-offset: 4px; transition: none; }
+@media (hover:hover) and (pointer:fine) {
+  .root [data-motion-button="solid"]:hover:not(:disabled)::before { transform: scaleX(1); }
+  .root [data-motion-button="outline"]:hover { border-color: var(--color-button-primary-bg); }
+  .root [data-motion-link]:hover { text-underline-offset: 8px; }
+  .root [data-motion-link]:hover svg { transform: translate(3px,-3px); }
+}
+@media (max-width:999px) { .root [data-chapter-spine] { display: none; } }
+@media (prefers-reduced-motion:reduce) {
+  :global(html:not([data-motion="full"])) .root [data-motion-button], :global(html:not([data-motion="full"])) .root [data-motion-link], :global(html:not([data-motion="full"])) .root [data-motion-link] svg, :global(html:not([data-motion="full"])) .root [data-motion-button]::before { transition: none; }
+  :global(html:not([data-motion="full"])) .root :is([data-motion-button],[data-motion-link]):hover svg,:global(html:not([data-motion="full"])) .root :is([data-motion-button],.ihb):active { transform: none; }
+}
+:global(html[data-motion="reduced"]) .root [data-motion-button], :global(html[data-motion="reduced"]) .root [data-motion-link], :global(html[data-motion="reduced"]) .root [data-motion-link] svg, :global(html[data-motion="reduced"]) .root [data-motion-button]::before { transition: none; }
+:global(html[data-motion="reduced"]) .root :is([data-motion-button],[data-motion-link]):hover svg,:global(html[data-motion="reduced"]) .root :is([data-motion-button],.ihb):active { transform: none; }

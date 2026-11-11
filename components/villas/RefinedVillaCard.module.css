@@ -1,0 +1,198 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.5s cubic-bezier(0.2, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.largeCard {
+  grid-column: span 2;
+}
+
+@media (max-width: 1024px) {
+  .largeCard {
+    grid-column: span 1;
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 24px;
+  overflow: hidden;
+  background-color: var(--color-card-bg-warm);
+  margin-bottom: 24px;
+}
+
+.largeCard .imageWrapper {
+  aspect-ratio: 16 / 9;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background-color: var(--color-badge-featured-bg);
+  color: var(--color-badge-featured-text);
+  padding: 8px 16px;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  border-radius: 8px;
+  z-index: 2;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--color-image-overlay-moss), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+}
+
+.card:hover .overlay {
+  opacity: 1;
+}
+
+.viewDetails {
+  color: var(--color-text-on-dark);
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  border: 1px solid var(--color-text-on-dark);
+  padding: 12px 24px;
+  border-radius: 12px;
+  transform: translateY(10px);
+  transition: all 0.5s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.card:hover .viewDetails {
+  transform: translateY(0);
+}
+
+/* Info */
+.info {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+}
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.location {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-brand);
+  font-weight: 700;
+}
+
+.divider {
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border-warm);
+}
+
+.name {
+  font-family: var(--font-playfair), serif;
+  font-size: 32px;
+  color: var(--color-brand);
+  margin-bottom: 12px;
+  transition: color 0.3s ease;
+}
+
+.card:hover .name {
+  color: var(--color-text);
+}
+
+.meta {
+  display: flex;
+  gap: 20px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.metaItem span:first-child {
+  font-size: 18px;
+  color: var(--color-accent-sage);
+}
+
+/* Skeleton Styles */
+.cardSkeleton {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.imageSkeleton {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 24px;
+  margin-bottom: 24px;
+}
+
+.locationHeaderSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.labelSkeleton {
+  width: 80px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.titleSkeleton {
+  width: 70%;
+  height: 32px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.metaSkeleton {
+  display: flex;
+  gap: 20px;
+}
+
+.metaItemSkeleton {
+  width: 60px;
+  height: 14px;
+  border-radius: 4px;
+}

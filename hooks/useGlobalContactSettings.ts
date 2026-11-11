@@ -1,0 +1,40 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  DEFAULT_GLOBAL_CONTACT,
+  GLOBAL_CONTACT_KEYS,
+  resolveGlobalContactSettings,
+  type GlobalContactSettings,
+} from "@/lib/contact-settings";
+import { isShowcasePreview } from "@/lib/showcase-preview";
+
+const CMS_BASE_URL = process.env.NEXT_PUBLIC_CMS_API_URL || "http://localhost:8000/api";
+const SETTINGS_URL = process.env.NEXT_PUBLIC_CMS_PILOT_BASE_URL
+  ? `${process.env.NEXT_PUBLIC_CMS_PILOT_BASE_URL.replace(/\/$/, "")}/settings`
+  : `${CMS_BASE_URL}/v1/cms/settings`;
+
+export function useGlobalContactSettings(): GlobalContactSettings {
+  const [settings, setSettings] = useState<GlobalContactSettings>(DEFAULT_GLOBAL_CONTACT);
+
+  useEffect(() => {
+    if (isShowcasePreview) return;
+    const controller = new AbortController();
+    const keys = [...GLOBAL_CONTACT_KEYS, "contact.email"].join(",");
+
+    fetch(`${SETTINGS_URL}?keys=${encodeURIComponent(keys)}`, {
+      signal: controller.signal,
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (data?.success) setSettings(resolveGlobalContactSettings(data.settings));
+      })
+      .catch(() => undefined);
+
+    return () => controller.abort();
+  }, []);
+
+  return settings;
+}

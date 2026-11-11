@@ -1,0 +1,173 @@
+/* Toasts: brief feedback that needs no decision. Policy: docs/design/notifications.md.
+   Surface follows DESIGN.md: porcelain panel, charcoal text, muted-ink message, moss for success,
+   rounded.panel (4px), one soft offset shadow and no border (elevation is declared once). */
+
+.sh-toast-region {
+  --sh-toast-gap: 24px;
+  position: fixed;
+  right: max(var(--sh-toast-gap), env(safe-area-inset-right));
+  bottom: calc(var(--sh-toast-gap) + env(safe-area-inset-bottom) + var(--sh-toast-offset, 0px));
+  z-index: 1400;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(360px, calc(100vw - 32px));
+  margin: 0;
+  pointer-events: none;
+}
+
+.sh-toast-region:empty {
+  display: none;
+}
+
+.sh-toast {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 10px 14px 16px;
+  border-radius: 4px;
+  background: #FAFAF9;
+  box-shadow: 0 12px 32px rgba(46, 46, 44, 0.14), 0 2px 6px rgba(46, 46, 44, 0.08);
+  color: #2E2E2C;
+  font: inherit;
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@starting-style {
+  .sh-toast {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.sh-toast__icon {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  color: rgba(46, 46, 44, 0.68);
+}
+
+.sh-toast--success .sh-toast__icon {
+  color: #446B4A;
+}
+
+.sh-toast--error .sh-toast__icon {
+  color: #A9493C;
+}
+
+.sh-toast__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sh-toast__title,
+.sh-toast__message {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.sh-toast__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.sh-toast__message {
+  color: rgba(46, 46, 44, 0.72);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sh-toast__action {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin: 4px 0 -6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2E2E2C;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.sh-toast__close {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  margin: -6px 0 -6px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(46, 46, 44, 0.68);
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.sh-toast__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.sh-toast__action:focus-visible,
+.sh-toast__close:focus-visible {
+  outline: 2px solid #2E2E2C;
+  outline-offset: 2px;
+}
+
+.sh-toast__close:focus-visible {
+  border-radius: 999px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sh-toast__close:hover {
+    background: rgba(46, 46, 44, 0.07);
+    color: #2E2E2C;
+  }
+
+  .sh-toast__action:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+/* Phones: bottom centre, clear of the home indicator and of any fixed bottom bar on the page. */
+@media (max-width: 640px) {
+  .sh-toast-region {
+    --sh-toast-gap: 16px;
+    right: auto;
+    left: 50%;
+    width: min(420px, calc(100vw - 32px));
+    transform: translateX(-50%);
+  }
+}
+
+/* The member dashboard's tab bar is fixed to the bottom below 600px (components/dashboard/dashboard.css). */
+@media (max-width: 600px) {
+  :root:has(.dash-nav) {
+    --sh-toast-offset: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-motion="full"])) .sh-toast {
+    transition: opacity 160ms ease;
+    transform: none;
+  }
+}
+
+:where(html[data-motion="reduced"]) .sh-toast {
+  transition: opacity 160ms ease;
+  transform: none;
+}
