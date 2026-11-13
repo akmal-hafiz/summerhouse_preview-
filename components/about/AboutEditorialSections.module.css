@@ -1940,10 +1940,6 @@
   inset: 0;
 }
 
-.mapCanvas :global(.maplibregl-canvas) {
-  filter: saturate(0.72) contrast(1.05) brightness(0.72);
-}
-
 .mapCanvas::after {
   content: "";
   position: absolute;

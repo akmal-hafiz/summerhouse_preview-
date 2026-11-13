@@ -19,6 +19,9 @@ type DestinationAccumulator = {
   prices: Array<{ amount: number; currencyCode: string }>;
 };
 
+// shortcut: hand-set area centres win over averaged villa coordinates, and the About map measures airport
+// distances from them; Padonan and Kerobokan are rounded estimates. Replace with surveyed centres (or the villa
+// averages) if the owner wants exact figures.
 const REGION_CENTERS: Record<string, { latitude: number; longitude: number }> = {
   canggu: { latitude: -8.6478, longitude: 115.1385 },
   "canggu - berawa": { latitude: -8.6601, longitude: 115.1437 },
@@ -141,6 +144,8 @@ function formatCompactAmount(amount: number, currencyCode: string) {
     if (amount >= 1_000_000) {
       return `Rp ${(amount / 1_000_000).toFixed(amount % 1_000_000 === 0 ? 0 : 1)}m`;
     }
+    // Thousands read as "Rp 800k" so a range such as "Rp 800k to Rp 1.7m" keeps one compact format.
+    if (amount >= 1_000) return `Rp ${Math.round(amount / 1_000)}k`;
     return `Rp ${Math.round(amount).toLocaleString("id-ID")}`;
   }
 

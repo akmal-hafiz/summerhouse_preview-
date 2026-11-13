@@ -11276,37 +11276,6 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   text-align: center;
 }
 
-.summerhouses-map-popup .maplibregl-popup-content {
-  min-width: 9.5rem;
-  border: 1px solid rgba(255, 254, 250, 0.18);
-  border-radius: 0.9rem;
-  background: #1d211b;
-  color: #fffefa;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.32);
-}
-
-.summerhouses-map-popup .maplibregl-popup-content strong,
-.summerhouses-map-popup .maplibregl-popup-content span {
-  display: block;
-}
-
-.summerhouses-map-popup .maplibregl-popup-content strong {
-  font-size: 0.9rem;
-}
-
-.summerhouses-map-popup .maplibregl-popup-content span {
-  margin-top: 0.2rem;
-  color: rgba(255, 254, 250, 0.66);
-  font-size: 0.74rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.summerhouses-map-popup .maplibregl-popup-tip {
-  border-top-color: #1d211b;
-}
-
 @media (max-width: 767px) {
   .villa-search-form__panel--location {
     width: min(23rem, calc(100vw - 1.25rem));
@@ -15030,4 +14999,41 @@ body .global-mini-header.global-mini-header--island .global-mini-nav {
 /* Empty search values ("Anywhere in Bali", "Add dates") read as placeholders in the hero and on /villas alike. */
 .villa-search-form .villa-search-form__group strong.is-empty {
   color: var(--color-text-muted);
+}
+
+/* Impeccable · navbar idle over the homepage hero (approved direction B, 2026-11-13).
+   At the top of the homepage the bar is clean: no surface, porcelain ink over the video, a porcelain booking pill.
+   Leaving the top forms the capsule; its links and actions rise in one after another. */
+.global-mini-header.global-mini-header--island[data-over-hero="true"] {
+  --nav-control-ink: var(--color-text-on-dark);
+  background: transparent !important;
+}
+body .global-mini-header--refined[data-over-hero="true"] .global-mini-link {
+  --ihb-fill: var(--color-button-primary-bg);
+  --ihb-fill-fg: var(--color-button-primary-text);
+  border-color: var(--color-page) !important;
+  background: var(--color-page) !important;
+  color: var(--color-text) !important;
+}
+.global-mini-header--island[data-over-hero="true"] .global-mini-link:focus-visible { outline-color: var(--color-text-on-dark) !important; }
+
+@keyframes sh-nav-rise { from { opacity: 0; translate: 0 8px; filter: blur(4px); } to { opacity: 1; translate: 0 0; filter: blur(0); } }
+@keyframes sh-nav-rise-idle { from { opacity: 0; translate: 0 -6px; filter: blur(3px); } to { opacity: 1; translate: 0 0; filter: blur(0); } }
+@keyframes sh-nav-surface { from { opacity: 0; scale: .965; } to { opacity: 1; scale: 1; } }
+/* Two keyframe names so the entrance restarts whenever the state flips. */
+.global-mini-header--island[data-compact="true"] .nav-prism-surface { animation: sh-nav-surface 460ms var(--ease-out-strong) both; }
+.global-mini-header--island[data-compact="true"] .global-mini-nav a { animation: sh-nav-rise 520ms var(--ease-out-strong) both; animation-delay: calc(120ms + var(--nav-i, 0) * 45ms); }
+.global-mini-header--island[data-compact="true"] .global-mini-actions > * { animation: sh-nav-rise 520ms var(--ease-out-strong) both; animation-delay: 340ms; }
+.global-mini-header--island[data-compact="true"] .global-mini-actions > :nth-child(2) { animation-delay: 380ms; }
+.global-mini-header--island[data-compact="true"] .global-mini-actions > :nth-child(3) { animation-delay: 420ms; }
+.global-mini-header--island[data-compact="true"] .global-mini-actions > :nth-child(n + 4) { animation-delay: 460ms; }
+.global-mini-header--island[data-over-hero="true"] .global-mini-nav a { animation: sh-nav-rise-idle 480ms var(--ease-out-strong) both; animation-delay: calc(60ms + var(--nav-i, 0) * 40ms); }
+.global-mini-header--island[data-over-hero="true"] .global-mini-actions > * { animation: sh-nav-rise-idle 480ms var(--ease-out-strong) both; animation-delay: 260ms; }
+:where(html[data-motion="reduced"]) .global-mini-header--island .nav-prism-surface,
+:where(html[data-motion="reduced"]) .global-mini-header--island .global-mini-nav a,
+:where(html[data-motion="reduced"]) .global-mini-header--island .global-mini-actions > * { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-motion="full"])) .global-mini-header--island .nav-prism-surface,
+  :where(html:not([data-motion="full"])) .global-mini-header--island .global-mini-nav a,
+  :where(html:not([data-motion="full"])) .global-mini-header--island .global-mini-actions > * { animation: none !important; }
 }

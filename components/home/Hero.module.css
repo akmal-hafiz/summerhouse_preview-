@@ -1,39 +1,66 @@
-/* Impeccable + Design Taste: approved FigCraft direction A, cinematic apron. */
-/* Full-bleed media, flat outside corner, small CMS copy and contextual links; original phone search retained. */
-/* The media frame starts below the fixed nav (--hero-frame-top) and is --hero-media-height tall; the floating links sit
-   --hero-actions-lift above its bottom edge, so all three positions come from these tokens and cannot drift apart. */
-.section { --hero-frame-top: 76px; --hero-media-height: clamp(360px, calc(100svh - 252px), 760px); --hero-actions-lift: 100px; position: relative; width: 100%; padding: var(--hero-frame-top) 0 48px; background: var(--color-page); color: var(--color-text); font-family: var(--font-sans); }
-.definitions { position: absolute; pointer-events: none; }
-.media { position: relative; width: 100%; height: var(--hero-media-height); background: var(--color-footer-bg); }
-.actions { position: absolute; right: clamp(24px, 3.9vw, 80px); top: calc(var(--hero-frame-top) + var(--hero-media-height) - var(--hero-actions-lift)); display: flex; gap: 12px; max-width: calc(100% - 48px); }
-.mediaLink { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 48px; padding: 12px 24px; border: 1px solid rgb(255 255 255 / .28); border-radius: 999px; background: rgb(46 46 44 / .82); color: #fff; backdrop-filter: blur(16px) saturate(130%); font-size: 16px; line-height: 1.4; text-decoration: none; min-width: 0; transition: background 180ms ease, transform 180ms ease; } /* taste-skill-ignore: user-approved translucent ghost navigation over cinematic media. */
-.mediaLink svg { flex: none; width: 20px; height: 20px; transition: transform 180ms ease; }
-.mediaLink span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mediaLink:active { transform: scale(.97); }
-.mediaLink:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
-@media (hover: hover) { .mediaLink:hover { background: rgb(46 46 44 / .94); } .mediaLink:hover svg { transform: translate(2px, -2px); } }
-@media (prefers-reduced-motion: reduce) { .mediaLink, .mediaLink svg { transition: none; } .mediaLink:active, .mediaLink:hover svg { transform: none; } }
-:global(html[data-motion="reduced"]) .mediaLink, :global(html[data-motion="reduced"]) .mediaLink svg { transition: none !important; transform: none !important; }
-.mobileOverlay { display: none; }
+/* Impeccable · approved FigCraft direction B (2026-11-13), full-bleed revision. */
+/* The video runs edge to edge behind the transparent homepage nav. The statement sits top-left in the site's display type,
+   the CMS links are glass cards on the right, and the only cut is the notch the page raises into the bottom edge to hold
+   the search. The notch shoulders are page-coloured radial gradients, so the cut reads as one contour. */
+.section {
+  --hero-nav: 76px;
+  --hero-notch-r: 28px; --hero-notch-side: 104px; --hero-notch-pad: 14px; --hero-notch-h: 98px;
+  --hero-gutter: clamp(24px, 3.9vw, 56px);
+  --hero-glass: rgb(29 51 42 / .3); --hero-glass-hover: rgb(29 51 42 / .44); --hero-glass-line: rgb(250 250 249 / .3);
+  position: relative; width: 100%;
+  background: var(--color-page); color: var(--color-text); font-family: var(--font-sans);
+}
+.frame {
+  /* z-index lifts the whole frame (and the search panels it holds) above the sections that follow. */
+  position: relative; z-index: 10; isolation: isolate;
+  height: 100svh; min-height: 640px; color: var(--color-text-on-dark);
+}
+.media { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--color-footer-bg); }
+/* Top band carries the transparent nav and the statement; the bottom keeps the glass cards legible. */
+.media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(29 51 42 / .62) 0%, rgb(29 51 42 / .28) 22%, rgb(29 51 42 / .08) 46%, rgb(29 51 42 / 0) 60%, rgb(29 51 42 / .3) 100%); pointer-events: none; }
 .poster, .video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .video[data-failed="true"] { visibility: hidden; }
-.apron { position: relative; display: grid; grid-template-columns: minmax(220px, .95fr) minmax(0, 3fr); align-items: start; gap: 32px; padding: 24px clamp(24px, 3.9vw, 80px) 0; }
-.copy { min-width: 0; align-self: start; margin-top: -24px; }
-.description { margin: 0; max-width: 25ch; font-size: clamp(22px, 1.95vw, 28px); font-weight: 400; line-height: 1.35; letter-spacing: -.02em; text-wrap: pretty; white-space: pre-line; overflow-wrap: break-word; }
-.heading { margin: 0 0 12px; font: 400 28px/1.25 var(--font-sans); letter-spacing: -.02em; white-space: pre-line; overflow-wrap: break-word; min-width: 0; }
-.badge { margin: 0 0 12px; color: var(--color-text-muted); font-size: 14px; line-height: 1.5; }
-.search { min-width: 0; scroll-margin-top: 112px; position: relative; z-index: 40; }
+
+/* Statement: the site's display scale (Outfit 400, as the Services and Why Stay headings). */
+.copy { position: absolute; inset: calc(var(--hero-nav) + clamp(28px, 4.4vw, 64px)) var(--hero-gutter) auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 32ch); gap: 32px; align-items: start; pointer-events: none; }
+.copy > * { pointer-events: auto; }
+.lead { min-width: 0; }
+.display { margin: 0; max-width: 14ch; color: var(--color-text-on-dark); font-family: var(--font-sans); font-size: clamp(3rem, 6.2vw, 6rem); font-weight: 400; line-height: .94; letter-spacing: -.04em; white-space: pre-line; text-wrap: balance; overflow-wrap: break-word; }
+.lede { justify-self: end; margin: 0; padding-top: 10px; max-width: 32ch; color: var(--color-text-on-dark-muted); font-size: clamp(1rem, 1.25vw, 1.16rem); line-height: 1.6; white-space: pre-line; }
+.badge { margin: 0 0 16px; color: var(--color-text-on-dark-muted); font-size: 14px; line-height: 1.5; }
+
+/* CMS links as glass cards over the video. taste-skill-ignore: glass is the approved treatment for controls on moving media. */
+.links { position: absolute; right: var(--hero-gutter); bottom: calc(var(--hero-notch-h) + 24px); display: grid; gap: 12px; width: min(15rem, 40%); }
+.glassLink { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; min-height: 6.25rem; padding: 18px 20px; border: 1px solid var(--hero-glass-line); border-radius: 16px; background: var(--hero-glass); color: var(--color-text-on-dark); text-decoration: none; -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); transition: background-color 180ms var(--ease-out-strong), transform 180ms var(--ease-out-strong); }
+.glassLink span { min-width: 0; font-size: clamp(1.35rem, 1.7vw, 1.65rem); font-weight: 400; line-height: 1.15; letter-spacing: -.02em; overflow-wrap: break-word; }
+.glassLink svg { flex: none; width: 20px; height: 20px; margin-top: 4px; transition: transform 180ms var(--ease-out-strong); }
+.glassLink:active { transform: scale(.98); }
+.glassLink:focus-visible, .motionToggle:focus-visible { outline: 2px solid var(--color-text-on-dark); outline-offset: 4px; }
+.motionToggle { position: absolute; left: var(--hero-gutter); bottom: 28px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--hero-glass-line); border-radius: 999px; background: var(--hero-glass); color: var(--color-text-on-dark); cursor: pointer; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); transition: background-color 180ms var(--ease-out-strong); }
+.motionToggle svg { width: 18px; height: 18px; }
+@media (hover: hover) {
+  .glassLink:hover, .motionToggle:hover { background: var(--hero-glass-hover); }
+  .glassLink:hover svg { transform: translate(2px, -2px); }
+}
+
+/* The notch: page colour rising into the frame, with concave shoulders on both sides. */
+.notch { position: absolute; z-index: 3; left: 50%; bottom: 0; width: min(920px, calc(100% - 2 * var(--hero-notch-side))); padding: var(--hero-notch-pad) var(--hero-notch-pad) 0; transform: translateX(-50%); border-radius: var(--hero-notch-r) var(--hero-notch-r) 0 0; background: var(--color-page); color: var(--color-text); scroll-margin-top: 112px; }
+.notch::before, .notch::after { content: ""; position: absolute; bottom: 0; width: var(--hero-notch-r); height: var(--hero-notch-r); pointer-events: none; }
+.notch::before { right: 100%; background: radial-gradient(circle at 0 0, transparent calc(var(--hero-notch-r) - .5px), var(--color-page) var(--hero-notch-r)); }
+.notch::after { left: 100%; background: radial-gradient(circle at 100% 0, transparent calc(var(--hero-notch-r) - .5px), var(--color-page) var(--hero-notch-r)); }
 .mobile { display: none; }
-.section .desktop :global(.villa-search-form) { display: grid; grid-template-columns: minmax(120px, 1.2fr) minmax(200px, 1.8fr) minmax(100px, .9fr) minmax(112px, 1fr); width: 100%; min-height: 84px; align-items: center; gap: 0; padding: 8px; border: 0; border-radius: 24px; background: var(--color-surface-raised); box-shadow: none; } /* taste-skill-ignore: explicitly removes inherited search shadow. */
+
+/* Desktop search bar: one white pill, hairline dividers, charcoal submit. */
+.section .desktop :global(.villa-search-form) { display: grid; grid-template-columns: minmax(120px, 1.25fr) minmax(200px, 1.8fr) minmax(100px, .9fr) minmax(112px, auto); width: 100%; min-height: 84px; align-items: center; gap: 0; padding: 8px 8px 8px 12px; border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-surface-raised); box-shadow: none; } /* taste-skill-ignore: explicitly removes inherited search shadow. */
 .section .desktop :global(.villa-search-form__group) { grid-column: auto; grid-row: auto; min-width: 0; border: 0; border-right: 1px solid var(--color-border); border-radius: 0; background: transparent; box-shadow: none !important; } /* taste-skill-ignore: approved form field separator; removes inherited calendar elevation. */
-.section .desktop :global(.villa-search-form__group > button) { position: relative; min-height: 60px; padding: 8px 24px 8px 16px; border: 0; border-radius: 8px; background: transparent; color: var(--color-text); box-shadow: none; } /* taste-skill-ignore: removes inherited control shadow. */
+.section .desktop :global(.villa-search-form__group > button) { position: relative; min-height: 60px; padding: 8px 24px 8px 16px; border: 0; border-radius: 999px; background: transparent; color: var(--color-text); box-shadow: none; } /* taste-skill-ignore: removes inherited control shadow. */
 .section .desktop :global(.villa-search-form__group--dates) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.section .desktop :global(.villa-search-form__group--dates > button:first-child) { border-right: 1px solid var(--color-border); border-radius: 0; } /* taste-skill-ignore: separates check-in and check-out fields in approved form. */
+.section .desktop :global(.villa-search-form__group--dates > button:first-child) { border-right: 1px solid var(--color-border); border-radius: 999px 0 0 999px; } /* taste-skill-ignore: separates check-in and check-out fields in approved form. */
 .section .desktop :global(.villa-search-form__group span) { color: var(--color-text-muted); font-size: 13px; line-height: 1.4; letter-spacing: 0; text-transform: none; font-weight: 400; }
 .section .desktop :global(.villa-search-form__group strong) { margin-top: 4px; font-size: 16px; font-weight: 500; line-height: 1.4; }
 .section .desktop :global(.villa-search-form__group strong:not(.is-empty)) { color: var(--color-text); }
 .section .desktop :global(.villa-search-form__chevron) { right: 8px; width: 12px; height: 12px; color: var(--color-text-muted); }
-.section .desktop :global(.villa-search-form__submit) { grid-column: auto; grid-row: auto; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 60px; padding: 12px 16px; margin-left: 12px; border: 0; border-radius: 16px; background: var(--color-button-primary-bg); color: var(--color-button-primary-text); gap: 12px; font: 500 16px/1.4 var(--font-sans); box-shadow: none !important; } /* taste-skill-ignore: removes inherited booking-button glow to match the approved flat action. */
+.section .desktop :global(.villa-search-form__submit) { grid-column: auto; grid-row: auto; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 64px; padding: 12px 24px; margin-left: 12px; border: 0; border-radius: 999px; background: var(--color-button-primary-bg); color: var(--color-button-primary-text); gap: 10px; font: 500 16px/1.4 var(--font-sans); box-shadow: none !important; } /* taste-skill-ignore: removes inherited booking-button glow to match the approved flat action. */
 .section .desktop :global(.villa-search-form__submit span) { color: inherit; text-transform: none; letter-spacing: 0; font-size: 16px; }
 .section .desktop :global(.villa-search-form__submit svg) { width: 20px; height: 20px; }
 .section .desktop :global(.villa-search-form__panel) { top: auto; bottom: calc(100% + 12px); max-height: min(440px, calc(100svh - 180px)); overflow-y: auto; background: var(--color-surface-raised); color: var(--color-text); border-color: var(--color-border); }
@@ -43,25 +70,36 @@
 .section button:focus-visible { outline: 2px solid var(--color-button-primary-bg); outline-offset: 3px; }
 .section .desktop :global(.villa-search-form__submit:active) { background: var(--color-button-primary-bg-pressed); }
 @media (hover: hover) { .section .desktop :global(.villa-search-form__group > button:hover) { background: var(--color-button-secondary-bg-hover); } .section .desktop :global(.villa-search-form__submit:hover) { background: var(--color-button-primary-bg-hover); } }
+
+@media (prefers-reduced-motion: reduce) { .glassLink, .glassLink svg, .motionToggle { transition: none; } .glassLink:active, .glassLink:hover svg { transform: none; } }
+:global(html[data-motion="reduced"]) .glassLink, :global(html[data-motion="reduced"]) .glassLink svg { transition: none !important; transform: none !important; }
+
+/* Tablet: the pause control moves to the top-right so the notch can widen. */
 @media (max-width: 1180px) {
- .apron { padding-inline: 24px; grid-template-columns: minmax(180px, .8fr) minmax(0, 2fr); gap: 24px; }
+  .section { --hero-notch-side: 44px; }
+  .copy { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .lede { justify-self: start; padding-top: 0; }
+  .motionToggle { top: calc(var(--hero-nav) + 24px); right: var(--hero-gutter); bottom: auto; left: auto; }
+  .copy { right: calc(var(--hero-gutter) + 60px); }
 }
 @media (min-width: 761px) and (max-width: 960px) {
- .section { --hero-media-height: clamp(360px, calc(100svh - 340px), 760px); }
- .apron { grid-template-columns: minmax(0, 1fr); gap: 20px; }
- .description { max-width: 34ch; }
- .section .desktop :global(.villa-search-form__group > button) { padding-left: 12px; }
+  .section .desktop :global(.villa-search-form__group > button) { padding-left: 12px; }
 }
+
+/* Phone: same frame and notch; the notch holds the search sheet trigger. */
 @media (max-width: 760px) {
- .desktop { display: none; } .mobile { display: block; }
- .actions { display: none; }
- .section { padding: 0; min-height: 100svh; display: flex; align-items: stretch; justify-content: flex-end; flex-direction: column; background: var(--color-footer-bg); color: var(--color-text-on-dark); }
- .media { position: absolute; inset: 0; height: 100%; border-radius: 0; clip-path: none !important; }
- .mobileOverlay { display: block; position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--color-footer-bg) 18%, transparent) 0%, color-mix(in srgb, var(--color-footer-bg) 15%, transparent) 32%, color-mix(in srgb, var(--color-footer-bg) 68%, transparent) 76%, color-mix(in srgb, var(--color-footer-bg) 96%, transparent) 100%); } /* taste-skill-ignore: original mobile video scrim retained at user's request. */
- .apron { grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 96px 20px 20px; }
- .copy { margin: 0; }
- .description { font-size: clamp(1rem, 4.2vw, 1.125rem); max-width: none; line-height: 1.3; font-weight: 500; letter-spacing: .01em; }
- .heading { font-size: 28px; }
- .badge { color: var(--color-text-on-dark); }
- .section button:focus-visible { outline-color: var(--color-text-on-dark); }
+  .section { --hero-nav: 68px; --hero-notch-r: 22px; --hero-notch-side: 70px; --hero-notch-pad: 10px; --hero-notch-h: 62px; --hero-gutter: 20px; }
+  .frame { min-height: 600px; }
+  .desktop { display: none; } .mobile { display: block; }
+  .copy { inset: calc(var(--hero-nav) + 24px) var(--hero-gutter) auto; }
+  .display { max-width: none; font-size: clamp(2.45rem, 12vw, 3.5rem); line-height: .98; letter-spacing: -.035em; }
+  .lede { font-size: 15px; }
+  .links { right: 16px; bottom: calc(var(--hero-notch-h) + 20px); width: 9.75rem; gap: 8px; }
+  .glassLink { min-height: 5rem; padding: 14px; border-radius: 14px; }
+  .glassLink span { font-size: 1.05rem; }
+  .glassLink svg { width: 16px; height: 16px; margin-top: 2px; }
+  .motionToggle { top: auto; right: auto; left: 16px; bottom: 32px; width: 40px; height: 40px; }
+  .section .mobile :global(.mobile-booking-search__trigger) { width: 100%; min-height: 52px; border: 0 !important; border-radius: 999px !important; background: var(--color-button-primary-bg) !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; filter: none !important; }
+  .section .mobile :global(.mobile-booking-search__trigger::before), .section .mobile :global(.mobile-booking-search__trigger::after) { display: none !important; }
+  .section .mobile :global(.mobile-booking-search__trigger-icon), .section .mobile :global(.mobile-booking-search__trigger-label) { color: var(--color-button-primary-text) !important; text-shadow: none !important; }
 }
