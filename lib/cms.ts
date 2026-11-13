@@ -251,10 +251,12 @@ export type CmsGalleryItem = {
   src?: string | null;
   alt?: string | null;
   label?: string | null;
-  /** Editorial filter tab this item belongs to (admin-defined, optional). */
+  /** Gallery collection (filter tab) this item belongs to, and that collection's sort key. */
   category?: string | null;
-  layout_variant?: "landscape" | "portrait" | "square" | "tall" | "wide" | null;
-  focal_point?: "center" | "top" | "bottom" | "left" | "right" | null;
+  category_order?: string | null;
+  /** Pixel size of the uploaded photo (or film cover), when known; the grid keeps this shape. */
+  width?: number | null;
+  height?: number | null;
   title?: string | null;
   text?: string | null;
   video_url?: string | null;

@@ -271,11 +271,15 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
     await logout();
   };
 
+  // Homepage: the bar is clean and transparent over the hero at the top, and the capsule forms as soon as you leave it.
+  const isHome = pathname === "/";
+
   useEffect(() => {
     let anchor = window.scrollY;
     const handleScroll = () => {
       const y = Math.max(0, window.scrollY);
       if (y < 48) setCompact(false);
+      else if (isHome) setCompact(true);
       else if (Math.abs(y - anchor) > 12) {
         setCompact(y > 96 && y > anchor);
         anchor = y;
@@ -289,7 +293,7 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
+  }, [pathname, isHome]);
 
   useEffect(() => {
     setSavedCount(getSavedVillasCount());
@@ -298,7 +302,7 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   }, []);
 
   return (
-    <header data-compact={compact} className={`global-mini-header global-mini-header--refined global-mini-header--island ${isScrolled || alwaysSolid ? "is-scrolled" : ""}`}>
+    <header data-compact={compact} data-over-hero={isHome && !compact && !alwaysSolid ? "true" : undefined} className={`global-mini-header global-mini-header--refined global-mini-header--island ${isScrolled || alwaysSolid ? "is-scrolled" : ""}`}>
       <svg className="nav-prism-defs" aria-hidden="true" width="0" height="0"><defs><filter id="nav-prism-refraction" x="-10%" y="-40%" width="120%" height="180%" colorInterpolationFilters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.045" numOctaves="2" seed="8" result="water" /><feDisplacementMap in="SourceGraphic" in2="water" scale="18" xChannelSelector="R" yChannelSelector="G" /></filter></defs></svg>
       <span className="nav-prism-surface" aria-hidden="true" />
       <div className="global-mini-header__brand">
@@ -310,8 +314,8 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
       <MobileNavigationMenu language={language} toggleLanguage={toggleLanguage} />
 
       <nav className="global-mini-nav" aria-label="Global navigation">
-        {desktopNavItems.map((item) => (
-          <Link href={item.href} key={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label[language]}</Link>
+        {desktopNavItems.map((item, index) => (
+          <Link href={item.href} key={item.href} style={{ "--nav-i": index } as React.CSSProperties} aria-current={pathname === item.href ? "page" : undefined}>{item.label[language]}</Link>
         ))}
       </nav>
 

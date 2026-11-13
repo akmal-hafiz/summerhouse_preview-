@@ -20,7 +20,8 @@ import { buildBookingWhatsAppUrl, buildLodgifyCheckoutUrl } from "@/lib/lodgify/
 import { useGlobalContactSettings } from "@/hooks/useGlobalContactSettings";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
-import { recordSearch } from "@/lib/search-history-client";
+import { sessionFetch } from "@/lib/auth-client";
+import { lastStayForVilla, recordSearch, type LastStay } from "@/lib/search-history-client";
 import { promotionErrorMessage } from "@/lib/notifications/guest-messages";
 
 type AvailabilityDay = {
@@ -83,6 +84,10 @@ export default function AvailabilityCalendar({
   const today = useMemo(() => startOfMonth(new Date()), []);
   const [visibleMonth, setVisibleMonth] = useState(today);
   const [availabilityMap, setAvailabilityMap] = useState<Record<string, AvailabilityDay>>({});
+  // The first month the loaded map belongs to, so a check never reads the previous window's days.
+  const [availabilityRange, setAvailabilityRange] = useState("");
+  const [lastStay, setLastStay] = useState<LastStay | null>(null);
+  const [prefill, setPrefill] = useState<"pending" | "applied" | "unavailable" | "off">("pending");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
@@ -169,10 +174,12 @@ export default function AvailabilityCalendar({
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.error || "Availability unavailable.");
         setAvailabilityMap(data.map || {});
+        setAvailabilityRange(rangeStart);
       } catch (fetchError) {
         if (controller.signal.aborted) return;
         setAvailabilityError(fetchError instanceof Error ? fetchError.message : "Availability unavailable.");
         setAvailabilityMap({});
+        setAvailabilityRange("");
       } finally {
         if (!controller.signal.aborted) setIsLoading(false);
       }
@@ -296,6 +303,49 @@ export default function AvailabilityCalendar({
     }, 1500);
     return () => window.clearTimeout(timer);
   }, [checkIn, checkOut, guests, isAuthLoading, isMember, isPromotionLoading, isRangeValid, promotionQuote, promotionQuoteKey, promotionStayKey, propertyId]);
+
+  // A signed-in member returning to this villa gets the dates they last checked here, while those are still ahead. Read once
+  // per page; guests and CMS admins send nothing. History is a convenience, so any failure just leaves the calendar empty.
+  useEffect(() => {
+    if (isAuthLoading || !isMember) return;
+    const controller = new AbortController();
+    void (async () => {
+      try {
+        const response = await sessionFetch("search-history", { signal: controller.signal });
+        if (!response.ok) return;
+        const data = await response.json() as { success?: boolean; items?: unknown };
+        if (!controller.signal.aborted && data.success && Array.isArray(data.items)) {
+          setLastStay(lastStayForVilla(data.items, String(propertyId)));
+        }
+      } catch {
+        // Leave the calendar as it is.
+      }
+    })();
+    return () => controller.abort();
+  }, [isAuthLoading, isMember, propertyId]);
+
+  // Fill the dates only if the member has not picked any yet; after that the remembered stay is never applied again.
+  useEffect(() => {
+    if (!lastStay || prefill !== "pending") return;
+    if (checkIn || checkOut) { setPrefill("off"); return; }
+    setCheckIn(lastStay.checkIn);
+    setCheckOut(lastStay.checkOut);
+    if (lastStay.guests) setGuests(Math.min(lastStay.guests, maxGuests));
+    setVisibleMonth(startOfMonth(parseISODate(lastStay.checkIn)));
+    setPrefill("applied");
+  }, [checkIn, checkOut, lastStay, maxGuests, prefill]);
+
+  // Once availability for those months is loaded, drop remembered dates that are no longer bookable.
+  // shortcut: the calendar loads two months, so a remembered stay ending after that window is dropped too; load the full range if long stays matter.
+  const showsLastStay = prefill === "applied" && !!lastStay && checkIn === lastStay.checkIn && checkOut === lastStay.checkOut;
+  useEffect(() => {
+    if (!showsLastStay || isLoading || availabilityError || availabilityRange !== rangeStart || isRangeValid) return;
+    setCheckIn("");
+    setCheckOut("");
+    setRateQuote(null);
+    setQuoteError("");
+    setPrefill("unavailable");
+  }, [availabilityError, availabilityRange, isLoading, isRangeValid, rangeStart, showsLastStay]);
 
   const handleApplyPromotion = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -456,6 +506,8 @@ export default function AvailabilityCalendar({
                 ? "Select check-out date"
                 : "Select check-in date"}
           </span>
+          {showsLastStay && <p className="villa-calendar__note" role="status">These are the dates you last checked here. Pick other days anytime.</p>}
+          {prefill === "unavailable" && !checkIn && <p className="villa-calendar__note" role="status">The dates you last checked here are no longer free. Pick new dates below.</p>}
         </div>
         <div className="villa-calendar-section__actions">
           <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); setBookingError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}>

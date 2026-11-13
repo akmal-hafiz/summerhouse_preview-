@@ -14,11 +14,11 @@ export type GalleryEntry = {
   /** Longer caption shown in the lightbox. */
   story: string;
   alt: string;
-  /** Editorial filter tab this entry belongs to (admin-defined, optional). */
+  /** Gallery collection (filter tab) this entry belongs to, and that collection's sort key. */
   category: string | null;
-  /** CMS-controlled editorial crop used by the masonry layout. */
-  layoutVariant?: "landscape" | "portrait" | "square" | "tall" | "wide";
-  focalPoint?: "center" | "top" | "bottom" | "left" | "right";
+  categoryOrder?: string | null;
+  /** Width / height of the media when known; otherwise the tile measures the image once it loads. */
+  ratio?: number | null;
   /** House this post is tagged to (from the linked Lodgify property). */
   houseName: string | null;
   houseLocation: string | null;
@@ -230,8 +230,8 @@ function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
       story,
       alt: item.alt?.trim() || `${label} ${isVideo ? "video" : "image"} from Summerhouse Bali`,
       category,
-      layoutVariant: item.layout_variant ?? "landscape",
-      focalPoint: item.focal_point ?? "center",
+      categoryOrder: item.category_order ?? null,
+      ratio: item.width && item.height ? item.width / item.height : null,
       houseName,
       houseLocation,
       propertyId,
@@ -251,7 +251,7 @@ export function useGalleryEntries(items: CmsGalleryItem[] | null | undefined): G
   const srcKey = useMemo(() => {
     if (!items?.length) return "__fallback__";
     return items
-      .map((item) => `${item.id ?? ""}:${item.type}:${item.src ?? ""}:${item.video_poster ?? ""}:${item.video_url ?? ""}:${item.lodgify_property_id ?? ""}:${item.category ?? ""}:${item.layout_variant ?? ""}:${item.focal_point ?? ""}:${item.title ?? ""}:${item.text ?? ""}:${item.alt ?? ""}`)
+      .map((item) => `${item.id ?? ""}:${item.type}:${item.src ?? ""}:${item.video_poster ?? ""}:${item.video_url ?? ""}:${item.lodgify_property_id ?? ""}:${item.category ?? ""}:${item.category_order ?? ""}:${item.width ?? ""}x${item.height ?? ""}:${item.title ?? ""}:${item.text ?? ""}:${item.alt ?? ""}`)
       .join("|");
   }, [items]);
 

@@ -37,6 +37,8 @@ export type AboutDestination = {
   startingPriceMin?: number | null;
   startingPriceMax?: number | null;
   currencyCode?: string | null;
+  /** The area's character from the Bali neighbourhood collections (for example "Quiet Coast"), when one exists. */
+  character?: string;
 };
 
 type AboutFaq = {

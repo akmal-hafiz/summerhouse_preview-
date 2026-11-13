@@ -3,18 +3,35 @@ import Footer from "@/components/common/Footer";
 import About from "@/components/about/About";
 import editorialStyles from "@/components/about/AboutEditorialSections.module.css";
 import { getProperties, getPortfolioStats } from "@/lib/lodgify";
-import { getCmsFaqs, getCmsGalleryItems, getCmsPageSections } from "@/lib/cms";
+import { getCmsBaliCollections, getCmsFaqs, getCmsGalleryItems, getCmsPageSections } from "@/lib/cms";
 import { listArticles } from "@/lib/journal";
 import { logServerError } from "@/lib/security/logger";
-import { summarizeLodgifyDestinations, type LodgifyDestinationSummary } from "@/lib/lodgify/destinations";
+import { summarizeLodgifyDestinations } from "@/lib/lodgify/destinations";
+import { baliCollections } from "@/data/baliCollections";
+import type { AboutDestination } from "@/components/about/About";
 
 export const metadata = {
   title: "About Summerhouses",
   description: "Discover the story, values, and curated Bali hospitality behind Summerhouses private villa stays.",
 };
 
-async function getDestinationSummaries(): Promise<LodgifyDestinationSummary[]> {
+/** Area character ("Quiet Coast") from the same neighbourhood collections the homepage uses, keyed by location name. */
+async function getAreaCharacters(): Promise<Map<string, string>> {
+  let collections = baliCollections;
+  try {
+    const cms = await getCmsBaliCollections();
+    if (cms?.length) collections = cms;
+  } catch (error) {
+    logServerError("[about:area-characters]", error);
+  }
+  return new Map(collections
+    .filter((collection) => collection.location && (collection.category || collection.tag))
+    .map((collection) => [collection.location.trim().toLowerCase(), String(collection.category || collection.tag).trim()]));
+}
+
+async function getDestinationSummaries(): Promise<AboutDestination[]> {
   let properties: Awaited<ReturnType<typeof getProperties>>;
+  const characters = getAreaCharacters();
 
   try {
     properties = await getProperties();
@@ -23,7 +40,11 @@ async function getDestinationSummaries(): Promise<LodgifyDestinationSummary[]> {
     return [];
   }
 
-  return summarizeLodgifyDestinations(properties);
+  const byName = await characters;
+  return summarizeLodgifyDestinations(properties).map((destination) => ({
+    ...destination,
+    character: byName.get(destination.name.trim().toLowerCase()),
+  }));
 }
 
 async function getGallerySectionData() {

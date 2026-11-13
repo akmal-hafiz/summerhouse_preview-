@@ -1,8 +1,22 @@
 import { sessionFetch } from "./auth-client";
 import { addDays, formatISODate, isValidDateRange, parseISODate } from "./date";
-import type { SearchEntry } from "./member-types";
+import type { HistoryItem, SearchEntry } from "./member-types";
 
 export type { SearchEntry };
+export type LastStay = { checkIn: string; checkOut: string; guests?: number };
+
+/**
+ * The dates a member most recently checked for one villa, when they are still ahead (today counts). `items` are newest
+ * first, as the history endpoint lists them. Another villa's dates are never used.
+ */
+export function lastStayForVilla(items: HistoryItem[], propertyId: string, today: string = formatISODate(new Date())): LastStay | null {
+  for (const item of items) {
+    if (item.propertyId !== propertyId || !item.checkIn || !item.checkOut) continue;
+    if (item.checkIn < today || !isValidDateRange(item.checkIn, item.checkOut)) continue;
+    return { checkIn: item.checkIn, checkOut: item.checkOut, ...(item.guests ? { guests: item.guests } : {}) };
+  }
+  return null;
+}
 
 /**
  * Builds the history entry for a submitted villa search, shared by every search form so the rule lives once.
