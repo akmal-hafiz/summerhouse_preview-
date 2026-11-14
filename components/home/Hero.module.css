@@ -35,11 +35,9 @@
 .glassLink span { min-width: 0; font-size: clamp(1.35rem, 1.7vw, 1.65rem); font-weight: 400; line-height: 1.15; letter-spacing: -.02em; overflow-wrap: break-word; }
 .glassLink svg { flex: none; width: 20px; height: 20px; margin-top: 4px; transition: transform 180ms var(--ease-out-strong); }
 .glassLink:active { transform: scale(.98); }
-.glassLink:focus-visible, .motionToggle:focus-visible { outline: 2px solid var(--color-text-on-dark); outline-offset: 4px; }
-.motionToggle { position: absolute; left: var(--hero-gutter); bottom: 28px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--hero-glass-line); border-radius: 999px; background: var(--hero-glass); color: var(--color-text-on-dark); cursor: pointer; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); transition: background-color 180ms var(--ease-out-strong); }
-.motionToggle svg { width: 18px; height: 18px; }
+.glassLink:focus-visible { outline: 2px solid var(--color-text-on-dark); outline-offset: 4px; }
 @media (hover: hover) {
-  .glassLink:hover, .motionToggle:hover { background: var(--hero-glass-hover); }
+  .glassLink:hover { background: var(--hero-glass-hover); }
   .glassLink:hover svg { transform: translate(2px, -2px); }
 }
 
@@ -71,7 +69,7 @@
 .section .desktop :global(.villa-search-form__submit:active) { background: var(--color-button-primary-bg-pressed); }
 @media (hover: hover) { .section .desktop :global(.villa-search-form__group > button:hover) { background: var(--color-button-secondary-bg-hover); } .section .desktop :global(.villa-search-form__submit:hover) { background: var(--color-button-primary-bg-hover); } }
 
-@media (prefers-reduced-motion: reduce) { .glassLink, .glassLink svg, .motionToggle { transition: none; } .glassLink:active, .glassLink:hover svg { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .glassLink, .glassLink svg { transition: none; } .glassLink:active, .glassLink:hover svg { transform: none; } }
 :global(html[data-motion="reduced"]) .glassLink, :global(html[data-motion="reduced"]) .glassLink svg { transition: none !important; transform: none !important; }
 
 /* Tablet: the pause control moves to the top-right so the notch can widen. */
@@ -79,7 +77,6 @@
   .section { --hero-notch-side: 44px; }
   .copy { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .lede { justify-self: start; padding-top: 0; }
-  .motionToggle { top: calc(var(--hero-nav) + 24px); right: var(--hero-gutter); bottom: auto; left: auto; }
   .copy { right: calc(var(--hero-gutter) + 60px); }
 }
 @media (min-width: 761px) and (max-width: 960px) {
@@ -98,7 +95,6 @@
   .glassLink { min-height: 5rem; padding: 14px; border-radius: 14px; }
   .glassLink span { font-size: 1.05rem; }
   .glassLink svg { width: 16px; height: 16px; margin-top: 2px; }
-  .motionToggle { top: auto; right: auto; left: 16px; bottom: 32px; width: 40px; height: 40px; }
   .section .mobile :global(.mobile-booking-search__trigger) { width: 100%; min-height: 52px; border: 0 !important; border-radius: 999px !important; background: var(--color-button-primary-bg) !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; filter: none !important; }
   .section .mobile :global(.mobile-booking-search__trigger::before), .section .mobile :global(.mobile-booking-search__trigger::after) { display: none !important; }
   .section .mobile :global(.mobile-booking-search__trigger-icon), .section .mobile :global(.mobile-booking-search__trigger-label) { color: var(--color-button-primary-text) !important; text-shadow: none !important; }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { FiArrowUpRight, FiPause, FiPlay } from "react-icons/fi";
+import { FiArrowUpRight } from "react-icons/fi";
 import { safeHttpHref } from "@/lib/safe-url";
 import VillaSearchForm from "@/components/booking/VillaSearchForm";
 import MobileHeroSearch from "@/components/booking/MobileHeroSearch";
@@ -38,17 +38,16 @@ export default function Hero({ cms }: HeroProps = {}) {
     .filter(button => button.label && button.href);
   const video = useRef<HTMLVideoElement>(null);
   const [failedVideo, setFailedVideo] = useState(false);
-  const [paused, setPaused] = useState(false);
+  // No on-screen pause button (owner decision); the site-wide motion preference (Reduced) stops the video.
   const reduced = usePrefersReducedMotion();
-  const stopped = reduced || paused;
 
   useEffect(() => { setFailedVideo(false); }, [videoSrc]);
   useEffect(() => {
     const element = video.current;
     if (!element) return;
-    if (stopped) element.pause();
+    if (reduced) element.pause();
     else void element.play().catch(() => { /* Retain the poster when autoplay is blocked. */ });
-  }, [stopped, videoSrc]);
+  }, [reduced, videoSrc]);
 
   return (
     <section className={styles.section} data-home-hero>
@@ -76,10 +75,6 @@ export default function Hero({ cms }: HeroProps = {}) {
             <span>{button.label}</span><FiArrowUpRight aria-hidden="true" />
           </Link>)}
         </nav> : null}
-
-        {!failedVideo && !reduced ? <button type="button" className={styles.motionToggle} onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? "Play background video" : "Pause background video"}>
-          {paused ? <FiPlay aria-hidden="true" /> : <FiPause aria-hidden="true" />}
-        </button> : null}
 
         {/* The page cuts a notch into the bottom edge of the frame; the search sits in it. */}
         <div id="home-hero-search" className={styles.notch}>
