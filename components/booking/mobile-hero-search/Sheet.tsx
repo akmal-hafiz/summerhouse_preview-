@@ -25,10 +25,15 @@ type SheetProps = {
   onLocationSelect: (value: string) => void;
   onDatesChange: (checkIn: string, checkOut: string) => void;
   onGuestsChange: (guests: Guests) => void;
+  canClear: boolean;
   onClearAll: () => void;
   onClose: () => void;
   onSubmit: () => void;
 };
+
+// Same query as the CSS that turns the sheet into a centred modal (globals.css, "Tablet and desktop").
+const MODAL_QUERY = "(min-width: 768px) and (min-height: 600px)";
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
 export default function Sheet({
   state,
@@ -38,11 +43,14 @@ export default function Sheet({
   onLocationSelect,
   onDatesChange,
   onGuestsChange,
+  canClear,
   onClearAll,
   onClose,
   onSubmit,
 }: SheetProps) {
   const reduce = usePrefersReducedMotion();
+  // The sheet only mounts after a click, so reading the viewport here is safe and stable for its lifetime.
+  const [modal] = useState(() => window.matchMedia(MODAL_QUERY).matches);
   const dialogRef = useRef<HTMLDivElement>(null);
   const [locations, setLocations] = useState<string[]>([]);
   const [locationsStatus, setLocationsStatus] = useState<LocationsStatus>("loading");
@@ -137,10 +145,16 @@ export default function Sheet({
         aria-modal="true"
         aria-label={activeTitle}
         tabIndex={-1}
-        initial={reduce ? { opacity: 0 } : { y: "100%", opacity: 0.6 }}
-        animate={reduce ? { opacity: 1 } : { y: 0, opacity: 1 }}
-        exit={reduce ? { opacity: 0 } : { y: "100%", opacity: 0 }}
-        transition={{ type: "spring", stiffness: 340, damping: 34 }}
+        {...(reduce
+          ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.18 } }
+          : modal
+            // Centred modal: rises a little and settles; leaving is quicker than arriving.
+            ? {
+              initial: { opacity: 0, transform: "translateY(16px) scale(0.97)" },
+              animate: { opacity: 1, transform: "translateY(0px) scale(1)", transition: { duration: 0.34, ease: EASE_OUT } },
+              exit: { opacity: 0, transform: "translateY(8px) scale(0.985)", transition: { duration: 0.18, ease: EASE_OUT } },
+            }
+            : { initial: { y: "100%", opacity: 0.6 }, animate: { y: 0, opacity: 1 }, exit: { y: "100%", opacity: 0 }, transition: { type: "spring", stiffness: 340, damping: 34 } })}
         className="mobile-booking-search__sheet"
       >
         <button
@@ -183,7 +197,7 @@ export default function Sheet({
           )}
         </div>
 
-        <ActionBar onClearAll={onClearAll} onSearch={onSubmit} />
+        <ActionBar canClear={canClear} onClearAll={onClearAll} onSearch={onSubmit} />
       </motion.div>
     </div>
   );

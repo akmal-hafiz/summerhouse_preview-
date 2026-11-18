@@ -7,6 +7,7 @@ import { FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import { useAuth } from "@/components/providers/AuthProvider";
 import PasswordInput from "@/components/auth/PasswordInput";
 import DashboardAvatar from "./DashboardAvatar";
+import DashboardSearchSetting from "./DashboardSearchSetting";
 
 type Feedback = { variant: "success" | "error"; message: string } | null;
 
@@ -316,6 +317,8 @@ export default function DashboardSettings() {
             </button>
           </div>
         </form>
+
+        <DashboardSearchSetting />
       </div>
       <div className="dash-mobile-account-actions">
         <Link href="/">Back to site</Link>

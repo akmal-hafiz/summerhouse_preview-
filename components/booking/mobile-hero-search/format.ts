@@ -15,8 +15,8 @@ export function formatLongDate(iso: string) {
 
 export function formatDateRange(checkIn: string, checkOut: string) {
   if (!checkIn) return "";
-  if (!checkOut) return formatShortDate(checkIn);
-  return `${formatShortDate(checkIn)} - ${formatShortDate(checkOut)}`;
+  if (!checkOut) return `From ${formatShortDate(checkIn)}`;
+  return `${formatShortDate(checkIn)} to ${formatShortDate(checkOut)}`;
 }
 
 export function guestsLabel(g: Guests) {

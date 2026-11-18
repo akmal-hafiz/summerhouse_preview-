@@ -223,24 +223,31 @@
 .dash-icon-button:hover { background: var(--dash-error-wash); color: var(--dash-error-ink); }
 .dash-icon-button:disabled { opacity: .45; cursor: wait; }
 
-.dash-history-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 30px; padding-bottom: 22px; border-bottom: 1px solid var(--dash-line); }
+/* Recent searches: a quiet list under Saved villas. Each row is one link; rows rise in once when the list arrives. */
+.dash-recent { margin-top: clamp(34px, 3.2vw, 50px); }
+.dash-recent-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--dash-line); }
+.dash-recent-list li { animation: dash-recent-in 420ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(var(--dash-i, 0) * 50ms); }
+.dash-recent-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 16px; align-items: center; gap: 4px 28px; min-height: 64px; padding: 14px 4px; border-bottom: 1px solid var(--dash-line); color: var(--dash-ink); text-decoration: none; }
+.dash-recent-title { font-size: 16px; font-weight: 600; letter-spacing: -.02em; line-height: 1.3; overflow-wrap: anywhere; }
+.dash-recent-dates { color: var(--dash-muted); font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dash-recent-row svg { width: 16px; color: var(--dash-muted); transition: transform 220ms cubic-bezier(.22, 1, .36, 1), color 180ms ease; }
+.dash-recent-row:hover svg, .dash-recent-row:focus-visible svg { color: var(--dash-ink); transform: translateX(3px); }
+.dash-recent-row:focus-visible { outline: 2px solid var(--color-button-primary-bg); outline-offset: -2px; border-radius: 6px; }
+@keyframes dash-recent-in { from { opacity: 0; transform: translateY(6px); } }
 .dash-switch { position: relative; display: inline-flex; align-items: center; gap: 11px; min-height: 44px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .dash-switch input { position: absolute; width: 38px; height: 22px; margin: 0; opacity: 0; cursor: pointer; }
 .dash-switch-track { position: relative; flex: none; width: 38px; height: 22px; border-radius: 999px; background: #8f8c86; transition: background-color 180ms ease; }
 .dash-switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(46, 46, 44, .25); transition: transform 180ms cubic-bezier(.22, 1, .36, 1); }
-/* The control is "Pause saving": checked means paused. A paused track takes the warm warning tone, not the action charcoal. */
-.dash-switch input:checked + .dash-switch-track { background: #8a6a2e; }
+/* Checked means on ("Remember my recent searches"). */
+.dash-switch input:checked + .dash-switch-track { background: var(--dash-moss); }
 .dash-switch input:checked + .dash-switch-track::after { transform: translateX(16px); }
 .dash-switch input:focus-visible + .dash-switch-track { outline: 2px solid var(--color-button-primary-bg); outline-offset: 3px; }
 .dash-switch input[aria-busy="true"] + .dash-switch-track { opacity: .6; }
-.dash-switch-state { margin-left: -8px; color: var(--dash-muted); font-size: 13px; }
-.dash-switch-state::before { content: "\00B7" / ""; margin-right: 8px; }
-.dash-text-button { min-height: 44px; margin-left: auto; padding: 0 2px; border: 0; background: transparent; color: var(--dash-ink); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.dash-text-button { min-height: 44px; padding: 0 2px; border: 0; background: transparent; color: var(--dash-ink); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 .dash-text-button:hover { color: var(--dash-error-ink); }
-.dash-confirm { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin: -14px 0 30px; padding: 16px 18px; border: 1px solid #e3cfc9; border-radius: 10px; background: #fbf5f3; }
+.dash-confirm { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin: 4px 0 0; padding: 16px 18px; border: 1px solid #e3cfc9; border-radius: 10px; background: #fbf5f3; }
 .dash-confirm p { margin: 0; font-size: 14px; font-weight: 600; }
 .dash-confirm-actions { display: flex; gap: 10px; }
-.dash-history-bar + .dash-action-error, .dash-confirm + .dash-action-error { margin: -14px 0 26px; }
 
 .dash-overview-lines { display: flex; flex-wrap: wrap; gap: 6px 26px; margin: 16px 0 0; padding: 0; list-style: none; }
 .dash-overview-lines a { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; color: var(--dash-ink); font-size: 14px; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(46, 46, 44, .28); text-underline-offset: 5px; }
@@ -378,7 +385,10 @@
   .dash-discovery { min-height: 205px; }
   .dash-discovery-content { padding: 23px; }
   .dash-discovery-content h2 { font-size: 27px; }
-  .dash-saved-section { margin-top: 29px; }
+  .dash-saved-section, .dash-recent { margin-top: 29px; }
+  .dash-recent-row { grid-template-columns: minmax(0, 1fr) 16px; gap: 3px 16px; }
+  .dash-recent-dates { grid-row: 2; font-size: 13px; }
+  .dash-recent-row svg { grid-row: 1 / span 2; grid-column: 2; }
   .dash-villa-grid { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(220px, 78%); grid-template-columns: none; gap: 13px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .dash-villa-grid::-webkit-scrollbar { display: none; }
   .dash-villa-card { scroll-snap-align: start; }

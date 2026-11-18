@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FiArrowLeft, FiHeart, FiHome, FiLogOut, FiUser, FiCalendar, FiTag, FiClock } from "react-icons/fi";
+import { FiArrowLeft, FiHeart, FiHome, FiLogOut, FiUser, FiCalendar, FiTag } from "react-icons/fi";
 import { useAuth } from "@/components/providers/AuthProvider";
 import DashboardAvatar from "./DashboardAvatar";
 
@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { href: "/dashboard/saved", label: "Saved villas", icon: FiHeart },
   ...(process.env.NEXT_PUBLIC_BOOKING_HISTORY_ENABLED === "true" ? [{ href: "/dashboard/stays", label: "My stays", icon: FiCalendar }] : []),
   { href: "/dashboard/coupons", label: "Coupons", icon: FiTag },
-  { href: "/dashboard/searches", label: "Recent searches", icon: FiClock },
   { href: "/dashboard/settings", label: "Account settings", icon: FiUser },
 ];
 
