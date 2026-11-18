@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 import { safeHttpHref } from "@/lib/safe-url";
-import VillaSearchForm from "@/components/booking/VillaSearchForm";
 import MobileHeroSearch from "@/components/booking/MobileHeroSearch";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import styles from "./Hero.module.css";
@@ -61,26 +60,20 @@ export default function Hero({ cms }: HeroProps = {}) {
           </video>
         </div>
 
+        {/* One quiet block at the lower left: statement, one line, then the search pill. The video keeps the rest. */}
         <div className={styles.copy}>
-          <div className={styles.lead}>
-            {cms?.show_badge && badge ? <p className={styles.badge}>{badge.split("/").map(item => item.trim()).filter(Boolean).join(" / ")}</p> : null}
-            {/* Exactly one h1: the CMS heading when it is shown, otherwise the statement (same class, same look). */}
-            {showHeading ? <h1 className={styles.display}>{heading}</h1> : description ? <h1 className={styles.display}>{description}</h1> : null}
-          </div>
+          {cms?.show_badge && badge ? <p className={styles.badge}>{badge.split("/").map(item => item.trim()).filter(Boolean).join(" / ")}</p> : null}
+          {/* Exactly one h1: the CMS heading when it is shown, otherwise the statement (same class, same look). */}
+          {showHeading ? <h1 className={styles.display}>{heading}</h1> : description ? <h1 className={styles.display}>{description}</h1> : null}
           {showHeading && description ? <p className={styles.lede}>{description}</p> : null}
+          <div id="home-hero-search" className={styles.search}><MobileHeroSearch /></div>
         </div>
 
         {buttons.length ? <nav className={styles.links} aria-label="Discover Summerhouse">
-          {buttons.map(button => <Link key={`${button.label}-${button.href}`} href={button.href} className={styles.glassLink}>
+          {buttons.map(button => <Link key={`${button.label}-${button.href}`} href={button.href} className={styles.link}>
             <span>{button.label}</span><FiArrowUpRight aria-hidden="true" />
           </Link>)}
         </nav> : null}
-
-        {/* The page cuts a notch into the bottom edge of the frame; the search sits in it. */}
-        <div id="home-hero-search" className={styles.notch}>
-          <div className={styles.desktop}><VillaSearchForm variant="cinematic" /></div>
-          <div className={styles.mobile}><MobileHeroSearch /></div>
-        </div>
       </div>
     </section>
   );

@@ -1,101 +1,91 @@
-/* Impeccable · approved FigCraft direction B (2026-11-13), full-bleed revision. */
-/* The video runs edge to edge behind the transparent homepage nav. The statement sits top-left in the site's display type,
-   the CMS links are glass cards on the right, and the only cut is the notch the page raises into the bottom edge to hold
-   the search. The notch shoulders are page-coloured radial gradients, so the cut reads as one contour. */
+/* Impeccable · quiet hero (2026-11-18), replaces the notched direction B on the owner's request.
+   The video runs edge to edge behind the transparent nav. One small block sits at the lower left: the statement, one line,
+   and the search pill that opens the search sheet. The CMS links are two text links at the lower right. Everything else is
+   the video. */
 .section {
   --hero-nav: 76px;
-  --hero-notch-r: 28px; --hero-notch-side: 104px; --hero-notch-pad: 14px; --hero-notch-h: 98px;
   --hero-gutter: clamp(24px, 3.9vw, 56px);
-  --hero-glass: rgb(29 51 42 / .3); --hero-glass-hover: rgb(29 51 42 / .44); --hero-glass-line: rgb(250 250 249 / .3);
+  --hero-base: clamp(32px, 6.5svh, 72px);
+  --hero-ease: cubic-bezier(.23, 1, .32, 1);
   position: relative; width: 100%;
   background: var(--color-page); color: var(--color-text); font-family: var(--font-sans);
 }
 .frame {
-  /* z-index lifts the whole frame (and the search panels it holds) above the sections that follow. */
+  /* z-index keeps the hero above the section that follows while the video loads. */
   position: relative; z-index: 10; isolation: isolate;
   height: 100svh; min-height: 640px; color: var(--color-text-on-dark);
 }
 .media { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--color-footer-bg); }
-/* Top band carries the transparent nav and the statement; the bottom keeps the glass cards legible. */
-.media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(29 51 42 / .62) 0%, rgb(29 51 42 / .28) 22%, rgb(29 51 42 / .08) 46%, rgb(29 51 42 / 0) 60%, rgb(29 51 42 / .3) 100%); pointer-events: none; }
+/* Shade only where text sits: a thin band under the nav and a soft pool at the lower left. The centre stays clear. */
+.media::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(29 51 42 / .42) 0%, rgb(29 51 42 / 0) 24%),
+    radial-gradient(110% 85% at 0% 100%, rgb(29 51 42 / .72) 0%, rgb(29 51 42 / .4) 38%, rgb(29 51 42 / 0) 68%),
+    radial-gradient(55% 45% at 100% 100%, rgb(29 51 42 / .6) 0%, rgb(29 51 42 / 0) 70%),
+    linear-gradient(0deg, rgb(29 51 42 / .32) 0%, rgb(29 51 42 / 0) 30%);
+}
 .poster, .video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .video[data-failed="true"] { visibility: hidden; }
 
-/* Statement: the site's display scale (Outfit 400, as the Services and Why Stay headings). */
-.copy { position: absolute; inset: calc(var(--hero-nav) + clamp(28px, 4.4vw, 64px)) var(--hero-gutter) auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 32ch); gap: 32px; align-items: start; pointer-events: none; }
-.copy > * { pointer-events: auto; }
-.lead { min-width: 0; }
-.display { margin: 0; max-width: 14ch; color: var(--color-text-on-dark); font-family: var(--font-sans); font-size: clamp(3rem, 6.2vw, 6rem); font-weight: 400; line-height: .94; letter-spacing: -.04em; white-space: pre-line; text-wrap: balance; overflow-wrap: break-word; }
-.lede { justify-self: end; margin: 0; padding-top: 10px; max-width: 32ch; color: var(--color-text-on-dark-muted); font-size: clamp(1rem, 1.25vw, 1.16rem); line-height: 1.6; white-space: pre-line; }
-.badge { margin: 0 0 16px; color: var(--color-text-on-dark-muted); font-size: 14px; line-height: 1.5; }
+.copy {
+  position: absolute; left: var(--hero-gutter); bottom: var(--hero-base);
+  display: grid; justify-items: start; width: min(560px, calc(100% - 2 * var(--hero-gutter)));
+}
+.badge { margin: 0 0 14px; color: var(--color-text-on-dark-muted); font-size: 13px; line-height: 1.5; }
+/* The site's display face at a size that captions the video rather than covering it. */
+.display {
+  margin: 0; max-width: 16ch; color: var(--color-text-on-dark); font-family: var(--font-sans);
+  font-size: clamp(2.25rem, 3.5vw, 3.6rem); font-weight: 400; line-height: 1.04; letter-spacing: -.03em;
+  white-space: pre-line; text-wrap: balance; overflow-wrap: break-word;
+}
+/* A soft shade in the brand dark, for the brightest video frames; not a visible outline. */
+.display, .lede, .link { text-shadow: 0 1px 28px rgb(29 51 42 / .45); }
+.lede { margin: 16px 0 0; max-width: 38ch; color: var(--color-text-on-dark-muted); font-size: clamp(15px, 1.1vw, 17px); line-height: 1.55; white-space: pre-line; }
+.search { width: 100%; margin-top: 28px; scroll-margin-top: 112px; }
 
-/* CMS links as glass cards over the video. taste-skill-ignore: glass is the approved treatment for controls on moving media. */
-.links { position: absolute; right: var(--hero-gutter); bottom: calc(var(--hero-notch-h) + 24px); display: grid; gap: 12px; width: min(15rem, 40%); }
-.glassLink { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; min-height: 6.25rem; padding: 18px 20px; border: 1px solid var(--hero-glass-line); border-radius: 16px; background: var(--hero-glass); color: var(--color-text-on-dark); text-decoration: none; -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); transition: background-color 180ms var(--ease-out-strong), transform 180ms var(--ease-out-strong); }
-.glassLink span { min-width: 0; font-size: clamp(1.35rem, 1.7vw, 1.65rem); font-weight: 400; line-height: 1.15; letter-spacing: -.02em; overflow-wrap: break-word; }
-.glassLink svg { flex: none; width: 20px; height: 20px; margin-top: 4px; transition: transform 180ms var(--ease-out-strong); }
-.glassLink:active { transform: scale(.98); }
-.glassLink:focus-visible { outline: 2px solid var(--color-text-on-dark); outline-offset: 4px; }
-@media (hover: hover) {
-  .glassLink:hover { background: var(--hero-glass-hover); }
-  .glassLink:hover svg { transform: translate(2px, -2px); }
+.links { position: absolute; right: var(--hero-gutter); bottom: var(--hero-base); display: flex; gap: 8px 28px; }
+.link {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 44px;
+  color: var(--color-text-on-dark); font-size: 14px; font-weight: 500; text-decoration: underline;
+  text-decoration-color: rgb(250 250 249 / .35); text-underline-offset: 6px; text-decoration-thickness: 1px;
+  transition: text-decoration-color 200ms ease;
+}
+.link svg { width: 15px; height: 15px; transition: transform 200ms var(--hero-ease); }
+.link:focus-visible { outline: 2px solid var(--color-text-on-dark); outline-offset: 4px; border-radius: 4px; }
+@media (hover: hover) and (pointer: fine) {
+  .link:hover { text-decoration-color: currentColor; }
+  .link:hover svg { transform: translate(2px, -2px); }
 }
 
-/* The notch: page colour rising into the frame, with concave shoulders on both sides. */
-.notch { position: absolute; z-index: 3; left: 50%; bottom: 0; width: min(920px, calc(100% - 2 * var(--hero-notch-side))); padding: var(--hero-notch-pad) var(--hero-notch-pad) 0; transform: translateX(-50%); border-radius: var(--hero-notch-r) var(--hero-notch-r) 0 0; background: var(--color-page); color: var(--color-text); scroll-margin-top: 112px; }
-.notch::before, .notch::after { content: ""; position: absolute; bottom: 0; width: var(--hero-notch-r); height: var(--hero-notch-r); pointer-events: none; }
-.notch::before { right: 100%; background: radial-gradient(circle at 0 0, transparent calc(var(--hero-notch-r) - .5px), var(--color-page) var(--hero-notch-r)); }
-.notch::after { left: 100%; background: radial-gradient(circle at 100% 0, transparent calc(var(--hero-notch-r) - .5px), var(--color-page) var(--hero-notch-r)); }
-.mobile { display: none; }
-
-/* Desktop search bar: one white pill, hairline dividers, charcoal submit. */
-.section .desktop :global(.villa-search-form) { display: grid; grid-template-columns: minmax(120px, 1.25fr) minmax(200px, 1.8fr) minmax(100px, .9fr) minmax(112px, auto); width: 100%; min-height: 84px; align-items: center; gap: 0; padding: 8px 8px 8px 12px; border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-surface-raised); box-shadow: none; } /* taste-skill-ignore: explicitly removes inherited search shadow. */
-.section .desktop :global(.villa-search-form__group) { grid-column: auto; grid-row: auto; min-width: 0; border: 0; border-right: 1px solid var(--color-border); border-radius: 0; background: transparent; box-shadow: none !important; } /* taste-skill-ignore: approved form field separator; removes inherited calendar elevation. */
-.section .desktop :global(.villa-search-form__group > button) { position: relative; min-height: 60px; padding: 8px 24px 8px 16px; border: 0; border-radius: 999px; background: transparent; color: var(--color-text); box-shadow: none; } /* taste-skill-ignore: removes inherited control shadow. */
-.section .desktop :global(.villa-search-form__group--dates) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.section .desktop :global(.villa-search-form__group--dates > button:first-child) { border-right: 1px solid var(--color-border); border-radius: 999px 0 0 999px; } /* taste-skill-ignore: separates check-in and check-out fields in approved form. */
-.section .desktop :global(.villa-search-form__group span) { color: var(--color-text-muted); font-size: 13px; line-height: 1.4; letter-spacing: 0; text-transform: none; font-weight: 400; }
-.section .desktop :global(.villa-search-form__group strong) { margin-top: 4px; font-size: 16px; font-weight: 500; line-height: 1.4; }
-.section .desktop :global(.villa-search-form__group strong:not(.is-empty)) { color: var(--color-text); }
-.section .desktop :global(.villa-search-form__chevron) { right: 8px; width: 12px; height: 12px; color: var(--color-text-muted); }
-.section .desktop :global(.villa-search-form__submit) { grid-column: auto; grid-row: auto; display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 64px; padding: 12px 24px; margin-left: 12px; border: 0; border-radius: 999px; background: var(--color-button-primary-bg); color: var(--color-button-primary-text); gap: 10px; font: 500 16px/1.4 var(--font-sans); box-shadow: none !important; } /* taste-skill-ignore: removes inherited booking-button glow to match the approved flat action. */
-.section .desktop :global(.villa-search-form__submit span) { color: inherit; text-transform: none; letter-spacing: 0; font-size: 16px; }
-.section .desktop :global(.villa-search-form__submit svg) { width: 20px; height: 20px; }
-.section .desktop :global(.villa-search-form__panel) { top: auto; bottom: calc(100% + 12px); max-height: min(440px, calc(100svh - 180px)); overflow-y: auto; background: var(--color-surface-raised); color: var(--color-text); border-color: var(--color-border); }
-.section .desktop :global(.villa-search-form__panel--dates) { left: auto; right: 0; max-width: 100%; }
-.section .desktop :global(.villa-search-form__panel--guests) { left: auto; right: 0; }
-.section .desktop :global(.villa-search-form__panel[data-placement="below"]) { top: calc(100% + 12px); bottom: auto; }
-.section button:focus-visible { outline: 2px solid var(--color-button-primary-bg); outline-offset: 3px; }
-.section .desktop :global(.villa-search-form__submit:active) { background: var(--color-button-primary-bg-pressed); }
-@media (hover: hover) { .section .desktop :global(.villa-search-form__group > button:hover) { background: var(--color-button-secondary-bg-hover); } .section .desktop :global(.villa-search-form__submit:hover) { background: var(--color-button-primary-bg-hover); } }
-
-@media (prefers-reduced-motion: reduce) { .glassLink, .glassLink svg { transition: none; } .glassLink:active, .glassLink:hover svg { transform: none; } }
-:global(html[data-motion="reduced"]) .glassLink, :global(html[data-motion="reduced"]) .glassLink svg { transition: none !important; transform: none !important; }
-
-/* Tablet: the pause control moves to the top-right so the notch can widen. */
-@media (max-width: 1180px) {
-  .section { --hero-notch-side: 44px; }
-  .copy { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .lede { justify-self: start; padding-top: 0; }
-  .copy { right: calc(var(--hero-gutter) + 60px); }
+/* One authored moment: the block rises out of a soft blur, line by line, as the video starts. */
+.copy > *, .links { animation: hero-rise 900ms var(--hero-ease) both; }
+.copy > :nth-child(1) { animation-delay: 120ms; }
+.copy > :nth-child(2) { animation-delay: 200ms; }
+.copy > :nth-child(3) { animation-delay: 280ms; }
+.copy > :nth-child(4) { animation-delay: 360ms; }
+.links { animation-delay: 440ms; }
+@keyframes hero-rise { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } }
+@keyframes hero-fade { from { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-motion="full"])) .copy > *, :where(html:not([data-motion="full"])) .links { animation-name: hero-fade; animation-duration: 300ms; }
+  :where(html:not([data-motion="full"])) .link svg { transition: none; }
 }
-@media (min-width: 761px) and (max-width: 960px) {
-  .section .desktop :global(.villa-search-form__group > button) { padding-left: 12px; }
-}
+:global(html[data-motion="reduced"]) .copy > *, :global(html[data-motion="reduced"]) .links { animation-name: hero-fade; animation-duration: 300ms; }
 
-/* Phone: same frame and notch; the notch holds the search sheet trigger. */
 @media (max-width: 760px) {
-  .section { --hero-nav: 68px; --hero-notch-r: 22px; --hero-notch-side: 70px; --hero-notch-pad: 10px; --hero-notch-h: 62px; --hero-gutter: 20px; }
+  .section { --hero-nav: 68px; --hero-gutter: 20px; --hero-base: 20px; }
   .frame { min-height: 600px; }
-  .desktop { display: none; } .mobile { display: block; }
-  .copy { inset: calc(var(--hero-nav) + 24px) var(--hero-gutter) auto; }
-  .display { max-width: none; font-size: clamp(2.45rem, 12vw, 3.5rem); line-height: .98; letter-spacing: -.035em; }
-  .lede { font-size: 15px; }
-  .links { right: 16px; bottom: calc(var(--hero-notch-h) + 20px); width: 9.75rem; gap: 8px; }
-  .glassLink { min-height: 5rem; padding: 14px; border-radius: 14px; }
-  .glassLink span { font-size: 1.05rem; }
-  .glassLink svg { width: 16px; height: 16px; margin-top: 2px; }
-  .section .mobile :global(.mobile-booking-search__trigger) { width: 100%; min-height: 52px; border: 0 !important; border-radius: 999px !important; background: var(--color-button-primary-bg) !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; filter: none !important; }
-  .section .mobile :global(.mobile-booking-search__trigger::before), .section .mobile :global(.mobile-booking-search__trigger::after) { display: none !important; }
-  .section .mobile :global(.mobile-booking-search__trigger-icon), .section .mobile :global(.mobile-booking-search__trigger-label) { color: var(--color-button-primary-text) !important; text-shadow: none !important; }
+  /* On a phone the text spans the full width, so the shade rises from the whole bottom edge (checked on the brightest frame). */
+  .media::after {
+    background:
+      linear-gradient(180deg, rgb(29 51 42 / .42) 0%, rgb(29 51 42 / 0) 22%),
+      linear-gradient(0deg, rgb(29 51 42 / .85) 0%, rgb(29 51 42 / .62) 36%, rgb(29 51 42 / 0) 64%);
+  }
+  /* The links move under the search, in a row, so nothing overlaps on a narrow screen. */
+  .copy { bottom: calc(var(--hero-base) + 52px); }
+  .display { font-size: clamp(2rem, 8.6vw, 2.6rem); letter-spacing: -.025em; }
+  .lede { margin-top: 12px; font-size: 15px; }
+  .search { margin-top: 22px; }
+  .links { left: var(--hero-gutter); right: auto; }
 }

@@ -44,7 +44,7 @@ export default function WhenCard({
           <FiChevronLeft size={16} aria-hidden />
         </button>
         <span className="mobile-booking-search__calendar-range-label">
-          {monthNames[cursor.getMonth()]} - {monthNames[addMonths(cursor, 1).getMonth()]}
+          {monthNames[cursor.getMonth()]} to {monthNames[addMonths(cursor, 1).getMonth()]}
         </span>
         <button
           type="button"

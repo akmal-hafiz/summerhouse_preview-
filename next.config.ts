@@ -72,6 +72,8 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         permanent: true,
       },
+      // Recent searches now live in the Overview; old bookmarks land there.
+      { source: "/dashboard/searches", destination: "/dashboard", permanent: false },
     ];
   },
   async headers() {

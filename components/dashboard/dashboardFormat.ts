@@ -51,30 +51,6 @@ export function historyTitle(item: HistoryItem, villaNames: ReadonlyMap<string, 
   return parts.join(", ");
 }
 
-/** "IDR 1,200,000" for a recorded total. */
-export function priceLabel(amount: number, currency: string): string {
-  const digits = currency === "IDR" ? 0 : 2;
-  return `${currency} ${amount.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
-}
-
-/** "3 Nov" in the member's own time zone. */
-export function seenLabel(seenAt: string, now = new Date()): string {
-  const seen = new Date(seenAt);
-  return dayMonth(seen, undefined, seen.getFullYear() !== now.getFullYear());
-}
-
-export type HistoryGroup = "Today" | "This week" | "Earlier";
-
-/** Rule: Today from local midnight; This week is the six calendar days before today; anything older is Earlier. */
-export function historyGroup(seenAt: string, now = new Date()): HistoryGroup {
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6).getTime();
-  const seen = Date.parse(seenAt);
-  if (seen >= startOfToday) return "Today";
-  if (seen >= startOfWeek) return "This week";
-  return "Earlier";
-}
-
 const isoToday = (now: Date) => `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
 /** True when the recorded check-in is before today (local), so a repeat search cannot use those dates. */
@@ -97,10 +73,8 @@ export function searchAgainHref(item: HistoryItem, now = new Date()): string {
   return `/villas?${params.toString()}`;
 }
 
-/** The Overview line for the newest entry: "Last search: Canggu, 12 to 15 Dec" or "Last viewed: Villa Name". */
-export function latestHistoryLine(item: HistoryItem, villaNames: ReadonlyMap<string, string>): string {
-  if (item.kind === "view") return `Last viewed: ${historyTitle(item, villaNames)}`;
-  const parts = [item.destination, stayDatesLabel(item)].filter(Boolean) as string[];
-  if (parts.length === 0 && item.guests !== undefined) parts.push(guestsLabel(item.guests));
-  return `Last search: ${parts.join(", ") || "Any area"}`;
+/** The second line of a recent-search row: the stay dates, or a plain fallback. */
+export function historyDatesLine(item: HistoryItem, now = new Date()): string {
+  if (stayDatesPassed(item, now)) return "Dates have passed";
+  return stayDatesLabel(item) ?? (item.kind === "view" ? "Villa you viewed" : "Any dates");
 }

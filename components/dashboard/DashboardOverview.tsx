@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { sessionFetch } from "@/lib/auth-client";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import { useAuth } from "@/components/providers/AuthProvider";
 import DashboardVillaThumb from "./DashboardVillaThumb";
 import { useDashboardWishlist } from "./useDashboardWishlist";
-import { couponEndLabel, latestHistoryLine, sortCoupons, type HistoryItem, type MemberCoupon } from "./dashboardFormat";
+import DashboardRecentSearches from "./DashboardRecentSearches";
+import { couponEndLabel, sortCoupons, type MemberCoupon } from "./dashboardFormat";
 
 type Props = {
   villas: VillaSearchResult[];
@@ -17,10 +18,9 @@ type Props = {
 
 type OverviewLine = { href: string; text: string };
 
-/** One compact line each for the next offer and the latest search. A failed or empty source simply shows no line. */
-function useOverviewLines(villas: VillaSearchResult[]) {
+/** One compact line for the next offer. A failed or empty source simply shows no line. */
+function useOverviewLines() {
   const [offer, setOffer] = useState<OverviewLine | null>(null);
-  const [search, setSearch] = useState<OverviewLine | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -37,16 +37,10 @@ function useOverviewLines(villas: VillaSearchResult[]) {
       const count = payload.coupons.length;
       setOffer({ href: "/dashboard/coupons", text: ends ? `Next offer ends ${ends}` : `${count} ${count === 1 ? "offer" : "offers"} for you` });
     });
-    void read<{ items?: HistoryItem[] }>("search-history").then((payload) => {
-      if (controller.signal.aborted || !Array.isArray(payload?.items) || payload.items.length === 0) return;
-      const names = new Map(villas.map((villa) => [String(villa.id), villa.name]));
-      const latest = payload.items.find((item) => item.kind === "search") ?? payload.items[0];
-      setSearch({ href: "/dashboard/searches", text: latestHistoryLine(latest, names) });
-    });
     return () => controller.abort();
-  }, [villas]);
+  }, []);
 
-  return [offer, search].filter((line): line is OverviewLine => line !== null);
+  return offer ? [offer] : [];
 }
 
 export default function DashboardOverview({ villas, catalogStatus }: Props) {
@@ -56,7 +50,8 @@ export default function DashboardOverview({ villas, catalogStatus }: Props) {
   const saved = ids.map((id) => byId.get(id)).filter((villa): villa is VillaSearchResult => Boolean(villa));
   const hiddenCount = ids.length - saved.length;
   const firstName = user?.name.trim().split(/\s+/)[0] || "Guest";
-  const lines = useOverviewLines(villas);
+  const lines = useOverviewLines();
+  const villaNames = useMemo(() => new Map(villas.map((villa) => [String(villa.id), villa.name])), [villas]);
 
   return (
     <>
@@ -136,6 +131,8 @@ export default function DashboardOverview({ villas, catalogStatus }: Props) {
           <p className="dash-action-error" role="alert">A shortlist change could not be saved. Please try again.</p>
         )}
       </section>
+
+      <DashboardRecentSearches villaNames={villaNames} />
     </>
   );
 }

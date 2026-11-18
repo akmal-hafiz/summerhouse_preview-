@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { FiMapPin, FiSearch, FiX } from "react-icons/fi";
-import { FEATURED, availableSuggestions } from "./constants";
 
 type Status = "loading" | "ready" | "error";
 
@@ -30,9 +29,6 @@ export default function WhereCard({
     if (!q) return locations.slice(0, 8);
     return locations.filter((loc) => loc.toLowerCase().includes(q)).slice(0, 8);
   }, [query, locations]);
-
-  // Only areas the destinations endpoint actually returned; nothing while it loads or fails.
-  const suggestions = useMemo(() => availableSuggestions(FEATURED, locations), [locations]);
 
   const handleInput = (v: string) => {
     setQuery(v);
@@ -79,33 +75,6 @@ export default function WhereCard({
       </div>
 
       <div className="mobile-booking-search__destination-list">
-        {!trimmed && suggestions.length > 0 ? (
-          <>
-            <p className="mobile-booking-search__section-label">Suggested for you</p>
-            <ul className="mobile-booking-search__destination-group">
-              {suggestions.map((f, i) => (
-                <li key={f.name}>
-                  <button
-                    type="button"
-                    onClick={() => pick(f.name)}
-                    className="mobile-booking-search__destination-row"
-                  >
-                    <span
-                      className={`mobile-booking-search__destination-tile mobile-booking-search__destination-tile--tint-${i % 4}`}
-                    >
-                      <FiMapPin size={16} aria-hidden />
-                    </span>
-                    <span className="mobile-booking-search__destination-text">
-                      <span className="mobile-booking-search__destination-title">{f.name}</span>
-                      <span className="mobile-booking-search__destination-subtitle">{f.tag}</span>
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : null}
-
         {status === "loading" ? (
           <ul className="mobile-booking-search__destination-group" aria-hidden>
             {[0, 1, 2, 3].map((i) => (
@@ -123,7 +92,7 @@ export default function WhereCard({
           <>
             <p className="mobile-booking-search__section-label">All destinations</p>
             <ul className="mobile-booking-search__destination-group">
-              {filtered.map((loc, i) => (
+              {filtered.map((loc) => (
                 <li key={loc}>
                   <button
                     type="button"
@@ -131,7 +100,7 @@ export default function WhereCard({
                     className="mobile-booking-search__destination-row"
                   >
                     <span
-                      className={`mobile-booking-search__destination-tile mobile-booking-search__destination-tile--tint-${i % 4}`}
+                      className="mobile-booking-search__destination-tile"
                     >
                       <FiMapPin size={16} aria-hidden />
                     </span>
@@ -145,7 +114,7 @@ export default function WhereCard({
           </>
         ) : trimmed ? (
           <p className="mobile-booking-search__helper-text">
-            No matches for &ldquo;{trimmed}&rdquo; — press Search to look anyway.
+            No matches for &ldquo;{trimmed}&rdquo;. Press Search to look anyway.
           </p>
         ) : null}
       </div>

@@ -123,6 +123,11 @@ export default function GalleryPage({ items: itemsProp, content }: GalleryPagePr
             reducedMotion={prefersReduced}
           />
         </section>
+      ) : entries.length === 0 ? (
+        // The CMS gallery is empty (or unreachable): one calm line, no built-in stand-in photos.
+        <div className={styles.emptyState}>
+          <p>New photographs are coming soon.</p>
+        </div>
       ) : (
         <div className={styles.emptyState}>
           <p>Nothing here yet. Try another category.</p>

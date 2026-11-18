@@ -23,7 +23,8 @@ import { recordSearch, searchEntryFromParams } from "@/lib/search-history-client
 import { promoFromSearch, withPromo } from "@/lib/promo-param";
 import Trigger from "./Trigger";
 import Sheet from "./Sheet";
-import { INITIAL_STATE } from "./constants";
+import { INITIAL_GUESTS, INITIAL_STATE } from "./constants";
+import { formatDateRange, guestsLabel } from "./format";
 import type { Guests, SearchState, Step } from "./types";
 
 export default function MobileHeroSearch() {
@@ -84,9 +85,17 @@ export default function MobileHeroSearch() {
     setOpen(false);
   }, [isAdmin, isAuthenticated, router, state]);
 
+  // The pill reads back what the guest chose, so closing the sheet never loses their place.
+  const touched = Boolean(state.location || state.checkIn)
+    || (Object.keys(INITIAL_GUESTS) as (keyof Guests)[]).some((key) => state.guests[key] !== INITIAL_GUESTS[key]);
+  const summary = touched ? {
+    where: state.location || "Anywhere in Bali",
+    meta: `${formatDateRange(state.checkIn, state.checkOut) || "Any dates"} · ${guestsLabel(state.guests)}`,
+  } : null;
+
   return (
     <>
-      <Trigger onOpen={() => setOpen(true)} />
+      <Trigger summary={summary} expanded={open} onOpen={() => setOpen(true)} onClear={onClearAll} />
       <AnimatePresence>
         {open ? (
           <Sheet
@@ -98,6 +107,7 @@ export default function MobileHeroSearch() {
             onLocationSelect={onLocationSelect}
             onDatesChange={onDatesChange}
             onGuestsChange={onGuestsChange}
+            canClear={touched}
             onClearAll={onClearAll}
             onClose={() => setOpen(false)}
             onSubmit={onSubmit}

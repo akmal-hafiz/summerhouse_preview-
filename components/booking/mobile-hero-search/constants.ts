@@ -26,19 +26,3 @@ export const GUEST_ROWS: Array<{
   { key: "infants", label: "Infants", helper: "Under 2", min: 0 },
   { key: "pets", label: "Pets", helper: "Well-mannered companions", min: 0 },
 ];
-
-export const FEATURED = [
-  { name: "Ubud", tag: "Rice-field calm" },
-  { name: "Canggu", tag: "Surf mornings" },
-  { name: "Seminyak", tag: "Sunset side" },
-  { name: "Uluwatu", tag: "Cliff living" },
-];
-
-/** The suggestions whose area is among the loaded destinations ("Canggu" also matches "Canggu - Berawa"). */
-export function availableSuggestions<T extends { name: string }>(featured: readonly T[], locations: readonly string[]): T[] {
-  const loaded = locations.map((location) => location.trim().toLowerCase());
-  return featured.filter(({ name }) => {
-    const area = name.toLowerCase();
-    return loaded.some((location) => location === area || location.startsWith(`${area} -`));
-  });
-}

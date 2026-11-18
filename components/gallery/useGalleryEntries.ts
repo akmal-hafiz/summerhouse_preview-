@@ -29,134 +29,6 @@ export type GalleryEntry = {
   meta: string;
 };
 
-/**
- * Local fallback media shown when the CMS gallery is empty or unreachable.
- * Mirrors the seeded cinematic/lifestyle set (never Lodgify listing photos)
- * so the feed is never blank.
- */
-const FALLBACK_ENTRIES: GalleryEntry[] = [
-  {
-    id: "fallback-editorial-large",
-    mediaSrc: "/bellevoire/editorial_large.png",
-    videoUrl: null,
-    isVideo: false,
-    title: "The Long Afternoon",
-    story: "Editorial photography of slow island living at Summerhouse Bali.",
-    alt: "Editorial photograph of slow island living at Summerhouse",
-    category: "Editorial",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-editorial-small",
-    mediaSrc: "/bellevoire/editorial_small.png",
-    videoUrl: null,
-    isVideo: false,
-    title: "Still Morning",
-    story: "A quiet editorial still from a Summerhouse morning.",
-    alt: "Quiet editorial still from a Summerhouse morning",
-    category: "Editorial",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-beach",
-    mediaSrc: "/bellevoire/beach_stay.png",
-    videoUrl: null,
-    isVideo: false,
-    title: "Beach Stay",
-    story: "A beachside stay moment near a Summerhouse villa.",
-    alt: "Beachside stay moment near a Summerhouse villa",
-    category: "Escapes",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-landscape",
-    mediaSrc: "/bellevoire/landscape.png",
-    videoUrl: null,
-    isVideo: false,
-    title: "Across the Ridge",
-    story: "Bali landscape stretching beyond the villa grounds.",
-    alt: "Bali landscape stretching beyond the villa grounds",
-    category: "Escapes",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-golden",
-    mediaSrc: "/herosection1.jpg",
-    videoUrl: null,
-    isVideo: false,
-    title: "Golden Hour",
-    story: "Golden hour light across a Summerhouse stay.",
-    alt: "Golden hour light across a Summerhouse stay",
-    category: "Lifestyle",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-canggu",
-    mediaSrc: "/images_canggu.jpg",
-    videoUrl: null,
-    isVideo: false,
-    title: "Canggu, Slow",
-    story: "A slow afternoon scene in Canggu.",
-    alt: "Slow afternoon scene in Canggu",
-    category: "Lifestyle",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-found",
-    mediaSrc: "/Found_myself..jpg",
-    videoUrl: null,
-    isVideo: false,
-    title: "Found Myself Here",
-    story: "A quiet found moment during a Summerhouse stay.",
-    alt: "A quiet found moment during a Summerhouse stay",
-    category: "Lifestyle",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Stills",
-  },
-  {
-    id: "fallback-film",
-    mediaSrc: "/Hero_Section.png",
-    videoUrl: "/video/herosection_summerhouse.mp4",
-    isVideo: true,
-    title: "Summerhouse, In Motion",
-    story: "A cinematic film of Summerhouse Bali island living.",
-    alt: "Cinematic film of Summerhouse Bali island living",
-    category: "Films",
-    houseName: null,
-    houseLocation: null,
-    propertyId: null,
-    year: null,
-    meta: "Film",
-  },
-];
-
 const SAFE_MEDIA_PROTOCOLS = new Set(["http:", "https:"]);
 const SAFE_PROPERTY_ID = /^[A-Za-z0-9_-]+$/;
 
@@ -197,7 +69,8 @@ function extractYear(createdAt: string | null | undefined): string | null {
 }
 
 function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
-  if (!items?.length) return FALLBACK_ENTRIES;
+  // Owner decision 2026-11-18: no built-in fallback photos; an empty CMS gallery shows the empty state.
+  if (!items?.length) return [];
 
   const seenSrc = new Set<string>();
   const result: GalleryEntry[] = [];
@@ -240,7 +113,7 @@ function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
     });
   });
 
-  return result.length ? result : FALLBACK_ENTRIES;
+  return result;
 }
 
 /**
@@ -249,7 +122,7 @@ function normalize(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
  */
 export function useGalleryEntries(items: CmsGalleryItem[] | null | undefined): GalleryEntry[] {
   const srcKey = useMemo(() => {
-    if (!items?.length) return "__fallback__";
+    if (!items?.length) return "__empty__";
     return items
       .map((item) => `${item.id ?? ""}:${item.type}:${item.src ?? ""}:${item.video_poster ?? ""}:${item.video_url ?? ""}:${item.lodgify_property_id ?? ""}:${item.category ?? ""}:${item.category_order ?? ""}:${item.width ?? ""}x${item.height ?? ""}:${item.title ?? ""}:${item.text ?? ""}:${item.alt ?? ""}`)
       .join("|");

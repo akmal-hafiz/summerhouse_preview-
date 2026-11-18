@@ -112,20 +112,19 @@ export default function DashboardStays() {
       <header className="dash-page-intro dash-page-intro--inner">
         <Link href="/dashboard" className="dash-back-link">Account overview</Link>
         <h1>My stays</h1>
-        <p>Direct reservations linked to your verified account.</p>
+        <p>Your stays with Summerhouses, past and upcoming.</p>
       </header>
 
       {state === "loading" && <div className="dash-inline-state" role="status">Checking your stays...</div>}
       {state === "error" && (
         <div className="dash-inline-state dash-inline-state--alert" role="alert">
-          <p>Your stays are temporarily unavailable. No booking has been changed.</p>
+          <p>We could not load your stays. Your bookings are not affected.</p>
           <button type="button" onClick={() => void load()}>Try again</button>
         </div>
       )}
       {state === "notReady" && (
         <div className="dash-empty-state dash-empty-state--wide">
-          <p className="dash-empty-state-title">My stays is not available yet.</p>
-          <p>We are still getting this page ready. Nothing is wrong with your account or your bookings.</p>
+          <p className="dash-empty-state-title">Your stays will appear here soon.</p>
           <Link href="/dashboard">Back to account overview</Link>
         </div>
       )}
@@ -137,23 +136,23 @@ export default function DashboardStays() {
       )}
       {state === "ready" && data?.emailVerificationRequired && (
         <div className="dash-empty-state dash-empty-state--wide">
-          <p className="dash-empty-state-title">Verify your email to see linked stays.</p>
-          <p>Booking details are private. Verify the email on your account before we match eligible reservations.</p>
+          <p className="dash-empty-state-title">Verify your email to see your stays.</p>
+          <p>We show bookings only to the person who made them.</p>
           <Link href="/dashboard/settings">Go to account settings</Link>
         </div>
       )}
       {state === "ready" && !data?.emailVerificationRequired && stays.length === 0 && (
         <div className="dash-empty-state dash-empty-state--wide">
-          <p className="dash-empty-state-title">No stays to show yet.</p>
-          <p>Eligible direct reservations appear here after they are verified and linked to your account.</p>
+          <p className="dash-empty-state-title">No stays yet.</p>
+          <p>Book directly on our website and your stay will show up here.</p>
           <Link href="/villas">Explore villas</Link>
         </div>
       )}
       {state === "ready" && !data?.emailVerificationRequired && stays.length > 0 && (
         <div className="dash-stay-groups">
-          <StayGroup title="Upcoming and current stays" stays={upcoming} />
-          <StayGroup title="Past stays" stays={past} />
-          <StayGroup title="Canceled reservations" stays={canceled} />
+          <StayGroup title="Upcoming" stays={upcoming} />
+          <StayGroup title="Past" stays={past} />
+          <StayGroup title="Canceled" stays={canceled} />
         </div>
       )}
     </>
