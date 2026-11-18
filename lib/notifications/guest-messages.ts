@@ -138,13 +138,14 @@ export function promotionErrorMessage(failure: { status?: number; code?: string;
 
 const PROMPT_NAME_LIMIT = 28;
 
-/** Copy for the guest "keep this villa" prompt. Long names fall back to "This villa" so the prompt stays two lines. */
+/** Copy for the note a guest gets on tapping a heart (guests save nothing). Long names fall back to "this villa"
+ * so the note stays two lines. */
 export function savePromptCopy(villaName: string): { title: string; body: string } {
   const name = villaName.trim();
-  const subject = name && name.length <= PROMPT_NAME_LIMIT ? name : "This villa";
+  const subject = name && name.length <= PROMPT_NAME_LIMIT ? name : "this villa";
   return {
-    title: "Keep this villa",
-    body: `${subject} is saved in this browser for now. Sign in to keep it on every device.`,
+    title: "Sign in to save villas",
+    body: `Keep ${subject} on your shortlist and find it again on any device.`,
   };
 }
 
@@ -161,7 +162,6 @@ export function saveErrorMessage({ wasSaved, signedOut }: { wasSaved: boolean; s
 }
 
 export const SAVE_TOASTS = {
-  guestSaved: { title: "Saved for now", message: "Sign in to keep it on every device." },
   saved: { title: "Saved to your villas" },
   removed: { title: "Removed from your villas" },
   undoFailed: { title: "We could not put this villa back", message: "Tap the heart on the villa to save it again." },
