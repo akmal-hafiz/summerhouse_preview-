@@ -10165,7 +10165,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   gap: 12px 24px;
   margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
   padding: 16px 20px;
-  border-radius: 4px;
+  border-radius: 16px; /* the cards' radius, so the note and the grid read as one set */
   background: var(--brand-cream, #F2EDE3);
 }
 
@@ -10195,12 +10195,15 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   outline-offset: 3px;
 }
 
-.villa-saved-hero {
-  padding-bottom: clamp(2rem, 4vw, 3rem) !important;
+/* No search band here, so the cards keep the same breathing room below the opener's rule as on /villas. */
+.villa-saved-list {
+  padding-top: clamp(2rem, 3.5vw, 3rem) !important;
 }
 
-.villa-saved-list {
-  padding-top: clamp(1rem, 2vw, 2rem) !important;
+/* Each saved card sits in a wrapper that animates its removal; the card still fills its grid row. */
+.villa-saved-item {
+  display: grid;
+  min-width: 0;
 }
 
 .villa-catalog-card--loading .villa-catalog-card__media,
@@ -13087,6 +13090,14 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+/* Says that the check-out came from the member's usual stay length. Quiet, above the months, no icon. */
+.mobile-booking-search__calendar-hint {
+  margin: 0 0 16px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .mobile-booking-search__calendar-month-title {

@@ -21,6 +21,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
 import { useToast } from "@/components/providers/ToastProvider";
 import { villaHref } from "@/lib/promo-param";
+import type { LastStay } from "@/lib/search-history-client";
 
 type PremiumVillaCardProps = {
   villa: VillaSearchResult;
@@ -29,6 +30,8 @@ type PremiumVillaCardProps = {
   onSavedChange?: (villaId: string, saved: boolean) => void;
   /** A validated `?promo=` code from the listing, kept on the links to the villa page. */
   promo?: string;
+  /** The listing's searched stay, carried to the villa page's calendar. */
+  stay?: LastStay | null;
 };
 
 function formatCount(value: number | null | undefined, singular: string, plural: string) {
@@ -42,6 +45,7 @@ export default function PremiumVillaCard({
   initialSaved = false,
   onSavedChange,
   promo = "",
+  stay = null,
 }: PremiumVillaCardProps) {
   const villaId = String(villa.id);
   const [isSaved, setIsSaved] = useState(initialSaved);
@@ -179,7 +183,7 @@ export default function PremiumVillaCard({
   return (
     <article className="villa-catalog-card">
       <div className="villa-catalog-card__media">
-        <Link href={villaHref(villa.id, promo)} className="villa-catalog-card__image-link" aria-label={`View ${villa.name}`}>
+        <Link href={villaHref(villa.id, promo, stay)} className="villa-catalog-card__image-link" aria-label={`View ${villa.name}`}>
           <Image
             src={villa.imageUrl}
             alt={villa.name}
@@ -227,7 +231,7 @@ export default function PremiumVillaCard({
 
       <div className="villa-catalog-card__body">
         {saveError && <p className="villa-catalog-card__save-error" role="alert">{saveError}</p>}
-        <Link href={villaHref(villa.id, promo)} className="villa-catalog-card__title-link">
+        <Link href={villaHref(villa.id, promo, stay)} className="villa-catalog-card__title-link">
           <h2>{villa.name}</h2>
         </Link>
 
@@ -264,7 +268,7 @@ export default function PremiumVillaCard({
               <strong>Rate on request</strong>
             )}
           </p>
-          <Link href={isShowcasePreview ? villaHref(villa.id, promo) : `${villaHref(villa.id, promo)}#availability`} className="villa-catalog-card__book">
+          <Link href={isShowcasePreview ? villaHref(villa.id, promo, stay) : `${villaHref(villa.id, promo, stay)}#availability`} className="villa-catalog-card__book">
             {isShowcasePreview ? "View villa" : "Book Now"}
           </Link>
         </div>
