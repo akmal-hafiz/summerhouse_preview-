@@ -58,11 +58,11 @@ const RefinedVillaCard = ({ property, index }: RefinedVillaCardProps) => {
           <h3 className={styles.name}>{property.name}</h3>
           <div className={styles.meta}>
             <div className={styles.metaItem}>
-               <span className="material-symbols-outlined">bed</span>
+               <span className="material-symbols-outlined" aria-hidden="true">bed</span>
                <span>{property.bedrooms} Beds</span>
             </div>
             <div className={styles.metaItem}>
-               <span className="material-symbols-outlined">bathtub</span>
+               <span className="material-symbols-outlined" aria-hidden="true">bathtub</span>
                <span>{property.bathrooms} Baths</span>
             </div>
           </div>

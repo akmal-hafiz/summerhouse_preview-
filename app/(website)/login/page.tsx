@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Sign in - Summerhouses Bali",
+  title: "Sign in",
   description: "Sign in to your Summerhouses account to keep your saved villas synced across devices.",
+  robots: { index: false, follow: false },
 };
 
 type LoginPageProps = {

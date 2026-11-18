@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
@@ -14,7 +15,9 @@ import {
   type FocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
+import { createPortal } from "react-dom";
 import { FiAlertCircle, FiCheckCircle, FiInfo, FiX } from "react-icons/fi";
 import { toastDuration, toastReducer, type ToastAction, type ToastItem, type ToastVariant } from "@/lib/notifications/toast-queue";
 
@@ -101,11 +104,33 @@ function ToastCard({ item, onDismiss }: { item: ToastItem; onDismiss: (id: numbe
   );
 }
 
+/**
+ * An open modal <dialog> makes everything outside it inert and paints over it, toasts included.
+ * ModalLayer registers its dialog here; while one is open the toasts render inside the newest one,
+ * so they stay visible, clickable and announced.
+ */
+const ToastHostContext = createContext<((host: HTMLElement) => () => void) | null>(null);
+
+export function useToastHost(ref: RefObject<HTMLElement | null>) {
+  const register = useContext(ToastHostContext);
+  useLayoutEffect(() => {
+    const host = ref.current;
+    if (!register || !host) return undefined;
+    return register(host);
+  }, [ref, register]);
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, dispatch] = useReducer(toastReducer, []);
   const nextId = useRef(1);
   const regionRef = useRef<HTMLElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const [hosts, setHosts] = useState<HTMLElement[]>([]);
+  const registerHost = useCallback((host: HTMLElement) => {
+    setHosts((current) => [...current, host]);
+    return () => setHosts((current) => current.filter((item) => item !== host));
+  }, []);
+  const host = hosts.at(-1);
 
   const dismiss = useCallback((id: number) => {
     const node = regionRef.current?.querySelector(`[data-toast-id="${id}"]`);
@@ -148,18 +173,35 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     dismiss,
   }), [dismiss, show]);
 
+  const cards = items.map((item) => <ToastCard key={item.id} item={item} onDismiss={dismiss} />);
+
   return (
     <ToastContext.Provider value={value}>
-      {children}
+      <ToastHostContext.Provider value={registerHost}>
+        {children}
+      </ToastHostContext.Provider>
+      {/* The page region always exists so a live region is in place before a toast lands in it. */}
       <section
-        ref={regionRef}
+        ref={host ? undefined : regionRef}
         className="sh-toast-region"
         aria-label="Notifications (Alt+N)"
         aria-live="polite"
         aria-relevant="additions text"
       >
-        {items.map((item) => <ToastCard key={item.id} item={item} onDismiss={dismiss} />)}
+        {host ? null : cards}
       </section>
+      {host ? createPortal(
+        <section
+          ref={regionRef}
+          className="sh-toast-region"
+          aria-label="Notifications (Alt+N)"
+          aria-live="polite"
+          aria-relevant="additions text"
+        >
+          {cards}
+        </section>,
+        host,
+      ) : null}
     </ToastContext.Provider>
   );
 }

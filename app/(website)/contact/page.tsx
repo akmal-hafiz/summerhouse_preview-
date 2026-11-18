@@ -7,6 +7,7 @@ import { GLOBAL_CONTACT_KEYS, resolveGlobalContactSettings } from "@/lib/contact
 export const metadata = {
   title: "Contact",
   description: "Contact the Summerhouses Bali team for private villa guidance, guest support, and thoughtful stay planning.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {

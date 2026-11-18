@@ -7,6 +7,7 @@ import DashboardGuard from "@/components/dashboard/DashboardGuard";
 export const metadata = {
   title: "Dashboard | Summerhouses Bali",
   description: "Member area for saved villas, verified direct stays, and account settings.",
+  robots: { index: false, follow: false },
 };
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {

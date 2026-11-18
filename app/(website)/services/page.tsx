@@ -6,6 +6,7 @@ import { getCmsFaqs, getCmsOwnerTestimonials, getCmsPageSections, getCmsServiceC
 export const metadata = {
   title: "Villa Management Services",
   description: "Maximize your Bali property investment. End-to-end property management services including operations, sales, marketing, and project renovation.",
+  alternates: { canonical: "/services" },
 };
 
 export default async function ServicesPage() {
