@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import SavedVillasClient from "@/components/villas/SavedVillasClient";
@@ -19,15 +20,14 @@ export default async function SavedVillasPage() {
       <Navbar alwaysSolid />
 
       <main>
-        <header className="villa-collection-hero villa-saved-hero">
+        {/* Same opener as /villas (heading, one-line lede, companion link on the right), so the two read as one place. */}
+        <header className="villa-collection-hero">
           <div className="villa-collection-shell">
             <div className="villa-collection-hero-copy">
-              <h1>Your private shortlist for a quieter Bali stay.</h1>
-              <p>
-                Keep promising homes in one calm place, then return to availability
-                and booking when your dates are ready.
-              </p>
+              <h1>Your saved villas.</h1>
+              <p>Keep promising homes in one calm place, then book when your dates are ready.</p>
             </div>
+            <Link className="villa-collection-saved-link" href="/villas">Villa collection</Link>
           </div>
         </header>
 

@@ -10,7 +10,8 @@ import { getVillaDetail, getVillaSummaries } from "@/lib/lodgify";
 import { getCmsVillaReviews } from "@/lib/cms";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { isShowcasePreview } from "@/lib/showcase-preview";
-import { promoCodeFromParam, villaHref } from "@/lib/promo-param";
+import { promoCodeFromParam, stayFromParams } from "@/lib/promo-param";
+import StayLink from "@/components/villas/StayLink";
 
 interface VillaDetailPageProps {
   params: Promise<{
@@ -31,7 +32,10 @@ export async function generateMetadata({ params }: VillaDetailPageProps) {
 
 export default async function VillaDetailPage({ params, searchParams }: VillaDetailPageProps) {
   const { id } = await params;
-  const promo = promoCodeFromParam((await searchParams).promo);
+  const query = await searchParams;
+  const promo = promoCodeFromParam(query.promo);
+  // The stay searched on the list (or on the villa before this one) fills the calendar; the nearby links read the URL.
+  const stay = stayFromParams(query);
   const [villa, summaries, reviewData] = await Promise.all([
     getVillaDetail(id),
     getVillaSummaries(),
@@ -171,6 +175,7 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
               priceLabel={villa.originalPriceLabel || villa.priceLabel}
               maxGuests={villa.guests}
               initialPromotionCode={promo}
+              initialStay={stay}
             />}
 
             {related.length > 0 && (
@@ -181,7 +186,7 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
                 </div>
                 <div className="villa-detail-related">
                   {related.map((item) => (
-                    <Link href={villaHref(item.id, promo)} key={item.id}>
+                    <StayLink villaId={item.id} promo={promo} key={item.id}>
                       <figure>
                         <Image
                           src={item.imageUrl}
@@ -193,7 +198,7 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
                       </figure>
                       <span>{item.location}</span>
                       <strong>{item.name}</strong>
-                    </Link>
+                    </StayLink>
                   ))}
                 </div>
               </section>

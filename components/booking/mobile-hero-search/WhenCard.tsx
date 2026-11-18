@@ -8,29 +8,27 @@ import {
   formatISODate,
   isPastDate,
   monthNames,
+  nightsBetween,
   parseISODate,
 } from "@/lib/date";
 import { formatLongDate } from "./format";
+import { pickDay, type DateRange } from "./pickDay";
 
 export default function WhenCard({
-  checkIn,
-  checkOut,
+  range,
+  nights,
   onChange,
 }: {
-  checkIn: string;
-  checkOut: string;
-  onChange: (checkIn: string, checkOut: string) => void;
+  range: DateRange;
+  /** The member's usual stay length; with it, a check-in tap also sets the check-out. */
+  nights?: number;
+  onChange: (range: DateRange) => void;
 }) {
+  const { checkIn, checkOut, autoCheckOut } = range;
   const [cursor, setCursor] = useState(() => (checkIn ? parseISODate(checkIn) : new Date()));
   const months = useMemo(() => [cursor, addMonths(cursor, 1)], [cursor]);
-
-  const onDayClick = (date: string) => {
-    if (!checkIn || (checkIn && checkOut) || parseISODate(date) <= parseISODate(checkIn)) {
-      onChange(date, "");
-      return;
-    }
-    onChange(checkIn, date);
-  };
+  const onDayClick = (date: string) => onChange(pickDay(range, date, nights));
+  const autoNights = autoCheckOut ? nightsBetween(checkIn, checkOut) : 0;
 
   return (
     <div className="mobile-booking-search__when">
@@ -55,6 +53,13 @@ export default function WhenCard({
           <FiChevronRight size={16} aria-hidden />
         </button>
       </div>
+
+      {/* Above the months: the calendar scrolls, and a note below it would sit out of sight. */}
+      {autoNights ? (
+        <p className="mobile-booking-search__calendar-hint" role="status">
+          {autoNights} {autoNights === 1 ? "night" : "nights"}, as in your last search. Pick another date to change it.
+        </p>
+      ) : null}
 
       <div className="mobile-booking-search__calendar-months">
         {months.map((m) => (

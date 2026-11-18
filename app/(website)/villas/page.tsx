@@ -53,10 +53,15 @@ async function VillaList({ filters, promo }: { filters: Awaited<ReturnType<typeo
     );
   }
 
+  // Every listed villa is free for the searched dates, so they travel to the villa page with the guests.
+  const stay = isValidDateRange(filters.checkIn, filters.checkOut)
+    ? { checkIn: filters.checkIn, checkOut: filters.checkOut, guests: filters.adults + filters.children }
+    : null;
+
   return (
     <div className="villa-collection-grid">
       {villas.map((villa, index) => (
-        <PremiumVillaCard key={villa.id} villa={villa} priority={index < 3} promo={promo} />
+        <PremiumVillaCard key={villa.id} villa={villa} priority={index < 3} promo={promo} stay={stay} />
       ))}
     </div>
   );

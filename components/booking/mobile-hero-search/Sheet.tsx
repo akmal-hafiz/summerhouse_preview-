@@ -14,6 +14,7 @@ import ActionBar from "./ActionBar";
 import { STEPS } from "./constants";
 import { formatDateRange, guestsLabel } from "./format";
 import type { Guests, SearchState, Step } from "./types";
+import type { DateRange } from "./pickDay";
 
 type LocationsStatus = "loading" | "ready" | "error";
 
@@ -23,7 +24,9 @@ type SheetProps = {
   onStepChange: (step: Step) => void;
   onLocationInput: (value: string) => void;
   onLocationSelect: (value: string) => void;
-  onDatesChange: (checkIn: string, checkOut: string) => void;
+  onDatesChange: (range: DateRange) => void;
+  /** The member's usual stay length, used to set the check-out after a check-in. */
+  nights?: number;
   onGuestsChange: (guests: Guests) => void;
   canClear: boolean;
   onClearAll: () => void;
@@ -42,6 +45,7 @@ export default function Sheet({
   onLocationInput,
   onLocationSelect,
   onDatesChange,
+  nights,
   onGuestsChange,
   canClear,
   onClearAll,
@@ -180,7 +184,7 @@ export default function Sheet({
                     onSelect={onLocationSelect}
                   />
                 ) : s.id === "when" ? (
-                  <WhenCard checkIn={state.checkIn} checkOut={state.checkOut} onChange={onDatesChange} />
+                  <WhenCard range={state} nights={nights} onChange={onDatesChange} />
                 ) : (
                   <WhoCard guests={state.guests} onChange={onGuestsChange} />
                 )}

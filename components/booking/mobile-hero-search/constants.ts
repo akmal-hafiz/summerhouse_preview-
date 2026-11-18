@@ -6,6 +6,7 @@ export const INITIAL_STATE: SearchState = {
   location: "",
   checkIn: "",
   checkOut: "",
+  autoCheckOut: false,
   guests: INITIAL_GUESTS,
 };
 

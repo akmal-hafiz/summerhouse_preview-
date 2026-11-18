@@ -14,18 +14,19 @@
  * resetting to "Where" every time.
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
 import { parseISODate } from "@/lib/date";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { recordSearch, searchEntryFromParams } from "@/lib/search-history-client";
+import { loadHistory, recordSearch, searchEntryFromParams, stayHabit } from "@/lib/search-history-client";
 import { promoFromSearch, withPromo } from "@/lib/promo-param";
 import Trigger from "./Trigger";
 import Sheet from "./Sheet";
 import { INITIAL_GUESTS, INITIAL_STATE } from "./constants";
 import { formatDateRange, guestsLabel } from "./format";
 import type { Guests, SearchState, Step } from "./types";
+import type { DateRange } from "./pickDay";
 
 export default function MobileHeroSearch() {
   const router = useRouter();
@@ -43,9 +44,27 @@ export default function MobileHeroSearch() {
     setStep("when");
   }, []);
 
-  const onDatesChange = useCallback((checkIn: string, checkOut: string) => {
-    setState((s) => ({ ...s, checkIn, checkOut }));
-    if (checkOut) setStep("who");
+  // A member's usual party and stay length, read once from their search history the first time the sheet opens.
+  // Guests and CMS admins send nothing. It fills only what is still untouched.
+  const [habit, setHabit] = useState<{ guests?: number; nights?: number }>({});
+  const habitLoaded = useRef(false);
+  const isMember = isAuthenticated && !isAdmin;
+  useEffect(() => {
+    if (!open || !isMember || habitLoaded.current) return;
+    habitLoaded.current = true;
+    void loadHistory().then((items) => {
+      const usual = stayHabit(items);
+      setHabit(usual);
+      if (usual.guests) {
+        setState((s) => (s.guests === INITIAL_GUESTS ? { ...s, guests: { ...s.guests, adults: Math.min(40, usual.guests!) } } : s));
+      }
+    });
+  }, [isMember, open]);
+
+  const onDatesChange = useCallback((range: DateRange) => {
+    setState((s) => ({ ...s, ...range }));
+    // An auto check-out keeps the calendar open, so the guest sees it and can tap another day.
+    if (range.checkOut && !range.autoCheckOut) setStep("who");
   }, []);
 
   const onGuestsChange = useCallback((guests: Guests) => {
@@ -106,6 +125,7 @@ export default function MobileHeroSearch() {
             onLocationInput={onLocationInput}
             onLocationSelect={onLocationSelect}
             onDatesChange={onDatesChange}
+            nights={habit.nights}
             onGuestsChange={onGuestsChange}
             canClear={touched}
             onClearAll={onClearAll}

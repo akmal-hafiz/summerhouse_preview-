@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import type { VillaSearchResult } from "@/lib/lodgify";
 import PremiumVillaCard from "./PremiumVillaCard";
 import { readSavedVillaIds, subscribeSavedVillas } from "./savedVillas";
@@ -54,11 +56,7 @@ export default function SavedVillasClient({ villas }: SavedVillasClientProps) {
           <p>These villas are saved in this browser for now. Sign in to keep them on every device.</p>
           <button type="button" onClick={() => openAuth("login")}>Sign in</button>
         </div>
-        <div className="villa-collection-grid villa-saved-grid">
-          {savedVillas.map((villa, index) => (
-            <PremiumVillaCard key={villa.id} villa={villa} priority={index < 2} initialSaved />
-          ))}
-        </div>
+        <SavedGrid villas={savedVillas} />
       </>
     );
   }
@@ -86,18 +84,40 @@ export default function SavedVillasClient({ villas }: SavedVillasClientProps) {
   }
 
   return (
+    <SavedGrid villas={savedVillas} onRemoved={(villaId) => setSavedIds((current) => current.filter((id) => id !== villaId))} />
+  );
+}
+
+const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+const EASE_IN_OUT = [0.77, 0, 0.175, 1] as const;
+
+/**
+ * The saved cards. Removing a heart lets that card fade and settle away (fast, it is the system answering) while the
+ * cards after it slide into its place, so the grid never jumps. Reduced motion keeps only the fade.
+ */
+function SavedGrid({ villas, onRemoved }: { villas: VillaSearchResult[]; onRemoved?: (villaId: string) => void }) {
+  const reduce = usePrefersReducedMotion();
+  return (
     <div className="villa-collection-grid villa-saved-grid">
-      {savedVillas.map((villa, index) => (
-        <PremiumVillaCard
-          key={villa.id}
-          villa={villa}
-          priority={index < 2}
-          initialSaved
-          onSavedChange={(villaId, saved) => {
-            if (!saved) setSavedIds((current) => current.filter((id) => id !== villaId));
-          }}
-        />
-      ))}
+      <AnimatePresence initial={false} mode="popLayout">
+        {villas.map((villa, index) => (
+          <motion.div
+            key={villa.id}
+            className="villa-saved-item"
+            layout={!reduce}
+            exit={reduce ? { opacity: 0, transition: { duration: 0.15 } }
+              : { opacity: 0, transform: "scale(0.96)", filter: "blur(4px)", transition: { duration: 0.2, ease: EASE_OUT } }}
+            transition={{ layout: { duration: 0.32, ease: EASE_IN_OUT } }}
+          >
+            <PremiumVillaCard
+              villa={villa}
+              priority={index < 2}
+              initialSaved
+              onSavedChange={onRemoved ? (villaId, saved) => { if (!saved) onRemoved(villaId); } : undefined}
+            />
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

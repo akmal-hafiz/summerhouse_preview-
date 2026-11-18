@@ -20,15 +20,24 @@ import { buildBookingWhatsAppUrl, buildLodgifyCheckoutUrl } from "@/lib/lodgify/
 import { useGlobalContactSettings } from "@/hooks/useGlobalContactSettings";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
-import { sessionFetch } from "@/lib/auth-client";
-import { lastStayForVilla, recordSearch, type LastStay } from "@/lib/search-history-client";
+import { lastStayForVilla, latestStay, loadHistory, recordSearch, type LastStay } from "@/lib/search-history-client";
 import { promotionErrorMessage } from "@/lib/notifications/guest-messages";
+import { withStay } from "@/lib/promo-param";
 
 type AvailabilityDay = {
   date: string;
   status: "available" | "booked" | "blocked" | "unavailable" | "unknown";
   available: boolean;
   reason: string;
+};
+
+const STAY_NOTES = {
+  link: { shown: "These are the dates you searched. Pick other days anytime.",
+    taken: "This villa is not free on the dates you searched. Pick new dates below." },
+  villa: { shown: "These are the dates you last checked here. Pick other days anytime.",
+    taken: "The dates you last checked here are no longer free. Pick new dates below." },
+  trip: { shown: "These are the dates from your last search. Pick other days anytime.",
+    taken: "This villa is not free on the dates from your last search. Pick new dates below." },
 };
 
 type AvailabilityCalendarProps = {
@@ -40,6 +49,8 @@ type AvailabilityCalendarProps = {
   maxGuests?: number;
   /** A validated code from the `?promo=` link param. It only prefills the field; applying still needs dates and a click. */
   initialPromotionCode?: string;
+  /** The stay carried by the link (from the villa list or the villa before). It wins over the member's history. */
+  initialStay?: LastStay | null;
 };
 
 type RateQuote = {
@@ -79,6 +90,7 @@ export default function AvailabilityCalendar({
   priceLabel,
   maxGuests = 12,
   initialPromotionCode = "",
+  initialStay = null,
 }: AvailabilityCalendarProps) {
   const contact = useGlobalContactSettings();
   const today = useMemo(() => startOfMonth(new Date()), []);
@@ -86,7 +98,12 @@ export default function AvailabilityCalendar({
   const [availabilityMap, setAvailabilityMap] = useState<Record<string, AvailabilityDay>>({});
   // The first month the loaded map belongs to, so a check never reads the previous window's days.
   const [availabilityRange, setAvailabilityRange] = useState("");
-  const [lastStay, setLastStay] = useState<LastStay | null>(null);
+  // A linked stay that has already started (an old link) is ignored; the browser's own date decides.
+  const linkedStay = initialStay && initialStay.checkIn >= formatISODate(new Date()) ? initialStay : null;
+  const [lastStay, setLastStay] = useState<LastStay | null>(linkedStay);
+  const hasLinkedStay = Boolean(linkedStay);
+  // Where the prefilled dates came from, so the note under the calendar says the truth.
+  const [staySource, setStaySource] = useState<keyof typeof STAY_NOTES>(linkedStay ? "link" : "villa");
   const [prefill, setPrefill] = useState<"pending" | "applied" | "unavailable" | "off">("pending");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -128,6 +145,15 @@ export default function AvailabilityCalendar({
     if (!checkIn || !checkOut || nights <= 0) return false;
     return eachNightInRange(checkIn, checkOut).every((date) => availabilityMap[date]?.available);
   }, [availabilityMap, checkIn, checkOut, nights]);
+  // A bookable stay the guest has here goes into the URL, so "Other Summerhouses nearby" carries it to the next villa.
+  // Dates that are dropped as taken never clear it: villa A full on 1-3 Dec still sends 1-3 Dec on to villa B.
+  useEffect(() => {
+    if (!isRangeValid) return;
+    const query = withStay(window.location.search, { checkIn, checkOut, guests });
+    if (query === window.location.search.slice(1)) return;
+    // `null` state is what lets Next.js sync useSearchParams (StayLink) with this native replaceState.
+    window.history.replaceState(null, "",`${window.location.pathname}?${query}${window.location.hash}`);
+  }, [checkIn, checkOut, guests, isRangeValid]);
   const isMinimumStayValid = rateQuote?.isMinimumStayValid !== false;
   const promotionStayKey = `${propertyId}|${roomTypeId ?? ""}|${checkIn}|${checkOut}|${guests}`;
   const isPromotionValidated = !appliedPromotionCode || (!!promotionQuote && promotionQuoteKey === promotionStayKey && !isPromotionLoading);
@@ -304,25 +330,20 @@ export default function AvailabilityCalendar({
     return () => window.clearTimeout(timer);
   }, [checkIn, checkOut, guests, isAuthLoading, isMember, isPromotionLoading, isRangeValid, promotionQuote, promotionQuoteKey, promotionStayKey, propertyId]);
 
-  // A signed-in member returning to this villa gets the dates they last checked here, while those are still ahead. Read once
-  // per page; guests and CMS admins send nothing. History is a convenience, so any failure just leaves the calendar empty.
+  // A signed-in member without dates in the link gets the dates they last checked here, otherwise their newest trip
+  // (e.g. villa A was full on 1-3 Dec, so villa B opens on 1-3 Dec), while those are still ahead. Read once per page;
+  // guests and CMS admins send nothing. History is a convenience, so any failure just leaves the calendar empty.
   useEffect(() => {
-    if (isAuthLoading || !isMember) return;
+    if (isAuthLoading || !isMember || hasLinkedStay) return;
     const controller = new AbortController();
-    void (async () => {
-      try {
-        const response = await sessionFetch("search-history", { signal: controller.signal });
-        if (!response.ok) return;
-        const data = await response.json() as { success?: boolean; items?: unknown };
-        if (!controller.signal.aborted && data.success && Array.isArray(data.items)) {
-          setLastStay(lastStayForVilla(data.items, String(propertyId)));
-        }
-      } catch {
-        // Leave the calendar as it is.
-      }
-    })();
+    void loadHistory(controller.signal).then((items) => {
+      if (controller.signal.aborted) return;
+      const own = lastStayForVilla(items, String(propertyId));
+      setStaySource(own ? "villa" : "trip");
+      setLastStay(own ?? latestStay(items));
+    });
     return () => controller.abort();
-  }, [isAuthLoading, isMember, propertyId]);
+  }, [hasLinkedStay, isAuthLoading, isMember, propertyId]);
 
   // Fill the dates only if the member has not picked any yet; after that the remembered stay is never applied again.
   useEffect(() => {
@@ -506,8 +527,8 @@ export default function AvailabilityCalendar({
                 ? "Select check-out date"
                 : "Select check-in date"}
           </span>
-          {showsLastStay && <p className="villa-calendar__note" role="status">These are the dates you last checked here. Pick other days anytime.</p>}
-          {prefill === "unavailable" && !checkIn && <p className="villa-calendar__note" role="status">The dates you last checked here are no longer free. Pick new dates below.</p>}
+          {showsLastStay && <p className="villa-calendar__note" role="status">{STAY_NOTES[staySource].shown}</p>}
+          {prefill === "unavailable" && !checkIn && <p className="villa-calendar__note" role="status">{STAY_NOTES[staySource].taken}</p>}
         </div>
         <div className="villa-calendar-section__actions">
           <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); setBookingError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}>
