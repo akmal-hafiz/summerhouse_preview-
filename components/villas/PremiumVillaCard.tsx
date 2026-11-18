@@ -11,7 +11,6 @@ import {
   readSavedVillaIds,
   restoreSavedVillaId,
   subscribeSavedVillas,
-  toggleGuestSavedVillaId,
   toggleSavedVillaId,
 } from "./savedVillas";
 import { isShowcasePreview } from "@/lib/showcase-preview";
@@ -136,7 +135,7 @@ export default function PremiumVillaCard({
         label: "Undo",
         onClick: () => {
           void restoreSavedVillaId(id).then((restored) => {
-            if (restored) toast.success(getStoredAuthToken() ? { ...SAVE_TOASTS.saved, message: name } : { ...SAVE_TOASTS.guestSaved });
+            if (restored) toast.success({ ...SAVE_TOASTS.saved, message: name });
             else toast.error({ ...SAVE_TOASTS.undoFailed });
           });
         },
@@ -148,19 +147,10 @@ export default function PremiumVillaCard({
     if (isSaving || isLoading) return;
     setSaveError("");
     if (!isAuthenticated) {
-      // Guests keep the villa in this tab at once; the prompt offers the sign-in that keeps it everywhere.
-      const result = toggleGuestSavedVillaId(villaId);
-      if (!result) return;
-      setIsSaved(result.saved);
-      onSavedChange?.(villaId, result.saved);
-      if (result.saved) {
-        window.dispatchEvent(new CustomEvent("summerhouses:wishlist-auth-prompt", { detail: saveButtonRef.current }));
-        setShowAuthPrompt(true);
-        toast.success({ ...SAVE_TOASTS.guestSaved, action: { label: "Sign in", onClick: () => openAuth("login") } });
-      } else {
-        setShowAuthPrompt(false);
-        offerUndo(villaId, villa.name);
-      }
+      // Owner decision 2026-11-19: only signed-in members save. A guest's tap saves nothing and opens the sign-in
+      // note next to the heart (a second tap closes it); any other open note closes first.
+      if (!showAuthPrompt) window.dispatchEvent(new CustomEvent("summerhouses:wishlist-auth-prompt", { detail: saveButtonRef.current }));
+      setShowAuthPrompt((open) => !open);
       return;
     }
     const wasSaved = isSaved;

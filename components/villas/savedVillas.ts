@@ -34,7 +34,9 @@ export function readSavedVillaIds() {
     } catch {
       // Private browsing can block storage; the account cache still never reaches a guest.
     }
-    return readGuestSavedVillaIds();
+    // Owner decision 2026-11-19: only signed-in members save, so a guest sees no saved hearts. An older guest list
+    // (from before this rule) stays in storage and moves to the account at sign-in.
+    return [];
   }
 
   try {
@@ -75,39 +77,16 @@ export function readGuestSavedVillaIds(): string[] {
   }
 }
 
-function writeGuestSavedVillaIds(ids: string[]) {
-  const nextIds = Array.from(new Set(ids.map(String).filter(Boolean)));
-  guestVillaIdsMemory = nextIds;
-  try {
-    if (nextIds.length) guestStorage()?.setItem(GUEST_SAVED_VILLAS_KEY, JSON.stringify(nextIds));
-    else guestStorage()?.removeItem(GUEST_SAVED_VILLAS_KEY);
-  } catch { /* Memory keeps the guest's choice for this page view. */ }
-  if (!getStoredAuthToken()) {
-    window.dispatchEvent(new CustomEvent<SavedVillasChange>(SAVED_VILLAS_CHANGED_EVENT, {
-      detail: { ids: nextIds, count: nextIds.length },
-    }));
-  }
+/** Empties the older guest list once it has moved to the account. */
+function clearGuestSavedVillaIds() {
+  guestVillaIdsMemory = [];
+  try { guestStorage()?.removeItem(GUEST_SAVED_VILLAS_KEY); } catch { /* Memory is already empty. */ }
 }
 
-/** Saves or unsaves a villa for a guest, in this browser only. Returns null when someone is signed in. */
-export function toggleGuestSavedVillaId(villaId: string | number): SavedVillasChange & { saved: boolean } | null {
-  if (typeof window === "undefined" || isAuthenticated()) return null;
-  const id = String(villaId);
-  const current = readGuestSavedVillaIds();
-  const saved = !current.includes(id);
-  const nextIds = saved ? [...current, id] : current.filter((item) => item !== id);
-  writeGuestSavedVillaIds(nextIds);
-  return { saved, ids: nextIds, count: nextIds.length };
-}
-
-/** Puts a just-removed villa back: the same `POST /v1/wishlist` as a save for members, the local list for guests. */
+/** Puts a just-removed villa back with the same `POST /v1/wishlist` as a save. Members only. */
 export async function restoreSavedVillaId(villaId: string | number): Promise<boolean> {
-  if (typeof window === "undefined") return false;
+  if (typeof window === "undefined" || !isAuthenticated()) return false;
   const id = String(villaId);
-  if (!isAuthenticated()) {
-    writeGuestSavedVillaIds([...readGuestSavedVillaIds(), id]);
-    return true;
-  }
   const generation = wishlistGeneration;
   const success = await pushWishlistAdd(id);
   if (generation !== wishlistGeneration || !isAuthenticated() || !success) return false;
@@ -125,8 +104,8 @@ export function clearSavedVillaIds() {
   } catch {
     // The in-memory auth boundary still clears, even if storage is blocked.
   }
-  // The account list is gone; once signed out, what remains visible is this tab's guest list (usually empty).
-  const remaining = getStoredAuthToken() ? [] : readGuestSavedVillaIds();
+  // The account list is gone; a signed-out visitor sees no saved hearts.
+  const remaining: string[] = [];
   window.dispatchEvent(new CustomEvent<SavedVillasChange>(SAVED_VILLAS_CHANGED_EVENT, {
     detail: { ids: remaining, count: remaining.length },
   }));
@@ -217,7 +196,7 @@ async function syncGuestSaves(ids: string[]): Promise<{ ids: string[]; merged: n
 export async function hydrateWishlistFromRemote(_userId: number): Promise<boolean> {
   if (!isAuthenticated() || typeof window === "undefined") return false;
   const generation = ++wishlistGeneration;
-  // The server is authoritative. A previous account cache is never imported; only this tab's guest saves are
+  // The server is authoritative. A previous account cache is never imported; only an older guest list (from before sign-in-only saving) is
   // offered to the account, through the server's own merge, and then cleared.
   try { window.localStorage.removeItem(SAVED_VILLAS_OWNER_KEY); } catch { /* Storage may be blocked. */ }
   const guestIds = readGuestSavedVillaIds().filter((id) => /^\d{1,20}$/.test(id)).slice(0, MAX_SYNC_IDS);
@@ -228,7 +207,7 @@ export async function hydrateWishlistFromRemote(_userId: number): Promise<boolea
   if (generation !== wishlistGeneration || !isAuthenticated() || !remote) return false;
   writeSavedVillaIds(remote);
   if (synced) {
-    writeGuestSavedVillaIds([]);
+    clearGuestSavedVillaIds();
     if (synced.merged > 0) {
       window.dispatchEvent(new CustomEvent<SavedVillasMerged>(SAVED_VILLAS_MERGED_EVENT, { detail: { merged: synced.merged } }));
     }

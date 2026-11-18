@@ -39,25 +39,13 @@ export default function SavedVillasClient({ villas }: SavedVillasClientProps) {
     );
   }
 
-  if (!isAuthenticated && savedVillas.length === 0) {
+  // Only signed-in members save villas (owner decision 2026-11-19).
+  if (!isAuthenticated) {
     return (
       <div className="villa-saved-empty">
         <p>Sign in to see the villas you have saved for later.</p>
         <button type="button" onClick={() => openAuth("login")}>Sign in</button>
       </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    // A guest's saves from this tab: show them, and say plainly where they live until sign-in.
-    return (
-      <>
-        <div className="villa-saved-guest-note">
-          <p>These villas are saved in this browser for now. Sign in to keep them on every device.</p>
-          <button type="button" onClick={() => openAuth("login")}>Sign in</button>
-        </div>
-        <SavedGrid villas={savedVillas} />
-      </>
     );
   }
 
@@ -95,7 +83,7 @@ const EASE_IN_OUT = [0.77, 0, 0.175, 1] as const;
  * The saved cards. Removing a heart lets that card fade and settle away (fast, it is the system answering) while the
  * cards after it slide into its place, so the grid never jumps. Reduced motion keeps only the fade.
  */
-function SavedGrid({ villas, onRemoved }: { villas: VillaSearchResult[]; onRemoved?: (villaId: string) => void }) {
+function SavedGrid({ villas, onRemoved }: { villas: VillaSearchResult[]; onRemoved: (villaId: string) => void }) {
   const reduce = usePrefersReducedMotion();
   return (
     <div className="villa-collection-grid villa-saved-grid">
@@ -113,7 +101,7 @@ function SavedGrid({ villas, onRemoved }: { villas: VillaSearchResult[]; onRemov
               villa={villa}
               priority={index < 2}
               initialSaved
-              onSavedChange={onRemoved ? (villaId, saved) => { if (!saved) onRemoved(villaId); } : undefined}
+              onSavedChange={(villaId, saved) => { if (!saved) onRemoved(villaId); }}
             />
           </motion.div>
         ))}

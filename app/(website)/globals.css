@@ -10157,44 +10157,6 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   cursor: pointer;
 }
 
-.villa-saved-guest-note {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 24px;
-  margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
-  padding: 16px 20px;
-  border-radius: 16px; /* the cards' radius, so the note and the grid read as one set */
-  background: var(--brand-cream, #F2EDE3);
-}
-
-.villa-saved-guest-note p {
-  max-width: 60ch;
-  margin: 0;
-  color: var(--brand-charcoal, #2E2E2C);
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.villa-saved-guest-note button {
-  min-height: 44px;
-  padding: 0 22px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--color-button-primary-bg);
-  color: var(--color-button-primary-text, #FAFAF9);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.villa-saved-guest-note button:focus-visible {
-  outline: 2px solid var(--color-button-primary-bg);
-  outline-offset: 3px;
-}
-
 /* No search band here, so the cards keep the same breathing room below the opener's rule as on /villas. */
 .villa-saved-list {
   padding-top: clamp(2rem, 3.5vw, 3rem) !important;
