@@ -59,13 +59,8 @@ function usePointerSlideshow(villa: HomepageStayVilla, isHovered: boolean) {
   return images[activeImage] || villa.imageUrl;
 }
 
-function VillaImage({
-  villa,
-  priority,
-}: {
-  villa: HomepageStayVilla;
-  priority: boolean;
-}) {
+// This grid sits below the homepage hero, so no card competes with the hero poster for priority.
+function VillaImage({ villa }: { villa: HomepageStayVilla }) {
   const [isHovered, setIsHovered] = useState(false);
   const image = usePointerSlideshow(villa, isHovered);
 
@@ -89,8 +84,7 @@ function VillaImage({
             alt={villa.name}
             fill
             sizes="(min-width: 960px) 30vw, (min-width: 721px) 46vw, 78vw"
-            loading={priority ? "eager" : "lazy"}
-            fetchPriority={priority ? "high" : "auto"}
+            loading="lazy"
             className={styles.image}
           />
         </motion.div>
@@ -103,17 +97,11 @@ function VillaFacts({ villa }: { villa: HomepageStayVilla }) {
   return <p className={styles.facts}>{getFacts(villa).join(" · ")}</p>;
 }
 
-function StayVillaCard({
-  villa,
-  index,
-}: {
-  villa: HomepageStayVilla;
-  index: number;
-}) {
+function StayVillaCard({ villa }: { villa: HomepageStayVilla }) {
   return (
     <article className={styles.item}>
       <Link href={villa.href} className={styles.card} aria-label={`View ${cleanVillaName(villa.name)}`}>
-        <VillaImage villa={villa} priority={index === 0} />
+        <VillaImage villa={villa} />
         <div className={styles.content}>
           <div className={styles.titleRow}>
             <h3>{cleanVillaName(villa.name)}</h3>
@@ -136,14 +124,14 @@ export default function StayCollectionGrid({ villas }: StayCollectionGridProps) 
   return (
     <div className={styles.gridContainer}>
       <div className={styles.scrollRow} role="region" aria-label="Featured stays row 1">
-        {row1.map((villa, index) => (
-          <StayVillaCard key={String(villa.id)} villa={villa} index={index} />
+        {row1.map(villa => (
+          <StayVillaCard key={String(villa.id)} villa={villa} />
         ))}
       </div>
       {row2.length > 0 && (
         <div className={styles.scrollRow} role="region" aria-label="Featured stays row 2">
-          {row2.map((villa, index) => (
-            <StayVillaCard key={String(villa.id)} villa={villa} index={index + 3} />
+          {row2.map(villa => (
+            <StayVillaCard key={String(villa.id)} villa={villa} />
           ))}
         </div>
       )}

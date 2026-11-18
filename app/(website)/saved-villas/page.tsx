@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Saved Villas",
   description: "Review your saved Summerhouses Bali villa selections before booking.",
+  robots: { index: false, follow: false },
 };
 
 export default async function SavedVillasPage() {

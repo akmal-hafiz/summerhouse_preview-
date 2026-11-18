@@ -15,6 +15,7 @@ import { collectionHref, promoCodeFromParam } from "@/lib/promo-param";
 export const metadata = {
   title: "Villa Collection",
   description: "Explore private Summerhouses Bali villas by location, dates, guests, photos, amenities, and availability.",
+  alternates: { canonical: "/villas" },
 };
 
 type VillasPageProps = {

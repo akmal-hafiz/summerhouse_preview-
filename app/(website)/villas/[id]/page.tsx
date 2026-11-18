@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: VillaDetailPageProps) {
   return {
     title: villa?.name || "Villa",
     description: villa?.descriptionText || "Explore this Summerhouses Bali villa.",
+    alternates: { canonical: `/villas/${id}` },
   };
 }
 
@@ -97,17 +98,17 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
                 </div>
                 <div className="villa-detail-reserve-fields">
                   <a href="#availability">
-                    <span className="material-symbols-outlined">calendar_month</span>
+                    <span className="material-symbols-outlined" aria-hidden="true">calendar_month</span>
                     <small>Check in</small>
                     <strong>Add date</strong>
                   </a>
                   <a href="#availability">
-                    <span className="material-symbols-outlined">event_available</span>
+                    <span className="material-symbols-outlined" aria-hidden="true">event_available</span>
                     <small>Check out</small>
                     <strong>Add date</strong>
                   </a>
                   <a href="#availability" className="is-wide">
-                    <span className="material-symbols-outlined">group</span>
+                    <span className="material-symbols-outlined" aria-hidden="true">group</span>
                     <small>Guests</small>
                     <strong>Up to {villa.guests} guests</strong>
                   </a>

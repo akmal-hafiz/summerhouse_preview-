@@ -4,8 +4,9 @@ import { Suspense } from "react";
 import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 
 export const metadata = {
-  title: "Reset password | Summerhouses Bali",
+  title: "Reset password",
   description: "Reset your Summerhouses account password with a secure email code.",
+  robots: { index: false, follow: false },
 };
 
 export default function ForgotPasswordPage() {

@@ -343,17 +343,17 @@ export default function Contact({ faqs: faqsProp, settings }: ContactProps = {})
           <form className={`${styles.form} ${styles.scrollReveal}`} onSubmit={handleSubmit}>
           <label className={styles.fullField}>
             <span>Name</span>
-            <input type="text" placeholder="Jane Smith" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input type="text" autoComplete="name" placeholder="Jane Smith" value={name} onChange={(e) => setName(e.target.value)} required />
           </label>
 
           <div className={styles.fieldPair}>
             <label>
               <span>Email</span>
-              <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input type="email" autoComplete="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </label>
             <label>
               <span>Phone</span>
-              <input type="tel" placeholder="+62 8xx xxxx xxxx" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <input type="tel" autoComplete="tel" placeholder="+62 8xx xxxx xxxx" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </label>
           </div>
 

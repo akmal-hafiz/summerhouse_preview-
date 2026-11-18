@@ -18,9 +18,6 @@ export const metadata: Metadata = {
     template: "%s | Summerhouse Bali",
   },
   description: "Luxury villas in Bali",
-  alternates: {
-    canonical: "/",
-  },
   openGraph: {
     type: "website",
     siteName: "Summerhouse Bali",
@@ -62,7 +59,10 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        {/* Only the icons the site draws, at the one style globals.css uses: ~3 KB instead of the 1.1 MB full font.
+            shortcut: a new icon name must be added here (sorted A-Z) or it renders as its word; swap these for
+            inline SVG icons if the list grows past ~20 or the Google Fonts request should go. */}
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&icon_names=ac_unit,bathtub,bed,calendar_month,check_circle,deck,event_available,group,local_parking,skillet,wifi&display=block" rel="stylesheet" />
       </head>
       <body
         className={`${outfit.variable} antialiased`}

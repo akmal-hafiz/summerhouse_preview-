@@ -12,6 +12,7 @@ import { useAuthModal } from "@/components/providers/AuthModalProvider";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import { LiquidDropdownSurface } from "@/components/ui/liquid-dropdown-surface";
+import ModalLayer from "@/components/common/ModalLayer";
 import { safeHttpHref } from "@/lib/safe-url";
 
 const navbarNavItems = [
@@ -79,41 +80,7 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
       if (window.matchMedia("(min-width: 1181px)").matches) closeMenu(false);
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeMenu();
-        return;
-      }
-
-      if (event.key !== "Tab") {
-        return;
-      }
-
-      const focusable = Array.from(
-        portalRef.current?.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      ).filter((element) => !element.hasAttribute("disabled") && element.offsetParent !== null);
-
-      if (!focusable.length) {
-        return;
-      }
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
     document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
     window.addEventListener("resize", handleResize);
     window.requestAnimationFrame(() => {
       document
@@ -125,7 +92,6 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("resize", handleResize);
     };
   }, [closeMenu, open]);
@@ -152,77 +118,77 @@ function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenu
       </details>
       {mounted && open
         ? createPortal(
-            <div ref={portalRef} className="global-mobile-menu__portal">
-              <button
-                type="button"
-                className="global-mobile-menu__backdrop"
-                aria-label="Close navigation menu"
-                tabIndex={-1}
-                onClick={() => closeMenu()}
-              />
-              <button
-                type="button"
-                className="global-mobile-menu__close"
-                aria-label="Close navigation menu"
-                onClick={() => closeMenu()}
-              >
-                <FiX aria-hidden="true" />
-              </button>
-              <LiquidDropdownSurface
-                id="global-mobile-navigation-panel"
-                className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel global-mobile-menu__panel--refined"
-                variant="drawer"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Site navigation"
-              >
-                <InteractiveHoverButton
-                  href="/#home-hero-search"
-                  className="global-mobile-menu__cta"
-                  arrow={null}
-                  onClick={() => closeMenu(false)}
-                >
-                  {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
-                </InteractiveHoverButton>
-                {navbarNavItems.map((item) => (
-                  <Link
-                    href={item.href}
-                    key={`standalone-mobile-${item.href}`}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    onClick={() => closeMenu(false)}
-                  >
-                    {item.label[language]}
-                  </Link>
-                ))}
-                <div className="global-mobile-menu__utilities">
-                  <Link className="global-mobile-menu__saved-link" href="/saved-villas" onClick={() => closeMenu(false)}>
-                    {language === "id" ? "Villa tersimpan" : "Saved villas"}
-                  </Link>
-                  {isAuthenticated && user ? (
-                    <>
-                      {!isAdmin && <Link href="/dashboard" onClick={() => closeMenu(false)}>
-                        {language === "id" ? "Akun saya" : "My account"}
-                      </Link>}
-                      {isAdmin && <a href={adminUrl} onClick={() => closeMenu(false)}>{language === "id" ? "Dashboard admin" : "Admin dashboard"}</a>}
-                      <button type="button" onClick={() => { closeMenu(false); void logout(); }}>
-                        {language === "id" ? "Keluar" : "Sign out"}
-                      </button>
-                    </>
-                  ) : (
-                    <button type="button" onClick={() => { closeMenu(false); openAuth("login"); }}>
-                      {language === "id" ? "Masuk / Daftar" : "Sign in / Create account"}
-                    </button>
-                  )}
-                </div>
+            // ModalLayer (native dialog) owns Esc, focus containment and the inert page behind.
+            <ModalLayer onClose={() => closeMenu()} aria-label="Site navigation">
+              <div ref={portalRef} className="global-mobile-menu__portal">
                 <button
                   type="button"
-                  className="global-language-toggle global-language-toggle--mobile"
-                  onClick={toggleLanguage}
+                  className="global-mobile-menu__backdrop"
+                  aria-label="Close navigation menu"
+                  tabIndex={-1}
+                  onClick={() => closeMenu()}
+                />
+                <button
+                  type="button"
+                  className="global-mobile-menu__close"
+                  aria-label="Close navigation menu"
+                  onClick={() => closeMenu()}
                 >
-                  {language === "id" ? "English" : "Bahasa Indonesia"}
+                  <FiX aria-hidden="true" />
                 </button>
-              </LiquidDropdownSurface>
-            </div>,
+                <LiquidDropdownSurface
+                  id="global-mobile-navigation-panel"
+                  className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel global-mobile-menu__panel--refined"
+                  variant="drawer"
+                >
+                  <InteractiveHoverButton
+                    href="/#home-hero-search"
+                    className="global-mobile-menu__cta"
+                    arrow={null}
+                    onClick={() => closeMenu(false)}
+                  >
+                    {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
+                  </InteractiveHoverButton>
+                  {navbarNavItems.map((item) => (
+                    <Link
+                      href={item.href}
+                      key={`standalone-mobile-${item.href}`}
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      onClick={() => closeMenu(false)}
+                    >
+                      {item.label[language]}
+                    </Link>
+                  ))}
+                  <div className="global-mobile-menu__utilities">
+                    <Link className="global-mobile-menu__saved-link" href="/saved-villas" onClick={() => closeMenu(false)}>
+                      {language === "id" ? "Villa tersimpan" : "Saved villas"}
+                    </Link>
+                    {isAuthenticated && user ? (
+                      <>
+                        {!isAdmin && <Link href="/dashboard" onClick={() => closeMenu(false)}>
+                          {language === "id" ? "Akun saya" : "My account"}
+                        </Link>}
+                        {isAdmin && <a href={adminUrl} onClick={() => closeMenu(false)}>{language === "id" ? "Dashboard admin" : "Admin dashboard"}</a>}
+                        <button type="button" onClick={() => { closeMenu(false); void logout(); }}>
+                          {language === "id" ? "Keluar" : "Sign out"}
+                        </button>
+                      </>
+                    ) : (
+                      <button type="button" onClick={() => { closeMenu(false); openAuth("login"); }}>
+                        {language === "id" ? "Masuk / Daftar" : "Sign in / Create account"}
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="global-language-toggle global-language-toggle--mobile"
+                    onClick={toggleLanguage}
+                  >
+                    {language === "id" ? "English" : "Bahasa Indonesia"}
+                  </button>
+                </LiquidDropdownSurface>
+              </div>
+            </ModalLayer>,
             document.body,
           )
         : null}

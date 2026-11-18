@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import ModalLayer from "@/components/common/ModalLayer";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
 type AmenityGroup = {
@@ -50,7 +51,7 @@ export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesP
       <div className="villa-detail-amenities">
         {visibleItems.map(({ group, item }) => (
           <div key={`${group.key}-${item}`} className="villa-detail-amenity">
-            <span className="material-symbols-outlined">{iconForGroup(group.key)}</span>
+            <span className="material-symbols-outlined" aria-hidden="true">{iconForGroup(group.key)}</span>
             <span>{formatAmenityName(item)}</span>
           </div>
         ))}
@@ -61,33 +62,35 @@ export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesP
       </button>
 
       {isOpen && createPortal(
-        <div className="villa-modal" data-lenis-prevent role="dialog" aria-modal="true" aria-label="All amenities">
-          <div className="villa-modal__backdrop" onClick={() => setIsOpen(false)} />
-          <div className="villa-modal__scroll" data-lenis-prevent>
-            <div className="villa-modal__panel villa-modal__panel--amenities">
-              <div className="villa-modal__header">
-                <h2>What this place offers</h2>
-                <button type="button" onClick={() => setIsOpen(false)} aria-label="Close amenities">Close</button>
-              </div>
-
-              <div className="villa-amenities-modal__groups">
-                {groups.map((group) => (
-                  <section key={group.key}>
-                    <h3>
-                      <span className="material-symbols-outlined">{iconForGroup(group.key)}</span>
-                      {group.title}
-                    </h3>
-                    <div>
-                      {group.items.map((item) => (
-                        <p key={`${group.key}-${item}`}>{formatAmenityName(item)}</p>
-                      ))}
-                    </div>
-                  </section>
-                ))}
+        <ModalLayer onClose={() => setIsOpen(false)} aria-label="All amenities">
+          <div className="villa-modal" data-lenis-prevent>
+            <div className="villa-modal__backdrop" onClick={() => setIsOpen(false)} />
+            <div className="villa-modal__scroll" data-lenis-prevent>
+              <div className="villa-modal__panel villa-modal__panel--amenities">
+                <div className="villa-modal__header">
+                  <h2>What this place offers</h2>
+                  <button type="button" onClick={() => setIsOpen(false)} aria-label="Close amenities">Close</button>
+                </div>
+  
+                <div className="villa-amenities-modal__groups">
+                  {groups.map((group) => (
+                    <section key={group.key}>
+                      <h3>
+                        <span className="material-symbols-outlined" aria-hidden="true">{iconForGroup(group.key)}</span>
+                        {group.title}
+                      </h3>
+                      <div>
+                        {group.items.map((item) => (
+                          <p key={`${group.key}-${item}`}>{formatAmenityName(item)}</p>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>,
+        </ModalLayer>,
         document.body
       )}
     </>

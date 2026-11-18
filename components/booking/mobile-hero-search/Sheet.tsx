@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { FiX } from "react-icons/fi";
-import { useFocusTrap } from "./useFocusTrap";
+import ModalLayer from "@/components/common/ModalLayer";
 import CollapsedRow from "./CollapsedRow";
 import WhereCard from "./WhereCard";
 import WhenCard from "./WhenCard";
@@ -59,8 +59,6 @@ export default function Sheet({
   const [locations, setLocations] = useState<string[]>([]);
   const [locationsStatus, setLocationsStatus] = useState<LocationsStatus>("loading");
 
-  useFocusTrap(dialogRef, true);
-
   useEffect(() => {
     const controller = new AbortController();
     fetch("/api/lodgify/search-options", { signal: controller.signal })
@@ -81,20 +79,13 @@ export default function Sheet({
   }, []);
 
   useEffect(() => {
+    // ModalLayer owns Esc, initial focus, focus containment and returning focus to the opener.
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    dialogRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-      previouslyFocused?.focus?.();
     };
-  }, [onClose]);
+  }, []);
 
   // Keep the sheet reachable when the on-screen keyboard resizes the visual
   // viewport — 100dvh alone can still clip content on some mobile browsers.
@@ -133,77 +124,76 @@ export default function Sheet({
   const activeTitle = STEPS.find((s) => s.id === step)?.title ?? "Search";
 
   const sheet = (
-    <div className="mobile-booking-search__overlay-layer">
-      <motion.div
-        aria-hidden
-        className="mobile-booking-search__overlay"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
-        onClick={onClose}
-      />
-      <motion.div
-        ref={dialogRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={activeTitle}
-        tabIndex={-1}
-        {...(reduce
-          ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.18 } }
-          : modal
-            // Centred modal: rises a little and settles; leaving is quicker than arriving.
-            ? {
-              initial: { opacity: 0, transform: "translateY(16px) scale(0.97)" },
-              animate: { opacity: 1, transform: "translateY(0px) scale(1)", transition: { duration: 0.34, ease: EASE_OUT } },
-              exit: { opacity: 0, transform: "translateY(8px) scale(0.985)", transition: { duration: 0.18, ease: EASE_OUT } },
-            }
-            : { initial: { y: "100%", opacity: 0.6 }, animate: { y: 0, opacity: 1 }, exit: { y: "100%", opacity: 0 }, transition: { type: "spring", stiffness: 340, damping: 34 } })}
-        className="mobile-booking-search__sheet"
-      >
-        <button
-          type="button"
+    <ModalLayer onClose={onClose} aria-label={activeTitle}>
+      <div className="mobile-booking-search__overlay-layer">
+        <motion.div
+          aria-hidden
+          className="mobile-booking-search__overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
           onClick={onClose}
-          aria-label="Close search"
-          className="mobile-booking-search__close"
+        />
+        <motion.div
+          ref={dialogRef}
+          tabIndex={-1}
+          {...(reduce
+            ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.18 } }
+            : modal
+              // Centred modal: rises a little and settles; leaving is quicker than arriving.
+              ? {
+                initial: { opacity: 0, transform: "translateY(16px) scale(0.97)" },
+                animate: { opacity: 1, transform: "translateY(0px) scale(1)", transition: { duration: 0.34, ease: EASE_OUT } },
+                exit: { opacity: 0, transform: "translateY(8px) scale(0.985)", transition: { duration: 0.18, ease: EASE_OUT } },
+              }
+              : { initial: { y: "100%", opacity: 0.6 }, animate: { y: 0, opacity: 1 }, exit: { y: "100%", opacity: 0 }, transition: { type: "spring", stiffness: 340, damping: 34 } })}
+          className="mobile-booking-search__sheet"
         >
-          <FiX size={20} aria-hidden />
-        </button>
-
-        <div className="mobile-booking-search__stack">
-          {STEPS.map((s) =>
-            s.id === step ? (
-              <div key={s.id} className="mobile-booking-search__card">
-                <p className="mobile-booking-search__card-title">{s.title}</p>
-                {s.id === "where" ? (
-                  <WhereCard
-                    value={state.location}
-                    locations={locations}
-                    status={locationsStatus}
-                    onInput={onLocationInput}
-                    onSelect={onLocationSelect}
-                  />
-                ) : s.id === "when" ? (
-                  <WhenCard range={state} nights={nights} onChange={onDatesChange} />
-                ) : (
-                  <WhoCard guests={state.guests} onChange={onGuestsChange} />
-                )}
-              </div>
-            ) : (
-              <CollapsedRow
-                key={s.id}
-                id={s.id}
-                label={s.label}
-                value={values[s.id]}
-                onSelect={onStepChange}
-              />
-            ),
-          )}
-        </div>
-
-        <ActionBar canClear={canClear} onClearAll={onClearAll} onSearch={onSubmit} />
-      </motion.div>
-    </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close search"
+            className="mobile-booking-search__close"
+          >
+            <FiX size={20} aria-hidden />
+          </button>
+  
+          <div className="mobile-booking-search__stack">
+            {STEPS.map((s) =>
+              s.id === step ? (
+                <div key={s.id} className="mobile-booking-search__card">
+                  <p className="mobile-booking-search__card-title">{s.title}</p>
+                  {s.id === "where" ? (
+                    <WhereCard
+                      value={state.location}
+                      locations={locations}
+                      status={locationsStatus}
+                      onInput={onLocationInput}
+                      onSelect={onLocationSelect}
+                    />
+                  ) : s.id === "when" ? (
+                    <WhenCard range={state} nights={nights} onChange={onDatesChange} />
+                  ) : (
+                    <WhoCard guests={state.guests} onChange={onGuestsChange} />
+                  )}
+                </div>
+              ) : (
+                <CollapsedRow
+                  key={s.id}
+                  id={s.id}
+                  label={s.label}
+                  value={values[s.id]}
+                  onSelect={onStepChange}
+                />
+              ),
+            )}
+          </div>
+  
+          <ActionBar canClear={canClear} onClearAll={onClearAll} onSearch={onSubmit} />
+        </motion.div>
+      </div>
+    </ModalLayer>
   );
 
   if (typeof document === "undefined") return null;

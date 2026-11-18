@@ -213,8 +213,9 @@ export default function PremiumVillaCard({
           <p id={`wishlist-auth-${villaId}-title`} className="wishlist-auth-prompt__title">{promptCopy.title}</p>
           <p id={`wishlist-auth-${villaId}-copy`} className="wishlist-auth-prompt__copy">{promptCopy.body}</p>
           <div className="wishlist-auth-prompt__actions">
-            <button type="button" className="wishlist-auth-prompt__primary" data-prompt-primary onClick={() => { setShowAuthPrompt(false); openAuth("login"); }}>Sign in</button>
-            <button type="button" className="wishlist-auth-prompt__secondary" onClick={() => { setShowAuthPrompt(false); openAuth("register"); }}>Create account</button>
+            {/* Focus the heart before the sign-in dialog opens, so closing that dialog returns focus here. */}
+            <button type="button" className="wishlist-auth-prompt__primary" data-prompt-primary onClick={() => { setShowAuthPrompt(false); saveButtonRef.current?.focus(); openAuth("login"); }}>Sign in</button>
+            <button type="button" className="wishlist-auth-prompt__secondary" onClick={() => { setShowAuthPrompt(false); saveButtonRef.current?.focus(); openAuth("register"); }}>Create account</button>
           </div>
         </div>, document.body
       )}

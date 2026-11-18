@@ -10,6 +10,7 @@ import StayStylesShowcase from "@/components/home/StayStylesShowcase";
 import WhyStaySection, { type WhyStayContent } from "@/components/home/WhyStaySection";
 
 export const dynamic = "force-dynamic";
+export const metadata = { alternates: { canonical: "/" } };
 import GuestStoriesSection from "@/components/testimonials/GuestStoriesSection";
 import {
   getCmsSection,

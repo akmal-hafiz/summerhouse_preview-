@@ -137,7 +137,7 @@ function GalleryTile({
               fill
               sizes="(min-width: 1024px) 30vw, 48vw"
               loading={priority ? "eager" : "lazy"}
-              fetchPriority={priority ? "high" : "auto"}
+              fetchPriority={order === 0 ? "high" : undefined}
               className={styles.tileImage}
               onError={() => setImageFailed(true)}
               onLoad={(event) => {
@@ -172,7 +172,7 @@ export default function EditorialGrid({ entries, onOpen, reducedMotion }: Editor
       {columns.map((column, columnIndex) => (
         <div key={columnIndex} className={styles.column}>
           {column.map(({ entry, index }) => (
-            <GalleryTile key={entry.id} entry={entry} order={index} priority={index === 0} onOpen={onOpen} reducedMotion={reducedMotion} />
+            <GalleryTile key={entry.id} entry={entry} order={index} priority={index < columnCount} onOpen={onOpen} reducedMotion={reducedMotion} />
           ))}
         </div>
       ))}

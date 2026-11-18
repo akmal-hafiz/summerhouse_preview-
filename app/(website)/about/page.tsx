@@ -13,6 +13,7 @@ import type { AboutDestination } from "@/components/about/About";
 export const metadata = {
   title: "About Summerhouses",
   description: "Discover the story, values, and curated Bali hospitality behind Summerhouses private villa stays.",
+  alternates: { canonical: "/about" },
 };
 
 /** Area character ("Quiet Coast") from the same neighbourhood collections the homepage uses, keyed by location name. */
