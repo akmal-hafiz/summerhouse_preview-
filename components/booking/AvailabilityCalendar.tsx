@@ -23,6 +23,7 @@ import { useAuthModal } from "@/components/providers/AuthModalProvider";
 import { lastStayForVilla, latestStay, loadHistory, recordSearch, type LastStay } from "@/lib/search-history-client";
 import { promotionErrorMessage } from "@/lib/notifications/guest-messages";
 import { withStay } from "@/lib/promo-param";
+import { canBookWithPromotion, checkoutPromotion, initialAppliedCode } from "./promotion-state";
 
 type AvailabilityDay = {
   date: string;
@@ -47,18 +48,25 @@ type AvailabilityCalendarProps = {
   location: string;
   priceLabel?: string | null;
   maxGuests?: number;
-  /** A validated code from the `?promo=` link param. It only prefills the field; applying still needs dates and a click. */
+  /** A validated code from the `?promo=` link param. It starts applied and is checked once the guest has a stay. */
   initialPromotionCode?: string;
   /** The stay carried by the link (from the villa list or the villa before). It wins over the member's history. */
   initialStay?: LastStay | null;
 };
 
-type RateQuote = {
+type QuoteParts = { rent: number; discount: number; fees: Array<{ name: string; amount: number }>; taxes: number };
+
+type RateQuote = Partial<QuoteParts> & {
   success: boolean;
   minStay?: number | null;
   maxStay?: number | null;
   isMinimumStayValid?: boolean;
   message?: string;
+  /** Lodgify's own total for the stay (its checkout's number); absent when Lodgify could not quote it. */
+  total?: number;
+  currency?: string;
+  /** The stay this quote belongs to, so a total is never shown for a different stay. */
+  key?: string;
 };
 
 type PromotionQuote = {
@@ -80,6 +88,21 @@ function formatPrice(amount: number, currency: string) {
   } catch {
     return `${currency} ${amount.toLocaleString("en-US")}`;
   }
+}
+
+/** Lodgify's breakdown rows, shown only when they add up to its total (otherwise the total alone is the truth). */
+function QuoteLines({ parts, total, currency, discountLabel = "Discount" }: { parts: QuoteParts; total: number; currency: string; discountLabel?: string }) {
+  const sum = parts.rent - parts.discount + parts.fees.reduce((acc, fee) => acc + fee.amount, 0) + parts.taxes;
+  // A breakdown that is only "Accommodation = total" says nothing new.
+  if (Math.abs(sum - total) >= 1 || (!parts.discount && !parts.fees.length && !parts.taxes)) return null;
+  return (
+    <>
+      <div><dt>Accommodation</dt><dd>{formatPrice(parts.rent, currency)}</dd></div>
+      {parts.discount > 0 && <div><dt>{discountLabel}</dt><dd>-{formatPrice(parts.discount, currency)}</dd></div>}
+      {parts.fees.map((fee, index) => <div key={`${fee.name}-${index}`}><dt>{fee.name}</dt><dd>{formatPrice(fee.amount, currency)}</dd></div>)}
+      {parts.taxes > 0 && <div><dt>Taxes</dt><dd>{formatPrice(parts.taxes, currency)}</dd></div>}
+    </>
+  );
 }
 
 export default function AvailabilityCalendar({
@@ -117,9 +140,12 @@ export default function AvailabilityCalendar({
   const [bookingError, setBookingError] = useState("");
   const [availabilityRetryKey, setAvailabilityRetryKey] = useState(0);
   const [promotionInput, setPromotionInput] = useState(initialPromotionCode);
-  const [appliedPromotionCode, setAppliedPromotionCode] = useState("");
+  // A code from the link ("Use code" on the dashboard) starts applied: it is checked against Lodgify as soon as there is a
+  // stay, and re-checked whenever the stay changes, without an extra click. The page validated it with promoCodeFromParam.
+  const [appliedPromotionCode, setAppliedPromotionCode] = useState(() => initialAppliedCode(initialPromotionCode, roomTypeId));
   const [promotionQuote, setPromotionQuote] = useState<PromotionQuote | null>(null);
   const [promotionQuoteKey, setPromotionQuoteKey] = useState("");
+  const [promotionFailedKey, setPromotionFailedKey] = useState("");
   const [promotionError, setPromotionError] = useState("");
   const [isPromotionLoading, setIsPromotionLoading] = useState(false);
   const [promotionRetryKey, setPromotionRetryKey] = useState(0);
@@ -145,6 +171,9 @@ export default function AvailabilityCalendar({
     if (!checkIn || !checkOut || nights <= 0) return false;
     return eachNightInRange(checkIn, checkOut).every((date) => availabilityMap[date]?.available);
   }, [availabilityMap, checkIn, checkOut, nights]);
+  // Lodgify's total for exactly the stay on screen; a quote for any other stay (a fast date or guest change) never shows.
+  const officialQuote = rateQuote && rateQuote.key === `${checkIn}|${checkOut}|${guests}` && typeof rateQuote.total === "number"
+    && typeof rateQuote.currency === "string" && !isQuoteLoading ? rateQuote as RateQuote & QuoteParts & { total: number; currency: string } : null;
   // A bookable stay the guest has here goes into the URL, so "Other Summerhouses nearby" carries it to the next villa.
   // Dates that are dropped as taken never clear it: villa A full on 1-3 Dec still sends 1-3 Dec on to villa B.
   useEffect(() => {
@@ -156,22 +185,21 @@ export default function AvailabilityCalendar({
   }, [checkIn, checkOut, guests, isRangeValid]);
   const isMinimumStayValid = rateQuote?.isMinimumStayValid !== false;
   const promotionStayKey = `${propertyId}|${roomTypeId ?? ""}|${checkIn}|${checkOut}|${guests}`;
-  const isPromotionValidated = !appliedPromotionCode || (!!promotionQuote && promotionQuoteKey === promotionStayKey && !isPromotionLoading);
+  const promotionState = { appliedCode: appliedPromotionCode, quoteKey: promotionQuote ? promotionQuoteKey : "",
+    failedKey: promotionFailedKey, stayKey: promotionStayKey, loading: isPromotionLoading };
+  const isPromotionValidated = canBookWithPromotion(promotionState);
+  const checkoutCode = checkoutPromotion(promotionState);
+  // Lodgify's price with the code for exactly this stay; the only place the code's numbers are shown.
+  const codeQuote = checkoutCode ? promotionQuote : null;
   const isBookingValid = isRangeValid && isMinimumStayValid && !isQuoteLoading && isPromotionValidated;
 
   const checkoutUrl = useMemo(() => {
     try {
-      return buildLodgifyCheckoutUrl({
-        propertyId,
-        checkIn,
-        checkOut,
-        guests,
-        promotionCode: isPromotionValidated && promotionQuote ? appliedPromotionCode : undefined,
-      });
+      return buildLodgifyCheckoutUrl({ propertyId, checkIn, checkOut, guests, promotionCode: checkoutCode });
     } catch {
       return "";
     }
-  }, [appliedPromotionCode, checkIn, checkOut, guests, isPromotionValidated, promotionQuote, propertyId]);
+  }, [checkIn, checkOut, checkoutCode, guests, propertyId]);
   const whatsAppFallbackUrl = useMemo(() => buildBookingWhatsAppUrl({
     villaName,
     checkIn,
@@ -249,7 +277,7 @@ export default function AvailabilityCalendar({
           throw new Error(data.error || "Unable to load rates.");
         }
 
-        setRateQuote(data);
+        setRateQuote({ ...data, key: `${checkIn}|${checkOut}|${guests}` });
       } catch (quoteFetchError) {
         if (controller.signal.aborted) return;
         setRateQuote(null);
@@ -281,6 +309,7 @@ export default function AvailabilityCalendar({
       setIsPromotionLoading(true);
       setPromotionQuote(null);
       setPromotionQuoteKey("");
+      setPromotionFailedKey("");
       setPromotionError("");
       try {
         const response = await fetch("/api/lodgify/promotion-quote", {
@@ -295,6 +324,8 @@ export default function AvailabilityCalendar({
         if (!response.ok || !data.success) {
           // The route's own wording names the supplier; guests get the mapped sentence instead.
           setPromotionError(promotionErrorMessage({ status: response.status, code: typeof data.status === "string" ? data.status : undefined }));
+          // The guest can still book this stay, without the code.
+          setPromotionFailedKey(promotionStayKey);
           return;
         }
         setPromotionQuote(data as PromotionQuote);
@@ -302,6 +333,7 @@ export default function AvailabilityCalendar({
       } catch (fetchError) {
         if (controller.signal.aborted) return;
         setPromotionError(promotionErrorMessage({ network: fetchError instanceof TypeError }));
+        setPromotionFailedKey(promotionStayKey);
       } finally {
         if (!controller.signal.aborted) setIsPromotionLoading(false);
       }
@@ -544,11 +576,39 @@ export default function AvailabilityCalendar({
               data-booking-guests={guests}
               data-booking-quote-status={rateQuote?.success ? "quoted" : quoteError ? "quote-fallback" : "available"}
             >
-              See your full stay price
+              {officialQuote || codeQuote ? "Continue to checkout" : "See your full stay price"}
             </a>
           )}
         </div>
       </div>
+
+      {isBookingValid && codeQuote && (
+        <div className="villa-stay-total" aria-live="polite">
+          <dl>
+            <div className="villa-stay-total__total">
+              <dt>Total for {nights} {nights === 1 ? "night" : "nights"}</dt>
+              <dd>
+                <s className="villa-stay-total__regular"><span className="villa-stay-total__sr">Regular price </span>{formatPrice(codeQuote.regularTotal, codeQuote.currency)}</s>
+                {formatPrice(codeQuote.quotedTotal, codeQuote.currency)}
+              </dd>
+            </div>
+            <QuoteLines parts={codeQuote} total={codeQuote.quotedTotal} currency={codeQuote.currency} discountLabel={`${checkoutCode} discount`} />
+          </dl>
+          <p>Lodgify&apos;s price for these dates with your code, fees and taxes included. Your checkout shows the same total.</p>
+        </div>
+      )}
+      {isBookingValid && !codeQuote && officialQuote && (
+        <div className="villa-stay-total" aria-live="polite">
+          <dl>
+            <div className="villa-stay-total__total">
+              <dt>Total for {nights} {nights === 1 ? "night" : "nights"}</dt>
+              <dd>{formatPrice(officialQuote.total, officialQuote.currency)}</dd>
+            </div>
+            <QuoteLines parts={officialQuote} total={officialQuote.total} currency={officialQuote.currency} />
+          </dl>
+          <p>Lodgify&apos;s price for these dates, with fees and taxes. Your checkout shows the same total.</p>
+        </div>
+      )}
 
       <div className="villa-calendar">
         <button
@@ -651,26 +711,12 @@ export default function AvailabilityCalendar({
           <div id="villa-promotion-feedback" aria-live="polite">
             {promotionError && <p className="villa-promotion__error" role="alert">{promotionError}</p>}
             {appliedPromotionCode && !promotionError && !promotionQuote && !isPromotionLoading && !isRangeValid && (
-              <p className="villa-promotion__hint">Choose new dates to recheck your code.</p>
+              <p className="villa-promotion__hint">Code {appliedPromotionCode} will be checked when you pick your dates.</p>
             )}
-            {promotionQuote && promotionQuoteKey === promotionStayKey && (
-              <div className="villa-promotion__result">
-                <p className="villa-promotion__success">{appliedPromotionCode} applied to your quote</p>
-                <dl>
-                  <div><dt>Regular stay quote</dt><dd>{formatPrice(promotionQuote.regularTotal, promotionQuote.currency)}</dd></div>
-                  {Math.abs(promotionQuote.rent - promotionQuote.discount + promotionQuote.fees.reduce((sum, fee) => sum + fee.amount, 0) + promotionQuote.taxes - promotionQuote.quotedTotal) < 1 && (
-                    <>
-                      <div><dt>Accommodation</dt><dd>{formatPrice(promotionQuote.rent, promotionQuote.currency)}</dd></div>
-                      {promotionQuote.discount > 0 && <div><dt>Code discount</dt><dd>-{formatPrice(promotionQuote.discount, promotionQuote.currency)}</dd></div>}
-                      {promotionQuote.fees.map((fee, index) => <div key={`${fee.name}-${index}`}><dt>{fee.name}</dt><dd>{formatPrice(fee.amount, promotionQuote.currency)}</dd></div>)}
-                      {promotionQuote.taxes > 0 && <div><dt>Taxes</dt><dd>{formatPrice(promotionQuote.taxes, promotionQuote.currency)}</dd></div>}
-                    </>
-                  )}
-                  <div className="villa-promotion__total"><dt>Quote with code</dt><dd>{formatPrice(promotionQuote.quotedTotal, promotionQuote.currency)}</dd></div>
-                  <div><dt>You save on this quote</dt><dd>{formatPrice(promotionQuote.savings, promotionQuote.currency)}</dd></div>
-                </dl>
-                <p className="villa-promotion__hint">Your code goes with you to checkout. Check the final total there before you confirm your stay.</p>
-              </div>
+            {codeQuote && (
+              <p className="villa-promotion__success">
+                {checkoutCode} is applied to this stay and goes with you to checkout.
+              </p>
             )}
           </div>
         </div>
@@ -685,6 +731,8 @@ export default function AvailabilityCalendar({
         guests={Math.min(guests, maxGuests)}
         maxGuests={maxGuests}
         nights={nights}
+        totalLabel={codeQuote ? formatPrice(codeQuote.quotedTotal, codeQuote.currency)
+          : officialQuote ? formatPrice(officialQuote.total, officialQuote.currency) : undefined}
         isValid={isBookingValid}
         error={isQuoteLoading ? "Preparing your stay..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "")}
         isQuoteLoading={isQuoteLoading}

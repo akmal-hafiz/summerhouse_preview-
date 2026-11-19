@@ -2417,49 +2417,75 @@ img {
   font-size: 0.9rem;
 }
 
-.villa-promotion__result {
-  margin-top: 1.2rem;
-  border-top: 1px solid rgba(32, 31, 27, 0.12);
-  padding-top: 1rem;
-}
-
 .villa-promotion__success {
-  margin: 0 0 0.9rem;
+  margin: 0.9rem 0 0;
   color: #3f704d;
   font-weight: 600;
 }
 
-.villa-promotion__result dl {
+/* Lodgify's total for the chosen stay: the headline figure, its breakdown when it adds up, and one line of context. */
+.villa-stay-total {
+  margin: 0 0 1.25rem;
+  border-top: 1px solid rgba(32, 31, 27, 0.12);
+  border-bottom: 1px solid rgba(32, 31, 27, 0.12);
+  padding: 1rem 0;
+}
+
+.villa-stay-total dl {
   display: grid;
   gap: 0.55rem;
   margin: 0;
 }
 
-.villa-promotion__result dl > div {
+.villa-stay-total dl > div {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   gap: 1rem;
   color: #70695f;
   font-size: 0.9rem;
 }
 
-.villa-promotion__result dd {
+.villa-stay-total dd {
   margin: 0;
   color: var(--color-text);
   text-align: right;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
-.villa-promotion__result .villa-promotion__total {
-  border-top: 1px solid rgba(32, 31, 27, 0.12);
-  margin-top: 0.3rem;
-  padding-top: 0.7rem;
+.villa-stay-total .villa-stay-total__total {
   color: var(--color-text);
+  font-size: 1rem;
   font-weight: 600;
 }
 
-.villa-promotion__result .villa-promotion__hint {
-  margin-top: 1rem;
+.villa-stay-total .villa-stay-total__total dd {
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.villa-stay-total__regular {
+  margin-right: 0.6rem;
+  color: #70695f;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.villa-stay-total__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.villa-stay-total p {
+  margin: 0.75rem 0 0;
+  color: #70695f;
+  font-size: 0.85rem;
+  line-height: 1.5;
 }
 
 .villa-booking-bar {

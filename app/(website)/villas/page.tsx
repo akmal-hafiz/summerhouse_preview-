@@ -148,7 +148,7 @@ export default async function VillasPage({ searchParams }: VillasPageProps) {
 
         <section className="villa-collection-list">
           <div className="villa-collection-shell">
-            {promo && <p className="villa-collection-promo">Code <strong>{promo}</strong> will be filled in when you check a villa&apos;s price.</p>}
+            {promo && <p className="villa-collection-promo">Code <strong>{promo}</strong> is applied when you pick dates on a villa, and goes with you to checkout.</p>}
             <Suspense fallback={<VillaGridLoading />}>
               <VillaList filters={resolvedFilters} promo={promo} />
             </Suspense>

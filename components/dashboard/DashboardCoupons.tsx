@@ -70,7 +70,7 @@ export default function DashboardCoupons() {
       <header className="dash-page-intro dash-page-intro--inner">
         <Link href="/dashboard" className="dash-back-link">Account overview</Link>
         <h1 ref={heading} tabIndex={-1}>Offers for you</h1>
-        <p>Codes available to members. Apply one when you check prices.</p>
+        <p>Codes available to members. Choose Use code and it is applied when you pick dates on a villa.</p>
       </header>
 
       <p className="dash-visually-hidden" aria-live="polite">{announcement}</p>
