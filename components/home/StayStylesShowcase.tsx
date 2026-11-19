@@ -19,11 +19,11 @@ type StayStylesShowcaseProps = {
 function StayGroupPanel({ group, reduceMotion }: { group: HomepageStayGroup; reduceMotion: boolean }) {
   const present = useIsPresent();
   return <motion.div inert={!present} aria-hidden={!present || undefined}
-    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-    transition={{ duration: reduceMotion ? 0 : 0.32, ease: [0.16, 1, 0.3, 1] }}>
-    <StayCollectionGrid villas={group.villas} groupLabel={group.label} />
+    initial={reduceMotion ? false : { opacity: 0, transform: "translateY(8px)" }}
+    animate={{ opacity: 1, transform: "translateY(0px)" }}
+    exit={reduceMotion ? { opacity: 0 } : { opacity: 0, transform: "translateY(-6px)" }}
+    transition={{ duration: reduceMotion ? 0 : 0.24, ease: [0.23, 1, 0.32, 1] }}>
+    <StayCollectionGrid villas={group.villas} />
   </motion.div>;
 }
 
@@ -36,6 +36,8 @@ export default function StayStylesShowcase({ groups, content }: StayStylesShowca
   const [isDocumentVisible, setIsDocumentVisible] = useState(true);
   const [isInteractionPaused, setIsInteractionPaused] = useState(false);
   const [isFocusPaused, setIsFocusPaused] = useState(false);
+  // Once the guest scrolls a row or uses the keyboard in the section, the selection is theirs: rotation stops for good.
+  const [hasGuestTakenOver, setHasGuestTakenOver] = useState(false);
   const [rotationKey, setRotationKey] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = usePrefersReducedMotion();
@@ -73,7 +75,8 @@ export default function StayStylesShowcase({ groups, content }: StayStylesShowca
       !isSectionVisible ||
       !isDocumentVisible ||
       isInteractionPaused ||
-      isFocusPaused
+      isFocusPaused ||
+      hasGuestTakenOver
     ) {
       return;
     }
@@ -91,6 +94,7 @@ export default function StayStylesShowcase({ groups, content }: StayStylesShowca
     isDocumentVisible,
     isInteractionPaused,
     isFocusPaused,
+    hasGuestTakenOver,
     isSectionVisible,
     reduceMotion,
     rotationKey,
@@ -114,17 +118,19 @@ export default function StayStylesShowcase({ groups, content }: StayStylesShowca
 
   return (
     <section ref={sectionRef} className={styles.section} aria-labelledby="stay-styles-title"
+      onScrollCapture={() => setHasGuestTakenOver(true)}
+      onKeyDownCapture={() => setHasGuestTakenOver(true)}
       onFocusCapture={() => setIsFocusPaused(true)}
       onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsFocusPaused(false); }}>
       <div className={styles.shell}>
         <div className={styles.masthead}>
           <motion.header
             className={styles.header}
-            initial={reduceMotion ? false : { opacity: 0, transform: "translateY(24px)" }}
-            animate={reduceMotion ? { opacity: 1, transform: "translateY(0)" } : undefined}
-            whileInView={{ opacity: 1, transform: "translateY(0)" }}
+            initial={reduceMotion ? false : { opacity: 0, transform: "translateY(16px)" }}
+            animate={reduceMotion ? { opacity: 1, transform: "translateY(0px)" } : undefined}
+            whileInView={{ opacity: 1, transform: "translateY(0px)" }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: reduceMotion ? 0 : 0.52, ease: [0.23, 1, 0.32, 1] }}
           >
             <h2 id="stay-styles-title">{content?.heading || "A home, not a hotel"}</h2>
           </motion.header>
@@ -145,7 +151,7 @@ export default function StayStylesShowcase({ groups, content }: StayStylesShowca
                     role="tab"
                     key={group.id}
                     id={`stay-tab-${group.id}`}
-                    aria-controls={`stay-panel-${group.id}`}
+                    aria-controls={isActive ? `stay-panel-${group.id}` : undefined}
                     aria-selected={isActive}
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => selectGroup(group.id)}

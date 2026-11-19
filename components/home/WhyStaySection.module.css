@@ -1,189 +1,156 @@
 .section {
   overflow: hidden;
-  padding: clamp(5rem, 6.7vw, 6rem) 0 clamp(4.5rem, 5.6vw, 5rem);
-  border-block: 1px solid rgb(68 107 74 / 0.12);
+  padding-block: clamp(4.5rem, 6.5vw, 6rem);
+  border-block: 1px solid #e1e0db;
   background: #fafaf9;
   color: #292927;
 }
 
+/* Same shell as the sections above, so the run shares one left edge. */
 .shell {
-  width: min(100% - clamp(2rem, 8vw, 9rem), 100rem);
+  width: min(100%, 92.5rem);
   margin-inline: auto;
+  padding-inline: clamp(1.25rem, 5vw, 5rem);
 }
 
+/* Heading left; copy and the credit right, like the copy and credential rail in the villa spotlight above. */
 .header {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.72fr);
-  align-items: end;
+  align-items: start;
   gap: clamp(3rem, 8vw, 9rem);
-  padding-bottom: clamp(2rem, 3.9vw, 3.5rem);
 }
 
+.aside {
+  min-width: 0;
+  padding-top: 0.5rem;
+}
+
+/* The section-display heading shared with "A home, not a hotel". */
 .header h2 {
   max-width: 12ch;
   margin: 0;
   color: #292927;
-  font-family: var(--font-heading, var(--font-dm-sans), system-ui, sans-serif);
-  font-size: clamp(2.75rem, 5vw, 5.3rem);
-  font-weight: 650;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: clamp(3rem, 4.8vw, 4.375rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.04;
   text-wrap: balance;
 }
 
-.header p {
+.aside > p {
   max-width: 37rem;
   margin: 0;
   color: var(--color-text-muted);
   font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: clamp(0.92rem, 1.08vw, 1.08rem);
-  line-height: 1.72;
+  font-size: clamp(0.9375rem, 1.08vw, 1.0625rem);
+  line-height: 1.7;
+  text-wrap: pretty;
 }
 
-.panel {
-  position: relative;
-  display: grid;
-  min-height: clamp(25rem, 36vw, 37rem);
-  place-items: center;
-  border: 1px solid #d8d8d1;
-  background: transparent;
-  color: inherit;
-  text-align: center;
+.credit {
+  margin-top: clamp(1.75rem, 2.6vw, 2.25rem);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+.source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  color: #292927;
+  font-size: clamp(1.5rem, 2vw, 1.875rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   text-decoration: none;
 }
 
-a.panel {
-  transition: background-color 350ms ease, border-color 350ms ease;
+.source svg {
+  width: 0.6em;
+  height: 0.6em;
+  color: var(--color-button-primary-bg);
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.credential {
-  display: flex;
-  width: min(100% - 3rem, 42rem);
-  flex-direction: column;
-  align-items: center;
-  padding: clamp(3rem, 6vw, 6rem) 1rem;
-}
-
-.credential > strong {
-  color: #446b4a;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(3.2rem, 6.2vw, 6.8rem);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 0.92;
-  text-wrap: balance;
-}
-
-.details {
-  display: flex;
-  margin-top: clamp(2.25rem, 4vw, 3.75rem);
-  flex-direction: column;
-  align-items: center;
-  gap: 0.38rem;
-  color: #57554f;
-  font-family: var(--font-dm-sans), system-ui, sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.45;
-}
-
-.details small {
-  margin-bottom: 0.25rem;
-  color: var(--color-text-muted);
-  font-size: 0.8125rem;
-}
-
-.details b {
-  color: #446b4a;
-  font-weight: 700;
-}
-
-.year {
-  position: absolute;
-  right: clamp(1.25rem, 2.5vw, 2.5rem);
-  bottom: clamp(1.15rem, 2.2vw, 2rem);
-  color: var(--color-text-muted);
-  font-size: 0.8125rem;
-}
-
-a.panel::after {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 0;
-  height: 1px;
-  background: #446b4a;
-  content: "";
-  transition: width 600ms cubic-bezier(0.16, 1, 0.3, 1);
+a.source:focus-visible {
+  outline: 2px solid #446b4a;
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  a.panel:hover {
-    border-color: rgb(68 107 74 / 0.55);
-    background: rgb(68 107 74 / 0.025);
-  }
-
-  a.panel:hover::after {
-    width: 100%;
+  a.source:hover svg {
+    transform: translate(0.08em, -0.08em);
   }
 }
 
-a.panel:focus-visible {
-  outline: 2px solid #446b4a;
-  outline-offset: 4px;
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid #e1e0db;
 }
 
-@media (max-width: 600px) {
+.facts li {
+  min-width: 0;
+  padding: 0.88rem 0.25rem 0.82rem 0;
+  border-bottom: 1px solid #e1e0db;
+  color: #4c4b47;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.facts .factTitle {
+  color: #446b4a;
+  font-weight: 600;
+}
+
+@media (max-width: 960px) {
+  .header {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .aside {
+    max-width: 37rem;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 720px) {
   .section {
     padding-block: 4rem;
   }
 
-  .shell {
-    width: calc(100% - 2.5rem);
-  }
-
   .header {
-    grid-template-columns: 1fr;
-    gap: 1.4rem;
-    padding-bottom: 2rem;
+    gap: 1.25rem;
   }
 
   .header h2 {
-    max-width: 10ch;
-    font-size: clamp(2.45rem, 12vw, 3.5rem);
+    max-width: 14ch;
+    font-size: clamp(2.125rem, 10vw, 2.875rem);
   }
 
-  .header p {
-    max-width: 32rem;
-    font-size: 0.9rem;
+  .aside > p {
+    font-size: 0.9375rem;
     line-height: 1.65;
   }
 
-  .panel {
-    min-height: 25rem;
-  }
-
-  .credential {
-    width: calc(100% - 1rem);
-    padding-inline: 0;
-  }
-
-  .credential > strong {
-    font-size: clamp(2.25rem, 11vw, 4rem);
-  }
-
-  .details {
-    font-size: 0.875rem;
+  .source {
+    font-size: 1.5rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :global(html:not([data-motion="full"])) a.panel,
-  :global(html:not([data-motion="full"])) a.panel::after {
+  :global(html:not([data-motion="full"])) .source svg {
     transition: none;
   }
 }
 
-:global(html[data-motion="reduced"]) a.panel,
-  :global(html[data-motion="reduced"]) a.panel::after {
-    transition: none;
-  }
+:global(html[data-motion="reduced"]) .source svg {
+  transition: none;
+}

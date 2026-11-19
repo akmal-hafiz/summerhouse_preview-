@@ -31,6 +31,10 @@ type PremiumVillaCardProps = {
   promo?: string;
   /** The listing's searched stay, carried to the villa page's calendar. */
   stay?: LastStay | null;
+  /** Image `sizes` for layouts other than the /villas grid. */
+  sizes?: string;
+  /** Heading level of the villa name; h3 where the card sits under a section h2. */
+  headingLevel?: "h2" | "h3";
 };
 
 function formatCount(value: number | null | undefined, singular: string, plural: string) {
@@ -45,6 +49,8 @@ export default function PremiumVillaCard({
   onSavedChange,
   promo = "",
   stay = null,
+  sizes = "(max-width: 359px) 100vw, (max-width: 767px) 50vw, (max-width: 1180px) 50vw, 33vw",
+  headingLevel: Title = "h2",
 }: PremiumVillaCardProps) {
   const villaId = String(villa.id);
   const [isSaved, setIsSaved] = useState(initialSaved);
@@ -179,7 +185,7 @@ export default function PremiumVillaCard({
             alt={villa.name}
             fill
             priority={priority}
-            sizes="(max-width: 359px) 100vw, (max-width: 767px) 50vw, (max-width: 1180px) 50vw, 33vw"
+            sizes={sizes}
             className="villa-catalog-card__image"
           />
         </Link>
@@ -223,7 +229,7 @@ export default function PremiumVillaCard({
       <div className="villa-catalog-card__body">
         {saveError && <p className="villa-catalog-card__save-error" role="alert">{saveError}</p>}
         <Link href={villaHref(villa.id, promo, stay)} className="villa-catalog-card__title-link">
-          <h2>{villa.name}</h2>
+          <Title>{villa.name}</Title>
         </Link>
 
         <p className="villa-catalog-card__location">

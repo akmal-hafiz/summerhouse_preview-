@@ -1,7 +1,7 @@
 .section {
   width: 100%;
   overflow: hidden;
-  padding: clamp(5rem, 6.7vw, 6rem) 0 clamp(4.5rem, 5.6vw, 5rem);
+  padding-block: clamp(4.5rem, 6.5vw, 6rem);
   background: #fafaf9;
 }
 
@@ -68,6 +68,13 @@
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
+  transition: color 180ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tabs button[aria-selected="false"]:hover {
+    color: var(--color-text);
+  }
 }
 
 .tabs button > span:last-child {
@@ -101,10 +108,6 @@
 .panel > div { grid-area: 1 / 1; min-width: 0; }
 
 @media (max-width: 960px) {
-  .section {
-    padding-block: 5rem 4.5rem;
-  }
-
   .masthead {
     grid-template-columns: 1fr;
     align-items: start;
@@ -118,7 +121,7 @@
 
 @media (max-width: 720px) {
   .section {
-    padding: 4rem 0;
+    padding-block: 4rem;
   }
 
   .shell {
