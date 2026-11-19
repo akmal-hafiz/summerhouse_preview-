@@ -11,6 +11,8 @@ type StickyBookingBarProps = {
   guests: number;
   maxGuests?: number;
   nights: number;
+  /** Lodgify's formatted total for the chosen stay, when it quoted one. */
+  totalLabel?: string;
   isValid: boolean;
   error?: string;
   isQuoteLoading?: boolean;
@@ -32,6 +34,7 @@ export default function StickyBookingBar({
   guests,
   maxGuests = 12,
   nights,
+  totalLabel,
   isValid,
   error,
   isQuoteLoading = false,
@@ -43,11 +46,12 @@ export default function StickyBookingBar({
   onGuestChange,
   onClearDates,
 }: StickyBookingBarProps) {
-  const bookingLabel = isValid ? "See your full stay price" : "Check dates";
+  const bookingLabel = isValid ? (totalLabel ? "Continue to checkout" : "See your full stay price") : "Check dates";
+  const nightsLabel = `${nights} ${nights === 1 ? "night" : "nights"}`;
   const summaryLabel = isValid
     ? isQuoteLoading
       ? "Preparing your stay..."
-      : `${nights} ${nights === 1 ? "night" : "nights"} selected`
+      : totalLabel ? `${nightsLabel} · ${totalLabel}` : `${nightsLabel} selected`
     : error || "Select available dates";
 
   return (
