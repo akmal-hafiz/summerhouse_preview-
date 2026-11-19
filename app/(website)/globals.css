@@ -10008,7 +10008,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   text-decoration: none;
 }
 
-.villa-catalog-card__title-link h2 {
+.villa-catalog-card__title-link :is(h2, h3) {
   margin: 0;
   color: #1f1f1d;
   font-size: clamp(0.98rem, 1.3vw, 1.28rem);
@@ -10023,7 +10023,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   align-items: center;
   gap: 0.34rem;
   margin: 0;
-  color: var(--sh-text-faint);
+  color: var(--sh-text-muted);
   font-size: 0.78rem;
   font-weight: 560;
   line-height: 1.35;
@@ -10072,7 +10072,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
   display: grid;
   gap: 0.08rem;
   margin: 0;
-  color: rgba(31, 31, 29, 0.54);
+  color: var(--sh-text-muted);
   font-size: 0.7rem;
   line-height: 1.1;
 }
@@ -10266,7 +10266,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     padding: 0.62rem;
   }
 
-  .villa-catalog-card__title-link h2 {
+  .villa-catalog-card__title-link :is(h2, h3) {
     display: -webkit-box;
     min-height: 2.05em;
     overflow: hidden;
@@ -10852,7 +10852,7 @@ details.global-mobile-menu.global-mobile-menu--standalone .global-mobile-menu__p
     padding: 0.68rem !important;
   }
 
-  .villa-catalog-card__title-link h2 {
+  .villa-catalog-card__title-link :is(h2, h3) {
     font-size: 0.8rem !important;
     line-height: 1.12 !important;
   }

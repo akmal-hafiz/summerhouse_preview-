@@ -68,10 +68,11 @@ export default function DestinationMosaic({ collections }: { collections: BaliCo
   useEffect(() => {
     // Reading, hovering and selecting must not leave the carousel stopped.
     // Manual input restarts the six-second interval; hidden content waits.
-    if (!visible || !documentVisible || keyboardFocused || collections.length < 2) return;
+    // Reduced motion: no content that changes on its own (WCAG 2.2.2); the guest picks a neighbourhood.
+    if (!visible || !documentVisible || keyboardFocused || reduced || collections.length < 2) return;
     const timer = window.setTimeout(() => select(nextCarouselIndex(index, 1, collections.length), false), ROTATION_MS);
     return () => window.clearTimeout(timer);
-  }, [index, interaction, keyboardFocused, visible, documentVisible, select, collections.length, identity]);
+  }, [index, interaction, keyboardFocused, visible, documentVisible, reduced, select, collections.length, identity]);
 
   // Prime only the next destination, with the same responsive URLs as Next Image.
   useEffect(() => {
@@ -99,7 +100,7 @@ export default function DestinationMosaic({ collections }: { collections: BaliCo
         const original = tabs.current[position];
         if (original) Object.assign(copy.style, { left: `${original.offsetLeft}px`, top: `${original.offsetTop}px`, width: `${original.offsetWidth}px`, height: `${original.offsetHeight}px` });
       });
-      gsap.to(nav, { "--tab-x": `${tab.offsetLeft}px`, "--tab-y": `${tab.offsetTop}px`, "--tab-w": `${tab.offsetWidth}px`, "--tab-h": `${tab.offsetHeight}px`, duration: animate && !reduced ? .65 : 0, ease: "power3.out", overwrite: true });
+      gsap.to(nav, { "--tab-x": `${tab.offsetLeft}px`, "--tab-y": `${tab.offsetTop}px`, "--tab-w": `${tab.offsetWidth}px`, "--tab-h": `${tab.offsetHeight}px`, duration: animate && !reduced ? .3 : 0, ease: "power3.out", overwrite: true });
     };
     measure(hasIndicator.current); hasIndicator.current = true;
     let observing = false;
@@ -154,6 +155,19 @@ export default function DestinationMosaic({ collections }: { collections: BaliCo
     onPointerDownCapture={() => setKeyboardFocused(false)}
     onFocusCapture={event => setKeyboardFocused((event.target as HTMLElement).matches(":focus-visible"))}
     onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setKeyboardFocused(false); }}>
+    {/* The tablist comes before its panel, so keyboard order matches the phone layout; CSS moves it below the mosaic on wider screens. */}
+    <div className={styles.controls}>
+      <nav ref={selector} className={styles.index} role="tablist" aria-label="Choose a Bali neighbourhood" onKeyDown={onKeyDown}>
+        {collections.map((collection, itemIndex) => <button key={collection.id} ref={node => { tabs.current[itemIndex] = node; }}
+          id={`destination-tab-${collection.id}`} type="button" role="tab" tabIndex={index === itemIndex ? 0 : -1} aria-selected={index === itemIndex}
+          aria-controls="destination-panel" className={styles.indexItem} onClick={event => select(itemIndex, true, event.detail === 0)}>
+          <span>{collection.location}</span>
+        </button>)}
+        <span className={styles.highlight} aria-hidden="true"><span className={styles.highlightLabels}>
+          {collections.map(collection => <span key={collection.id} className={styles.highlightLabel} data-selector-copy>{collection.location}</span>)}
+        </span></span>
+      </nav>
+    </div>
     <div id="destination-panel" className={styles.mosaic} role="tabpanel" aria-labelledby={`destination-tab-${active.id}`} tabIndex={0}
       onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => { pointer.current = null; }}>
       <div className={styles.details} data-bento-cell>
@@ -168,18 +182,6 @@ export default function DestinationMosaic({ collections }: { collections: BaliCo
         {previous && previous.id !== active.id ? <MosaicPhoto key={`${previous.id}-${slot}-${oldImages[slot]}`} src={oldImages[slot]} alt="" incoming={false} sizes={slot === 3 ? WIDE_IMAGE_SIZES : IMAGE_SIZES} /> : null}
         <MosaicPhoto key={`${active.id}-${slot}-${src}`} src={src} alt={slot === 0 ? active.imageAlt || `A villa in ${active.location}` : ""} incoming sizes={slot === 3 ? WIDE_IMAGE_SIZES : IMAGE_SIZES} />
       </div>)}
-    </div>
-    <div className={styles.controls}>
-      <nav ref={selector} className={styles.index} role="tablist" aria-label="Choose a Bali neighbourhood" onKeyDown={onKeyDown}>
-        {collections.map((collection, itemIndex) => <button key={collection.id} ref={node => { tabs.current[itemIndex] = node; }}
-          id={`destination-tab-${collection.id}`} type="button" role="tab" tabIndex={index === itemIndex ? 0 : -1} aria-selected={index === itemIndex}
-          aria-controls="destination-panel" className={styles.indexItem} onClick={event => select(itemIndex, true, event.detail === 0)}>
-          <span>{collection.location}</span>
-        </button>)}
-        <span className={styles.highlight} aria-hidden="true"><span className={styles.highlightLabels}>
-          {collections.map(collection => <span key={collection.id} className={styles.highlightLabel} data-selector-copy>{collection.location}</span>)}
-        </span></span>
-      </nav>
     </div>
   </div>;
 }

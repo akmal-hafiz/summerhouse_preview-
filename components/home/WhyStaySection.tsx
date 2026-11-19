@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef } from "react";
+import { FiArrowUpRight } from "react-icons/fi";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -81,20 +82,17 @@ function normalizeRecognition(content?: WhyStayContent): WhyStayRecognition {
   return legacyAward ? { ...legacyAward, type: "award", is_visible: true } : fallbackRecognition;
 }
 
-function Credential({ recognition }: { recognition: WhyStayRecognition }) {
+// The facts of the recognition as a ruled list, in the same hairline language as the villa feature list above.
+function CreditFacts({ recognition }: { recognition: WhyStayRecognition }) {
+  const title = recognition.title || "Best Villa in Bali 2024";
   return (
-    <span className={styles.credential}>
-      <strong data-recognition-reveal>{recognition.name || "Honeycombers"}</strong>
-      <span className={styles.details} data-recognition-reveal>
-        <small>{recognition.type === "publication" ? "Publication" : "Award"}</small>
-        {recognition.issuer ? <span>{recognition.issuer}</span> : null}
-        <b>{recognition.title || "Best Villa in Bali 2024"}</b>
-        {recognition.villa_name ? <span>{recognition.villa_name}</span> : null}
-        {recognition.year && !recognition.title?.includes(recognition.year) ? (
-          <span className={styles.year}>{recognition.year}</span>
-        ) : null}
-      </span>
-    </span>
+    <ul className={styles.facts}>
+      <li>{recognition.type === "publication" ? "Publication" : "Award"}</li>
+      {recognition.issuer ? <li>{recognition.issuer}</li> : null}
+      <li className={styles.factTitle}>{title}</li>
+      {recognition.villa_name ? <li>{recognition.villa_name}</li> : null}
+      {recognition.year && !title.includes(recognition.year) ? <li>{recognition.year}</li> : null}
+    </ul>
   );
 }
 
@@ -105,6 +103,7 @@ export default function WhyStaySection({ content }: { content?: WhyStayContent }
   const href = safeHttpHref(recognition.url, "");
   const contextTitle = content?.context_title?.trim() || fallbackContextTitle;
   const supportingCopy = content?.supporting_copy?.trim() || fallbackSupportingCopy;
+  const sourceName = recognition.name || "Honeycombers";
 
   useGSAP(
     () => {
@@ -116,12 +115,12 @@ export default function WhyStaySection({ content }: { content?: WhyStayContent }
 
       gsap.fromTo(
         elements,
-        { opacity: 0, y: 14 },
+        { opacity: 0, y: 12 },
         {
           opacity: 1,
           y: 0,
-          stagger: 0.09,
-          duration: 0.72,
+          stagger: 0.08,
+          duration: 0.52,
           ease: "power3.out",
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -137,27 +136,31 @@ export default function WhyStaySection({ content }: { content?: WhyStayContent }
   if (content?.is_visible === false || recognition.is_visible === false) return null;
 
   return (
-    <section ref={sectionRef} className={styles.section} aria-label="Summerhouse recognition">
+    <section ref={sectionRef} className={styles.section} aria-labelledby="recognition-title" data-home-recognition>
       <div className={styles.shell}>
         <header className={styles.header}>
-          <h2 data-recognition-reveal>{contextTitle}</h2>
-          <p data-recognition-reveal>{supportingCopy}</p>
-        </header>
-        {href ? (
-          <Link
-            className={styles.panel}
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`View ${recognition.name || "Honeycombers"} recognition for ${recognition.villa_name || "Summerhouse"}`}
-          >
-            <Credential recognition={recognition} />
-          </Link>
-        ) : (
-          <div className={styles.panel}>
-            <Credential recognition={recognition} />
+          <h2 id="recognition-title" data-recognition-reveal>{contextTitle}</h2>
+          <div className={styles.aside}>
+            <p data-recognition-reveal>{supportingCopy}</p>
+            <div className={styles.credit} data-recognition-reveal>
+              {href ? (
+                <Link
+                  className={styles.source}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View ${sourceName} recognition for ${recognition.villa_name || "Summerhouse"}`}
+                >
+                  {sourceName}
+                  <FiArrowUpRight aria-hidden="true" />
+                </Link>
+              ) : (
+                <p className={styles.source}>{sourceName}</p>
+              )}
+              <CreditFacts recognition={recognition} />
+            </div>
           </div>
-        )}
+        </header>
       </div>
     </section>
   );

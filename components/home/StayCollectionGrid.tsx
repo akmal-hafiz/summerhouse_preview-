@@ -1,140 +1,56 @@
 "use client";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { FiArrowUpRight } from "react-icons/fi";
-import type { HomepageStayVilla } from "@/lib/lodgify/types";
+import PremiumVillaCard from "@/components/villas/PremiumVillaCard";
+import type { HomepageStayVilla, VillaSearchResult } from "@/lib/lodgify/types";
 import styles from "./StayCollectionGrid.module.css";
 
 type StayCollectionGridProps = {
   villas: HomepageStayVilla[];
-  groupLabel: string;
 };
 
-function cleanVillaName(name: string) {
-  return name.split("|")[0]?.trim() || name;
+// The homepage selection carries no live availability, so the card shows no availability note.
+function toCardVilla(villa: HomepageStayVilla): VillaSearchResult {
+  return {
+    id: villa.id,
+    name: villa.name.split("|")[0]?.trim() || villa.name,
+    location: villa.location,
+    description: villa.description,
+    imageUrl: villa.imageUrl,
+    priceLabel: villa.priceLabel,
+    originalPriceLabel: null,
+    priceValue: villa.priceValue,
+    currencyCode: "",
+    isFeatured: false,
+    guests: villa.guests,
+    bedrooms: villa.bedrooms,
+    bathrooms: villa.bathrooms,
+    capacity: villa.guests || 0,
+    amenitiesPreview: villa.amenitiesPreview,
+    rating: 0,
+    isAvailableForSearch: true,
+    availabilityStatus: "unknown",
+    availabilityReason: "not_checked",
+  };
 }
 
-function getPriceLabel(villa: HomepageStayVilla) {
-  if (!villa.priceLabel) return "Price confirmed at booking";
-  if (/night/i.test(villa.priceLabel)) return villa.priceLabel;
-  return `From ${villa.priceLabel} per night`;
-}
-
-function getFacts(villa: HomepageStayVilla) {
-  const countLabel = (count: number, singular: string, plural: string) =>
-    `${count} ${count === 1 ? singular : plural}`;
-
-  return [
-    villa.guests ? countLabel(villa.guests, "guest", "guests") : null,
-    villa.bedrooms ? countLabel(villa.bedrooms, "bedroom", "bedrooms") : null,
-    villa.bathrooms ? countLabel(villa.bathrooms, "bathroom", "bathrooms") : null,
-  ].filter(Boolean) as string[];
-}
-
-function usePointerSlideshow(villa: HomepageStayVilla, isHovered: boolean) {
-  const [activeImage, setActiveImage] = useState(0);
-  const reduceMotion = usePrefersReducedMotion();
-  const images = villa.images?.length ? villa.images : [villa.imageUrl];
-
-  useEffect(() => {
-    if (!isHovered || reduceMotion || images.length <= 1) {
-      setActiveImage(0);
-      return;
-    }
-
-    const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    if (!canHover) return;
-
-    const interval = window.setInterval(() => {
-      setActiveImage((current) => (current + 1) % images.length);
-    }, 2600);
-
-    return () => window.clearInterval(interval);
-  }, [images.length, isHovered, reduceMotion]);
-
-  return images[activeImage] || villa.imageUrl;
-}
-
-// This grid sits below the homepage hero, so no card competes with the hero poster for priority.
-function VillaImage({ villa }: { villa: HomepageStayVilla }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const image = usePointerSlideshow(villa, isHovered);
-
-  return (
-    <div
-      className={styles.media}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <AnimatePresence initial={false} mode="popLayout">
-        <motion.div
-          className={styles.imageLayer}
-          key={image}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <Image
-            src={image}
-            alt={villa.name}
-            fill
-            sizes="(min-width: 960px) 30vw, (min-width: 721px) 46vw, 78vw"
-            loading="lazy"
-            className={styles.image}
-          />
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-}
-
-function VillaFacts({ villa }: { villa: HomepageStayVilla }) {
-  return <p className={styles.facts}>{getFacts(villa).join(" · ")}</p>;
-}
-
-function StayVillaCard({ villa }: { villa: HomepageStayVilla }) {
-  return (
-    <article className={styles.item}>
-      <Link href={villa.href} className={styles.card} aria-label={`View ${cleanVillaName(villa.name)}`}>
-        <VillaImage villa={villa} />
-        <div className={styles.content}>
-          <div className={styles.titleRow}>
-            <h3>{cleanVillaName(villa.name)}</h3>
-            <span className={styles.arrow} aria-hidden="true"><FiArrowUpRight /></span>
-          </div>
-          <VillaFacts villa={villa} />
-          <p className={styles.location}>{villa.location}</p>
-          <p className={styles.price}>{getPriceLabel(villa)}</p>
-        </div>
-      </Link>
-    </article>
-  );
-}
+// Below the homepage hero, so no card takes image priority from the hero poster.
+const CARD_SIZES = "(min-width: 961px) 30vw, (min-width: 721px) 44vw, 80vw";
 
 export default function StayCollectionGrid({ villas }: StayCollectionGridProps) {
   const displayVillas = villas.slice(0, 6);
-  const row1 = displayVillas.slice(0, 3);
-  const row2 = displayVillas.slice(3, 6);
+  const rows = [displayVillas.slice(0, 3), displayVillas.slice(3, 6)].filter((row) => row.length > 0);
 
   return (
     <div className={styles.gridContainer}>
-      <div className={styles.scrollRow} role="region" aria-label="Featured stays row 1">
-        {row1.map(villa => (
-          <StayVillaCard key={String(villa.id)} villa={villa} />
-        ))}
-      </div>
-      {row2.length > 0 && (
-        <div className={styles.scrollRow} role="region" aria-label="Featured stays row 2">
-          {row2.map(villa => (
-            <StayVillaCard key={String(villa.id)} villa={villa} />
+      {rows.map((row, index) => (
+        <div key={index} className={styles.scrollRow}>
+          {row.map((villa) => (
+            <div key={String(villa.id)} className={styles.item}>
+              <PremiumVillaCard villa={toCardVilla(villa)} sizes={CARD_SIZES} headingLevel="h3" />
+            </div>
           ))}
         </div>
-      )}
+      ))}
     </div>
   );
 }

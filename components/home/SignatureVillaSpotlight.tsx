@@ -4,6 +4,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiArrowUpRight } from "react-icons/fi";
 import type { SignatureVilla } from "@/lib/lodgify/types";
@@ -118,6 +119,34 @@ function DistinctiveCopy({ villa }: { villa: SignatureVilla }) {
   );
 }
 
+// One entrance for the whole section: a short rise and fade, staggered by column.
+function Reveal({
+  as = "div",
+  className,
+  delay = 0,
+  children,
+}: {
+  as?: "div" | "header";
+  className?: string;
+  delay?: number;
+  children: ReactNode;
+}) {
+  const reduceMotion = usePrefersReducedMotion();
+  const Tag = as === "header" ? motion.header : motion.div;
+  return (
+    <Tag
+      className={className}
+      initial={reduceMotion ? false : { opacity: 0, transform: "translateY(16px)" }}
+      animate={reduceMotion ? { opacity: 1, transform: "translateY(0px)" } : undefined}
+      whileInView={{ opacity: 1, transform: "translateY(0px)" }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: reduceMotion ? 0 : 0.52, ease: [0.23, 1, 0.32, 1], delay: reduceMotion ? 0 : delay }}
+    >
+      {children}
+    </Tag>
+  );
+}
+
 export default function SignatureVillaSpotlight({ villa, variant }: SignatureVillaSpotlightProps) {
   const [indices, setIndices] = useState({ mid: 1, small: 2 });
   const [visible, setVisible] = useState(false);
@@ -164,97 +193,46 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
 
   const title = cleanVillaName(villa.name);
   const location = villa.address || villa.location;
+  const header = (
+    <Reveal as="header" className={styles.header}>
+      <h2 className={styles.title}>{title}</h2>
+      <p className={styles.location}>{location}</p>
+    </Reveal>
+  );
 
   if (variant === "mobile") {
     return (
       <section ref={sectionRef} className={`${styles.section} ${styles.mobileSection}`} data-home-signature="mobile">
-        <div className={styles.mobileContainer}>
-          <motion.header
-            className={styles.header}
-            initial={reduceMotion ? false : { opacity: 0, y: 25 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h2 className={styles.mobileTitle}>{title}</h2>
-            <p className={styles.location}>{location}</p>
-          </motion.header>
-
+        <div className={styles.container}>
+          {header}
           <div className={styles.mobileStack}>
-          <motion.div
-            className={styles.mobilePrimary}
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.96 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: reduceMotion ? 0 : 1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Link className={styles.mediaLink} href={villa.href}>
-              <Image
-                src={getImage(villa, 0)}
-                alt={villa.name}
-                fill
+            <Reveal className={styles.mobilePrimary}>
+              <Link className={styles.mediaLink} href={villa.href} aria-label={`View ${title}`}>
+                <Image src={getImage(villa, 0)} alt={villa.name} fill sizes="calc(100vw - 2.5rem)" className="object-cover" />
+              </Link>
+            </Reveal>
+            <Reveal>
+              <DistinctiveCopy villa={villa} />
+            </Reveal>
+            <Reveal>
+              <FadingImage
+                className={styles.landscapeMedia}
+                src={getImage(villa, indices.mid)}
+                alt={`${villa.name} detail`}
                 sizes="calc(100vw - 2.5rem)"
-                priority
-                className="object-cover"
               />
-            </Link>
-          </motion.div>
-
-          <motion.div
-            className={styles.mobileLandscape}
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <FadingImage
-              className={styles.landscapeMedia}
-              src={getImage(villa, indices.mid)}
-              alt={`${villa.name} detail`}
-              sizes="calc(100vw - 2.5rem)"
-            />
-          </motion.div>
-
-          <motion.div
-            className={styles.mobileDistinctive}
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <DistinctiveCopy villa={villa} />
-          </motion.div>
-
-          <motion.div
-            className={styles.mobileFeatures}
-            initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <FeatureList villa={villa} />
-          </motion.div>
-
-          <motion.div
-            className={styles.mobileLandscape}
-            initial={reduceMotion ? false : { opacity: 0, scale: 0.95 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <FadingImage
-              className={styles.landscapeMedia}
-              src={getImage(villa, indices.small)}
-              alt={`${villa.name} lifestyle`}
-              sizes="calc(100vw - 2.5rem)"
-            />
-          </motion.div>
+            </Reveal>
+            <Reveal>
+              <FeatureList villa={villa} />
+            </Reveal>
+            <Reveal>
+              <FadingImage
+                className={styles.landscapeMedia}
+                src={getImage(villa, indices.small)}
+                alt={`${villa.name} lifestyle`}
+                sizes="calc(100vw - 2.5rem)"
+              />
+            </Reveal>
           </div>
         </div>
       </section>
@@ -263,29 +241,11 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
 
   return (
     <section ref={sectionRef} className={`${styles.section} ${styles.desktopSection}`} data-home-signature="desktop">
-      <div className={styles.desktopContainer}>
-        <motion.header
-          className={styles.header}
-          initial={reduceMotion ? false : { opacity: 0, y: 30 }}
-          animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: reduceMotion ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2 className={styles.desktopTitle}>{title}</h2>
-          <p className={styles.location}>{location}</p>
-        </motion.header>
-
+      <div className={styles.container}>
+        {header}
         <div className={styles.desktopGrid}>
-          <motion.div
-            className={styles.primaryRail}
-            initial={reduceMotion ? false : { opacity: 0, x: -35 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: reduceMotion ? 0 : 1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Link className={`${styles.mediaLink} ${styles.primaryMedia}`} href={villa.href}>
+          <Reveal className={styles.primaryRail}>
+            <Link className={`${styles.mediaLink} ${styles.primaryMedia}`} href={villa.href} aria-label={`View ${title}`}>
               <Image
                 src={getImage(villa, 0)}
                 alt={villa.name}
@@ -294,16 +254,9 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
                 className="object-cover"
               />
             </Link>
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            className={styles.centerRail}
-            initial={reduceMotion ? false : { opacity: 0, x: 35 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: reduceMotion ? 0 : 1, ease: [0.16, 1, 0.3, 1], delay: reduceMotion ? 0 : 0.1 }}
-          >
+          <Reveal className={styles.centerRail} delay={0.06}>
             <FadingImage
               className={styles.landscapeMedia}
               src={getImage(villa, indices.mid)}
@@ -313,16 +266,9 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
             <div className={styles.centerFeatures}>
               <FeatureList villa={villa} />
             </div>
-          </motion.div>
+          </Reveal>
 
-          <motion.div
-            className={styles.rightRail}
-            initial={reduceMotion ? false : { opacity: 0, x: 35 }}
-            animate={reduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: reduceMotion ? 0 : 1, ease: [0.16, 1, 0.3, 1], delay: reduceMotion ? 0 : 0.16 }}
-          >
+          <Reveal className={styles.rightRail} delay={0.12}>
             <DistinctiveCopy villa={villa} />
             <div className={styles.rightMedia}>
               <FadingImage
@@ -332,7 +278,7 @@ export default function SignatureVillaSpotlight({ villa, variant }: SignatureVil
                 sizes="27vw"
               />
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>
