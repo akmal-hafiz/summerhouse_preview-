@@ -1,0 +1,255 @@
+/* Phone and tablet menu: a plain button whose three bars turn into an X. No disk, no tap ring;
+   keyboard focus keeps a visible outline. */
+.mobile-nav-trigger,
+.mobile-nav-close {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-fast) var(--ease-out-strong);
+}
+
+.mobile-nav-trigger {
+  color: var(--nav-control-ink);
+}
+
+.mobile-nav-trigger:active,
+.mobile-nav-close:active {
+  transform: scale(0.97);
+}
+
+.mobile-nav-trigger:focus-visible {
+  outline: 2px solid var(--nav-control-ink);
+  outline-offset: 4px;
+}
+
+@media (max-width: 1180px) {
+  .global-mini-header--island > .mobile-nav-trigger {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+  }
+}
+
+@media (min-width: 1181px) {
+  .mobile-nav-trigger {
+    display: none;
+  }
+}
+
+/* The dialog's close button: inline top/left/width/height and color, read from the trigger, put the same X exactly over it. */
+.mobile-nav-close {
+  position: fixed;
+  z-index: 3;
+  top: 12px;
+  pointer-events: auto;
+}
+
+.mobile-nav-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* The mobile overlay is portaled to document.body so Safari cannot clip its
+   fixed backdrop to the navbar's compositing layer. */
+.global-mobile-menu__portal {
+  position: fixed;
+  inset: 0;
+  z-index: 1250;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.global-mobile-menu__portal .global-mobile-menu__backdrop {
+  z-index: 0 !important;
+  pointer-events: auto;
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer {
+  --sh-glass-opacity: 0.88;
+  --sh-glass-blur: 46px;
+  --sh-glass-saturation: 170%;
+  --sh-glass-contrast: 108%;
+  --sh-glass-brightness: 102%;
+  position: absolute !important;
+  top: 4.15rem !important;
+  right: clamp(1rem, 5vw, 1.25rem) !important;
+  z-index: 2 !important;
+  display: grid !important;
+  width: min(22.5rem, calc(100vw - 2rem)) !important;
+  max-height: calc(100dvh - 5.15rem);
+  overflow: auto;
+  padding: clamp(1rem, 3.4vw, 1.35rem) !important;
+  border-color: rgba(255, 255, 255, 0.68) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(125% 100% at 12% -8%, rgba(255, 255, 255, 0.88), transparent 48%),
+    radial-gradient(90% 80% at 100% 100%, rgba(68, 107, 74, 0.18), transparent 68%),
+    linear-gradient(155deg, rgba(255, 255, 255, 0.9), rgba(246, 245, 239, 0.82)),
+    rgba(246, 245, 239, 0.88) !important;
+  box-shadow:
+    0 34px 90px -24px rgba(8, 18, 11, 0.44),
+    0 10px 30px -18px rgba(8, 18, 11, 0.28),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.54),
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.94),
+    inset 0 -12px 28px rgba(68, 107, 74, 0.08) !important;
+  -webkit-backdrop-filter: blur(46px) saturate(170%) contrast(108%) brightness(102%) !important;
+  backdrop-filter: blur(46px) saturate(170%) contrast(108%) brightness(102%) !important;
+  pointer-events: auto;
+  overscroll-behavior: contain;
+  animation: summerhouse-menu-drawer-in 260ms var(--ease-out-strong) both !important;
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer a,
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta {
+  position: relative;
+  z-index: 2;
+  display: flex !important;
+  min-height: 44px;
+  align-items: center;
+  border-radius: 16px !important;
+  color: #17231a !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.64) !important;
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer a:hover,
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer a:focus-visible,
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:hover,
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:focus-visible {
+  background: rgba(46, 46, 44, 0.08) !important;
+  color: var(--color-button-primary-bg) !important;
+  outline: none;
+  transform: translate3d(1px, 0, 0);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer::after {
+  opacity: 0.9 !important;
+  background:
+    radial-gradient(80% 55% at 92% 100%, rgba(68, 107, 74, 0.16), transparent 76%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(250, 249, 245, 0.44)) !important;
+}
+
+@media (min-width: 1181px) {
+  .global-mobile-menu__portal {
+    display: none;
+  }
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .global-mobile-menu__portal .global-mobile-menu__backdrop {
+    background: rgba(20, 27, 22, 0.78) !important;
+  }
+
+  .global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer {
+    background: #f6f5ef !important;
+  }
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel--refined {
+  background: #f7f4ee !important;
+  border: 1px solid rgb(68 107 74 / 0.16) !important;
+  box-shadow: 0 1rem 2.5rem rgb(17 28 20 / 0.2) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel--refined::before,
+.global-mobile-menu__portal .global-mobile-menu__panel--refined::after {
+  display: none !important;
+}
+
+.global-mobile-menu__portal .global-mobile-menu__panel--refined.global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta,
+.global-mobile-menu__portal .global-mobile-menu__panel--refined.global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:hover,
+.global-mobile-menu__portal .global-mobile-menu__panel--refined.global-mobile-menu__panel.summerhouse-liquid-glass--drawer .global-mobile-menu__cta:focus-visible {
+  --ihb-fill: var(--color-button-primary-bg);
+  --ihb-fill-fg: #fff;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+  background: var(--color-button-primary-bg) !important;
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+/* Touch opens focus the panel itself so nothing inside shows a ring. */
+.global-mobile-menu__portal .global-mobile-menu__panel:focus {
+  outline: none;
+}
+
+.mobile-nav-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 18px;
+  height: calc(12px + 1.85px);
+}
+
+.mobile-nav-icon > span {
+  display: block;
+  height: 1.85px;
+  border-radius: 1px;
+  background: currentColor;
+  transform-origin: center;
+  transition: transform var(--dur-base) var(--ease-out-strong), opacity var(--dur-fast) ease;
+}
+
+.mobile-nav-icon[data-open] > span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.mobile-nav-icon[data-open] > span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0.6);
+}
+
+.mobile-nav-icon[data-open] > span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* The close button mounts as bars and turns into the X in place, over the trigger. */
+@starting-style {
+  .mobile-nav-close .mobile-nav-icon[data-open] > span:nth-child(n) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: the bars swap without moving; only opacity transitions. */
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-motion="full"])) .mobile-nav-icon > span {
+    transition: opacity var(--dur-fast) ease;
+  }
+
+  :where(html:not([data-motion="full"])) .mobile-nav-trigger,
+  :where(html:not([data-motion="full"])) .mobile-nav-close {
+    transition: none;
+  }
+}
+
+:where(html[data-motion="reduced"]) .mobile-nav-icon > span {
+  transition: opacity var(--dur-fast) ease;
+}
+
+:where(html[data-motion="reduced"]) .mobile-nav-trigger,
+:where(html[data-motion="reduced"]) .mobile-nav-close {
+  transition: none;
+}
+
+/* The drawer rule above is !important at 0,3,0, so reduced motion has to out-rank it by order. */
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-motion="full"])) .global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer {
+    animation: none !important;
+  }
+}
+
+:where(html[data-motion="reduced"]) .global-mobile-menu__portal .global-mobile-menu__panel.summerhouse-liquid-glass--drawer {
+  animation: none !important;
+}

@@ -3,197 +3,21 @@
 import "./navbar-user.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { createPortal } from "react-dom";
-import { FiGrid, FiHeart, FiLogOut, FiMenu, FiShield, FiUser, FiX } from "react-icons/fi";
+import React, { useState, useEffect, useRef } from "react";
+import { nextNavState, type NavScrollState } from "@/lib/nav-scroll";
+import { FiGrid, FiHeart, FiLogOut, FiShield, FiUser } from "react-icons/fi";
 import { getSavedVillasCount, subscribeSavedVillas } from "@/components/villas/savedVillas";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 import { LiquidDropdownSurface } from "@/components/ui/liquid-dropdown-surface";
-import ModalLayer from "@/components/common/ModalLayer";
+import MobileNavMenu from "@/components/common/MobileNavMenu";
+import { navbarNavItems } from "@/components/common/nav-items";
 import { safeHttpHref } from "@/lib/safe-url";
-
-const navbarNavItems = [
-  { label: { en: "Stays", id: "Menginap" }, href: "/villas" },
-  { label: { en: "Services", id: "Layanan" }, href: "/services" },
-  { label: { en: "Gallery", id: "Galeri" }, href: "/gallery" },
-  { label: { en: "About", id: "Tentang" }, href: "/about" },
-  { label: { en: "Contact", id: "Kontak" }, href: "/contact" },
-];
-const desktopNavItems = navbarNavItems;
 
 interface NavbarProps {
   alwaysSolid?: boolean;
-}
-
-type NavbarLanguage = "en" | "id";
-
-type MobileNavigationMenuProps = {
-  language: NavbarLanguage;
-  toggleLanguage: () => void;
-};
-
-function MobileNavigationMenu({ language, toggleLanguage }: MobileNavigationMenuProps) {
-  const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const detailsRef = useRef<HTMLDetailsElement>(null);
-  const portalRef = useRef<HTMLDivElement>(null);
-  const summaryRef = useRef<HTMLElement>(null);
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
-  const { openAuth } = useAuthModal();
-  const pathname = usePathname();
-  const adminUrl = safeHttpHref(process.env.NEXT_PUBLIC_CMS_ADMIN_URL || "/admin", "/admin");
-
-  useEffect(() => setMounted(true), []);
-
-  const closeMenu = useCallback((restoreFocus = true) => {
-    if (detailsRef.current) {
-      detailsRef.current.open = false;
-    }
-    setOpen(false);
-
-    if (restoreFocus) {
-      window.requestAnimationFrame(() => summaryRef.current?.focus());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handlePointerDown = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        detailsRef.current &&
-        !detailsRef.current.contains(target) &&
-        !portalRef.current?.contains(target)
-      ) {
-        closeMenu();
-      }
-    };
-
-    const handleResize = () => {
-      if (window.matchMedia("(min-width: 1181px)").matches) closeMenu(false);
-    };
-
-    document.addEventListener("mousedown", handlePointerDown);
-    window.addEventListener("resize", handleResize);
-    window.requestAnimationFrame(() => {
-      document
-        .getElementById("global-mobile-navigation-panel")
-        ?.querySelector<HTMLElement>('a[href], button:not([disabled])')
-        ?.focus();
-    });
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("mousedown", handlePointerDown);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [closeMenu, open]);
-
-  return (
-    <>
-      <details
-        ref={detailsRef}
-        open={open}
-        className="global-mobile-menu global-mobile-menu--standalone"
-      >
-        <summary
-          ref={summaryRef}
-          aria-label={open ? "Close navigation" : "Open navigation"}
-          aria-controls="global-mobile-navigation-panel"
-          aria-expanded={open}
-          onClick={(event) => {
-            event.preventDefault();
-            setOpen((current) => !current);
-          }}
-        >
-          {open ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
-        </summary>
-      </details>
-      {mounted && open
-        ? createPortal(
-            // ModalLayer (native dialog) owns Esc, focus containment and the inert page behind.
-            <ModalLayer onClose={() => closeMenu()} aria-label="Site navigation">
-              <div ref={portalRef} className="global-mobile-menu__portal">
-                <button
-                  type="button"
-                  className="global-mobile-menu__backdrop"
-                  aria-label="Close navigation menu"
-                  tabIndex={-1}
-                  onClick={() => closeMenu()}
-                />
-                <button
-                  type="button"
-                  className="global-mobile-menu__close"
-                  aria-label="Close navigation menu"
-                  onClick={() => closeMenu()}
-                >
-                  <FiX aria-hidden="true" />
-                </button>
-                <LiquidDropdownSurface
-                  id="global-mobile-navigation-panel"
-                  className="summerhouse-liquid-glass summerhouse-liquid-glass--drawer global-mobile-menu__panel global-mobile-menu__panel--refined"
-                  variant="drawer"
-                >
-                  <InteractiveHoverButton
-                    href="/#home-hero-search"
-                    className="global-mobile-menu__cta"
-                    arrow={null}
-                    onClick={() => closeMenu(false)}
-                  >
-                    {language === "id" ? "Pesan Menginap" : "Book Your Stay"}
-                  </InteractiveHoverButton>
-                  {navbarNavItems.map((item) => (
-                    <Link
-                      href={item.href}
-                      key={`standalone-mobile-${item.href}`}
-                      aria-current={pathname === item.href ? "page" : undefined}
-                      onClick={() => closeMenu(false)}
-                    >
-                      {item.label[language]}
-                    </Link>
-                  ))}
-                  <div className="global-mobile-menu__utilities">
-                    <Link className="global-mobile-menu__saved-link" href="/saved-villas" onClick={() => closeMenu(false)}>
-                      {language === "id" ? "Villa tersimpan" : "Saved villas"}
-                    </Link>
-                    {isAuthenticated && user ? (
-                      <>
-                        {!isAdmin && <Link href="/dashboard" onClick={() => closeMenu(false)}>
-                          {language === "id" ? "Akun saya" : "My account"}
-                        </Link>}
-                        {isAdmin && <a href={adminUrl} onClick={() => closeMenu(false)}>{language === "id" ? "Dashboard admin" : "Admin dashboard"}</a>}
-                        <button type="button" onClick={() => { closeMenu(false); void logout(); }}>
-                          {language === "id" ? "Keluar" : "Sign out"}
-                        </button>
-                      </>
-                    ) : (
-                      <button type="button" onClick={() => { closeMenu(false); openAuth("login"); }}>
-                        {language === "id" ? "Masuk / Daftar" : "Sign in / Create account"}
-                      </button>
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    className="global-language-toggle global-language-toggle--mobile"
-                    onClick={toggleLanguage}
-                  >
-                    {language === "id" ? "English" : "Bahasa Indonesia"}
-                  </button>
-                </LiquidDropdownSurface>
-              </div>
-            </ModalLayer>,
-            document.body,
-          )
-        : null}
-    </>
-  );
 }
 
 export default function Navbar({ alwaysSolid = false }: NavbarProps) {
@@ -241,20 +65,16 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
   const isHome = pathname === "/";
 
   useEffect(() => {
-    let anchor = window.scrollY;
+    // React state may be stale after a route change, so the first run always writes both values.
+    let state: NavScrollState = { compact: false, scrolled: false, anchor: window.scrollY };
+    let synced = false;
     const handleScroll = () => {
-      const y = Math.max(0, window.scrollY);
-      if (y < 48) setCompact(false);
-      else if (isHome) setCompact(true);
-      else if (Math.abs(y - anchor) > 12) {
-        setCompact(y > 96 && y > anchor);
-        anchor = y;
-      }
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      const maxY = document.documentElement.scrollHeight - window.innerHeight;
+      const next = nextNavState(state, { y: window.scrollY, maxY, isHome });
+      if (!synced || next.compact !== state.compact) setCompact(next.compact);
+      if (!synced || next.scrolled !== state.scrolled) setIsScrolled(next.scrolled);
+      synced = true;
+      state = next;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
@@ -277,10 +97,10 @@ export default function Navbar({ alwaysSolid = false }: NavbarProps) {
         </Link>
       </div>
 
-      <MobileNavigationMenu language={language} toggleLanguage={toggleLanguage} />
+      <MobileNavMenu language={language} toggleLanguage={toggleLanguage} />
 
       <nav className="global-mini-nav" aria-label="Global navigation">
-        {desktopNavItems.map((item, index) => (
+        {navbarNavItems.map((item, index) => (
           <Link href={item.href} key={item.href} style={{ "--nav-i": index } as React.CSSProperties} aria-current={pathname === item.href ? "page" : undefined}>{item.label[language]}</Link>
         ))}
       </nav>

@@ -78,43 +78,6 @@ export default function Sheet({
     return () => controller.abort();
   }, []);
 
-  useEffect(() => {
-    // ModalLayer owns Esc, initial focus, focus containment and returning focus to the opener.
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
-
-  // Keep the sheet reachable when the on-screen keyboard resizes the visual
-  // viewport — 100dvh alone can still clip content on some mobile browsers.
-  // Scoped to the mobile full-screen sheet only (< 768px): the tablet modal
-  // has its own definite height and must not be fought by an inline style,
-  // and only kicks in past a real keyboard-sized delta so ordinary browser
-  // chrome (address bar show/hide) doesn't trigger a layout jump.
-  useEffect(() => {
-    const vv = window.visualViewport;
-    const el = dialogRef.current;
-    if (!vv || !el) return;
-    const onResize = () => {
-      if (window.innerWidth >= 768) {
-        el.style.height = "";
-        return;
-      }
-      const keyboardInset = window.innerHeight - vv.height;
-      el.style.height = keyboardInset > 120 ? `${vv.height}px` : "";
-    };
-    onResize();
-    vv.addEventListener("resize", onResize);
-    window.addEventListener("resize", onResize);
-    return () => {
-      vv.removeEventListener("resize", onResize);
-      window.removeEventListener("resize", onResize);
-      el.style.height = "";
-    };
-  }, []);
-
   const values: Record<Step, string> = {
     where: state.location || "Anywhere in Bali",
     when: formatDateRange(state.checkIn, state.checkOut) || "Add dates",
@@ -124,7 +87,7 @@ export default function Sheet({
   const activeTitle = STEPS.find((s) => s.id === step)?.title ?? "Search";
 
   const sheet = (
-    <ModalLayer onClose={onClose} aria-label={activeTitle}>
+    <ModalLayer lockScroll onClose={onClose} aria-label={activeTitle}>
       <div className="mobile-booking-search__overlay-layer">
         <motion.div
           aria-hidden

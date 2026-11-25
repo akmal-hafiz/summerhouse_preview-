@@ -203,9 +203,39 @@
     width: 100%;
   }
 
+  /* iOS shrinks only the visual viewport for the keyboard. ModalLayer publishes --vv-height and
+     --keyboard-inset on the dialog; the panel (not the shell, which runs the mount keyframe) lifts by the
+     inset and scrolls inside itself when a step is taller than the space left. */
+  .auth-modal-overlay {
+    overflow: hidden;
+  }
+
   .auth-modal-panel {
     border-radius: 28px 28px 0 0;
-    padding: 2rem 1.5rem 2.25rem;
+    padding: 2rem 1.5rem max(2.25rem, env(safe-area-inset-bottom));
+    max-height: calc(var(--vv-height, 100dvh) - 12px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateY(calc(-1 * var(--keyboard-inset, 0px)));
+    transition: transform var(--dur-base) var(--ease-drawer);
+  }
+
+  dialog[data-keyboard="open"] .auth-modal-brand {
+    display: none;
+  }
+
+  dialog[data-keyboard="open"] .auth-modal-panel {
+    padding-top: 1.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(html:not([data-motion="full"])) .auth-modal-panel {
+      transition: none;
+    }
+  }
+
+  :where(html[data-motion="reduced"]) .auth-modal-panel {
+    transition: none;
   }
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import "./auth-modal.css";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { FiX } from "react-icons/fi";
 import ModalLayer from "@/components/common/ModalLayer";
 import AuthForm from "./AuthForm";
@@ -16,20 +16,10 @@ type AuthModalProps = {
 };
 
 export default function AuthModal({ open, mode, onClose, onSwitchMode }: AuthModalProps) {
-  // Lock body scroll while open
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
   if (!open) return null;
 
   return (
-    <ModalLayer onClose={onClose} aria-label="Sign in or create an account">
+    <ModalLayer lockScroll onClose={onClose} aria-label="Sign in or create an account">
       <div className="auth-modal-overlay" onClick={onClose}>
         <div className="auth-modal-shell" onClick={(e) => e.stopPropagation()}>
           <div className="auth-modal-panel">
