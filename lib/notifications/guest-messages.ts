@@ -161,8 +161,52 @@ export function saveErrorMessage({ wasSaved, signedOut }: { wasSaved: boolean; s
     : "This villa was not saved. Tap the heart to try again.";
 }
 
+/** Words for the wishlist sheet and its toasts (named wishlists, 2026-11-20). */
+export const WISHLIST_COPY = {
+  createTitle: "Create wishlist",
+  saveTitle: "Save to wishlist",
+  nameLabel: "Name",
+  counter: (length: number, max: number) => `${length}/${max} characters`,
+  cancel: "Cancel",
+  create: "Create",
+  creating: "Creating…",
+  done: "Done",
+  createNew: "Create new wishlist",
+  more: (count: number) => `More wishlists (${count})`,
+  villaCount: (count: number) => `${count} ${count === 1 ? "villa" : "villas"}`,
+  close: "Close",
+  newWishlist: "New wishlist",
+  savedTo: (name: string) => ({ title: `Saved to ${name}` }),
+  removedFrom: (name: string) => ({ title: `Removed from ${name}` }),
+  failed: "We could not update your wishlist. Please try again.",
+  undo: "Undo",
+  /** A removed villa's toast when the wishlist's name is not known (an older cached state). */
+  yourWishlist: "your wishlist",
+  // Saved villas page and the dashboard (wishlist cards and one wishlist's view).
+  allWishlists: "All wishlists",
+  rename: "Rename",
+  renameTitle: "Rename wishlist",
+  save: "Save",
+  saving: "Saving…",
+  deleteWishlist: "Delete wishlist",
+  deleteTitle: "Delete this wishlist?",
+  deleteBody: (name: string, count: number) =>
+    count > 0
+      ? `“${name}” and its ${count === 1 ? "villa" : `${count} villas`} will be removed. Villas saved in your other wishlists stay there.`
+      : `“${name}” will be removed.`,
+  deleting: "Deleting…",
+  deleted: (name: string) => ({ title: "Wishlist deleted", message: name }),
+  noWishlists: "You have no wishlists yet. Tap the heart on a villa to start your first one.",
+  emptyList: "Nothing saved here yet. Tap the heart on a villa and choose this wishlist.",
+  listGone: "We could not find this wishlist. It may have been deleted.",
+  missingTitle: "No longer in our collection",
+  missingBody: "These villas were saved here but are no longer available to book.",
+  missingVilla: (id: string) => `Villa reference #${id}`,
+  remove: "Remove",
+  removing: "Removing…",
+  wishlistCount: (count: number) => `${count} ${count === 1 ? "wishlist" : "wishlists"}`,
+} as const;
+
 export const SAVE_TOASTS = {
-  saved: { title: "Saved to your villas" },
-  removed: { title: "Removed from your villas" },
   undoFailed: { title: "We could not put this villa back", message: "Tap the heart on the villa to save it again." },
 } as const;

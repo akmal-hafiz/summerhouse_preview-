@@ -7,18 +7,11 @@ import { createPortal } from "react-dom";
 import type { IconType } from "react-icons";
 import { FiDroplet, FiHeart, FiHome, FiMapPin, FiUsers, FiX } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
-import {
-  readSavedVillaIds,
-  restoreSavedVillaId,
-  subscribeSavedVillas,
-  toggleSavedVillaId,
-} from "./savedVillas";
+import { useVillaHeart } from "./useVillaHeart";
 import { isShowcasePreview } from "@/lib/showcase-preview";
-import { getStoredAuthToken } from "@/lib/auth-client";
-import { SAVE_TOASTS, saveErrorMessage, savePromptCopy } from "@/lib/notifications/guest-messages";
+import { savePromptCopy } from "@/lib/notifications/guest-messages";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useAuthModal } from "@/components/providers/AuthModalProvider";
-import { useToast } from "@/components/providers/ToastProvider";
 import { villaHref } from "@/lib/promo-param";
 import type { LastStay } from "@/lib/search-history-client";
 
@@ -35,6 +28,8 @@ type PremiumVillaCardProps = {
   sizes?: string;
   /** Heading level of the villa name; h3 where the card sits under a section h2. */
   headingLevel?: "h2" | "h3";
+  /** Shown inside this wishlist: the heart removes the villa from this wishlist only. */
+  insideListId?: number;
 };
 
 function formatCount(value: number | null | undefined, singular: string, plural: string) {
@@ -51,26 +46,32 @@ export default function PremiumVillaCard({
   stay = null,
   sizes = "(max-width: 359px) 100vw, (max-width: 767px) 50vw, (max-width: 1180px) 50vw, 33vw",
   headingLevel: Title = "h2",
+  insideListId,
 }: PremiumVillaCardProps) {
   const villaId = String(villa.id);
-  const [isSaved, setIsSaved] = useState(initialSaved);
-  const [isSaving, setIsSaving] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-  const [saveError, setSaveError] = useState("");
   const [promptPosition, setPromptPosition] = useState({ top: 0, left: 0 });
   const saveButtonRef = useRef<HTMLButtonElement>(null);
   const promptRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { openAuth } = useAuthModal();
-  const toast = useToast();
   const promptCopy = savePromptCopy(villa.name);
 
-  useEffect(() => {
-    setIsSaved(readSavedVillaIds().includes(villaId));
-    return subscribeSavedVillas(({ ids }) => {
-      setIsSaved(ids.includes(villaId));
-    });
-  }, [villaId]);
+  const { isSaved, saveError, onHeart: toggleSaved } = useVillaHeart(
+    { id: villa.id, name: villa.name, image: villa.imageUrl },
+    {
+      initialSaved,
+      insideListId,
+      onSavedChange,
+      onAuthNote: () => {
+        // A guest's tap saves nothing and opens the sign-in note next to the heart (a second tap closes it).
+        if (!showAuthPrompt) {
+          window.dispatchEvent(new CustomEvent("summerhouses:wishlist-auth-prompt", { detail: saveButtonRef.current }));
+        }
+        setShowAuthPrompt((open) => !open);
+      },
+    },
+  );
 
   useEffect(() => {
     if (isAuthenticated) setShowAuthPrompt(false);
@@ -131,50 +132,6 @@ export default function PremiumVillaCard({
     villa.capacity,
     villa.guests,
   ]);
-
-  // Undo outlives the card (the saved list unmounts a removed card), so it uses only module and context helpers.
-  const offerUndo = (id: string, name: string) => {
-    toast.success({
-      ...SAVE_TOASTS.removed,
-      message: name,
-      action: {
-        label: "Undo",
-        onClick: () => {
-          void restoreSavedVillaId(id).then((restored) => {
-            if (restored) toast.success({ ...SAVE_TOASTS.saved, message: name });
-            else toast.error({ ...SAVE_TOASTS.undoFailed });
-          });
-        },
-      },
-    });
-  };
-
-  const toggleSaved = async () => {
-    if (isSaving || isLoading) return;
-    setSaveError("");
-    if (!isAuthenticated) {
-      // Owner decision 2026-11-19: only signed-in members save. A guest's tap saves nothing and opens the sign-in
-      // note next to the heart (a second tap closes it); any other open note closes first.
-      if (!showAuthPrompt) window.dispatchEvent(new CustomEvent("summerhouses:wishlist-auth-prompt", { detail: saveButtonRef.current }));
-      setShowAuthPrompt((open) => !open);
-      return;
-    }
-    const wasSaved = isSaved;
-    setIsSaving(true);
-    try {
-      const result = await toggleSavedVillaId(villaId);
-      if (!result) {
-        setSaveError(saveErrorMessage({ wasSaved, signedOut: !getStoredAuthToken() }));
-        return;
-      }
-      setIsSaved(result.saved);
-      onSavedChange?.(villaId, result.saved);
-      if (result.saved) toast.success({ ...SAVE_TOASTS.saved, message: villa.name });
-      else offerUndo(villaId, villa.name);
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   return (
     <article className="villa-catalog-card">

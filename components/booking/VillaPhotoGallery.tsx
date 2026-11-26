@@ -1,11 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import type { ReactNode } from "react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import ModalLayer from "@/components/common/ModalLayer";
-import { useScrollLock } from "@/hooks/useScrollLock";
 
 type VillaPhoto = {
   url: string;
@@ -15,7 +13,6 @@ type VillaPhoto = {
 type VillaPhotoGalleryProps = {
   villaName: string;
   photos: VillaPhoto[];
-  sideContent?: ReactNode;
 };
 
 const getPhotoKey = (photo: VillaPhoto, index: number, scope: string) => {
@@ -23,14 +20,12 @@ const getPhotoKey = (photo: VillaPhoto, index: number, scope: string) => {
   return `${scope}-${index}-${source}`;
 };
 
-export default function VillaPhotoGallery({ villaName, photos, sideContent }: VillaPhotoGalleryProps) {
+export default function VillaPhotoGallery({ villaName, photos }: VillaPhotoGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const mainPhoto = photos[0];
-  const sidePhotos = photos.slice(1, 3);
-
-  const isLocked = isOpen || lightboxIndex !== null;
-  useScrollLock(isLocked);
+  const heroPhotos = photos.slice(0, 5);
+  const mainPhoto = heroPhotos[0];
+  const sidePhotos = heroPhotos.slice(1);
 
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
@@ -51,12 +46,25 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
     setLightboxIndex((prev) => (prev !== null && prev < photos.length - 1 ? prev + 1 : 0));
   }, [photos.length]);
 
+  const resetTouch = useCallback(() => {
+    touchStartX.current = null;
+    touchEndX.current = null;
+  }, []);
+
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) {
+      resetTouch();
+      return;
+    }
     touchStartX.current = e.touches[0].clientX;
     touchEndX.current = e.touches[0].clientX;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1 || touchStartX.current === null) {
+      resetTouch();
+      return;
+    }
     touchEndX.current = e.touches[0].clientX;
   };
 
@@ -71,8 +79,7 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
       // swiped right -> prev
       goPrev();
     }
-    touchStartX.current = null;
-    touchEndX.current = null;
+    resetTouch();
   };
 
   /* Arrow keys step through the lightbox. Esc belongs to each ModalLayer: the top one (the lightbox
@@ -89,7 +96,7 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
 
   return (
     <>
-      <div className="villa-detail-photo-grid">
+      <div className="villa-detail-photo-grid" data-count={heroPhotos.length}>
         {mainPhoto && (
           <figure className="is-main">
             <Image
@@ -98,42 +105,53 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
               fill
               priority
               fetchPriority="high"
-              sizes="(min-width: 1024px) 58vw, 100vw"
+              sizes="(min-width: 1024px) 50vw, 100vw"
               className="villa-detail-image"
+            />
+            <button
+              type="button"
+              className="villa-photo-grid__trigger"
+              aria-label={`Open photo 1 of ${photos.length}`}
+              onClick={() => openLightbox(0)}
             />
             {photos.length > 3 && (
               <button type="button" className="villa-photo-grid__show" onClick={() => setIsOpen(true)}>
-                Show all photos
+                Show all {photos.length} photos
               </button>
             )}
           </figure>
         )}
 
-        <div className="villa-detail-photo-grid__side">
-          {sidePhotos.map((photo, index) => (
-            <figure key={getPhotoKey(photo, index + 1, "side-photo")}>
-              <Image
-                src={photo.url}
-                alt={photo.caption || `${villaName} image ${index + 2}`}
-                fill
-                sizes="(min-width: 1024px) 28vw, 100vw"
-                loading="eager"
-                className="villa-detail-image"
-              />
-            </figure>
-          ))}
-          {sideContent && <div className="villa-detail-photo-grid__booking">{sideContent}</div>}
-        </div>
-        {photos.length > 3 && (
-          <button type="button" className="villa-photo-grid__show villa-photo-grid__show--mobile" onClick={() => setIsOpen(true)}>
-            Show all photos
-          </button>
+        {sidePhotos.length > 0 && (
+          <div className="villa-detail-photo-grid__side">
+            {sidePhotos.map((photo, index) => (
+              <figure
+                key={getPhotoKey(photo, index + 1, "side-photo")}
+                className={index >= 2 ? "is-desktop-extra" : undefined}
+              >
+                <Image
+                  src={photo.url}
+                  alt={photo.caption || `${villaName} image ${index + 2}`}
+                  fill
+                  sizes="(min-width: 1024px) 25vw, 50vw"
+                  loading="eager"
+                  className="villa-detail-image"
+                />
+                <button
+                  type="button"
+                  className="villa-photo-grid__trigger"
+                  aria-label={`Open photo ${index + 2} of ${photos.length}`}
+                  onClick={() => openLightbox(index + 1)}
+                />
+              </figure>
+            ))}
+          </div>
         )}
       </div>
 
-      {/* ── All Photos Modal (portaled to body) ── */}
+      {/* All Photos Modal (portaled to body) */}
       {isOpen && createPortal(
-        <ModalLayer onClose={() => setIsOpen(false)} aria-label={`${villaName} photos`}>
+        <ModalLayer lockScroll onClose={() => setIsOpen(false)} aria-label={`${villaName} photos`}>
           <div className="villa-modal" data-lenis-prevent>
             {/* Backdrop click to close */}
             <div className="villa-modal__backdrop" onClick={() => setIsOpen(false)} />
@@ -146,20 +164,21 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
                 </div>
                 <div className="villa-photo-modal__grid">
                   {photos.map((photo, index) => (
-                    <figure
-                      key={getPhotoKey(photo, index, "modal-photo")}
-                      onClick={() => openLightbox(index)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => { if (e.key === "Enter") openLightbox(index); }}
-                    >
-                      <Image
-                        src={photo.url}
-                        alt={photo.caption || `${villaName} image ${index + 1}`}
-                        fill
-                        sizes="(min-width: 900px) 45vw, 100vw"
-                        className="villa-detail-image"
-                      />
+                    <figure key={getPhotoKey(photo, index, "modal-photo")}>
+                      <button
+                        type="button"
+                        className="villa-photo-modal__thumb"
+                        aria-label={`Open photo ${index + 1} of ${photos.length}`}
+                        onClick={() => openLightbox(index)}
+                      >
+                        <Image
+                          src={photo.url}
+                          alt={photo.caption || `${villaName} image ${index + 1}`}
+                          fill
+                          sizes="(min-width: 900px) 45vw, 100vw"
+                          className="villa-detail-image"
+                        />
+                      </button>
                       {photo.caption && <figcaption>{photo.caption}</figcaption>}
                     </figure>
                   ))}
@@ -171,15 +190,16 @@ export default function VillaPhotoGallery({ villaName, photos, sideContent }: Vi
         document.body
       )}
 
-      {/* ── Lightbox (portaled to body) ── */}
+      {/* Lightbox (portaled to body) */}
       {lightboxIndex !== null && createPortal(
-        <ModalLayer onClose={closeLightbox} aria-label="Photo detail">
+        <ModalLayer lockScroll onClose={closeLightbox} aria-label="Photo detail">
           <div
             className="villa-lightbox"
             data-lenis-prevent
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={resetTouch}
           >
             <div className="villa-lightbox__backdrop" onClick={closeLightbox} />
   

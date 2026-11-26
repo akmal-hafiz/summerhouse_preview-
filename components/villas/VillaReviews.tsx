@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CmsVillaReview, CmsVillaReviewSummary } from "@/lib/cms";
 import styles from "./VillaReviews.module.css";
 import VillaReviewForm from "./VillaReviewForm";
+import VillaReviewText from "./VillaReviewText";
 import { isShowcasePreview } from "@/lib/showcase-preview";
 
 type VillaReviewsProps = {
@@ -34,21 +35,27 @@ export default function VillaReviews({ lodgifyId, villaName, summary, reviews }:
 
   return (
     <section className="villa-detail-section" id="reviews" aria-labelledby="villa-reviews-heading">
-      <div className="villa-detail-section-heading">
-        <p className="villa-detail-section-label">Reviews</p>
-        {hasReviews && average !== null ? (
-          <h2 id="villa-reviews-heading" className={styles.headline}>
-            <span className={styles.headlineScore}>
-              <span className={styles.headlineStar} aria-hidden="true">★</span>
-              {average.toFixed(1)}
-            </span>
-            <span className={styles.headlineCount}>
-              · {total} review{total === 1 ? "" : "s"}
-            </span>
-          </h2>
-        ) : (
-          <h2 id="villa-reviews-heading">What guests remember.</h2>
-        )}
+      <div className={styles.sectionHeaderRow}>
+        <div className="villa-detail-section-heading">
+          <p className="villa-detail-section-label">Reviews</p>
+          {hasReviews && average !== null ? (
+            <h2 id="villa-reviews-heading" className={styles.headline}>
+              <span className={styles.headlineScore}>
+                <span className={styles.headlineStar} aria-hidden="true">★</span>
+                {average.toFixed(1)}
+              </span>
+              <span className={styles.headlineCount}>
+                · {total} review{total === 1 ? "" : "s"}
+              </span>
+            </h2>
+          ) : (
+            <h2 id="villa-reviews-heading">What guests remember.</h2>
+          )}
+        </div>
+
+        {hasReviews && !isShowcasePreview ? (
+          <VillaReviewForm lodgifyId={lodgifyId} villaName={villaName} />
+        ) : null}
       </div>
 
       {hasReviews ? (
@@ -92,20 +99,21 @@ export default function VillaReviews({ lodgifyId, villaName, summary, reviews }:
                 ) : null}
 
                 {review.title ? <p className={styles.reviewTitle}>{review.title}</p> : null}
-                <p className={styles.reviewText}>{review.comment}</p>
+                <VillaReviewText text={review.comment} />
               </article>
             );
           })}
         </div>
       ) : (
-        <p className={styles.empty}>
-          {isShowcasePreview
-            ? "Villa reviews will appear when the live review service is connected."
-            : `No reviews yet for ${villaName}. Stayed here? Share your experience below. It goes live after a quick check by our team.`}
-        </p>
+        <div className={styles.emptyRow}>
+          <p className={styles.empty}>
+            {isShowcasePreview
+              ? "Villa reviews will appear when the live review service is connected."
+              : "No reviews yet. Be the first to share your stay."}
+          </p>
+          {!isShowcasePreview ? <VillaReviewForm lodgifyId={lodgifyId} villaName={villaName} /> : null}
+        </div>
       )}
-
-      {!isShowcasePreview ? <VillaReviewForm lodgifyId={lodgifyId} villaName={villaName} /> : null}
     </section>
   );
 }

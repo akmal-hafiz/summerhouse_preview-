@@ -183,7 +183,6 @@
 .dash-stay-status.is-canceled { color: var(--dash-muted); }
 .dash-stay-link { align-self: end; margin-bottom: 3px; color: var(--color-button-primary-bg) !important; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
 .dash-stay-link:hover { text-decoration-thickness: 2px; }
-.dash-action-error { padding: 12px 15px; border-radius: 8px; background: var(--dash-error-wash); color: var(--dash-error-ink); font-size: 13px; }
 
 /* Offers and recent searches: text rows in the same ruled list as stays, with actions on the right. */
 .dash-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -439,3 +438,7 @@
   scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important;
   transition-property: opacity, background-color, color, border-color !important;
 }
+
+/* Saved and Overview: wishlist cards (components/villas/WishlistCard.tsx, compact); the photo note sits above the grid. */
+.dash-wishlist-grid { row-gap: 26px; }
+.dash-collection-note--above { margin: 0 0 18px; }

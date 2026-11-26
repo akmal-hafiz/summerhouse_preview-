@@ -1,18 +1,31 @@
 /* Toasts: brief feedback that needs no decision. Policy: docs/design/notifications.md.
-   Surface follows DESIGN.md: porcelain panel, charcoal text, muted-ink message, moss for success,
-   rounded.panel (4px), one soft offset shadow and no border (elevation is declared once). */
+   A dark charcoal card (DESIGN.md charcoal and porcelain) that floats at the bottom centre, shows the villa's photo when
+   it has one, stacks like a deck (the newest in front), spreads out on hover or focus, and swipes away. Motion follows
+   emil-design-eng: a drawer curve in, a faster ease-out away, transform and opacity only. */
 
 .sh-toast-region {
-  --sh-toast-gap: 24px;
+  --sh-toast-gap: 20px;
+  --sh-toast-edge: 1; /* 1: stacked from the bottom edge; -1: from the top (see the wishlist sheet rule) */
+  --sh-toast-bg: #2E2E2C;
+  --sh-toast-ink: #FAFAF9;
+  --sh-toast-muted: rgba(250, 250, 249, 0.72);
+  --sh-toast-success: #446B4A;
+  --sh-toast-error: #A9493C;
+  /* A hairline of light along each card's top edge: one charcoal card on another still reads as a deck. */
+  --sh-toast-shadow: inset 0 1px 0 rgba(250, 250, 249, 0.14), 0 -1px 0 rgba(29, 51, 42, 0.35),
+    0 18px 40px -14px rgba(29, 51, 42, 0.55), 0 2px 8px rgba(29, 51, 42, 0.22);
+  --sh-toast-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  /* A gentle spring (about 4% overshoot) for the phone deck opening; browsers without linear() keep the drawer curve. */
+  --sh-toast-spring: var(--sh-toast-ease);
+  --sh-toast-spring: linear(0, 0.06 2.2%, 0.25 5%, 0.55 9.4%, 0.83 15%, 0.97 20%, 1.03 25.8%, 1.045 30%, 1.04 35%, 1.02 42%, 1.005 52%, 0.998 64%, 1);
   position: fixed;
-  right: max(var(--sh-toast-gap), env(safe-area-inset-right));
+  left: 50%;
   bottom: calc(var(--sh-toast-gap) + env(safe-area-inset-bottom) + var(--sh-toast-offset, 0px));
   z-index: 1400;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: min(360px, calc(100vw - 32px));
+  width: min(400px, calc(100vw - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  height: var(--sh-toast-front, 0px);
   margin: 0;
+  transform: translateX(-50%);
   pointer-events: none;
 }
 
@@ -21,43 +34,125 @@
 }
 
 .sh-toast {
+  position: absolute;
+  inset: auto 0 0;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   gap: 12px;
-  align-items: start;
-  padding: 14px 10px 14px 16px;
-  border-radius: 4px;
-  background: #FAFAF9;
-  box-shadow: 0 12px 32px rgba(46, 46, 44, 0.14), 0 2px 6px rgba(46, 46, 44, 0.08);
-  color: #2E2E2C;
+  align-items: center;
+  min-height: 60px;
+  padding: 12px 8px 12px 14px;
+  border-radius: 16px;
+  background: var(--sh-toast-bg);
+  box-shadow: var(--sh-toast-shadow);
+  color: var(--sh-toast-ink);
   font: inherit;
   pointer-events: auto;
+  touch-action: none; /* the card is a swipe handle; the page keeps scrolling everywhere else */
+  user-select: none;
+  -webkit-touch-callout: none; /* a long press opens the deck, not the system image menu */
+  transform-origin: center bottom;
+  transform:
+    translateY(calc(var(--sh-toast-y, 0) * var(--sh-toast-edge) * 1px + var(--sh-toast-drag, 0px)))
+    scale(var(--sh-toast-scale, 1));
+  opacity: var(--sh-toast-opacity, 1);
+  transition: transform 360ms var(--sh-toast-ease), opacity 240ms ease, scale 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  /* Folding back, the cards follow the front one a beat apart. */
+  transition-delay: calc(var(--sh-toast-depth, 0) * 30ms);
+}
+
+/* Phones: a held press sinks the card a little over the hold, like lifting a home-screen widget. */
+.sh-toast[data-pressing] {
+  scale: 0.97;
+  transition: transform 360ms var(--sh-toast-ease), opacity 240ms ease, scale 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Phones: the open deck fans up on a spring, each card behind starting 40ms after the one in front of it. */
+.sh-toast-region[data-open] .sh-toast {
+  transition: transform 420ms var(--sh-toast-spring), opacity 240ms ease, scale 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition-delay: calc(var(--sh-toast-depth, 0) * 40ms);
+}
+
+/* The open deck's focus mode: the page dims and blurs behind it (the wishlist sheet's overlay tint); a tap closes it. */
+.sh-toast-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1399;
+  background: rgb(29 51 42 / 0.38);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  touch-action: none;
+  transition: opacity 240ms ease, visibility 0s linear 240ms;
+}
+
+.sh-toast-scrim[data-open] {
   opacity: 1;
-  transform: translateY(0);
-  transition: opacity 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  visibility: visible;
+  transition: opacity 240ms ease, visibility 0s;
+}
+
+/* Collapsed, the cards behind the front one take its height (so they always peek out above it, whatever their own
+   text), hide their content, and take DESIGN.md's charcoal-hover, so the deck reads as layers. */
+.sh-toast-region:not([data-expanded]) .sh-toast:not(:last-child) {
+  height: var(--sh-toast-front);
+  overflow: hidden;
+  background: #41413E;
+}
+
+.sh-toast-region:not([data-expanded]) .sh-toast:not(:last-child) > * {
+  opacity: 0;
+}
+
+.sh-toast > * {
+  transition: opacity 200ms ease;
+}
+
+.sh-toast--media {
+  padding-left: 10px;
 }
 
 @starting-style {
   .sh-toast {
+    transform: translateY(calc(var(--sh-toast-edge) * 100%)) scale(0.96);
     opacity: 0;
-    transform: translateY(8px);
   }
 }
 
-.sh-toast__icon {
-  width: 18px;
-  height: 18px;
-  margin-top: 1px;
-  color: rgba(46, 46, 44, 0.68);
+.sh-toast[data-leaving] {
+  transform: translateY(calc(var(--sh-toast-edge) * 100% + var(--sh-toast-drag, 0px))) scale(0.96);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1), opacity 200ms ease-out;
 }
 
-.sh-toast--success .sh-toast__icon {
-  color: #446B4A;
+.sh-toast[data-swiping] {
+  transition: none;
+  cursor: grabbing;
 }
 
-.sh-toast--error .sh-toast__icon {
-  color: #A9493C;
+.sh-toast__media {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  pointer-events: none;
 }
+
+.sh-toast__glyph {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(250, 250, 249, 0.12);
+  color: var(--sh-toast-ink);
+  font-size: 15px;
+}
+
+.sh-toast--success .sh-toast__glyph { background: var(--sh-toast-success); }
+.sh-toast--error .sh-toast__glyph { background: var(--sh-toast-error); }
 
 .sh-toast__copy {
   display: grid;
@@ -68,89 +163,82 @@
 .sh-toast__title,
 .sh-toast__message {
   margin: 0;
-  overflow-wrap: anywhere;
 }
 
+/* Two lines at most: on a phone the wishlist's name is the point of the toast, so it wraps rather than ellipses. */
 .sh-toast__title {
-  font-size: 16px;
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.35;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .sh-toast__message {
-  color: rgba(46, 46, 44, 0.72);
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--sh-toast-muted);
   font-size: 13px;
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .sh-toast__action {
-  justify-self: start;
   display: inline-flex;
   align-items: center;
   min-height: 32px;
-  margin: 4px 0 -6px;
-  padding: 0;
+  padding: 0 14px;
   border: 0;
-  background: transparent;
-  color: #2E2E2C;
+  border-radius: 999px;
+  background: var(--sh-toast-ink);
+  color: var(--sh-toast-bg);
   cursor: pointer;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease, transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.sh-toast__action:active {
+  transform: scale(0.97);
 }
 
 .sh-toast__close {
   display: inline-grid;
-  width: 32px;
-  height: 32px;
-  margin: -6px 0 -6px;
+  width: 28px;
+  height: 28px;
   place-items: center;
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: rgba(46, 46, 44, 0.68);
+  color: var(--sh-toast-muted);
   cursor: pointer;
-  transition: background-color 180ms ease, color 180ms ease;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 .sh-toast__close svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .sh-toast__action:focus-visible,
 .sh-toast__close:focus-visible {
-  outline: 2px solid #2E2E2C;
+  outline: 2px solid var(--sh-toast-ink);
   outline-offset: 2px;
 }
 
-.sh-toast__close:focus-visible {
-  border-radius: 999px;
-}
-
 @media (hover: hover) and (pointer: fine) {
-  .sh-toast__close:hover {
-    background: rgba(46, 46, 44, 0.07);
-    color: #2E2E2C;
-  }
-
-  .sh-toast__action:hover {
-    text-decoration-thickness: 2px;
-  }
-}
-
-/* Phones: bottom centre, clear of the home indicator and of any fixed bottom bar on the page. */
-@media (max-width: 640px) {
-  .sh-toast-region {
-    --sh-toast-gap: 16px;
-    right: auto;
-    left: 50%;
-    width: min(420px, calc(100vw - 32px));
-    transform: translateX(-50%);
-  }
+  .sh-toast__action:hover { background: #FFFFFF; }
+  .sh-toast__close:hover { background: rgba(250, 250, 249, 0.1); color: var(--sh-toast-ink); }
 }
 
 /* The member dashboard's tab bar is fixed to the bottom below 600px (components/dashboard/dashboard.css). */
@@ -160,14 +248,33 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  :where(html:not([data-motion="full"])) .sh-toast {
-    transition: opacity 160ms ease;
-    transform: none;
+/* The villa detail page fixes a compact booking bar to the bottom on phones. */
+@media (max-width: 767px) {
+  :root:has(.villa-booking-bar) {
+    --sh-toast-offset: 88px;
   }
 }
 
-:where(html[data-motion="reduced"]) .sh-toast {
-  transition: opacity 160ms ease;
-  transform: none;
+/* Reduced motion (system setting, or the site's Reduced preference): no slide, no scale, no deck. The cards simply
+   stack with a gap and fade in and out. */
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-motion="full"])) .sh-toast-region { display: flex; flex-direction: column; gap: 8px; height: auto; }
+  :where(html:not([data-motion="full"])) .sh-toast { position: relative; inset: auto; transform: none; opacity: 1; transition: opacity 160ms ease; }
+  :where(html:not([data-motion="full"])) .sh-toast[data-leaving] { opacity: 0; transform: none; }
+  :where(html:not([data-motion="full"])) .sh-toast-scrim { display: none; }
+}
+
+:where(html[data-motion="reduced"]) .sh-toast-region { display: flex; flex-direction: column; gap: 8px; height: auto; }
+:where(html[data-motion="reduced"]) .sh-toast { position: relative; inset: auto; transform: none; opacity: 1; transition: opacity 160ms ease; }
+:where(html[data-motion="reduced"]) .sh-toast[data-leaving] { opacity: 0; transform: none; }
+:where(html[data-motion="reduced"]) .sh-toast-scrim { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  @starting-style {
+    :where(html:not([data-motion="full"])) .sh-toast { opacity: 0; transform: none; }
+  }
+}
+
+@starting-style {
+  :where(html[data-motion="reduced"]) .sh-toast { opacity: 0; transform: none; }
 }

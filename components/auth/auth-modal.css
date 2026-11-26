@@ -11,7 +11,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1rem, 3vw, 2rem) max(clamp(1rem, 3vw, 2rem), env(safe-area-inset-right, 0px)) clamp(1rem, 3vw, 2rem) max(clamp(1rem, 3vw, 2rem), env(safe-area-inset-left, 0px));
   background: rgba(26, 26, 26, 0.48);
   animation: auth-overlay-in 180ms ease;
   overflow-y: auto;
@@ -212,7 +212,7 @@
 
   .auth-modal-panel {
     border-radius: 28px 28px 0 0;
-    padding: 2rem 1.5rem max(2.25rem, env(safe-area-inset-bottom));
+    padding: 2rem max(1.5rem, env(safe-area-inset-right, 0px)) max(2.25rem, env(safe-area-inset-bottom)) max(1.5rem, env(safe-area-inset-left, 0px));
     max-height: calc(var(--vv-height, 100dvh) - 12px);
     overflow-y: auto;
     overscroll-behavior: contain;

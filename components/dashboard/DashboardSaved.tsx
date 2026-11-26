@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { FiArrowRight, FiX } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import type { VillaSearchResult } from "@/lib/lodgify";
-import { removeSavedVillaId } from "@/components/villas/savedVillas";
-import DashboardVillaThumb from "./DashboardVillaThumb";
+import { WISHLIST_COPY } from "@/lib/notifications/guest-messages";
+import WishlistCard from "@/components/villas/WishlistCard";
+import { coverPhotos, listVillaIds } from "@/components/villas/wishlistCards";
 import { useDashboardWishlist } from "./useDashboardWishlist";
 
 type Props = {
@@ -13,19 +13,9 @@ type Props = {
   catalogStatus: "ready" | "unavailable";
 };
 
+/** The member's wishlists as small cards; each opens that wishlist on Saved villas, where villas are managed. */
 export default function DashboardSaved({ villas, catalogStatus }: Props) {
-  const { ids, status, retry } = useDashboardWishlist();
-  const [removingId, setRemovingId] = useState<string | null>(null);
-  const [removeError, setRemoveError] = useState(false);
-  const byId = new Map(villas.map((villa) => [String(villa.id), villa]));
-
-  const remove = async (id: string) => {
-    setRemoveError(false);
-    setRemovingId(id);
-    const success = await removeSavedVillaId(id).catch(() => false);
-    setRemovingId(null);
-    if (!success) setRemoveError(true);
-  };
+  const { lists, status, retry } = useDashboardWishlist();
 
   return (
     <>
@@ -42,55 +32,32 @@ export default function DashboardSaved({ villas, catalogStatus }: Props) {
           <p>We could not load your saved villas. Your shortlist has not been changed.</p>
           <button type="button" onClick={retry}>Try again</button>
         </div>
-      ) : catalogStatus === "unavailable" ? (
-        <div className="dash-inline-state dash-inline-state--alert" role="status">
-          <p>Villa details are temporarily unavailable. Your saved choices are still in your account.</p>
-          <button type="button" onClick={() => window.location.reload()}>Refresh page</button>
-        </div>
-      ) : ids.length === 0 ? (
+      ) : lists.length === 0 ? (
         <div className="dash-empty-state dash-empty-state--wide">
-          <p className="dash-empty-state-title">No villas saved yet.</p>
-          <p>Explore the collection and save the places you would like to return to.</p>
+          <p className="dash-empty-state-title">No wishlists yet.</p>
+          <p>Tap the heart on a villa to save it. Your wishlists will appear here.</p>
           <Link href="/villas">Explore villas <FiArrowRight aria-hidden="true" /></Link>
         </div>
       ) : (
-        <section aria-label="Your saved villas">
+        <section aria-label="Your wishlists">
           <div className="dash-section-head dash-section-head--list">
-            <h2>{ids.length} {ids.length === 1 ? "villa" : "villas"} in your shortlist</h2>
-            <Link href="/villas">Explore more <FiArrowRight aria-hidden="true" /></Link>
+            <h2>{WISHLIST_COPY.wishlistCount(lists.length)}</h2>
+            <Link href="/saved-villas">Open Saved villas <FiArrowRight aria-hidden="true" /></Link>
           </div>
-          {removeError && <p className="dash-action-error" role="alert">The villa could not be removed. Please try again.</p>}
-          <div className="dash-villa-grid dash-villa-grid--all">
-            {ids.map((id) => {
-              const villa = byId.get(id);
-              return (
-                <article className={`dash-villa-card${villa ? "" : " dash-villa-card--unavailable"}`} key={id}>
-                  {villa ? (
-                    <Link href={`/villas/${villa.id}`} className="dash-villa-card-link">
-                      <span className="dash-villa-image"><DashboardVillaThumb src={villa.imageUrl} alt={villa.name} /></span>
-                      <span className="dash-villa-name">{villa.name}</span>
-                      <span className="dash-villa-location">{villa.location || "Bali"}</span>
-                    </Link>
-                  ) : (
-                    <div className="dash-villa-card-link">
-                      <span className="dash-villa-image dash-villa-image--unavailable" aria-hidden="true" />
-                      <span className="dash-villa-name">No longer in our current collection</span>
-                      <span className="dash-villa-location">Saved villa reference #{id}</span>
-                    </div>
-                  )}
-                  <button
-                    type="button"
-                    className="dash-villa-remove"
-                    aria-label={`Remove ${villa?.name || `villa ${id}`} from saved villas`}
-                    onClick={() => void remove(id)}
-                    disabled={removingId !== null}
-                  >
-                    <FiX aria-hidden="true" />
-                    <span>{removingId === id ? "Removing..." : "Remove"}</span>
-                  </button>
-                </article>
-              );
-            })}
+          {catalogStatus === "unavailable" ? (
+            <p className="dash-collection-note dash-collection-note--above" role="status">Villa photos are temporarily unavailable. Your wishlists are safe.</p>
+          ) : null}
+          <div className="dash-villa-grid dash-villa-grid--all dash-wishlist-grid">
+            {lists.map((list) => (
+              <WishlistCard
+                key={list.id}
+                list={list}
+                photos={coverPhotos(listVillaIds(list), villas)}
+                href={`/saved-villas?list=${list.id}`}
+                compact
+                headingLevel="h3"
+              />
+            ))}
           </div>
         </section>
       )}

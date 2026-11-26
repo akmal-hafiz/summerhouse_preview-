@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import ModalLayer from "@/components/common/ModalLayer";
-import { useScrollLock } from "@/hooks/useScrollLock";
+import { formatAmenityName, selectAmenityHighlights } from "@/lib/villa-detail-format";
 
 type AmenityGroup = {
   key: string;
@@ -27,31 +27,22 @@ const iconForGroup = (key: string) => {
   return "check_circle";
 };
 
-const formatAmenityName = (name: string) => {
-  if (!name) return "";
-  return name
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
-    .trim();
-};
-
 export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const visibleItems = groups.flatMap((group) => group.items.map((item) => ({ group, item }))).slice(0, 12);
-  useScrollLock(isOpen);
+  const visibleItems = selectAmenityHighlights(groups, 10);
 
   if (groups.length === 0) return null;
 
   return (
     <>
       {preview.length > 0 && (
-        <p className="villa-detail-amenities-preview">{preview.join(" - ")}</p>
+        <p className="villa-detail-amenities-preview">{preview.map(formatAmenityName).join(" · ")}</p>
       )}
 
       <div className="villa-detail-amenities">
-        {visibleItems.map(({ group, item }) => (
-          <div key={`${group.key}-${item}`} className="villa-detail-amenity">
-            <span className="material-symbols-outlined" aria-hidden="true">{iconForGroup(group.key)}</span>
+        {visibleItems.map(({ groupKey, item }) => (
+          <div key={`${groupKey}-${item}`} className="villa-detail-amenity">
+            <span className="material-symbols-outlined" aria-hidden="true">{iconForGroup(groupKey)}</span>
             <span>{formatAmenityName(item)}</span>
           </div>
         ))}
@@ -62,7 +53,7 @@ export default function VillaAmenities({ groups, preview = [] }: VillaAmenitiesP
       </button>
 
       {isOpen && createPortal(
-        <ModalLayer onClose={() => setIsOpen(false)} aria-label="All amenities">
+        <ModalLayer lockScroll onClose={() => setIsOpen(false)} aria-label="All amenities">
           <div className="villa-modal" data-lenis-prevent>
             <div className="villa-modal__backdrop" onClick={() => setIsOpen(false)} />
             <div className="villa-modal__scroll" data-lenis-prevent>

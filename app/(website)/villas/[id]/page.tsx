@@ -1,17 +1,27 @@
-import Image from "next/image";
 import Link from "next/link";
+import { FiArrowLeft } from "react-icons/fi";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import AvailabilityCalendar from "@/components/booking/AvailabilityCalendar";
+import { VillaBookingProvider } from "@/components/booking/VillaBookingContext";
+import VillaBookingSidebar from "@/components/booking/VillaBookingSidebar";
 import VillaAmenities from "@/components/booking/VillaAmenities";
 import VillaPhotoGallery from "@/components/booking/VillaPhotoGallery";
+import NearbyVillasGrid from "@/components/villas/NearbyVillasGrid";
 import VillaReviews from "@/components/villas/VillaReviews";
+import VillaSaveButton from "@/components/villas/VillaSaveButton";
+import VillaDescriptionBody from "@/components/villas/VillaDescriptionBody";
 import { getVillaDetail, getVillaSummaries } from "@/lib/lodgify";
 import { getCmsVillaReviews } from "@/lib/cms";
-import { sanitizeHtml } from "@/lib/sanitize";
+import {
+  buildGoogleMapsExternalUrl,
+  formatBedroomLabel,
+  formatVillaDescriptionHtml,
+  clampGuestCount,
+  selectNearbyVillas,
+} from "@/lib/villa-detail-format";
 import { isShowcasePreview } from "@/lib/showcase-preview";
 import { promoCodeFromParam, stayFromParams } from "@/lib/promo-param";
-import StayLink from "@/components/villas/StayLink";
 
 interface VillaDetailPageProps {
   params: Promise<{
@@ -45,18 +55,20 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
 
   if (!villa) {
     return (
-      <main className="villa-detail-page">
+      <div className="villa-detail-route-shell">
         <Navbar alwaysSolid={true} />
-        <section className="villa-detail-missing">
-          <h1>Villa not found</h1>
-          <Link href="/villas">Back to villa collection</Link>
-        </section>
+        <main className="villa-detail-page">
+          <section className="villa-detail-missing">
+            <h1>Villa not found</h1>
+            <Link href="/villas">Back to villa collection</Link>
+          </section>
+        </main>
         <Footer />
-      </main>
+      </div>
     );
   }
 
-  const related = summaries.filter((item) => item.id !== villa.id).slice(0, 3);
+  const related = selectNearbyVillas(summaries, villa.id, villa.city || villa.address || "", 3);
   const amenitiesPreview = Array.isArray(villa.amenitiesPreview) ? villa.amenitiesPreview.filter(Boolean).slice(0, 6) : [];
   const photos = Array.isArray(villa.imageGallery) && villa.imageGallery.length > 0
     ? villa.imageGallery
@@ -73,111 +85,113 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
           <div className="villa-detail-frame">
 
           <div className="villa-detail-hero-copy">
-            <Link href="/villas" className="villa-detail-back">Villa collection</Link>
-            <h1>Enjoy life in {villa.name}</h1>
+            <div className="villa-detail-top-bar">
+              <nav aria-label="Breadcrumb">
+                <Link href="/villas" className="villa-detail-back">
+                  <FiArrowLeft aria-hidden="true" />
+                  <span>Villa collection</span>
+                </Link>
+              </nav>
+              <VillaSaveButton
+                villaId={villa.id}
+                villaName={villa.name}
+                image={photos[0]?.url}
+              />
+            </div>
+            <h1>{villa.name}</h1>
             <p className="villa-detail-location-line">{villa.address || `${villa.city}, ${villa.country}`}</p>
             <div className="villa-detail-facts" aria-label="Villa quick facts">
               <span>{villa.city || "Bali"}</span>
               <span>Private villa</span>
               <span>Max {villa.guests} guests</span>
-              <span>{villa.bedrooms} beds</span>
+              <span>{formatBedroomLabel(villa.bedrooms)}</span>
             </div>
           </div>
 
           <VillaPhotoGallery
             villaName={villa.name}
             photos={photos}
-            sideContent={(
-              <aside className="villa-detail-reserve-card">
-                <div className="villa-detail-reserve-price">
-                  {villa.priceLabel ? <>
-                    <small>From</small>
-                    <strong>{villa.priceLabel}</strong>
-                    <span>/ night</span>
-                  </> : <strong>Rate on request</strong>}
-                </div>
-                <div className="villa-detail-reserve-fields">
-                  <a href="#availability">
-                    <span className="material-symbols-outlined" aria-hidden="true">calendar_month</span>
-                    <small>Check in</small>
-                    <strong>Add date</strong>
-                  </a>
-                  <a href="#availability">
-                    <span className="material-symbols-outlined" aria-hidden="true">event_available</span>
-                    <small>Check out</small>
-                    <strong>Add date</strong>
-                  </a>
-                  <a href="#availability" className="is-wide">
-                    <span className="material-symbols-outlined" aria-hidden="true">group</span>
-                    <small>Guests</small>
-                    <strong>Up to {villa.guests} guests</strong>
-                  </a>
-                </div>
-                <a href="#availability" className="villa-detail-reserve-cta">Check availability</a>
-                <p>See the current rate and any applicable fees before you confirm your stay.</p>
-              </aside>
-            )}
           />
 
-          <div className="villa-detail-main-grid">
-            <article className="villa-detail-content">
-              <section className="villa-detail-section villa-detail-intro">
-                <div className="villa-detail-section-heading">
-                  <p className="villa-detail-section-label">Description</p>
-                  <h2>Entire villa in {villa.city || "Bali"}</h2>
-                </div>
-                <div
-                  className="villa-detail-description"
-                  dangerouslySetInnerHTML={{ __html: formatDescriptionHtml(villa.descriptionHtml) }}
-                />
-              </section>
-
-              <section className="villa-detail-section">
-                <div className="villa-detail-section-heading">
-                  <p className="villa-detail-section-label">What this place offers</p>
-                  <h2>Considered comforts for your stay.</h2>
-                </div>
-                <VillaAmenities groups={villa.amenityGroups || []} preview={amenitiesPreview} />
-              </section>
-
-              <section className="villa-detail-section">
-                <div className="villa-detail-section-heading">
-                  <p className="villa-detail-section-label">Location</p>
-                  <h2>Where you'll be</h2>
-                  <span>{villa.address || `${villa.city}, ${villa.country}`}</span>
-                </div>
-                <div className="villa-detail-map">
-                  <iframe
-                    title={`${villa.name} map`}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
-                  />
-                </div>
-              </section>
-            </article>
-          </div>
-
-            {isShowcasePreview ? (
-              <section className="villa-calendar-section" id="availability" aria-label="Availability preview notice">
-                <div className="villa-calendar-section__header">
-                  <div>
-                    <p className="villa-detail-section-label">Availability</p>
-                    <h2>Live dates and rates are not available in this visual preview.</h2>
-                    <p>Contact our team for current availability and a confirmed quote.</p>
+          <VillaBookingProvider>
+            <div className="villa-detail-main-grid">
+              <article className="villa-detail-content">
+                <section className="villa-detail-section villa-detail-intro">
+                  <div className="villa-detail-section-heading">
+                    <p className="villa-detail-section-label">Description</p>
+                    <h2>Entire villa in {villa.city || "Bali"}</h2>
                   </div>
-                </div>
-              </section>
-            ) : <AvailabilityCalendar
-              propertyId={villa.id}
-              roomTypeId={villa.roomTypeId}
-              villaName={villa.name}
-              location={villa.address || `${villa.city}, ${villa.country}`}
-              priceLabel={villa.originalPriceLabel || villa.priceLabel}
-              maxGuests={villa.guests}
-              initialPromotionCode={promo}
-              initialStay={stay}
-            />}
+                  <VillaDescriptionBody html={formatVillaDescriptionHtml(villa.descriptionHtml)} />
+                </section>
+
+                <section className="villa-detail-section">
+                  <div className="villa-detail-section-heading">
+                    <p className="villa-detail-section-label">What this place offers</p>
+                    <h2>Considered comforts for your stay.</h2>
+                  </div>
+                  <VillaAmenities groups={villa.amenityGroups || []} preview={amenitiesPreview} />
+                </section>
+
+                <section className="villa-detail-section">
+                  <div className="villa-detail-section-heading">
+                    <p className="villa-detail-section-label">Location</p>
+                    <h2>Where you'll be</h2>
+                    <div className="villa-detail-location-row">
+                      <span>{villa.address || `${villa.city}, ${villa.country}`}</span>
+                      <a
+                        href={buildGoogleMapsExternalUrl(mapQuery)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="villa-detail-maps-link"
+                      >
+                        Open in Maps
+                      </a>
+                    </div>
+                  </div>
+                  <div className="villa-detail-map">
+                    <iframe
+                      title={`${villa.name} map`}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+                    />
+                  </div>
+                </section>
+
+                {isShowcasePreview ? (
+                  <section className="villa-calendar-section" id="availability" aria-label="Availability preview notice">
+                    <div className="villa-calendar-section__header">
+                      <div>
+                        <p className="villa-detail-section-label">Availability</p>
+                        <h2>Live dates and rates are not available in this visual preview.</h2>
+                        <p>Contact our team for current availability and a confirmed quote.</p>
+                      </div>
+                    </div>
+                  </section>
+                ) : (
+                  <AvailabilityCalendar
+                    propertyId={villa.id}
+                    roomTypeId={villa.roomTypeId}
+                    villaName={villa.name}
+                    location={villa.address || `${villa.city}, ${villa.country}`}
+                    priceLabel={villa.originalPriceLabel || villa.priceLabel}
+                    maxGuests={villa.guests}
+                    initialPromotionCode={promo}
+                    initialStay={stay}
+                  />
+                )}
+              </article>
+
+              <div className="villa-detail-sidebar">
+                <VillaBookingSidebar
+                  priceLabel={villa.priceLabel}
+                  originalPriceLabel={villa.originalPriceLabel}
+                  initialGuests={clampGuestCount(stay?.guests, villa.guests)}
+                  isShowcasePreview={isShowcasePreview}
+                />
+              </div>
+            </div>
+          </VillaBookingProvider>
 
             {related.length > 0 && (
               <section className="villa-detail-section">
@@ -185,23 +199,7 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
                   <p className="villa-detail-section-label">More stays</p>
                   <h2>Other Summerhouses nearby.</h2>
                 </div>
-                <div className="villa-detail-related">
-                  {related.map((item) => (
-                    <StayLink villaId={item.id} promo={promo} key={item.id}>
-                      <figure>
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          fill
-                          sizes="(min-width: 1024px) 20vw, 100vw"
-                          className="villa-detail-image"
-                        />
-                      </figure>
-                      <span>{item.location}</span>
-                      <strong>{item.name}</strong>
-                    </StayLink>
-                  ))}
-                </div>
+                <NearbyVillasGrid villas={related} promo={promo} />
               </section>
             )}
 
@@ -213,93 +211,8 @@ export default async function VillaDetailPage({ params, searchParams }: VillaDet
             />
         </div>
       </section>
-
+      </main>
       <Footer />
-    </main>
-  </div>
+    </div>
   );
-}
-
-function formatDescriptionHtml(html: string): string {
-  if (!html) return "";
-
-  let cleaned = sanitizeHtml(html)
-    .replace(/<p>/gi, "")
-    .replace(/<\/p>/gi, "\n\n")
-    .replace(/<br\s*\/?>/gi, "\n");
-
-  const rawLines = cleaned.split("\n");
-  let result = "";
-  let inList = false;
-
-  for (let line of rawLines) {
-    let trimmed = line.trim();
-    if (!trimmed) continue;
-
-    const plainText = trimmed
-      .replace(/&nbsp;/gi, " ")
-      .replace(/<[^>]*>/g, "")
-      .trim();
-
-    if (!plainText) continue;
-
-    const cleanTextForCheck = plainText
-      .replace(/^[-*•·—\s]+/, "")
-      .replace(/[-*•·—\s]+$/, "")
-      .trim();
-
-    const isHeading = 
-      (cleanTextForCheck.length > 3 && cleanTextForCheck === cleanTextForCheck.toUpperCase() && !/^\d+$/.test(cleanTextForCheck)) ||
-      /^(?:The Space|Layout|Neighborhood|Details To Note|Entire Place Use|Rules|Amenities|Getting around|For coffee & slow mornings|For dining|For movement & wellness|For the Beach|Shops & essentials|Guest access|Other things to note|About the property):?$/i.test(cleanTextForCheck) ||
-      /^\d+\.\s+[A-Za-z]/i.test(cleanTextForCheck) ||
-      /^(?:<strong>|<b>)(.*?)(?:<\/strong>|<\/b>):?$/i.test(trimmed);
-
-    const isListItem = !isHeading && (
-      trimmed.startsWith("-") || 
-      trimmed.startsWith("*") || 
-      trimmed.startsWith("•") || 
-      trimmed.startsWith("·") ||
-      trimmed.startsWith("—")
-    );
-
-    if (isHeading) {
-      if (inList) {
-        result += "</ul>\n";
-        inList = false;
-      }
-      result += `<h3 class="description-heading">${escapeHtml(cleanTextForCheck)}</h3>\n`;
-    } else if (isListItem) {
-      if (!inList) {
-        result += `<ul class="description-list">\n`;
-        inList = true;
-      }
-      const content = trimmed.replace(/^[-*•·—\s]+/, "").trim();
-      if (content.endsWith(":")) {
-        result += `  <li class="description-list-heading"><strong>${escapeHtml(content.replace(/<[^>]*>/g, "").trim())}</strong></li>\n`;
-      } else {
-        result += `  <li>${escapeHtml(content.replace(/<[^>]*>/g, "").trim())}</li>\n`;
-      }
-    } else {
-      if (inList) {
-        result += "</ul>\n";
-        inList = false;
-      }
-      result += `<p>${escapeHtml(plainText)}</p>\n`;
-    }
-  }
-
-  if (inList) {
-    result += "</ul>\n";
-  }
-
-  return result;
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }

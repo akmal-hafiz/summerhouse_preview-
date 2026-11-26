@@ -1,8 +1,9 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import { normalizeGuestLimit } from "@/lib/villa-detail-format";
 
-type StickyBookingBarProps = {
+export type StickyBookingBarProps = {
   villaName: string;
   location: string;
   priceLabel?: string | null;
@@ -22,6 +23,7 @@ type StickyBookingBarProps = {
   quoteStatus?: "quoted" | "quote-fallback" | "available";
   onBookNow?: (event: MouseEvent<HTMLAnchorElement>) => void;
   onGuestChange: (guests: number) => void;
+  onFocusDates: () => void;
   onClearDates: () => void;
 };
 
@@ -44,6 +46,7 @@ export default function StickyBookingBar({
   quoteStatus = "available",
   onBookNow,
   onGuestChange,
+  onFocusDates,
   onClearDates,
 }: StickyBookingBarProps) {
   const bookingLabel = isValid ? (totalLabel ? "Continue to checkout" : "See your full stay price") : "Check dates";
@@ -55,25 +58,28 @@ export default function StickyBookingBar({
     : error || "Select available dates";
 
   return (
-    <div className="villa-booking-bar" aria-live="polite">
+    <div className="villa-booking-bar">
       <div className="villa-booking-bar__identity">
-        <strong>{villaName}</strong>
-        <span>{location}{!checkIn && !checkOut && priceLabel ? ` - from ${priceLabel} per night` : ""}</span>
+        <strong className="villa-booking-bar__name">{villaName}</strong>
+        <span className="villa-booking-bar__location">{location}{!checkIn && !checkOut && priceLabel ? ` - from ${priceLabel} per night` : ""}</span>
+        <strong className="villa-booking-bar__mobile-price">
+          {priceLabel ? `From ${priceLabel} / night` : villaName}
+        </strong>
       </div>
 
       <div className="villa-booking-bar__controls">
-        <button type="button" className="villa-booking-bar__field" onClick={onClearDates}>
+        <button type="button" className="villa-booking-bar__field" onClick={onFocusDates}>
           <span>Check-in</span>
           <strong>{checkIn || "Add date"}</strong>
         </button>
-        <button type="button" className="villa-booking-bar__field" onClick={onClearDates}>
+        <button type="button" className="villa-booking-bar__field" onClick={onFocusDates}>
           <span>Check-out</span>
           <strong>{checkOut || "Add date"}</strong>
         </button>
         <label className="villa-booking-bar__field villa-booking-bar__guest">
           <span>Guests</span>
           <select value={guests} onChange={(event) => onGuestChange(Number(event.target.value))}>
-            {Array.from({ length: Math.max(1, Math.min(20, maxGuests)) }).map((_, index) => {
+            {Array.from({ length: normalizeGuestLimit(maxGuests) }).map((_, index) => {
               const value = index + 1;
               return (
                 <option key={value} value={value}>
@@ -83,15 +89,26 @@ export default function StickyBookingBar({
             })}
           </select>
         </label>
+        {(checkIn || checkOut) && (
+          <button type="button" className="villa-booking-bar__clear" onClick={onClearDates}>
+            Clear
+          </button>
+        )}
       </div>
 
       <div className="villa-booking-bar__summary">
-        <span>{summaryLabel}</span>
+        <span className="villa-booking-bar__status" aria-live="polite">{summaryLabel}</span>
         <a
-          href={isValid ? checkoutUrl : undefined}
-          onClick={onBookNow}
-          aria-disabled={!isValid}
-          className={!isValid ? "is-disabled" : ""}
+          href={isValid ? checkoutUrl : "#availability"}
+          onClick={
+            isValid
+              ? onBookNow
+              : (event) => {
+                  event.preventDefault();
+                  onFocusDates();
+                }
+          }
+          className="villa-booking-bar__cta"
           data-booking-property-id={propertyId}
           data-booking-check-in={checkIn || ""}
           data-booking-check-out={checkOut || ""}

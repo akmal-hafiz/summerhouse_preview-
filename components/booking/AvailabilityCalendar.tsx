@@ -1,8 +1,9 @@
 "use client";
 
-import type { FormEvent, MouseEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import StickyBookingBar from "./StickyBookingBar";
+import type { FormEvent, KeyboardEvent, MouseEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import StickyBookingBar, { type StickyBookingBarProps } from "./StickyBookingBar";
+import { usePublishBooking } from "./VillaBookingContext";
 import {
   addMonths,
   buildMonthCells,
@@ -23,6 +24,13 @@ import { useAuthModal } from "@/components/providers/AuthModalProvider";
 import { lastStayForVilla, latestStay, loadHistory, recordSearch, type LastStay } from "@/lib/search-history-client";
 import { promotionErrorMessage } from "@/lib/notifications/guest-messages";
 import { withStay } from "@/lib/promo-param";
+import {
+  clampGuestCount,
+  formatCalendarDayAriaLabel,
+  isMonthBeforeToday,
+  normalizeGuestLimit,
+  resolveCalendarTabStopDate,
+} from "@/lib/villa-detail-format";
 import { canBookWithPromotion, checkoutPromotion, initialAppliedCode } from "./promotion-state";
 
 type AvailabilityDay = {
@@ -116,6 +124,8 @@ export default function AvailabilityCalendar({
   initialStay = null,
 }: AvailabilityCalendarProps) {
   const contact = useGlobalContactSettings();
+  // Unknown capacity (0 or missing) offers 12, never 1; every guest value below is clamped to this.
+  const guestLimit = normalizeGuestLimit(maxGuests);
   const today = useMemo(() => startOfMonth(new Date()), []);
   const [visibleMonth, setVisibleMonth] = useState(today);
   const [availabilityMap, setAvailabilityMap] = useState<Record<string, AvailabilityDay>>({});
@@ -130,7 +140,11 @@ export default function AvailabilityCalendar({
   const [prefill, setPrefill] = useState<"pending" | "applied" | "unavailable" | "off">("pending");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(1);
+  // Start from the link's guests (even when its dates are past or "today" differs between server and browser), so the
+  // first snapshot matches what the server rendered in the sidebar.
+  const [guests, setGuests] = useState(() => clampGuestCount(initialStay?.guests ?? 1, guestLimit));
+  // The day Tab lands on in each month (roving tabIndex): the last focused day, else the stay, else the first open day.
+  const [focusedDate, setFocusedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isQuoteLoading, setIsQuoteLoading] = useState(false);
   const [rateQuote, setRateQuote] = useState<RateQuote | null>(null);
@@ -149,7 +163,10 @@ export default function AvailabilityCalendar({
   const [promotionError, setPromotionError] = useState("");
   const [isPromotionLoading, setIsPromotionLoading] = useState(false);
   const [promotionRetryKey, setPromotionRetryKey] = useState(0);
+  const [promoOpen, setPromoOpen] = useState(() => Boolean(initialPromotionCode));
   const [membershipDismissed, setMembershipDismissed] = useState(true);
+  const sectionRef = useRef<HTMLElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isAdmin, isLoading: isAuthLoading } = useAuth();
   // Only a member session records views; a CMS admin has none.
   const isMember = isAuthenticated && !isAdmin;
@@ -180,7 +197,7 @@ export default function AvailabilityCalendar({
     if (!isRangeValid) return;
     const query = withStay(window.location.search, { checkIn, checkOut, guests });
     if (query === window.location.search.slice(1)) return;
-    // `null` state is what lets Next.js sync useSearchParams (StayLink) with this native replaceState.
+    // `null` state is what lets Next.js sync useSearchParams (NearbyVillasGrid) with this native replaceState.
     window.history.replaceState(null, "",`${window.location.pathname}?${query}${window.location.hash}`);
   }, [checkIn, checkOut, guests, isRangeValid]);
   const isMinimumStayValid = rateQuote?.isMinimumStayValid !== false;
@@ -324,6 +341,7 @@ export default function AvailabilityCalendar({
         if (!response.ok || !data.success) {
           // The route's own wording names the supplier; guests get the mapped sentence instead.
           setPromotionError(promotionErrorMessage({ status: response.status, code: typeof data.status === "string" ? data.status : undefined }));
+          setPromoOpen(true);
           // The guest can still book this stay, without the code.
           setPromotionFailedKey(promotionStayKey);
           return;
@@ -333,6 +351,7 @@ export default function AvailabilityCalendar({
       } catch (fetchError) {
         if (controller.signal.aborted) return;
         setPromotionError(promotionErrorMessage({ network: fetchError instanceof TypeError }));
+        setPromoOpen(true);
         setPromotionFailedKey(promotionStayKey);
       } finally {
         if (!controller.signal.aborted) setIsPromotionLoading(false);
@@ -383,10 +402,10 @@ export default function AvailabilityCalendar({
     if (checkIn || checkOut) { setPrefill("off"); return; }
     setCheckIn(lastStay.checkIn);
     setCheckOut(lastStay.checkOut);
-    if (lastStay.guests) setGuests(Math.min(lastStay.guests, maxGuests));
+    if (lastStay.guests) setGuests(clampGuestCount(lastStay.guests, guestLimit));
     setVisibleMonth(startOfMonth(parseISODate(lastStay.checkIn)));
     setPrefill("applied");
-  }, [checkIn, checkOut, lastStay, maxGuests, prefill]);
+  }, [checkIn, checkOut, lastStay, guestLimit, prefill]);
 
   // Once availability for those months is loaded, drop remembered dates that are no longer bookable.
   // shortcut: the calendar loads two months, so a remembered stay ending after that window is dropped too; load the full range if long stays matter.
@@ -476,7 +495,7 @@ export default function AvailabilityCalendar({
       return "Please choose a valid check-out date after check-in.";
     }
     if (!Number.isFinite(guests) || guests < 1) return "Please choose at least one guest.";
-    if (guests > maxGuests) return `This villa accepts up to ${maxGuests} guests.`;
+    if (guests > guestLimit) return `This villa accepts up to ${guestLimit} guests.`;
     if (availabilityError) return "Availability is temporarily unavailable. Please retry or contact us via WhatsApp.";
     if (!isRangeValid) return "Selected dates are not available. Please choose another date range.";
     if (!isMinimumStayValid) return rateQuote?.message || "Selected dates do not meet the minimum stay rule.";
@@ -498,33 +517,65 @@ export default function AvailabilityCalendar({
     window.location.href = checkoutUrl;
   };
 
-  const renderMonth = (month: Date) => {
-    const cells = buildMonthCells(month);
+  const handleGuestChange = (value: number) => {
+    if (isRangeValid && checkIn && checkOut) {
+      setIsQuoteLoading(true);
+    }
+    setRateQuote(null);
+    setQuoteError("");
+    setBookingError("");
+    setGuests(clampGuestCount(value, guestLimit));
+  };
+
+  const canGoPrevMonth = !isMonthBeforeToday(addMonths(visibleMonth, -1), today);
+
+  const renderMonth = (month: Date, index: number) => {
+    const days = buildMonthCells(month).map((cell) => {
+      const date = formatISODate(cell);
+      const day = availabilityMap[date];
+      const isOutside = cell.getMonth() !== month.getMonth();
+      const isPast = isPastDate(cell);
+      const isCheckoutCandidate = Boolean(checkIn && !checkOut && parseISODate(date) > parseISODate(checkIn));
+      const isValidCheckout = isCheckoutCandidate && validateRange(checkIn, date);
+      const isDisabled = isOutside || isPast || (!day?.available && !isValidCheckout);
+      return { cell, date, day, isOutside, isPast, isDisabled };
+    });
+    const tabStopDate = resolveCalendarTabStopDate(
+      days.filter((item) => !item.isDisabled).map((item) => item.date),
+      [focusedDate, checkIn, checkOut],
+    );
 
     return (
       <div className="villa-calendar__month">
-        <h3>{monthNames[month.getMonth()]} {month.getFullYear()}</h3>
+        <div className={`villa-calendar__month-head ${index === 0 ? "is-first-month" : ""}`}>
+          <h3>{monthNames[month.getMonth()]} {month.getFullYear()}</h3>
+        </div>
         <div className="villa-calendar__weekdays">
           {dayNames.map((day) => <span key={day}>{day}</span>)}
         </div>
         <div className="villa-calendar__grid">
-          {cells.map((cell) => {
-            const date = formatISODate(cell);
-            const day = availabilityMap[date];
-            const isOutside = cell.getMonth() !== month.getMonth();
-            const isPast = isPastDate(cell);
+          {days.map(({ cell, date, day, isOutside, isPast, isDisabled }) => {
             const isSelectedStart = date === checkIn;
             const isSelectedEnd = date === checkOut;
             const isInsideRange = checkIn && checkOut && parseISODate(date) > parseISODate(checkIn) && parseISODate(date) < parseISODate(checkOut);
-            const isCheckoutCandidate = Boolean(checkIn && !checkOut && parseISODate(date) > parseISODate(checkIn));
-            const isValidCheckout = isCheckoutCandidate && validateRange(checkIn, date);
-            const isDisabled = isOutside || isPast || (!day?.available && !isValidCheckout);
+            const dayStatus = day?.status ?? "unknown";
+            const ariaLabel = formatCalendarDayAriaLabel(cell, dayStatus, {
+              isSelectedStart,
+              isSelectedEnd,
+              isInRange: Boolean(isInsideRange),
+              isDisabled,
+            });
 
             return (
               <button
                 key={date}
                 type="button"
+                data-date={date}
                 disabled={isDisabled}
+                tabIndex={!isDisabled && date === tabStopDate ? 0 : -1}
+                onFocus={() => setFocusedDate(date)}
+                aria-label={ariaLabel}
+                aria-pressed={isSelectedStart || isSelectedEnd}
                 title={!day?.available && !isOutside ? day?.reason || "Unavailable" : undefined}
                 onClick={() => handleDateClick(date)}
                 className={[
@@ -546,8 +597,216 @@ export default function AvailabilityCalendar({
     );
   };
 
+  const handleCalendarGridKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+      return;
+    }
+
+    const handledKeys = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"]);
+    if (!handledKeys.has(event.key)) return;
+
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement) || !target.classList.contains("villa-calendar__day")) {
+      return;
+    }
+
+    const currentIso = target.dataset.date;
+    if (!currentIso) return;
+
+    const isVisibleButton = (button: HTMLButtonElement) =>
+      typeof button.checkVisibility === "function" ? button.checkVisibility() : button.offsetParent !== null;
+
+    let candidate: HTMLButtonElement | null = null;
+
+    if (event.key === "Home" || event.key === "End") {
+      const grid = target.closest(".villa-calendar__grid");
+      if (!grid) return;
+      const cells = Array.from(grid.querySelectorAll<HTMLButtonElement>(".villa-calendar__day"));
+      const currentIndex = cells.indexOf(target);
+      if (currentIndex === -1) return;
+      const rowStart = Math.floor(currentIndex / 7) * 7;
+      const rowEnd = Math.min(cells.length - 1, rowStart + 6);
+      const step = event.key === "Home" ? 1 : -1;
+      for (let idx = event.key === "Home" ? rowStart : rowEnd; idx >= rowStart && idx <= rowEnd; idx += step) {
+        const cell = cells[idx];
+        if (cell && !cell.disabled && isVisibleButton(cell)) {
+          candidate = cell;
+          break;
+        }
+      }
+    } else {
+      const enabledButtons = Array.from(
+        event.currentTarget.querySelectorAll<HTMLButtonElement>(".villa-calendar__day[data-date]:not(:disabled)"),
+      ).filter(isVisibleButton);
+
+      if (enabledButtons.length === 0) return;
+
+      const enabledByDate = new Map<string, HTMLButtonElement>();
+      let minIso = "";
+      let maxIso = "";
+      for (const button of enabledButtons) {
+        const iso = button.dataset.date;
+        if (!iso) continue;
+        enabledByDate.set(iso, button);
+        if (!minIso || iso < minIso) minIso = iso;
+        if (!maxIso || iso > maxIso) maxIso = iso;
+      }
+
+      const delta =
+        event.key === "ArrowLeft" ? -1
+          : event.key === "ArrowRight" ? 1
+            : event.key === "ArrowUp" ? -7
+              : 7;
+
+      const cursor = parseISODate(currentIso);
+      for (let guard = 0; guard < 90; guard += 1) {
+        cursor.setDate(cursor.getDate() + delta);
+        const nextIso = formatISODate(cursor);
+        if (nextIso < minIso || nextIso > maxIso) break;
+        const match = enabledByDate.get(nextIso);
+        if (match) {
+          candidate = match;
+          break;
+        }
+      }
+    }
+
+    if (candidate && candidate !== target) {
+      event.preventDefault();
+      candidate.focus();
+      candidate.scrollIntoView({ block: "nearest", inline: "nearest" });
+    } else if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+      // Home, End, Up and Down at an edge would otherwise scroll the page; Left and Right have no page default here.
+      event.preventDefault();
+    }
+  };
+
+  const focusDates = () => {
+    const prefersReduced =
+      document.documentElement.dataset.motion === "reduced" ||
+      (document.documentElement.dataset.motion !== "full" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    sectionRef.current?.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start",
+    });
+    calendarRef.current?.focus({ preventScroll: true });
+  };
+
+  const publishBooking = usePublishBooking();
+
+  const handleClearDates = () => {
+    setCheckIn("");
+    setCheckOut("");
+    setError("");
+    setBookingError("");
+    setRateQuote(null);
+    setQuoteError("");
+    setIsQuoteLoading(false);
+    // A guest who clears the dates on purpose drops them from the URL too, so nearby villa links stop carrying them.
+    const query = withStay(window.location.search, null);
+    if (query !== window.location.search.slice(1)) {
+      window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
+    }
+  };
+
+  const bookingHandlersRef = useRef({
+    onBookNow: handleBookNow,
+    onGuestChange: handleGuestChange,
+    onFocusDates: focusDates,
+    onClearDates: handleClearDates,
+  });
+  // Refreshed after each commit (never during render); the stable wrappers below only run from events.
+  useLayoutEffect(() => {
+    bookingHandlersRef.current = {
+      onBookNow: handleBookNow,
+      onGuestChange: handleGuestChange,
+      onFocusDates: focusDates,
+      onClearDates: handleClearDates,
+    };
+  });
+
+  const stableOnBookNow = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    bookingHandlersRef.current.onBookNow(event);
+  }, []);
+  const stableOnGuestChange = useCallback((nextGuests: number) => {
+    bookingHandlersRef.current.onGuestChange(nextGuests);
+  }, []);
+  const stableOnFocusDates = useCallback(() => {
+    bookingHandlersRef.current.onFocusDates();
+  }, []);
+  const stableOnClearDates = useCallback(() => {
+    bookingHandlersRef.current.onClearDates();
+  }, []);
+
+  const clampedGuests = clampGuestCount(guests, guestLimit);
+  const barTotalLabel = codeQuote
+    ? formatPrice(codeQuote.quotedTotal, codeQuote.currency)
+    : officialQuote
+      ? formatPrice(officialQuote.total, officialQuote.currency)
+      : undefined;
+  const barError = isQuoteLoading
+    ? "Preparing your stay..."
+    : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "");
+  const barQuoteStatus: StickyBookingBarProps["quoteStatus"] = rateQuote?.success
+    ? "quoted"
+    : quoteError
+      ? "quote-fallback"
+      : "available";
+
+  const barProps = useMemo<StickyBookingBarProps>(
+    () => ({
+      villaName,
+      location,
+      priceLabel,
+      checkIn,
+      checkOut,
+      guests: clampedGuests,
+      maxGuests: guestLimit,
+      nights,
+      totalLabel: barTotalLabel,
+      isValid: isBookingValid,
+      error: barError,
+      isQuoteLoading,
+      checkoutUrl,
+      whatsAppFallbackUrl,
+      propertyId,
+      quoteStatus: barQuoteStatus,
+      onBookNow: stableOnBookNow,
+      onGuestChange: stableOnGuestChange,
+      onFocusDates: stableOnFocusDates,
+      onClearDates: stableOnClearDates,
+    }),
+    [
+      villaName,
+      location,
+      priceLabel,
+      checkIn,
+      checkOut,
+      clampedGuests,
+      guestLimit,
+      nights,
+      barTotalLabel,
+      isBookingValid,
+      barError,
+      isQuoteLoading,
+      checkoutUrl,
+      whatsAppFallbackUrl,
+      propertyId,
+      barQuoteStatus,
+      stableOnBookNow,
+      stableOnGuestChange,
+      stableOnFocusDates,
+      stableOnClearDates,
+    ],
+  );
+
+  useEffect(() => {
+    publishBooking?.(barProps);
+  }, [publishBooking, barProps]);
+
   return (
-    <section className="villa-calendar-section" id="availability">
+    <section ref={sectionRef} className="villa-calendar-section" id="availability">
       <div className="villa-calendar-section__header">
         <div>
           <p className="villa-detail-section-label">Availability</p>
@@ -563,9 +822,11 @@ export default function AvailabilityCalendar({
           {prefill === "unavailable" && !checkIn && <p className="villa-calendar__note" role="status">{STAY_NOTES[staySource].taken}</p>}
         </div>
         <div className="villa-calendar-section__actions">
-          <button type="button" onClick={() => { setCheckIn(""); setCheckOut(""); setError(""); setBookingError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}>
-            Clear dates
-          </button>
+          {(checkIn || checkOut) && (
+            <button type="button" className="villa-calendar-section__clear" onClick={handleClearDates}>
+              Clear dates
+            </button>
+          )}
           {isBookingValid && (
             <a
               href={checkoutUrl}
@@ -573,7 +834,7 @@ export default function AvailabilityCalendar({
               data-booking-property-id={propertyId}
               data-booking-check-in={checkIn}
               data-booking-check-out={checkOut}
-              data-booking-guests={guests}
+              data-booking-guests={clampedGuests}
               data-booking-quote-status={rateQuote?.success ? "quoted" : quoteError ? "quote-fallback" : "available"}
             >
               {officialQuote || codeQuote ? "Continue to checkout" : "See your full stay price"}
@@ -594,7 +855,7 @@ export default function AvailabilityCalendar({
             </div>
             <QuoteLines parts={codeQuote} total={codeQuote.quotedTotal} currency={codeQuote.currency} discountLabel={`${checkoutCode} discount`} />
           </dl>
-          <p>Lodgify&apos;s price for these dates with your code, fees and taxes included. Your checkout shows the same total.</p>
+          <p>Final price with taxes, fees, and your code included.</p>
         </div>
       )}
       {isBookingValid && !codeQuote && officialQuote && (
@@ -606,37 +867,92 @@ export default function AvailabilityCalendar({
             </div>
             <QuoteLines parts={officialQuote} total={officialQuote.total} currency={officialQuote.currency} />
           </dl>
-          <p>Lodgify&apos;s price for these dates, with fees and taxes. Your checkout shows the same total.</p>
+          <p>Final price with taxes and fees included.</p>
         </div>
       )}
 
-      <div className="villa-calendar">
+      <div ref={calendarRef} className="villa-calendar" tabIndex={-1}>
+        <div className="villa-calendar__mobile-head">
+          <button
+            type="button"
+            className="villa-calendar__month-nav"
+            disabled={isLoading || !canGoPrevMonth}
+            onClick={() => setVisibleMonth(addMonths(visibleMonth, -1))}
+            aria-label="Previous month"
+          >
+            &#8592;
+          </button>
+          <h3>{monthNames[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}</h3>
+          <button
+            type="button"
+            className="villa-calendar__month-nav"
+            disabled={isLoading}
+            onClick={() => setVisibleMonth(addMonths(visibleMonth, 1))}
+            aria-label="Next month"
+          >
+            &#8594;
+          </button>
+        </div>
         <button
           type="button"
           className="villa-calendar__nav villa-calendar__nav--prev"
+          disabled={isLoading || !canGoPrevMonth}
           onClick={() => setVisibleMonth(addMonths(visibleMonth, -1))}
           aria-label="Previous month"
         >
           &#8592;
         </button>
-        <div className="villa-calendar__months">
+        <div className="villa-calendar__months" onKeyDown={handleCalendarGridKeyDown}>
           {isLoading ? (
             <div className="villa-calendar__loading" role="status" aria-live="polite">Checking availability...</div>
           ) : (
             <>
-              {renderMonth(visibleMonth)}
-              {renderMonth(addMonths(visibleMonth, 1))}
+              {renderMonth(visibleMonth, 0)}
+              {renderMonth(addMonths(visibleMonth, 1), 1)}
             </>
           )}
         </div>
         <button
           type="button"
           className="villa-calendar__nav villa-calendar__nav--next"
+          disabled={isLoading}
           onClick={() => setVisibleMonth(addMonths(visibleMonth, 1))}
           aria-label="Next month"
         >
           &#8594;
         </button>
+      </div>
+
+      <div className="villa-calendar__legend" aria-label="Calendar key">
+        <span><i className="villa-calendar__swatch is-available" aria-hidden="true" />Available</span>
+        <span><i className="villa-calendar__swatch is-selected" aria-hidden="true" />Selected</span>
+        <span><i className="villa-calendar__swatch is-unavailable" aria-hidden="true" />Unavailable</span>
+      </div>
+
+      <div className="villa-calendar-mobile-bar">
+        <label className="villa-calendar-mobile-bar__guests">
+          <span>Guests</span>
+          <select value={clampedGuests} onChange={(event) => handleGuestChange(Number(event.target.value))}>
+            {Array.from({ length: guestLimit }).map((_, index) => {
+              const value = index + 1;
+              return (
+                <option key={value} value={value}>
+                  {value} {value === 1 ? "guest" : "guests"}
+                </option>
+              );
+            })}
+          </select>
+        </label>
+        {whatsAppFallbackUrl && (
+          <a
+            href={whatsAppFallbackUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="villa-calendar-mobile-bar__whatsapp"
+          >
+            WhatsApp us
+          </a>
+        )}
       </div>
 
       {error && !bookingError && <p className="villa-calendar__error" role="alert">{error}</p>}
@@ -684,72 +1000,58 @@ export default function AvailabilityCalendar({
 
       {roomTypeId && (
         <div className="villa-promotion">
-          <div className="villa-promotion__heading">
-            <h3>Have a promotion code?</h3>
-            <p>We check your code against the dates and guests you chose.</p>
-          </div>
-          <form onSubmit={handleApplyPromotion} className="villa-promotion__form">
-            <label htmlFor="villa-promotion-code">Promotion code</label>
-            <div className="villa-promotion__input-row">
-              <input
-                id="villa-promotion-code"
-                type="text"
-                autoComplete="off"
-                value={promotionInput}
-                onChange={(event) => setPromotionInput(event.target.value)}
-                maxLength={64}
-                placeholder="Enter code"
-                disabled={isPromotionLoading}
-                aria-describedby="villa-promotion-feedback"
-              />
-              <button type="submit" disabled={isPromotionLoading || !isRangeValid || !isMinimumStayValid}>
-                {isPromotionLoading ? "Checking..." : "Apply"}
-              </button>
-              {appliedPromotionCode && <button type="button" className="villa-promotion__remove" onClick={removePromotion}>Remove</button>}
+          <button
+            type="button"
+            className="villa-promotion__toggle"
+            aria-expanded={promoOpen}
+            aria-controls="villa-promotion-panel"
+            onClick={() => setPromoOpen((open) => !open)}
+          >
+            <span>Have a promotion code?</span>
+            <span className="villa-promotion__toggle-icon" aria-hidden="true">{promoOpen ? "−" : "+"}</span>
+          </button>
+          {promoOpen && (
+            <div id="villa-promotion-panel" className="villa-promotion__panel">
+              <div className="villa-promotion__heading">
+                <p>We check your code against the dates and guests you chose.</p>
+              </div>
+              <form onSubmit={handleApplyPromotion} className="villa-promotion__form">
+                <label htmlFor="villa-promotion-code">Promotion code</label>
+                <div className="villa-promotion__input-row">
+                  <input
+                    id="villa-promotion-code"
+                    type="text"
+                    autoComplete="off"
+                    value={promotionInput}
+                    onChange={(event) => setPromotionInput(event.target.value)}
+                    maxLength={64}
+                    placeholder="Enter code"
+                    disabled={isPromotionLoading}
+                    aria-describedby="villa-promotion-feedback"
+                  />
+                  <button type="submit" disabled={isPromotionLoading || !isRangeValid || !isMinimumStayValid}>
+                    {isPromotionLoading ? "Checking..." : "Apply"}
+                  </button>
+                  {appliedPromotionCode && <button type="button" className="villa-promotion__remove" onClick={removePromotion}>Remove</button>}
+                </div>
+              </form>
+              <div id="villa-promotion-feedback" aria-live="polite">
+                {promotionError && <p className="villa-promotion__error" role="alert">{promotionError}</p>}
+                {appliedPromotionCode && !promotionError && !promotionQuote && !isPromotionLoading && !isRangeValid && (
+                  <p className="villa-promotion__hint">Code {appliedPromotionCode} will be checked when you pick your dates.</p>
+                )}
+                {codeQuote && (
+                  <p className="villa-promotion__success">
+                    {checkoutCode} is applied to this stay and goes with you to checkout.
+                  </p>
+                )}
+              </div>
             </div>
-          </form>
-          <div id="villa-promotion-feedback" aria-live="polite">
-            {promotionError && <p className="villa-promotion__error" role="alert">{promotionError}</p>}
-            {appliedPromotionCode && !promotionError && !promotionQuote && !isPromotionLoading && !isRangeValid && (
-              <p className="villa-promotion__hint">Code {appliedPromotionCode} will be checked when you pick your dates.</p>
-            )}
-            {codeQuote && (
-              <p className="villa-promotion__success">
-                {checkoutCode} is applied to this stay and goes with you to checkout.
-              </p>
-            )}
-          </div>
+          )}
         </div>
       )}
 
-      <StickyBookingBar
-        villaName={villaName}
-        location={location}
-        priceLabel={priceLabel}
-        checkIn={checkIn}
-        checkOut={checkOut}
-        guests={Math.min(guests, maxGuests)}
-        maxGuests={maxGuests}
-        nights={nights}
-        totalLabel={codeQuote ? formatPrice(codeQuote.quotedTotal, codeQuote.currency)
-          : officialQuote ? formatPrice(officialQuote.total, officialQuote.currency) : undefined}
-        isValid={isBookingValid}
-        error={isQuoteLoading ? "Preparing your stay..." : availabilityError || error || (isRangeValid && !isMinimumStayValid ? rateQuote?.message : "")}
-        isQuoteLoading={isQuoteLoading}
-        checkoutUrl={checkoutUrl}
-        whatsAppFallbackUrl={whatsAppFallbackUrl}
-        propertyId={propertyId}
-        quoteStatus={rateQuote?.success ? "quoted" : quoteError ? "quote-fallback" : "available"}
-        onBookNow={handleBookNow}
-        onGuestChange={(value) => {
-          setIsQuoteLoading(true);
-          setRateQuote(null);
-          setQuoteError("");
-          setBookingError("");
-          setGuests(Math.min(value, maxGuests));
-        }}
-        onClearDates={() => { setCheckIn(""); setCheckOut(""); setError(""); setBookingError(""); setRateQuote(null); setQuoteError(""); setIsQuoteLoading(false); }}
-      />
+      <StickyBookingBar {...barProps} />
     </section>
   );
 }
